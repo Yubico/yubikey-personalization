@@ -31,12 +31,15 @@
 
 # The library.
 
+COMMON_SOURCES =  common/ykutil.c common/yubikey.c common/aes128.c
+
 lib_LTLIBRARIES = libykpers.la
-libykpers_la_SOURCES = ykpers.h ykpers.c common/ykutil.c common/yubikey.c
+libykpers_la_SOURCES = ykpers.h ykpers.c $(COMMON_SOURCES)
+libykpers_la_CFLAGS = -Icommon
 libykpers_la_LDFLAGS = -no-undefined \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
-noinst_HEADERS =  common/ykdef.h common/ykutil.h common/yubikey.h
+noinst_HEADERS =  common/ykdef.h common/ykutil.h common/yubikey.h common/aes128.h
 
 # The command line tools.
 
