@@ -34,7 +34,7 @@
 typedef void YUBIKEY;
 
 extern int ykInit(void);
-extern YUBIKEY * ykOpen(void);
+extern YUBIKEY *ykOpen(void);
 extern void ykClose(YUBIKEY *);
 extern int ykGetStatus(YUBIKEY *, STATUS *, int);
 extern int ykWriteConfig(YUBIKEY *, CONFIG *, unsigned char *);

@@ -27,8 +27,8 @@
 **  function hidSetReport						**
 **  Set HID report							**
 **                                                                      **
-**  int hidSetReport(YUBIKEY yk, int reportType, int reportNumber,	**
-**					 char *buffer, int size)	**
+**  int hidSetReport(YUBIKEY *yk, int reportType, int reportNumber,	**
+**		     char *buffer, int size)				**
 **                                                                      **
 **  Where:                                                              **
 **  "yk" is handle to open Yubikey					**
@@ -41,18 +41,18 @@
 **                                                                      **
 *************************************************************************/
 
-static int hidSetReport(YUBIKEY yk, int reportType, int reportNumber, char *buffer, int size)
+static int hidSetReport(YUBIKEY *yk, int reportType, int reportNumber, char *buffer, int size)
 {
     return usb_control_msg(yk, USB_TYPE_CLASS | USB_RECIP_INTERFACE | USB_ENDPOINT_OUT, HID_SET_REPORT,
-				reportType << 8 | reportNumber, 0, buffer, size, 1000) > 0;
+			   reportType << 8 | reportNumber, 0, buffer, size, 1000) > 0;
 }
 
 /*************************************************************************
 **  function hidGetReport						**
 **  Get HID report							**
 **                                                                      **
-**  int hidGetReport(YUBIKEY yk, int reportType, int reportNumber,	**
-**					 char *buffer, int size)	**
+**  int hidGetReport(YUBIKEY *yk, int reportType, int reportNumber,	**
+**		     char *buffer, int size)				**
 **                                                                      **
 **  Where:                                                              **
 **  "yk" is handle to open Yubikey					**
@@ -65,7 +65,7 @@ static int hidSetReport(YUBIKEY yk, int reportType, int reportNumber, char *buff
 **                                                                      **
 *************************************************************************/
 
-static int hidGetReport(YUBIKEY yk, int reportType, int reportNumber, char *buffer, int size)
+static int hidGetReport(YUBIKEY *yk, int reportType, int reportNumber, char *buffer, int size)
 {
   int m = usb_claim_interface(yk, 0);
   printf ("m %d: %s\n", m, usb_strerror ());
@@ -101,7 +101,7 @@ int ykInit(void)
 **                                                                      **
 *************************************************************************/
 
-YUBIKEY ykOpen(void)
+YUBIKEY *ykOpen(void)
 {
 	struct usb_bus *bus;
 	struct usb_device *dev;
@@ -110,9 +110,10 @@ YUBIKEY ykOpen(void)
 
 	for (bus = usb_get_busses(); bus; bus = bus->next)
 		for (dev = bus->devices; dev; dev = dev->next)
-			if (dev->descriptor.idVendor == YUBICO_VID && dev->descriptor.idProduct == YUBIKEY_PID) return usb_open(dev);
+			if (dev->descriptor.idVendor == YUBICO_VID && dev->descriptor.idProduct == YUBIKEY_PID)
+				return (YUBIKEY *) usb_open(dev);
 
-	return (YUBIKEY) 0;
+	return (YUBIKEY *) 0;
 }
 
 /*************************************************************************
@@ -143,7 +144,7 @@ void ykClose(YUBIKEY *yk)
 **                                                                      **
 *************************************************************************/
 
-int ykGetStatus(YUBIKEY yk, STATUS *status, int forceUpdate)
+int ykGetStatus(YUBIKEY *yk, STATUS *status, int forceUpdate)
 {
 	unsigned char buf[FEATURE_RPT_SIZE];
 
