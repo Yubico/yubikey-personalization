@@ -41,7 +41,7 @@ AC_PROG_CC
 AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
 
-AC_SEARCH_LIBS([yubikey_parse],[yubikey],,AC_MSG_FAILURE(libyubikey not found))
+#AC_SEARCH_LIBS([yubikey_parse],[yubikey],,AC_MSG_FAILURE(libyubikey not found))
 
 AC_CONFIG_FILES(Makefile)
 AC_OUTPUT
