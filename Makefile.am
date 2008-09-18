@@ -31,18 +31,19 @@
 
 # The library.
 
-HEADERS = ykpers.h
 lib_LTLIBRARIES = libykpers.la
-libyubikey_la_SOURCES = ykpers.h ykpers.c
-libyubikey_la_LDFLAGS = -no-undefined \
+libykpers_la_SOURCES = ykpers.h ykpers.c common/ykutil.c common/yubikey.c
+libykpers_la_LDFLAGS = -no-undefined \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+
+noinst_HEADERS =  common/ykdef.h common/ykutil.h common/yubikey.h
 
 # The command line tools.
 
 bin_PROGRAMS = ykpersonalize
 
 ykpersonalize_SOURCES = ykpersonalize.c
-modhex_LDADD = ./libykpers.la
+ykpersonalize_LDADD = ./libykpers.la
 
 # Self tests.
 
