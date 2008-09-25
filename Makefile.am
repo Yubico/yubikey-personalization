@@ -29,23 +29,25 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# The library.
+# Subdirectories
 
-COMMON_SOURCES =  common/ykutil.c common/yubikey.c common/aes128.c
+SUBDIRS=@subdirs@
+
+# The library.
 
 lib_LTLIBRARIES = libykpers.la
 libykpers_la_SOURCES = ykpers.h ykpers.c $(COMMON_SOURCES)
-libykpers_la_CFLAGS = -Icommon
+libykpers_la_CFLAGS = -I./yubikey-core
 libykpers_la_LDFLAGS = -no-undefined \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
-
-noinst_HEADERS =  common/ykdef.h common/ykutil.h common/yubikey.h common/aes128.h
 
 # The command line tools.
 
 bin_PROGRAMS = ykpersonalize
 
 ykpersonalize_SOURCES = ykpersonalize.c
+ykpersonalize_CFLAGS = -I./yubikey-core
+ykpersonalize_LDFLAGS = -lusb ./yubikey-core/libykcore.a
 ykpersonalize_LDADD = ./libykpers.la
 
 # Self tests.

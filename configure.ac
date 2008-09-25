@@ -41,7 +41,16 @@ AC_PROG_CC
 AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
 
+# This really checks a directory
+AC_CHECK_FILE(yubikey-core/configure.ac,,AC_MSG_FAILURE(yubikey-core directory not found.
+
+************************************
+Please provide by checking out http://yubikey-core.googlecode.com/svn/trunk
+with svn and creating a symbolic link `yubikey-core' to that checkout
+************************************
+))
 #AC_SEARCH_LIBS([yubikey_parse],[yubikey],,AC_MSG_FAILURE(libyubikey not found))
 
+AC_CONFIG_SUBDIRS(yubikey-core)
 AC_CONFIG_FILES(Makefile)
 AC_OUTPUT
