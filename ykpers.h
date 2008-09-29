@@ -34,7 +34,6 @@
 #include <ykcore.h>
 
 int ykp_AES_key_from_passphrase(CONFIG *cfg, const char *passphrase);
-int ykp_random_AES_key(CONFIG *cfg);
 int ykp_set_access_code(CONFIG *cfg, unsigned char *access_code);
 
 int ykp_write_config(CONFIG *cfg,
