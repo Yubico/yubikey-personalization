@@ -36,7 +36,8 @@
 CONFIG *ykp_create_config(void);
 int ykp_free_config(CONFIG *cfg);
 
-int ykp_AES_key_from_passphrase(CONFIG *cfg, const char *passphrase);
+int ykp_AES_key_from_passphrase(CONFIG *cfg, const char *passphrase,
+				const char *salt);
 int ykp_set_access_code(CONFIG *cfg, unsigned char *access_code);
 
 int ykp_write_config(const CONFIG *cfg,

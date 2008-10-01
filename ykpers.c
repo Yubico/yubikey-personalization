@@ -68,7 +68,8 @@ int ykp_free_config(CONFIG *cfg)
 	return 0;
 }
 
-int ykp_AES_key_from_passphrase(CONFIG *cfg, const char *passphrase)
+int ykp_AES_key_from_passphrase(CONFIG *cfg, const char *passphrase,
+				const char *salt)
 {
 	if (cfg) {
 		char *random_places[] = {
@@ -78,31 +79,38 @@ int ykp_AES_key_from_passphrase(CONFIG *cfg, const char *passphrase)
 			0
 		};
 		char **random_place;
-		uint8_t salt[8];
-		size_t salt_len = 0;
+		uint8_t _salt[8];
+		size_t _salt_len = 0;
 
-		for (random_place = random_places;
-		     *random_place;
-		     random_place++) {
-			FILE *random_file = fopen(*random_place, "r");
-			if (random_file) {
-				size_t read_bytes = 0;
+		if (salt) {
+			_salt_len = strlen(salt);
+			if (_salt_len > 8)
+				_salt_len = 8;
+			memcpy(_salt, salt, _salt_len);
+		} else {
+			for (random_place = random_places;
+			     *random_place;
+			     random_place++) {
+				FILE *random_file = fopen(*random_place, "r");
+				if (random_file) {
+					size_t read_bytes = 0;
 
-				while (read_bytes < sizeof(salt)) {
-					size_t n = fread(&cfg->key[read_bytes],
-							 1, KEY_SIZE - read_bytes,
-							 random_file);
-					read_bytes += n;
+					while (read_bytes < sizeof(_salt)) {
+						size_t n = fread(&cfg->key[read_bytes],
+								 1, KEY_SIZE - read_bytes,
+								 random_file);
+						read_bytes += n;
+					}
+
+					fclose(random_file);
+
+					_salt_len = sizeof(_salt);
+
+					break; /* from for loop */
 				}
-
-				fclose(random_file);
-
-				salt_len = sizeof(salt);
-
-				break; /* from for loop */
 			}
 		}
-		if (salt_len == 0) {
+		if (_salt_len == 0) {
 			/* There was no randomness files, so create a cheap
 			   salt from time */
 #                       include <ykpbkdf2.h>
@@ -113,12 +121,12 @@ int ykp_AES_key_from_passphrase(CONFIG *cfg, const char *passphrase)
 			yk_hmac_sha1.prf_fn(passphrase, strlen(passphrase),
 					    (char *)&t, sizeof(t),
 					    output, sizeof(output));
-			memcpy(salt, output, sizeof(salt));
-			salt_len = sizeof(salt);
+			memcpy(_salt, output, sizeof(_salt));
+			_salt_len = sizeof(_salt);
 		}
 
 		return yk_pbkdf2(passphrase,
-				 salt, salt_len,
+				 _salt, _salt_len,
 				 1024,
 				 cfg->key, sizeof(cfg->key),
 				 &yk_hmac_sha1);
