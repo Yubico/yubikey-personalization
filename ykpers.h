@@ -33,15 +33,20 @@
 
 #include <ykcore.h>
 
+CONFIG *ykp_create_config(void);
+int ykp_free_config(CONFIG *cfg);
+
 int ykp_AES_key_from_passphrase(CONFIG *cfg, const char *passphrase);
 int ykp_set_access_code(CONFIG *cfg, unsigned char *access_code);
 
-int ykp_write_config(CONFIG *cfg,
-		     int (*writer)(const void *buf, size_t count,
-				   void *userdata));
+int ykp_write_config(const CONFIG *cfg,
+		     int (*writer)(const char *buf, size_t count,
+				   void *userdata),
+		     void *userdata);
 int ykp_read_config(CONFIG *cfg,
-		    int (*reader)(const void *buf, size_t count,
-				  void *userdata));
+		    int (*reader)(char *buf, size_t count,
+				  void *userdata),
+		    void *userdata);
 
 
 #endif	// __YKPERS_H_INCLUDED__
