@@ -36,8 +36,11 @@ SUBDIRS=@subdirs@
 # The library.
 
 lib_LTLIBRARIES = libykpers.la
-libykpers_la_SOURCES = ykpers.h ykpers.c $(COMMON_SOURCES)
-libykpers_la_CFLAGS = -I./yubikey-core
+libykpers_la_SOURCES = ykpers.h ykpers.c ykpbkdf2.h ykpbkdf2.c \
+	rfc4634/hmac.c rfc4634/usha.c rfc4634/sha.h \
+	rfc4634/sha1.c rfc4634/sha224-256.c rfc4634/sha384-512.c
+libykpers_la_LIBADD = ./yubikey-core/libykcore.a -lusb
+libykpers_la_CFLAGS = -I./yubikey-core -I./rfc4634
 libykpers_la_LDFLAGS = -no-undefined \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
@@ -47,13 +50,12 @@ bin_PROGRAMS = ykpersonalize
 
 ykpersonalize_SOURCES = ykpersonalize.c
 ykpersonalize_CFLAGS = -I./yubikey-core
-ykpersonalize_LDFLAGS = -lusb ./yubikey-core/libykcore.a
 ykpersonalize_LDADD = ./libykpers.la
 
 # Self tests.
 
 AM_LDFLAGS = -no-install
-LDADD = libykpers.la
+LDADD = ./libykpers.la
 
 check_PROGRAMS = selftest
 TESTS = $(check_PROGRAMS)
