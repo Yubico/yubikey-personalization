@@ -64,10 +64,18 @@ static int writer(const char *buf, size_t count, void *stream)
 main(int argc, char **argv)
 {
 	char c;
-	FILE *inf = NULL;
-	FILE *outf = NULL;
+	FILE *inf = NULL; const char *infname = NULL;
+	FILE *outf = NULL; const char *outfname = NULL;
 	bool verbose = false;
 	CONFIG *cfg = ykp_create_config();
+
+	bool error = false;
+	int exit_code = 0;
+
+	if (!cfg) {
+		fprintf(stderr, "Out of memory!\n");
+		exit(1);
+	}
 
 	/* Options */
 	char *salt = NULL;
@@ -75,30 +83,10 @@ main(int argc, char **argv)
 	while((c = getopt(argc, argv, optstring)) != -1) {
 		switch (c) {
 		case 'i':
-			if (strcmp(optarg, "-") == 0)
-				inf = stdin;
-			else
-				inf = fopen(optarg, "r");
-			if (inf == NULL) {
-				fprintf(stderr,
-					"Couldn't open %s for reading: %s\n",
-					optarg,
-					strerror(errno));
-				exit(1);
-			}
+			infname = optarg;
 			break;
 		case 's':
-			if (strcmp(optarg, "-") == 0)
-				outf = stdout;
-			else
-				outf = fopen(optarg, "r");
-			if (outf == NULL) {
-				fprintf(stderr,
-					"Couldn't open %s for writing: %s\n",
-					optarg,
-					strerror(errno));
-				exit(1);
-			}
+			outfname = optarg;
 			break;
 		case 'o':
 			if (strncmp(optarg, "salt=", 5) == 0)
@@ -112,6 +100,7 @@ main(int argc, char **argv)
 			break;
 		case 'v':
 			verbose = true;
+			break;
 		case 'h':
 		default:
 			fprintf(stderr, usage);
@@ -120,27 +109,117 @@ main(int argc, char **argv)
 		}
 	}
 
-	if (inf) {
-		ykp_read_config(cfg, reader, inf);
-		fclose(inf);
-	} else {
-		char passphrasebuf[256]; size_t passphraselen;
-		fprintf(stderr, "Passphrase to create AES key: ");
-		fflush(stderr);
-		fgets(passphrasebuf, sizeof(passphrasebuf), stdin);
-		passphraselen = strlen(passphrasebuf);
-		if (passphrasebuf[passphraselen - 1] == '\n')
-			passphrasebuf[passphraselen - 1] == '\0';
-		ykp_AES_key_from_passphrase(cfg, passphrasebuf, salt);
+	if (infname) {
+		if (strcmp(infname, "-") == 0)
+			inf = stdin;
+		else
+			inf = fopen(infname, "r");
+		if (inf == NULL) {
+			fprintf(stderr,
+				"Couldn't open %s for reading: %s\n",
+				infname,
+				strerror(errno));
+			exit(1);
+		}
 	}
 
-	if (outf) {
-		ykp_write_config(cfg, writer, outf);
-		fclose(outf);
-	} else {
-		/* Output to key, and that's a different story! */
+	if (outfname) {
+		if (strcmp(outfname, "-") == 0)
+			outf = stdout;
+		else
+			outf = fopen(outfname, "w");
+		if (outf == NULL) {
+			fprintf(stderr,
+				"Couldn't open %s for writing: %s\n",
+				outfname,
+				strerror(errno));
+			exit(1);
+		}
 	}
+
+	/* Using a do-while loop that never loops provides a practical
+	   way to bail out on error without using goto... */
+	do {
+		/* Assume the worst */
+		error = true;
+
+		exit_code = 0;
+		ykp_errno = 0;
+		yk_errno = 0;
+
+		if (inf) {
+			if (!ykp_read_config(cfg, reader, inf))
+				break;
+		} else {
+			char passphrasebuf[256]; size_t passphraselen;
+			fprintf(stderr, "Passphrase to create AES key: ");
+			fflush(stderr);
+			fgets(passphrasebuf, sizeof(passphrasebuf), stdin);
+			passphraselen = strlen(passphrasebuf);
+			if (passphrasebuf[passphraselen - 1] == '\n')
+				passphrasebuf[passphraselen - 1] == '\0';
+			if (!ykp_AES_key_from_passphrase(cfg,
+							 passphrasebuf, salt))
+				break;
+		}
+
+		if (outf) {
+			if (!ykp_write_config(cfg, writer, outf))
+				break;
+		} else {
+			YUBIKEY *yk;
+
+			/* Assume the worst */
+			exit_code = 2;
+
+			if (verbose)
+				printf("Attempting to write configuration to the yubikey...");
+			if (!yk_init())
+				break;
+
+			if (!(yk = yk_open_first_key()))
+				break;
+
+			if (yk_write_config(yk, cfg, NULL)) {
+				if (verbose)
+					printf(" success\n");
+				ykp_write_config(cfg, writer, stdout);
+				exit_code = 0;
+			} else {
+				printf(" failure\n");
+			}
+			if (!yk_close_key(yk))
+				break;
+
+			if (!yk_release())
+				break;
+		}
+		error = false;
+	} while(false);
 
 	if (salt)
 		free(salt);
+	if (inf)
+		fclose(inf);
+	if (outf)
+		fclose(outf);
+
+	if (error) {
+		if (ykp_errno)
+			fprintf(stderr, "Yubikey personalization error: %s\n",
+				ykp_strerror(ykp_errno));
+		if (yk_errno) {
+			if (yk_errno == YK_EUSBERR) {
+				fprintf(stderr, "USB error: %s\n",
+					usb_strerror());
+			} else {
+				fprintf(stderr, "Yubikey core error: %s\n",
+					yk_strerror(yk_errno));
+			}
+		}
+		if (exit_code)
+			exit(exit_code);
+		exit(1);
+	}
+	exit(0);
 }
