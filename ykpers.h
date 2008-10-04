@@ -49,5 +49,10 @@ int ykp_read_config(CONFIG *cfg,
 				  void *userdata),
 		    void *userdata);
 
+extern int * const _ykp_errno_location(void);
+#define ykp_errno (*_ykp_errno_location())
+const char *ykp_strerror(int errnum);
+
+#define YKP_ENOTYETIMPL	0x01
 
 #endif	// __YKPERS_H_INCLUDED__

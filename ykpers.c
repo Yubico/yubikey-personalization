@@ -271,5 +271,27 @@ int ykp_read_config(CONFIG *cfg,
 				  void *userdata),
 		    void *userdata)
 {
-	return -1;
+	ykp_errno = YKP_ENOTYETIMPL;
+	return 0;
+}
+
+/* As soon as we find a way to safely detect if we're in a threaded environment
+   or not, this should be changed to support per-thread locations.  Until then,
+   we only support non-threaded applications. */
+static int _ykp_errno = 0;
+
+int * const _ykp_errno_location(void)
+{
+	return &_ykp_errno;
+}
+
+static const char *errtext[] = {
+	"",
+	"not yet implemented"
+};
+const char *ykp_strerror(int errnum)
+{
+	if (errnum < sizeof(errtext)/sizeof(errtext[0]))
+		return errtext[errnum];
+	return NULL;
 }
