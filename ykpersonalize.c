@@ -220,7 +220,8 @@ main(int argc, char **argv)
 		fclose(inf);
 	if (outf)
 		fclose(outf);
-	if (!yk_close_key(yk)) {
+
+	if (yk && !yk_close_key(yk)) {
 		report_yk_error();
 		exit_code = 2;
 	}
