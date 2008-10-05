@@ -61,6 +61,22 @@ static int writer(const char *buf, size_t count, void *stream)
 	return (int)fwrite(buf, 1, count, (FILE *)stream);
 }
 
+static void report_yk_error()
+{
+	if (ykp_errno)
+		fprintf(stderr, "Yubikey personalization error: %s\n",
+			ykp_strerror(ykp_errno));
+	if (yk_errno) {
+		if (yk_errno == YK_EUSBERR) {
+			fprintf(stderr, "USB error: %s\n",
+				usb_strerror());
+		} else {
+			fprintf(stderr, "Yubikey core error: %s\n",
+				yk_strerror(yk_errno));
+		}
+	}
+}
+
 main(int argc, char **argv)
 {
 	char c;
@@ -68,6 +84,7 @@ main(int argc, char **argv)
 	FILE *outf = NULL; const char *outfname = NULL;
 	bool verbose = false;
 	CONFIG *cfg = ykp_create_config();
+	YUBIKEY *yk = NULL;
 
 	bool error = false;
 	int exit_code = 0;
@@ -167,8 +184,6 @@ main(int argc, char **argv)
 			if (!ykp_write_config(cfg, writer, outf))
 				break;
 		} else {
-			YUBIKEY *yk;
-
 			/* Assume the worst */
 			exit_code = 2;
 
@@ -180,23 +195,24 @@ main(int argc, char **argv)
 			if (!(yk = yk_open_first_key()))
 				break;
 
-			if (yk_write_config(yk, cfg, NULL)) {
-				if (verbose)
-					printf(" success\n");
-				ykp_write_config(cfg, writer, stdout);
-				exit_code = 0;
-			} else {
+			if (!yk_write_config(yk, cfg, NULL)) {
 				if (verbose)
 					printf(" failure\n");
+				break;
 			}
-			if (!yk_close_key(yk))
-				break;
 
-			if (!yk_release())
-				break;
+			if (verbose)
+				printf(" success\n");
+			ykp_write_config(cfg, writer, stdout);
 		}
+
+		exit_code = 0;
 		error = false;
 	} while(false);
+
+	if (error) {
+		report_yk_error();
+	}
 
 	if (salt)
 		free(salt);
@@ -204,23 +220,15 @@ main(int argc, char **argv)
 		fclose(inf);
 	if (outf)
 		fclose(outf);
-
-	if (error) {
-		if (ykp_errno)
-			fprintf(stderr, "Yubikey personalization error: %s\n",
-				ykp_strerror(ykp_errno));
-		if (yk_errno) {
-			if (yk_errno == YK_EUSBERR) {
-				fprintf(stderr, "USB error: %s\n",
-					usb_strerror());
-			} else {
-				fprintf(stderr, "Yubikey core error: %s\n",
-					yk_strerror(yk_errno));
-			}
-		}
-		if (exit_code)
-			exit(exit_code);
-		exit(1);
+	if (!yk_close_key(yk)) {
+		report_yk_error();
+		exit_code = 2;
 	}
-	exit(0);
+
+	if (!yk_release()) {
+		report_yk_error();
+		exit_code = 2;
+	}
+
+	exit(exit_code);
 }
