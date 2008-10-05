@@ -186,7 +186,8 @@ main(int argc, char **argv)
 				ykp_write_config(cfg, writer, stdout);
 				exit_code = 0;
 			} else {
-				printf(" failure\n");
+				if (verbose)
+					printf(" failure\n");
 			}
 			if (!yk_close_key(yk))
 				break;
