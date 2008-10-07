@@ -1,1 +1,5 @@
-To be filled in
+=Build instructions=
+
+autoreconf -fvi
+./configure
+make check
