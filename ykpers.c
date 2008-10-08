@@ -34,6 +34,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 static const CONFIG default_config = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* fixed */
@@ -115,7 +116,7 @@ int ykp_AES_key_from_passphrase(CONFIG *cfg, const char *passphrase,
 			   salt from time */
 #                       include <ykpbkdf2.h>
 
-			time_t t;
+			time_t t = time(NULL);
 			uint8_t output[256]; /* 2048 bits is a lot! */
 
 			yk_hmac_sha1.prf_fn(passphrase, strlen(passphrase),
