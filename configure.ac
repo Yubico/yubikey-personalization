@@ -36,6 +36,8 @@ AC_SUBST(LT_CURRENT, 0)
 AC_SUBST(LT_REVISION, 0)
 AC_SUBST(LT_AGE, 0)
 
+AC_ARG_WITH([usb], [ AS_HELP_STRING([--with-usb], [set libusb root path])])
+
 AM_INIT_AUTOMAKE([-Wall -Werror])
 AC_PROG_CC
 AC_LIBTOOL_WIN32_DLL
@@ -50,6 +52,22 @@ with svn and creating a symbolic link `yubikey-core' to that checkout
 ************************************
 ))
 #AC_SEARCH_LIBS([yubikey_parse],[yubikey],,AC_MSG_FAILURE(libyubikey not found))
+
+if test "$with_usb" != "yes"; then
+  if test "$with_usb" != ""; then
+    CFLAGS="$CFLAGS -I$with_usb/include"
+    CXXFLAGS="$CXXFLAGS -I$with_usb/include"
+    CPPFLAGS="$CPPFLAGS -I$with_usb/include"
+    LIBS="$LIBS -L$with_usb/lib"
+  fi
+fi
+
+AC_CHECK_HEADER([usb.h])
+AC_CHECK_LIB([usb], [usb_init])
+
+if test "$ac_cv_header_usb_h" == no; then
+  AC_MSG_WARN([Missing libusb])
+fi
 
 AC_CONFIG_SUBDIRS(yubikey-core)
 AC_CONFIG_FILES(Makefile)
