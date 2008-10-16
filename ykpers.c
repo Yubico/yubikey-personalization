@@ -151,6 +151,49 @@ int ykp_set_access_code(CONFIG *cfg, unsigned char *access_code)
 	return 0;
 }
 
+#define def_set_tktflag(type)					\
+int ykp_set_tktflag_ ## type(CONFIG *cfg, bool state)		\
+{								\
+	if (cfg) {						\
+		if (state)					\
+			cfg->tktFlags |= TKTFLAG_ ## type;	\
+		else						\
+			cfg->tktFlags &= ~TKTFLAG_ ## type;	\
+		return 1;					\
+	}							\
+	ykp_errno = YKP_ENOCFG;					\
+	return 0;						\
+}
+
+#define def_set_cfgflag(type)					\
+int ykp_set_cfgflag_ ## type(CONFIG *cfg, bool state)		\
+{								\
+	if (cfg) {						\
+		if (state)					\
+			cfg->cfgFlags |= CFGFLAG_ ## type;	\
+		else						\
+			cfg->cfgFlags &= ~CFGFLAG_ ## type;	\
+		return 1;					\
+	}							\
+	ykp_errno = YKP_ENOCFG;					\
+	return 0;						\
+}
+
+def_set_tktflag(TAB_FIRST)
+def_set_tktflag(APPEND_TAB1)
+def_set_tktflag(APPEND_TAB2)
+def_set_tktflag(APPEND_DELAY1)
+def_set_tktflag(APPEND_DELAY2)
+def_set_tktflag(APPEND_CR)
+
+def_set_cfgflag(SEND_REF)
+def_set_cfgflag(TICKET_FIRST)
+def_set_cfgflag(PACING_10MS)
+def_set_cfgflag(PACING_20MS)
+def_set_cfgflag(ALLOW_HIDTRIG)
+def_set_cfgflag(STATIC_TICKET)
+
+
 const char str_key_value_separator[] = ":";
 const char str_fixed[] = "fixed";
 const char str_uid[] = "uid";
@@ -288,7 +331,8 @@ int * const _ykp_errno_location(void)
 
 static const char *errtext[] = {
 	"",
-	"not yet implemented"
+	"not yet implemented",
+	"no configuration structure given"
 };
 const char *ykp_strerror(int errnum)
 {

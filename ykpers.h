@@ -39,6 +39,22 @@ int ykp_free_config(CONFIG *cfg);
 int ykp_AES_key_from_passphrase(CONFIG *cfg, const char *passphrase,
 				const char *salt);
 int ykp_set_access_code(CONFIG *cfg, unsigned char *access_code);
+int ykp_set_fixed(CONFIG *cfg, unsigned char *fixed);
+int ykp_set_uid(CONFIG *cfg, unsigned char *uid);
+
+int ykp_set_tktflag_TAB_FIRST(CONFIG *cfg, bool state);
+int ykp_set_tktflag_APPEND_TAB1(CONFIG *cfg, bool state);
+int ykp_set_tktflag_APPEND_TAB2(CONFIG *cfg, bool state);
+int ykp_set_tktflag_APPEND_DELAY1(CONFIG *cfg, bool state);
+int ykp_set_tktflag_APPEND_DELAY2(CONFIG *cfg, bool state);
+int ykp_set_tktflag_APPEND_CR(CONFIG *cfg, bool state);
+
+int ykp_set_cfgflag_SEND_REF(CONFIG *cfg, bool state);
+int ykp_set_cfgflag_TICKET_FIRST(CONFIG *cfg, bool state);
+int ykp_set_cfgflag_PACING_10MS(CONFIG *cfg, bool state);
+int ykp_set_cfgflag_PACING_20MS(CONFIG *cfg, bool state);
+int ykp_set_cfgflag_ALLOW_HIDTRIG(CONFIG *cfg, bool state);
+int ykp_set_cfgflag_STATIC_TICKET(CONFIG *cfg, bool state);
 
 int ykp_write_config(const CONFIG *cfg,
 		     int (*writer)(const char *buf, size_t count,
@@ -54,5 +70,6 @@ extern int * const _ykp_errno_location(void);
 const char *ykp_strerror(int errnum);
 
 #define YKP_ENOTYETIMPL	0x01
+#define YKP_ENOCFG	0x02
 
 #endif	// __YKPERS_H_INCLUDED__
