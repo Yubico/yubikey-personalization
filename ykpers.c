@@ -135,21 +135,29 @@ int ykp_AES_key_from_passphrase(CONFIG *cfg, const char *passphrase,
 	return 0;
 }
 
-int ykp_set_access_code(CONFIG *cfg, unsigned char *access_code)
-{
-	if (cfg) {
-		size_t max_chars = strlen(access_code);
-
-		if (max_chars > ACC_CODE_SIZE)
-			max_chars = ACC_CODE_SIZE;
-
-		memcpy(cfg->accCode, access_code, max_chars);
-		memset(cfg->accCode, 0, ACC_CODE_SIZE - max_chars);
-
-		return 1;
-	}
-	return 0;
+#define def_set_charfield(fnname,fieldname,size,extra)		\
+int ykp_set_ ## fnname(CONFIG *cfg, unsigned char *input)	\
+{								\
+	if (cfg) {						\
+		size_t max_chars = strlen(input);		\
+								\
+		if (max_chars > (size))				\
+			max_chars = (size);			\
+								\
+		memcpy(cfg->fieldname, (input), max_chars);	\
+		memset(cfg->fieldname + max_chars, 0,		\
+		       (size) - max_chars);			\
+		extra;						\
+								\
+		return 1;					\
+	}							\
+	ykp_errno = YKP_ENOCFG;					\
+	return 0;						\
 }
+
+def_set_charfield(access_code,accCode,ACC_CODE_SIZE,)
+def_set_charfield(fixed,fixed,FIXED_SIZE,cfg->fixedSize = max_chars)
+def_set_charfield(uid,uid,UID_SIZE,)
 
 #define def_set_tktflag(type)					\
 int ykp_set_tktflag_ ## type(CONFIG *cfg, bool state)		\
