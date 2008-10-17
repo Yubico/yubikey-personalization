@@ -36,16 +36,34 @@
 #include <errno.h>
 
 #include <ykpers.h>
+#include <ykstatus.h>
 
 const char *usage =
 "Usage: ykpersonalize [options]\n"
-"-sfile    save configuration to file instead of key\n"
+"-sfile    save configuration to file instead of key.\n"
 "          (if file is -, send to stdout)\n"
-"-ifile    read configuration from file\n"
+"-ifile    read configuration from file.\n"
 "          (if file is -, read from stdin)\n"
 "-ooption  change configuration option.  Possible option arguments are:\n"
-"          salt=ssssssss   Salt to be used for key generation.  If none\n"
-"                          is given, a unique random one will be generated\n"
+"          salt=ssssssss       Salt to be used for key generation.  If\n"
+"                              none is given, a unique random one will be\n"
+"                              generated.\n"
+"          fixed=fffffffffff   The fixed part to be included in the generated\n"
+"                              ticket.  Can be up to 16 characters long.\n"
+"          uid=uuuuuu          The uid part of the generated ticket.  Can\n"
+"                              be up to 6 characters long.\n"
+"          [-]tab-first        set/clear the TAB_FIRST ticket flag.\n"
+"          [-]append-tab1      set/clear the APPEND_TAB1 ticket flag.\n"
+"          [-]append-tab2      set/clear the APPEND_TAB1 ticket flag.\n"
+"          [-]append-delay1    set/clear the APPEND_DELAY1 ticket flag.\n"
+"          [-]append-delay2    set/clear the APPEND_DELAY2 ticket flag.\n"
+"          [-]append-cr        set/clear the APPEND_CR ticket flag.\n"
+"          [-]send-ref         set/clear the SEND_REF configuration flag.\n"
+"          [-]ticket-first     set/clear the TICKET_FIRST configuration flag.\n"
+"          [-]pacing-10ms      set/clear the PACING_10MS configuration flag.\n"
+"          [-]pacing-20ms      set/clear the PACING_20MS configuration flag.\n"
+"          [-]allow-hidtrig    set/clear the ALLOW_HIDTRIG configuration flag.\n"
+"          [-]static-ticket    set/clear the STATIC_TICKET configuration flag.\n"
 ""
 "-v        verbose\n"
 "-h        help (this text)\n"
@@ -83,8 +101,9 @@ main(int argc, char **argv)
 	FILE *inf = NULL; const char *infname = NULL;
 	FILE *outf = NULL; const char *outfname = NULL;
 	bool verbose = false;
-	CONFIG *cfg = ykp_create_config();
 	YUBIKEY *yk = NULL;
+	CONFIG *cfg = ykp_create_config();
+	STATUS *st = ykds_alloc();
 
 	bool error = false;
 	int exit_code = 0;
@@ -108,6 +127,58 @@ main(int argc, char **argv)
 		case 'o':
 			if (strncmp(optarg, "salt=", 5) == 0)
 				salt = strdup(optarg+5);
+			else if (strncmp(optarg, "fixed=", 6) == 0)
+				ykp_set_fixed(cfg, optarg+6);
+			else if (strncmp(optarg, "uid=", 4) == 0)
+				ykp_set_uid(cfg, optarg+4);
+			else if (strcmp(optarg, "tab-first") == 0)
+				ykp_set_tktflag_TAB_FIRST(cfg, true);
+			else if (strcmp(optarg, "-tab-first") == 0)
+				ykp_set_tktflag_TAB_FIRST(cfg, false);
+			else if (strcmp(optarg, "append-tab1") == 0)
+				ykp_set_tktflag_APPEND_TAB1(cfg, true);
+			else if (strcmp(optarg, "-append-tab1") == 0)
+				ykp_set_tktflag_APPEND_TAB1(cfg, false);
+			else if (strcmp(optarg, "append-tab2") == 0)
+				ykp_set_tktflag_APPEND_TAB1(cfg, true);
+			else if (strcmp(optarg, "-append-tab2") == 0)
+				ykp_set_tktflag_APPEND_TAB1(cfg, false);
+			else if (strcmp(optarg, "append-delay1") == 0)
+				ykp_set_tktflag_APPEND_DELAY1(cfg, true);
+			else if (strcmp(optarg, "-append-delay1") == 0)
+				ykp_set_tktflag_APPEND_DELAY1(cfg, false);
+			else if (strcmp(optarg, "append-delay2") == 0)
+				ykp_set_tktflag_APPEND_DELAY2(cfg, true);
+			else if (strcmp(optarg, "-append-delay2") == 0)
+				ykp_set_tktflag_APPEND_DELAY2(cfg, false);
+			else if (strcmp(optarg, "append-cr") == 0)
+				ykp_set_tktflag_APPEND_CR(cfg, true);
+			else if (strcmp(optarg, "-append-cr") == 0)
+				ykp_set_tktflag_APPEND_CR(cfg, false);
+			else if (strcmp(optarg, "send-ref") == 0)
+				ykp_set_cfgflag_SEND_REF(cfg, true);
+			else if (strcmp(optarg, "-send-ref") == 0)
+				ykp_set_cfgflag_SEND_REF(cfg, false);
+			else if (strcmp(optarg, "ticket-first") == 0)
+				ykp_set_cfgflag_TICKET_FIRST(cfg, true);
+			else if (strcmp(optarg, "-ticket-first") == 0)
+				ykp_set_cfgflag_TICKET_FIRST(cfg, false);
+			else if (strcmp(optarg, "pacing-10ms") == 0)
+				ykp_set_cfgflag_PACING_10MS(cfg, true);
+			else if (strcmp(optarg, "-pacing-10ms") == 0)
+				ykp_set_cfgflag_PACING_10MS(cfg, false);
+			else if (strcmp(optarg, "pacing-20ms") == 0)
+				ykp_set_cfgflag_PACING_20MS(cfg, true);
+			else if (strcmp(optarg, "-pacing-20ms") == 0)
+				ykp_set_cfgflag_PACING_20MS(cfg, false);
+			else if (strcmp(optarg, "allow-hidtrig") == 0)
+				ykp_set_cfgflag_ALLOW_HIDTRIG(cfg, true);
+			else if (strcmp(optarg, "-allow-hidtrig") == 0)
+				ykp_set_cfgflag_ALLOW_HIDTRIG(cfg, false);
+			else if (strcmp(optarg, "static-ticket") == 0)
+				ykp_set_cfgflag_STATIC_TICKET(cfg, true);
+			else if (strcmp(optarg, "-static-ticket") == 0)
+				ykp_set_cfgflag_STATIC_TICKET(cfg, false);
 			else {
 				fprintf(stderr, "Unknown option '%s'\n",
 					optarg);
@@ -203,6 +274,21 @@ main(int argc, char **argv)
 
 			if (verbose)
 				printf(" success\n");
+
+			if (yk_get_status(yk, st)) {
+				printf("Firmware version %d.%d.%d Touch level %d ",
+				       ykds_version_major(st),
+				       ykds_version_minor(st),
+				       ykds_version_build(st),
+				       ykds_touch_level(st));
+				if (ykds_pgm_seq(st))
+					printf("Program sequence %d\n",
+					       ykds_pgm_seq(st));
+				else
+					printf("Unconfigured\n");
+			} else
+				break;
+
 			ykp_write_config(cfg, writer, stdout);
 		}
 
@@ -216,6 +302,8 @@ main(int argc, char **argv)
 
 	if (salt)
 		free(salt);
+	if (st)
+		free(st);
 	if (inf)
 		fclose(inf);
 	if (outf)
