@@ -50,12 +50,12 @@ libykpers_la_LDFLAGS = -no-undefined \
 bin_PROGRAMS = ykpersonalize
 
 ykpersonalize_SOURCES = ykpersonalize.c
-ykpersonalize_LDADD = ./libykpers.la ./yubikey-core/libykcore.a
+ykpersonalize_LDADD = ./libykpers.la ./yubikey-core/libykcore.la
 
 # Self tests.
 
 AM_LDFLAGS = -no-install
-LDADD = ./libykpers.la ./yubikey-core/libykcore.a
+LDADD = ./libykpers.la ./yubikey-core/libykcore.la
 
 check_PROGRAMS = selftest
 TESTS = $(check_PROGRAMS)
