@@ -87,7 +87,7 @@ static void report_yk_error()
 	if (yk_errno) {
 		if (yk_errno == YK_EUSBERR) {
 			fprintf(stderr, "USB error: %s\n",
-				usb_strerror());
+				yk_usb_strerror());
 		} else {
 			fprintf(stderr, "Yubikey core error: %s\n",
 				yk_strerror(yk_errno));
