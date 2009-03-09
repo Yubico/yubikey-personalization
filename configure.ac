@@ -44,7 +44,7 @@ AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
 
 # This really checks a directory
-AC_CHECK_FILE(yubikey-core/configure.ac,,AC_MSG_FAILURE(yubikey-core directory not found.
+AC_CHECK_FILES([yubikey-core/configure.ac yubikey-core/ykcore.h],,AC_MSG_FAILURE(yubikey-core directory not found.
 
 ************************************
 Please provide by checking out http://yubikey-core.googlecode.com/svn/trunk
@@ -52,6 +52,15 @@ with svn and creating a symbolic link `yubikey-core' to that checkout
 ************************************
 ))
 #AC_SEARCH_LIBS([yubikey_parse],[yubikey],,AC_MSG_FAILURE(libyubikey not found))
+
+# Check that the yubikey-core we try to use is modern enough
+AC_MSG_CHECKING(if yubikey-core/ykcore.h declares yk_usb_strerror)
+AC_EGREP_CPP([yk_usb_strerror],
+	     [#include "yubikey-core/ykcore.h"],
+	     AC_MSG_RESULT(yes),
+	     AC_MSG_RESULT(no)
+	     AC_MSG_FAILURE(yubikey-core/ykcore.h does not declare yk_usb_strerror.
+You probably need to update yubikey-core))
 
 if test "$with_usb" != "yes"; then
   if test "$with_usb" != ""; then
