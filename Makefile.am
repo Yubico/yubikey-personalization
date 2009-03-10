@@ -1,5 +1,5 @@
 # Written by Richard Levitte <richard@levitte.org>.
-# Copyright (c) 2008 Yubico AB
+# Copyright (c) 2008, 2009 Yubico AB
 # All rights reserved.
 #
 # Copyright (c) 2008, Yubico AB
@@ -57,8 +57,9 @@ ykpersonalize_LDADD = ./libykpers.la ./yubikey-core/libykcore.la
 AM_LDFLAGS = -no-install
 LDADD = ./libykpers.la ./yubikey-core/libykcore.la
 
-check_PROGRAMS = selftest
-TESTS = $(check_PROGRAMS)
+ctests = selftest$(EXEEXT)
+check_PROGRAMS = $(ctests)
+TESTS = $(ctests)
 
 # Release
 
