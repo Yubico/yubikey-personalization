@@ -1,3 +1,26 @@
+=Dependencies=
+
+This package depends on another yubikey package called yubikey-core.
+
+The current best way to get a working yubikey-core is to fetch it as
+follows:
+
+  svn checkout http://yubikey-core.googlecode.com/svn/trunk/ yubikey-core
+
+You can do that in a completely separate directory as well as directly
+in the directory where you found this file.  If you do the former,
+just make sure there's a soft link here with the name yubikey-core, as
+follows:
+
+  ln -s /PATH/TO/yubikey-core yubikey-core
+
+Also, yubikey-core depends on the development files for libusb, so you
+will have to get those as well.  Getting and installing them depends
+on your operating systems, here are example for a few flavors:
+
+  (Debian) apt-get install libusb-dev
+  (Fedora) yum install libusb-devel
+
 =Build instructions=
 
 autoreconf -fvi
