@@ -1,5 +1,5 @@
 # Written by Richard Levitte <richard@levitte.org>.
-# Copyright (c) 2008, Yubico AB
+# Copyright (c) 2008, 2009, Yubico AB
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -42,6 +42,7 @@ AM_INIT_AUTOMAKE([-Wall -Werror])
 AC_PROG_CC
 AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
+AC_CONFIG_MACRO_DIR([m4])
 
 # This really checks a directory
 AC_CHECK_FILES([yubikey-core/configure.ac yubikey-core/ykcore.h],,AC_MSG_FAILURE(yubikey-core directory not found.

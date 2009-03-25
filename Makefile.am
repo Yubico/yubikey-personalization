@@ -33,6 +33,8 @@
 
 SUBDIRS=@subdirs@
 
+ACLOCAL_AMFLAGS = -I m4
+
 AM_CPPFLAGS = -I./yubikey-core -I./rfc4634
 
 # The library.
