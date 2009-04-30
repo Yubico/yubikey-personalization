@@ -49,8 +49,10 @@ const char *usage =
 "          salt=ssssssss       Salt to be used for key generation.  If\n"
 "                              none is given, a unique random one will be\n"
 "                              generated.\n"
-"          fixed=fffffffffff   The fixed part to be included in the generated\n"
-"                              ticket.  Can be up to 16 characters long.\n"
+"          fixed=fffffffffff   The public modhex identity of key.\n"
+"                              This is 0-16 characters long.\n"
+"          hexfixed=fffffff    Fixed part, but encoded in hex.\n"
+"                              This is 0-16 characters long.\n"
 "          uid=uuuuuu          The uid part of the generated ticket.  Can\n"
 "                              be up to 6 characters long.\n"
 "          [-]tab-first        set/clear the TAB_FIRST ticket flag.\n"
@@ -133,10 +135,49 @@ main(int argc, char **argv)
 		case 'o':
 			if (strncmp(optarg, "salt=", 5) == 0)
 				salt = strdup(optarg+5);
-			else if (strncmp(optarg, "fixed=", 6) == 0)
-				ykp_set_fixed(cfg, optarg+6);
-			else if (strncmp(optarg, "uid=", 4) == 0)
-				ykp_set_uid(cfg, optarg+4);
+			else if (strncmp(optarg, "fixed=", 6) == 0) {
+				const char *fixed = optarg+6;
+				size_t fixedlen = strlen (fixed);
+				char fixedbin[256];
+				if (fixedlen % 2 || fixedlen > 16)
+				{
+					fprintf(stderr,
+						"Invalid modhex fixed string: %s\n",
+						fixed);
+					exit(1);
+				}
+				yubikey_modhex_decode (fixedbin, fixed,
+						       fixedlen);
+				ykp_set_fixed(cfg, fixedbin, fixedlen / 2);
+			}
+			else if (strncmp(optarg, "hexfixed=", 9) == 0) {
+				const char *fixed = optarg+9;
+				size_t fixedlen = strlen (fixed);
+				char fixedbin[256];
+				if (fixedlen % 2 || fixedlen > 16)
+				{
+					fprintf(stderr,
+						"Invalid hex fixed string: %s\n",
+						fixed);
+					exit(1);
+				}
+				yubikey_hex_decode (fixedbin, fixed, fixedlen);
+				ykp_set_fixed(cfg, fixedbin, fixedlen / 2);
+			}
+			else if (strncmp(optarg, "uid=", 4) == 0) {
+				const char *uid = optarg+4;
+				size_t uidlen = strlen (uid);
+				char uidbin[256];
+				if (uidlen % 2 || uidlen != 8)
+				{
+					fprintf(stderr,
+						"Invalid hex uid string: %s\n",
+						uid);
+					exit(1);
+				}
+				yubikey_hex_decode (uidbin, uid, uidlen);
+				ykp_set_uid(cfg, uidbin, uidlen / 2);
+			}
 			else if (strcmp(optarg, "tab-first") == 0)
 				ykp_set_tktflag_TAB_FIRST(cfg, true);
 			else if (strcmp(optarg, "-tab-first") == 0)

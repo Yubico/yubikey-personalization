@@ -39,9 +39,10 @@ int ykp_free_config(CONFIG *cfg);
 int ykp_AES_key_from_hex(CONFIG *cfg, const char *hexkey);
 int ykp_AES_key_from_passphrase(CONFIG *cfg, const char *passphrase,
 				const char *salt);
-int ykp_set_access_code(CONFIG *cfg, unsigned char *access_code);
-int ykp_set_fixed(CONFIG *cfg, unsigned char *fixed);
-int ykp_set_uid(CONFIG *cfg, unsigned char *uid);
+
+int ykp_set_access_code(CONFIG *cfg, unsigned char *access_code, size_t len);
+int ykp_set_fixed(CONFIG *cfg, unsigned char *fixed, size_t len);
+int ykp_set_uid(CONFIG *cfg, unsigned char *uid, size_t len);
 
 int ykp_set_tktflag_TAB_FIRST(CONFIG *cfg, bool state);
 int ykp_set_tktflag_APPEND_TAB1(CONFIG *cfg, bool state);

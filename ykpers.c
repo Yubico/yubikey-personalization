@@ -163,10 +163,10 @@ int ykp_AES_key_from_passphrase(CONFIG *cfg, const char *passphrase,
 }
 
 #define def_set_charfield(fnname,fieldname,size,extra)		\
-int ykp_set_ ## fnname(CONFIG *cfg, unsigned char *input)	\
+int ykp_set_ ## fnname(CONFIG *cfg, unsigned char *input, size_t len)	\
 {								\
 	if (cfg) {						\
-		size_t max_chars = strlen(input);		\
+		size_t max_chars = len;		\
 								\
 		if (max_chars > (size))				\
 			max_chars = (size);			\
