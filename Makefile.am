@@ -43,7 +43,7 @@ lib_LTLIBRARIES = libykpers.la
 libykpers_la_SOURCES = ykpers.h ykpers.c ykpbkdf2.h ykpbkdf2.c \
 	rfc4634/hmac.c rfc4634/usha.c rfc4634/sha.h \
 	rfc4634/sha1.c rfc4634/sha224-256.c rfc4634/sha384-512.c
-libykpers_la_LIBADD = ./yubikey-core/libykcore.la -lusb
+libykpers_la_LIBADD = $(LTLIBYUBIKEY) ./yubikey-core/libykcore.la -lusb
 libykpers_la_LDFLAGS = -no-undefined \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
@@ -64,8 +64,6 @@ check_PROGRAMS = $(ctests)
 TESTS = $(ctests)
 
 # Release
-
-#EXTRA_DIST = simple.mk
 
 ChangeLog:
 	svn2cl

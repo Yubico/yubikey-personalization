@@ -36,6 +36,8 @@
 #include <string.h>
 #include <time.h>
 
+#include <yubikey.h>
+
 static const CONFIG default_config = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* fixed */
 	{ 0, 0, 0, 0, 0, 0 },	/* uid */
@@ -308,7 +310,7 @@ int ykp_write_config(const CONFIG *cfg,
 		writer(str_key_value_separator,
 		       strlen(str_key_value_separator),
 		       userdata);
-		yk_modhex_encode(buffer, cfg->fixed, cfg->fixedSize);
+		yubikey_modhex_encode(buffer, cfg->fixed, cfg->fixedSize);
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
@@ -316,7 +318,7 @@ int ykp_write_config(const CONFIG *cfg,
 		writer(str_key_value_separator,
 		       strlen(str_key_value_separator),
 		       userdata);
-		yk_modhex_encode(buffer, cfg->uid, UID_SIZE);
+		yubikey_modhex_encode(buffer, cfg->uid, UID_SIZE);
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
@@ -324,7 +326,7 @@ int ykp_write_config(const CONFIG *cfg,
 		writer(str_key_value_separator,
 		       strlen(str_key_value_separator),
 		       userdata);
-		yk_modhex_encode(buffer, cfg->key, KEY_SIZE);
+		yubikey_modhex_encode(buffer, cfg->key, KEY_SIZE);
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
@@ -332,7 +334,7 @@ int ykp_write_config(const CONFIG *cfg,
 		writer(str_key_value_separator,
 		       strlen(str_key_value_separator),
 		       userdata);
-		yk_modhex_encode(buffer, cfg->accCode, ACC_CODE_SIZE);
+		yubikey_modhex_encode(buffer, cfg->accCode, ACC_CODE_SIZE);
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
