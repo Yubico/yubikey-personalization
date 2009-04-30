@@ -26,7 +26,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-AC_INIT([yubikey-personalization], [1.0], [richard@levitte.org])
+AC_INIT([yubikey-personalization], [1.0], [yubico-devel@googlegroups.com])
+AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_MACRO_DIR([m4])
 
 # Library code modified:                              REVISION++
 # Interfaces changed/added/removed:   CURRENT++       REVISION=0
@@ -42,7 +44,6 @@ AM_INIT_AUTOMAKE([-Wall -Werror])
 AC_PROG_CC
 AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
-AC_CONFIG_MACRO_DIR([m4])
 
 # This really checks a directory
 AC_CHECK_FILES([yubikey-core/configure.ac yubikey-core/ykcore.h],,AC_MSG_FAILURE(yubikey-core directory not found.
@@ -77,6 +78,12 @@ AC_CHECK_LIB([usb], [usb_init])
 
 if test "$ac_cv_header_usb_h" == no; then
   AC_MSG_WARN([Missing libusb])
+fi
+
+AC_LIB_HAVE_LINKFLAGS(yubikey,, [#include <yubikey.h>],
+				[yubikey_modhex_decode(0,0,0)])
+if test "$ac_cv_libyubikey" != yes; then
+   AC_MSG_ERROR([libyubikey not found, see http://code.google.com/p/yubico-c/])
 fi
 
 AC_CONFIG_SUBDIRS(yubikey-core)
