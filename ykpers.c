@@ -71,39 +71,6 @@ int ykp_free_config(CONFIG *cfg)
 	return 0;
 }
 
-static int hex_to_binary(const char *data, char *dest)
-{
-	char value;
-	int desti=0;
-	char hexstr[3]="xx";
-
-/* We only allow an even number of hex digits (full bytes) */
-	if (strlen(data) % 2) {
-		return 0;
-	}
-
-/* Convert the hex to binary. */
-	while (*data != '\0' && hexstr[1] != '\0') {
-		int i;
-		for (i=0; i<2; i++) {
-			char c;  c=tolower(*data);
-			hexstr[i]=c;
-			data++;
-/* In ASCII, 0-9 == 48-57 and a-f == 97-102. */
-			if ( (c<48||(c>57 && c<97)||c>102) && (i!=0 && c!='\0') ) {
-				return 0; /* Not a valid hex digit */
-			}
-		}
-		dest[desti] = (char)strtol(hexstr, NULL, 16);
-		desti+=sizeof(char);
-	}
-
-/* Tack a NULL on the end then return the number of bytes
-   in the converted binary _minus_ the NULL. */
-	dest[desti] = '\0';
-	return desti;
-}
-
 int ykp_AES_key_from_hex(CONFIG *cfg, const char *hexkey) {
 	char aesbin[256];
 	unsigned long int aeslong;
@@ -123,7 +90,7 @@ int ykp_AES_key_from_hex(CONFIG *cfg, const char *hexkey) {
 		}
 	}
 
-	hex_to_binary(hexkey, aesbin);
+	yubikey_hex_decode(aesbin, hexkey, sizeof(aesbin));
 	memcpy(cfg->key, aesbin, sizeof(cfg->key));
 
 	return 0;
