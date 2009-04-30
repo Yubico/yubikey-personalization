@@ -168,7 +168,7 @@ main(int argc, char **argv)
 				const char *uid = optarg+4;
 				size_t uidlen = strlen (uid);
 				char uidbin[256];
-				if (uidlen % 2 || uidlen != 8)
+				if (uidlen % 2 || uidlen != 12)
 				{
 					fprintf(stderr,
 						"Invalid hex uid string: %s\n",
