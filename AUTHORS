@@ -8,3 +8,9 @@ Common files (the common subdirectory)
 --------------------------------------
 
 Jakob Ehrensvärd <jakob@yubico.com>
+
+Patches
+-------
+
+Lester Hightower, 10East" <lester.hightower@gmail.com>
+Added ykp_AES_key_from_hex and ykpersonalize -a parameter.

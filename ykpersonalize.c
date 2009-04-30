@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2008, Yubico AB
+ * Copyright (c) 2008, 2009, Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,7 @@ const char *usage =
 "          (if file is -, send to stdout)\n"
 "-ifile    read configuration from file.\n"
 "          (if file is -, read from stdin)\n"
+"-aaeshex  A 32 char hex value (not modhex) of a fixed AES key to use\n"
 "-ooption  change configuration option.  Possible option arguments are:\n"
 "          salt=ssssssss       Salt to be used for key generation.  If\n"
 "                              none is given, a unique random one will be\n"
@@ -68,7 +69,7 @@ const char *usage =
 "-v        verbose\n"
 "-h        help (this text)\n"
 ;
-const char *optstring = "hi:o:s:v";
+const char *optstring = "a:hi:o:s:v";
 
 static int reader(char *buf, size_t count, void *stream)
 {
@@ -101,6 +102,7 @@ main(int argc, char **argv)
 	FILE *inf = NULL; const char *infname = NULL;
 	FILE *outf = NULL; const char *outfname = NULL;
 	bool verbose = false;
+	bool aesviahash = false; const char *aeshash = NULL;
 	YUBIKEY *yk = NULL;
 	CONFIG *cfg = ykp_create_config();
 	STATUS *st = ykds_alloc();
@@ -123,6 +125,10 @@ main(int argc, char **argv)
 			break;
 		case 's':
 			outfname = optarg;
+			break;
+		case 'a':
+			aesviahash = true;
+			aeshash = optarg;
 			break;
 		case 'o':
 			if (strncmp(optarg, "salt=", 5) == 0)
@@ -238,6 +244,12 @@ main(int argc, char **argv)
 		if (inf) {
 			if (!ykp_read_config(cfg, reader, inf))
 				break;
+		} else if (aesviahash) {
+			if (ykp_AES_key_from_hex(cfg, aeshash)) {
+				fprintf(stderr, "Bad AES key: %s\n", aeshash);
+				fflush(stderr);
+				break;
+			}
 		} else {
 			char passphrasebuf[256]; size_t passphraselen;
 			fprintf(stderr, "Passphrase to create AES key: ");

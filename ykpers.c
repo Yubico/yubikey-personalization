@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2008, Yubico AB
+ * Copyright (c) 2008, 2009, Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -66,6 +66,64 @@ int ykp_free_config(CONFIG *cfg)
 		free(cfg);
 		return 1;
 	}
+	return 0;
+}
+
+static int hex_to_binary(const char *data, char *dest)
+{
+	char value;
+	int desti=0;
+	char hexstr[3]="xx";
+
+/* We only allow an even number of hex digits (full bytes) */
+	if (strlen(data) % 2) {
+		return 0;
+	}
+
+/* Convert the hex to binary. */
+	while (*data != '\0' && hexstr[1] != '\0') {
+		int i;
+		for (i=0; i<2; i++) {
+			char c;  c=tolower(*data);
+			hexstr[i]=c;
+			data++;
+/* In ASCII, 0-9 == 48-57 and a-f == 97-102. */
+			if ( (c<48||(c>57 && c<97)||c>102) && (i!=0 && c!='\0') ) {
+				return 0; /* Not a valid hex digit */
+			}
+		}
+		dest[desti] = (char)strtol(hexstr, NULL, 16);
+		desti+=sizeof(char);
+	}
+
+/* Tack a NULL on the end then return the number of bytes
+   in the converted binary _minus_ the NULL. */
+	dest[desti] = '\0';
+	return desti;
+}
+
+int ykp_AES_key_from_hex(CONFIG *cfg, const char *hexkey) {
+	char aesbin[256];
+	unsigned long int aeslong;
+
+/* Make sure that the hexkey is exactly 32 characters */
+	if (strlen(hexkey) != 32) {
+		return 1;  /* Bad AES key */
+	}
+
+/* Make sure that the hexkey is made up of only [0-9a-f] */
+	int i;
+	for (i=0; i < strlen(hexkey); i++) {
+		char c = tolower(hexkey[i]);
+/* In ASCII, 0-9 == 48-57 and a-f == 97-102 */
+		if ( c<48 || (c>57 && c<97) || c>102 ) {
+			return 1;
+		}
+	}
+
+	hex_to_binary(hexkey, aesbin);
+	memcpy(cfg->key, aesbin, sizeof(cfg->key));
+
 	return 0;
 }
 

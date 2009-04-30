@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2008, Yubico AB
+ * Copyright (c) 2008, 2009, Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,7 @@
 CONFIG *ykp_create_config(void);
 int ykp_free_config(CONFIG *cfg);
 
+int ykp_AES_key_from_hex(CONFIG *cfg, const char *hexkey);
 int ykp_AES_key_from_passphrase(CONFIG *cfg, const char *passphrase,
 				const char *salt);
 int ykp_set_access_code(CONFIG *cfg, unsigned char *access_code);
