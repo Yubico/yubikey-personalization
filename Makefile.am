@@ -1,9 +1,6 @@
 # Written by Richard Levitte <richard@levitte.org>.
 # Copyright (c) 2008, 2009 Yubico AB
 # All rights reserved.
-#
-# Copyright (c) 2008, Yubico AB
-# All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -31,19 +28,20 @@
 
 # Subdirectories
 
-SUBDIRS=@subdirs@
+SUBDIRS=ykcore
 
 ACLOCAL_AMFLAGS = -I m4
 
-AM_CPPFLAGS = -I./yubikey-core -I./rfc4634
+AM_CPPFLAGS = -I$(srcdir)/ykcore -I$(srcdir)/rfc4634
 
 # The library.
 
 lib_LTLIBRARIES = libykpers.la
-libykpers_la_SOURCES = ykpers.h ykpers.c ykpbkdf2.h ykpbkdf2.c \
-	rfc4634/hmac.c rfc4634/usha.c rfc4634/sha.h \
-	rfc4634/sha1.c rfc4634/sha224-256.c rfc4634/sha384-512.c
-libykpers_la_LIBADD = $(LTLIBYUBIKEY) ./yubikey-core/libykcore.la -lusb
+libykpers_la_SOURCES = ykpers.h ykpers.c ykpbkdf2.h ykpbkdf2.c
+libykpers_la_SOURCES += rfc4634/hmac.c rfc4634/usha.c rfc4634/sha.h	\
+	rfc4634/sha1.c rfc4634/sha224-256.c rfc4634/sha384-512.c	\
+	rfc4634/sha-private.h
+libykpers_la_LIBADD = $(LTLIBYUBIKEY) ./ykcore/libykcore.la -lusb
 libykpers_la_LDFLAGS = -no-undefined \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
@@ -52,12 +50,12 @@ libykpers_la_LDFLAGS = -no-undefined \
 bin_PROGRAMS = ykpersonalize
 
 ykpersonalize_SOURCES = ykpersonalize.c
-ykpersonalize_LDADD = ./libykpers.la ./yubikey-core/libykcore.la
+ykpersonalize_LDADD = ./libykpers.la ./ykcore/libykcore.la
 
 # Self tests.
 
 AM_LDFLAGS = -no-install
-LDADD = ./libykpers.la ./yubikey-core/libykcore.la
+LDADD = ./libykpers.la
 
 ctests = selftest$(EXEEXT)
 check_PROGRAMS = $(ctests)
