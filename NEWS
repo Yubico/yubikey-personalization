@@ -1,6 +1,6 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 0.91 (unreleased)
+* Version 0.91 (released 2009-05-07)
 
 ** Added Mac OS X backend.
 Contributed by Christer Kaivo-oja <christer.kaivooja@gmail.com>.
