@@ -65,7 +65,7 @@ YUBIKEY *yk_open_first_key(void)
 		} else {
 			if (!(st.versionMajor == 1 &&
 			      (st.versionMinor == 2 ||
-			       st.versionMinor == 3)) {
+			       st.versionMinor == 3))) {
 				rc = YK_EFIRMWARE;
 				yk_close_key(yk);
 				yk = NULL;
