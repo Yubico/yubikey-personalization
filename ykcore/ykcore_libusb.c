@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2008, Yubico AB
+ * Copyright (c) 2008, 2009, Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,11 +32,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "ykcore.h"
+#include "ykdef.h"
 #include "ykcore_backend.h"
-
-#ifndef _WIN32
-#define Sleep(x) usleep((x)*1000)
-#endif
 
 #define HID_GET_REPORT			0x01
 #define HID_SET_REPORT			0x09

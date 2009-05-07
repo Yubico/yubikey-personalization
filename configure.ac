@@ -44,15 +44,32 @@ AC_PROG_CC
 AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
 
-AC_LIB_HAVE_LINKFLAGS(usb,, [#include <usb.h>], [usb_init()])
-if test "$ac_cv_libusb" != yes; then
-   AC_MSG_ERROR([libusb not found, please install usb.h and libusb.so])
-fi
-
 AC_LIB_HAVE_LINKFLAGS(yubikey,, [#include <yubikey.h>],
 				[yubikey_modhex_decode(0,0,0)])
 if test "$ac_cv_libyubikey" != yes; then
    AC_MSG_ERROR([libyubikey not found, see http://code.google.com/p/yubico-c/])
+fi
+
+AC_ARG_WITH([backend],
+  [AS_HELP_STRING([--with-backend=ARG],
+    [use specific backend; 'libusb' or 'osx'])])
+AC_MSG_CHECKING([for backend])
+if test x$with_backend != xosx && test x$with_backend != xlibusb; then
+  AC_CANONICAL_HOST
+  case "$host" in
+    *-darwin*) with_backend=osx ;;
+    *) with_backend=libusb ;;
+  esac
+fi
+AC_MSG_RESULT([$with_backend])
+AM_CONDITIONAL([BACKEND_LIBUSB], test x$with_backend = xlibusb)
+AM_CONDITIONAL([BACKEND_OSX], test x$with_backend = xosx)
+
+if test x$with_backend = libusb; then
+  AC_LIB_HAVE_LINKFLAGS(usb,, [#include <usb.h>], [usb_init()])
+  if test "$ac_cv_libusb" != yes; then
+     AC_MSG_ERROR([libusb not found, please install usb.h and libusb.so])
+  fi
 fi
 
 AC_CONFIG_FILES([

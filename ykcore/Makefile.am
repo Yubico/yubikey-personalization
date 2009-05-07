@@ -1,4 +1,4 @@
-# Copyright (c) 2008, Yubico AB
+# Copyright (c) 2008, 2009, Yubico AB
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -29,4 +29,11 @@ noinst_LTLIBRARIES = libykcore.la
 libykcore_la_SOURCES = ykdef.h ykcore.h ykcore_backend.h ykcore.c \
 	ykstatus.h ykstatus.c
 libykcore_la_LIBADD = $(LTLIBYUBIKEY)
-EXTRA_DIST = ykcore_libusb.c ykcore_win32.c
+
+if BACKEND_LIBUSB
+libykcore_la_SOURCES += ykcore_libusb.c
+endif
+
+if BACKEND_OSX
+libykcore_la_SOURCES += ykcore_osx.c
+endif

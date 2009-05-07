@@ -32,16 +32,11 @@
 #include "ykdef.h"
 #include "ykcore_backend.h"
 
-/* Include platform-specific backends for the USB routines */
-#ifdef _WIN32
-# include "ykcore_win32.c"
-#elif defined(__APPLE__)
-# include "ykcore_osx.c"
-#else
-# include "ykcore_libusb.c"
-#endif
-
 #include <yubikey.h>
+
+#ifndef _WIN32
+#define Sleep(x) usleep((x)*1000)
+#endif
 
 int yk_init(void)
 {
