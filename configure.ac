@@ -26,8 +26,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-AC_INIT([yubikey-personalization], [0.9], [yubico-devel@googlegroups.com], [ykpers],
-        [http://code.google.com/p/yubikey-personalization/])
+AC_INIT([yubikey-personalization], [0.91],
+  [yubico-devel@googlegroups.com], [ykpers],
+  [http://code.google.com/p/yubikey-personalization/])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -44,10 +45,11 @@ AC_PROG_CC
 AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
 
-AC_LIB_HAVE_LINKFLAGS(yubikey,, [#include <yubikey.h>],
-				[yubikey_modhex_decode(0,0,0)])
+AC_LIB_HAVE_LINKFLAGS(yubikey,,
+  [#include <yubikey.h>],
+  [yubikey_modhex_decode(0,0,0)])
 if test "$ac_cv_libyubikey" != yes; then
-   AC_MSG_ERROR([libyubikey not found, see http://code.google.com/p/yubico-c/])
+  AC_MSG_ERROR([libyubikey not found, see http://code.google.com/p/yubico-c/])
 fi
 
 AC_ARG_WITH([backend],

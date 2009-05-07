@@ -1,5 +1,9 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 0.91 (unreleased)
+
+** Added --with-backend parameter to chose backend.
+
 * Version 0.9 (released 2009-05-05)
 
 ** Initial release candidate.
