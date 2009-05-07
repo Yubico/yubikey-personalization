@@ -48,14 +48,14 @@
  *
  ****/
 
-typedef struct yubikey_st YUBIKEY;	/* Really a USB device handle. */
-typedef struct status_st STATUS;	/* Status structure,
+typedef struct yk_key_st YK_KEY;	/* Really a USB device handle. */
+typedef struct yk_status_st YK_STATUS;	/* Status structure,
 					   filled by yk_get_status(). */
 
-typedef struct ticket_st TICKET;	/* Ticket structure... */
-typedef struct config_st CONFIG;	/* Configuration structure.
+typedef struct yk_ticket_st YK_TICKET;	/* Ticket structure... */
+typedef struct yk_config_st YK_CONFIG;	/* Configuration structure.
 					   Other libraries provide access. */
-typedef struct nav_st NAV;		/* Navigation structure.
+typedef struct yk_nav_st YK_NAV;	/* Navigation structure.
 					   Other libraries provide access. */
 
 /*************************************************************************
@@ -71,8 +71,8 @@ extern int yk_release(void);
  * Functions to get and release the key itself.
  *
  ****/
-extern YUBIKEY *yk_open_first_key(void);	/* opens the first key available */
-extern int yk_close_key(YUBIKEY *k);		/* closes a previously opened key */
+extern YK_KEY *yk_open_first_key(void);	/* opens the first key available */
+extern int yk_close_key(YK_KEY *k);		/* closes a previously opened key */
 
 /*************************************************************************
  *
@@ -80,7 +80,7 @@ extern int yk_close_key(YUBIKEY *k);		/* closes a previously opened key */
  *
  ****/
 /* fetches key status into the structure given by `status' */
-extern int yk_get_status(YUBIKEY *k, STATUS *status /*, int forceUpdate */);
+extern int yk_get_status(YK_KEY *k, YK_STATUS *status /*, int forceUpdate */);
 
 /*************************************************************************
  *
@@ -91,7 +91,7 @@ extern int yk_get_status(YUBIKEY *k, STATUS *status /*, int forceUpdate */);
 /* writes the given configuration to the key.  If the configuration is NULL,
    zap the key configuration.
    acc_code has to be provided of the key has a protecting access code. */
-extern int yk_write_config(YUBIKEY *k, CONFIG *cfg, unsigned char *acc_code);
+extern int yk_write_config(YK_KEY *k, YK_CONFIG *cfg, unsigned char *acc_code);
 
 /*************************************************************************
  *
@@ -115,40 +115,5 @@ const char *yk_usb_strerror();
 #define YK_ENOMEM	0x07
 #define YK_ENOSTATUS	0x07
 #define YK_ENOTYETIMPL	0x08
-
-/*=======================================================================*
-
-/*************************************************************************
- **
- ** = = = = = = = = =   B I G   F A T   W A R N I N G   = = = = = = = = =
- **
- ** DO NOT USE THE FOLLOWING FUCTIONS DIRECTLY UNLESS YOU WRITE CORE ROUTINES!
- **
- ** These functions are declared here only to make sure they get defined
- ** correctly internally.
- **
- ** YOU HAVE BEEN WARNED!
- **
- ****/
-
-/*************************************************************************
- *
- * Functions to send and receive data to/from the key.
- *
- ****/
-extern int yk_read_from_key(YUBIKEY *k, uint8_t slot,
-			    void *buf, unsigned int bufsize,
-			    unsigned int *bufcount);
-extern int yk_write_to_key(YUBIKEY *k, uint8_t slot,
-			   const void *buf, int bufcount);
-
-/*************************************************************************
- *
- * Internal helper functions
- *
- ****/
-
-/* Swaps the two bytes between little and big endian on big endian machines */
-extern uint16_t endian_swap_16(uint16_t x);
 
 #endif	/* __YKCORE_H_INCLUDED__ */

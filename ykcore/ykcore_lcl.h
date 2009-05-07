@@ -1,7 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Written by Richard Levitte <richard@levitte.org>
- * Copyright (c) 2008, Yubico AB
+ * Copyright (c) 2008, 2009, Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,62 +28,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ykcore_lcl.h"
+#ifndef	__YKCORE_LCL_H_INCLUDED__
+#define	__YKCORE_LCL_H_INCLUDED__
+
+/* This is a hack to map official structure names (in ykcore.h) to
+   internal ones (in ykdef.h) */
+#define yk_key_st yubikey_st
+#define yk_status_st status_st
+#define yk_ticket_st ticket_st
+#define yk_config_st config_st
+#define yk_nav_st nav_st
+
+#include "ykcore.h"
 #include "ykdef.h"
-#include "ykstatus.h"
 
-YK_STATUS *ykds_alloc(void)
-{
-	YK_STATUS *st = malloc(sizeof(YK_STATUS));
-	if (!st) {
-		yk_errno = YK_ENOMEM;
-	}
-	return st;
-}
+/*************************************************************************
+ **
+ ** = = = = = = = = =   B I G   F A T   W A R N I N G   = = = = = = = = =
+ **
+ ** DO NOT USE THE FOLLOWING FUCTIONS DIRECTLY UNLESS YOU WRITE CORE ROUTINES!
+ **
+ ** These functions are declared here only to make sure they get defined
+ ** correctly internally.
+ **
+ ** YOU HAVE BEEN WARNED!
+ **
+ ****/
 
-void ykds_free(YK_STATUS *st)
-{
-	free(st);
-}
+/*************************************************************************
+ *
+ * Functions to send and receive data to/from the key.
+ *
+ ****/
+extern int yk_read_from_key(YK_KEY *k, uint8_t slot,
+			    void *buf, unsigned int bufsize,
+			    unsigned int *bufcount);
+extern int yk_write_to_key(YK_KEY *k, uint8_t slot,
+			   const void *buf, int bufcount);
 
-YK_STATUS *ykds_static(void)
-{
-	static YK_STATUS st;
-	return &st;
-}
+/*************************************************************************
+ *
+ * Internal helper functions
+ *
+ ****/
 
-extern int ykds_version_major(const YK_STATUS *st)
-{
-	if (st)
-		return st->versionMajor;
-	yk_errno = YK_ENOSTATUS;
-	return 0;
-}
-extern int ykds_version_minor(const YK_STATUS *st)
-{
-	if (st)
-		return st->versionMinor;
-	yk_errno = YK_ENOSTATUS;
-	return 0;
-}
-extern int ykds_version_build(const YK_STATUS *st)
-{
-	if (st)
-		return st->versionBuild;
-	yk_errno = YK_ENOSTATUS;
-	return 0;
-}
-extern int ykds_pgm_seq(const YK_STATUS *st)
-{
-	if (st)
-		return st->pgmSeq;
-	yk_errno = YK_ENOSTATUS;
-	return 0;
-}
-extern int ykds_touch_level(const YK_STATUS *st)
-{
-	if (st)
-		return st->touchLevel;
-	yk_errno = YK_ENOSTATUS;
-	return 0;
-}
+/* Swaps the two bytes between little and big endian on big endian machines */
+extern uint16_t yk_endian_swap_16(uint16_t x);
+
+#endif	/* __YKCORE_LCL_H_INCLUDED__ */

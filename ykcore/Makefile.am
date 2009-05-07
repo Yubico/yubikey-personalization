@@ -26,7 +26,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 noinst_LTLIBRARIES = libykcore.la
-libykcore_la_SOURCES = ykdef.h ykcore.h ykcore_backend.h ykcore.c \
+libykcore_la_SOURCES = ykdef.h ykcore.h ykcore_lcl.h ykcore_backend.h ykcore.c \
 	ykstatus.h ykstatus.c
 libykcore_la_LIBADD = $(LTLIBYUBIKEY) $(LTLIBUSB)
 

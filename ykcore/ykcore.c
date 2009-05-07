@@ -28,10 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ykcore.h"
-#include "ykdef.h"
+#include "ykcore_lcl.h"
 #include "ykcore_backend.h"
 
+/* To get modhex and crc16 */
 #include <yubikey.h>
 
 #ifndef _WIN32
@@ -48,15 +48,15 @@ int yk_release(void)
 	_ykusb_start();
 }
 
-YUBIKEY *yk_open_first_key(void)
+YK_KEY *yk_open_first_key(void)
 {
 	struct usb_bus *bus;
 	struct usb_device *dev;
-	YUBIKEY *yk = _ykusb_open_device(YUBICO_VID, YUBIKEY_PID);
+	YK_KEY *yk = _ykusb_open_device(YUBICO_VID, YUBIKEY_PID);
 	int rc = yk_errno;
 
 	if (yk) {
-		STATUS st;
+		YK_STATUS st;
 
 		if (!yk_get_status(yk, &st)) {
 			rc = yk_errno;
@@ -76,32 +76,32 @@ YUBIKEY *yk_open_first_key(void)
 	return yk;
 }
 
-int yk_close_key(YUBIKEY *yk)
+int yk_close_key(YK_KEY *yk)
 {
 	return _ykusb_close_device(yk);
 }
 
-int yk_get_status(YUBIKEY *k, STATUS *status)
+int yk_get_status(YK_KEY *k, YK_STATUS *status)
 {
 	unsigned int status_count = 0;
 
-	if (!yk_read_from_key(k, 0, status, sizeof(STATUS), &status_count))
+	if (!yk_read_from_key(k, 0, status, sizeof(YK_STATUS), &status_count))
 		return 0;
 
-	if (status_count != sizeof(STATUS)) {
+	if (status_count != sizeof(YK_STATUS)) {
 		yk_errno = YK_EWRONGSIZ;
 		return 0;
 	}
 
-	status->touchLevel = endian_swap_16(status->touchLevel);
+	status->touchLevel = yk_endian_swap_16(status->touchLevel);
 
 	return 1;
 }
 
-int yk_write_config(YUBIKEY *yk, CONFIG *cfg, unsigned char *acc_code)
+int yk_write_config(YK_KEY *yk, YK_CONFIG *cfg, unsigned char *acc_code)
 {
-	unsigned char buf[sizeof(CONFIG) + ACC_CODE_SIZE];
-	STATUS stat;
+	unsigned char buf[sizeof(YK_CONFIG) + ACC_CODE_SIZE];
+	YK_STATUS stat;
 	int seq;
 
 	/* Get current seqence # from status block */
@@ -117,15 +117,15 @@ int yk_write_config(YUBIKEY *yk, CONFIG *cfg, unsigned char *acc_code)
 
 	if (cfg) {
 		cfg->crc = ~yubikey_crc16 ((unsigned char *) cfg,
-					   sizeof(CONFIG) - sizeof(cfg->crc));
-		cfg->crc = endian_swap_16(cfg->crc);
-		memcpy(buf, cfg, sizeof(CONFIG));
+					   sizeof(YK_CONFIG) - sizeof(cfg->crc));
+		cfg->crc = yk_endian_swap_16(cfg->crc);
+		memcpy(buf, cfg, sizeof(YK_CONFIG));
 	}
 
 	/* Append current access code if present */
 
 	if (acc_code)
-		memcpy(buf + sizeof(CONFIG), acc_code, ACC_CODE_SIZE);
+		memcpy(buf + sizeof(YK_CONFIG), acc_code, ACC_CODE_SIZE);
 
 	/* Write to Yubikey */
 
@@ -182,7 +182,7 @@ const char *yk_usb_strerror()
 /* Note: we currently have no idea whatsoever how to read things larger
    than FEATURE_RPT_SIZE - 1.  We also have no idea what to do with the
    slot parameter, it currently is there for future purposes only. */
-int yk_read_from_key(YUBIKEY *yk, uint8_t slot,
+int yk_read_from_key(YK_KEY *yk, uint8_t slot,
 		     void *buf, unsigned int bufsize, unsigned int *bufcount)
 {
 	unsigned char data[FEATURE_RPT_SIZE];
@@ -205,7 +205,7 @@ int yk_read_from_key(YUBIKEY *yk, uint8_t slot,
 	return 1;
 }
 
-int yk_write_to_key(YUBIKEY *yk, uint8_t slot, const void *buf, int bufcount)
+int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount)
 {
 	unsigned char repbuf[FEATURE_RPT_SIZE];
 	unsigned char data[SLOT_DATA_SIZE + FEATURE_RPT_SIZE];
@@ -269,7 +269,7 @@ int yk_write_to_key(YUBIKEY *yk, uint8_t slot, const void *buf, int bufcount)
 	return 1;
 }
 
-int yk_force_key_update(YUBIKEY *yk)
+int yk_force_key_update(YK_KEY *yk)
 {
 	unsigned char buf[FEATURE_RPT_SIZE];
 
@@ -281,7 +281,7 @@ int yk_force_key_update(YUBIKEY *yk)
 	return 1;
 }
 
-uint16_t endian_swap_16(uint16_t x)
+uint16_t yk_endian_swap_16(uint16_t x)
 {
 	static int testflag = -1;
 

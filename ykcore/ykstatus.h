@@ -29,24 +29,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef	__YKDATA_H_INCLUDED__
-#define	__YKDATA_H_INCLUDED__
+#ifndef	__YKSTATUS_H_INCLUDED__
+#define	__YKSTATUS_H_INCLUDED__
 
-#include "ykcore.h"
+#include <ykcore.h>
 
 /* Allocate and free status structures */
-extern STATUS *ykds_alloc(void);
-extern void ykds_free(STATUS *st);
+extern YK_STATUS *ykds_alloc(void);
+extern void ykds_free(YK_STATUS *st);
 
 /* Return static status structure, to be used for quick checks.
    USE WITH CAUTION, as this is a SHARED OBJECT. */
-extern STATUS *ykds_static(void);
+extern YK_STATUS *ykds_static(void);
 
 /* Accessor functions */
-extern int ykds_version_major(const STATUS *st);
-extern int ykds_version_minor(const STATUS *st);
-extern int ykds_version_build(const STATUS *st);
-extern int ykds_pgm_seq(const STATUS *st);
-extern int ykds_touch_level(const STATUS *st);
+extern int ykds_version_major(const YK_STATUS *st);
+extern int ykds_version_minor(const YK_STATUS *st);
+extern int ykds_version_build(const YK_STATUS *st);
+extern int ykds_pgm_seq(const YK_STATUS *st);
+extern int ykds_touch_level(const YK_STATUS *st);
 
-#endif /* __YKDATA_H_INCLUDED__ */
+#endif /* __YKSTATUS_H_INCLUDED__ */
