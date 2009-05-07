@@ -67,7 +67,7 @@ AC_MSG_RESULT([$with_backend])
 AM_CONDITIONAL([BACKEND_LIBUSB], test x$with_backend = xlibusb)
 AM_CONDITIONAL([BACKEND_OSX], test x$with_backend = xosx)
 
-if test x$with_backend = libusb; then
+if test x$with_backend = xlibusb; then
   AC_LIB_HAVE_LINKFLAGS(usb,, [#include <usb.h>], [usb_init()])
   if test "$ac_cv_libusb" != yes; then
      AC_MSG_ERROR([libusb not found, please install usb.h and libusb.so])
