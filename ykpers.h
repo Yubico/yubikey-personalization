@@ -34,38 +34,38 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-typedef struct config_st ykp_cfg;
+#include <ykcore.h>
 
-ykp_cfg *ykp_create_config(void);
-int ykp_free_config(ykp_cfg *cfg);
+YK_CONFIG *ykp_create_config(void);
+int ykp_free_config(YK_CONFIG *cfg);
 
-int ykp_AES_key_from_hex(ykp_cfg *cfg, const char *hexkey);
-int ykp_AES_key_from_passphrase(ykp_cfg *cfg, const char *passphrase,
+int ykp_AES_key_from_hex(YK_CONFIG *cfg, const char *hexkey);
+int ykp_AES_key_from_passphrase(YK_CONFIG *cfg, const char *passphrase,
 				const char *salt);
 
-int ykp_set_access_code(ykp_cfg *cfg, unsigned char *access_code, size_t len);
-int ykp_set_fixed(ykp_cfg *cfg, unsigned char *fixed, size_t len);
-int ykp_set_uid(ykp_cfg *cfg, unsigned char *uid, size_t len);
+int ykp_set_access_code(YK_CONFIG *cfg, unsigned char *access_code, size_t len);
+int ykp_set_fixed(YK_CONFIG *cfg, unsigned char *fixed, size_t len);
+int ykp_set_uid(YK_CONFIG *cfg, unsigned char *uid, size_t len);
 
-int ykp_set_tktflag_TAB_FIRST(ykp_cfg *cfg, bool state);
-int ykp_set_tktflag_APPEND_TAB1(ykp_cfg *cfg, bool state);
-int ykp_set_tktflag_APPEND_TAB2(ykp_cfg *cfg, bool state);
-int ykp_set_tktflag_APPEND_DELAY1(ykp_cfg *cfg, bool state);
-int ykp_set_tktflag_APPEND_DELAY2(ykp_cfg *cfg, bool state);
-int ykp_set_tktflag_APPEND_CR(ykp_cfg *cfg, bool state);
+int ykp_set_tktflag_TAB_FIRST(YK_CONFIG *cfg, bool state);
+int ykp_set_tktflag_APPEND_TAB1(YK_CONFIG *cfg, bool state);
+int ykp_set_tktflag_APPEND_TAB2(YK_CONFIG *cfg, bool state);
+int ykp_set_tktflag_APPEND_DELAY1(YK_CONFIG *cfg, bool state);
+int ykp_set_tktflag_APPEND_DELAY2(YK_CONFIG *cfg, bool state);
+int ykp_set_tktflag_APPEND_CR(YK_CONFIG *cfg, bool state);
 
-int ykp_set_cfgflag_SEND_REF(ykp_cfg *cfg, bool state);
-int ykp_set_cfgflag_TICKET_FIRST(ykp_cfg *cfg, bool state);
-int ykp_set_cfgflag_PACING_10MS(ykp_cfg *cfg, bool state);
-int ykp_set_cfgflag_PACING_20MS(ykp_cfg *cfg, bool state);
-int ykp_set_cfgflag_ALLOW_HIDTRIG(ykp_cfg *cfg, bool state);
-int ykp_set_cfgflag_STATIC_TICKET(ykp_cfg *cfg, bool state);
+int ykp_set_cfgflag_SEND_REF(YK_CONFIG *cfg, bool state);
+int ykp_set_cfgflag_TICKET_FIRST(YK_CONFIG *cfg, bool state);
+int ykp_set_cfgflag_PACING_10MS(YK_CONFIG *cfg, bool state);
+int ykp_set_cfgflag_PACING_20MS(YK_CONFIG *cfg, bool state);
+int ykp_set_cfgflag_ALLOW_HIDTRIG(YK_CONFIG *cfg, bool state);
+int ykp_set_cfgflag_STATIC_TICKET(YK_CONFIG *cfg, bool state);
 
-int ykp_write_config(const ykp_cfg *cfg,
+int ykp_write_config(const YK_CONFIG *cfg,
 		     int (*writer)(const char *buf, size_t count,
 				   void *userdata),
 		     void *userdata);
-int ykp_read_config(ykp_cfg *cfg,
+int ykp_read_config(YK_CONFIG *cfg,
 		    int (*reader)(char *buf, size_t count,
 				  void *userdata),
 		    void *userdata);

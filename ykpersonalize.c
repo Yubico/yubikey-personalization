@@ -105,9 +105,9 @@ main(int argc, char **argv)
 	FILE *outf = NULL; const char *outfname = NULL;
 	bool verbose = false;
 	bool aesviahash = false; const char *aeshash = NULL;
-	YUBIKEY *yk = NULL;
-	CONFIG *cfg = ykp_create_config();
-	STATUS *st = ykds_alloc();
+	YK_KEY *yk = NULL;
+	YK_CONFIG *cfg = ykp_create_config();
+	YK_STATUS *st = ykds_alloc();
 
 	bool error = false;
 	int exit_code = 0;

@@ -28,10 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "ykcore_lcl.h"
+#include "ykpbkdf2.h"
+
 #include <ykpers.h>
-#include <ykcore.h>
-#include <ykdef.h>
-#include <ykpbkdf2.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -41,7 +41,7 @@
 
 
 
-static const ykp_cfg default_config = {
+static const YK_CONFIG default_config = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* fixed */
 	{ 0, 0, 0, 0, 0, 0 },	/* uid */
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* key */
@@ -54,9 +54,9 @@ static const ykp_cfg default_config = {
 	0			/* crc */
 };
 
-ykp_cfg *ykp_create_config(void)
+YK_CONFIG *ykp_create_config(void)
 {
-	ykp_cfg *cfg = malloc(sizeof(ykp_cfg));
+	YK_CONFIG *cfg = malloc(sizeof(YK_CONFIG));
 	if (cfg) {
 		memcpy(cfg, &default_config,
 		       sizeof(default_config));
@@ -65,7 +65,7 @@ ykp_cfg *ykp_create_config(void)
 	return 0;
 }
 
-int ykp_free_config(ykp_cfg *cfg)
+int ykp_free_config(YK_CONFIG *cfg)
 {
 	if (cfg) {
 		free(cfg);
@@ -74,7 +74,7 @@ int ykp_free_config(ykp_cfg *cfg)
 	return 0;
 }
 
-int ykp_AES_key_from_hex(ykp_cfg *cfg, const char *hexkey) {
+int ykp_AES_key_from_hex(YK_CONFIG *cfg, const char *hexkey) {
 	char aesbin[256];
 	unsigned long int aeslong;
 
@@ -99,7 +99,7 @@ int ykp_AES_key_from_hex(ykp_cfg *cfg, const char *hexkey) {
 	return 0;
 }
 
-int ykp_AES_key_from_passphrase(ykp_cfg *cfg, const char *passphrase,
+int ykp_AES_key_from_passphrase(YK_CONFIG *cfg, const char *passphrase,
 				const char *salt)
 {
 	if (cfg) {
@@ -166,7 +166,7 @@ int ykp_AES_key_from_passphrase(ykp_cfg *cfg, const char *passphrase,
 }
 
 #define def_set_charfield(fnname,fieldname,size,extra)		\
-int ykp_set_ ## fnname(ykp_cfg *cfg, unsigned char *input, size_t len)	\
+int ykp_set_ ## fnname(YK_CONFIG *cfg, unsigned char *input, size_t len)	\
 {								\
 	if (cfg) {						\
 		size_t max_chars = len;				\
@@ -190,7 +190,7 @@ def_set_charfield(fixed,fixed,FIXED_SIZE,cfg->fixedSize = max_chars)
 def_set_charfield(uid,uid,UID_SIZE,)
 
 #define def_set_tktflag(type)					\
-int ykp_set_tktflag_ ## type(ykp_cfg *cfg, bool state)		\
+int ykp_set_tktflag_ ## type(YK_CONFIG *cfg, bool state)		\
 {								\
 	if (cfg) {						\
 		if (state)					\
@@ -204,7 +204,7 @@ int ykp_set_tktflag_ ## type(ykp_cfg *cfg, bool state)		\
 }
 
 #define def_set_cfgflag(type)					\
-int ykp_set_cfgflag_ ## type(ykp_cfg *cfg, bool state)		\
+int ykp_set_cfgflag_ ## type(YK_CONFIG *cfg, bool state)		\
 {								\
 	if (cfg) {						\
 		if (state)					\
@@ -267,7 +267,7 @@ struct map_st config_flags_map[] = {
 	{ 0, "" }
 };
 
-int ykp_write_config(const ykp_cfg *cfg,
+int ykp_write_config(const YK_CONFIG *cfg,
 		     int (*writer)(const char *buf, size_t count,
 				   void *userdata),
 		     void *userdata)
@@ -348,7 +348,7 @@ int ykp_write_config(const ykp_cfg *cfg,
 	}
 	return 0;
 }
-int ykp_read_config(ykp_cfg *cfg,
+int ykp_read_config(YK_CONFIG *cfg,
 		    int (*reader)(char *buf, size_t count,
 				  void *userdata),
 		    void *userdata)

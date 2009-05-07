@@ -36,8 +36,10 @@ AM_CPPFLAGS = -I$(srcdir)/ykcore -I$(srcdir)/rfc4634
 
 # The library.
 
+include_HEADERS = ykpers.h ykcore/ykstatus.h ykcore/ykcore.h
+
 lib_LTLIBRARIES = libykpers.la
-libykpers_la_SOURCES = ykpers.h ykpers.c ykpbkdf2.h ykpbkdf2.c
+libykpers_la_SOURCES = ykpers.c ykpbkdf2.h ykpbkdf2.c
 libykpers_la_SOURCES += rfc4634/hmac.c rfc4634/usha.c rfc4634/sha.h	\
 	rfc4634/sha1.c rfc4634/sha224-256.c rfc4634/sha384-512.c	\
 	rfc4634/sha-private.h
