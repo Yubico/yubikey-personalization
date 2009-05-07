@@ -30,6 +30,7 @@
 
 #include "ykcore_lcl.h"
 #include "ykcore_backend.h"
+#include "yktsd.h"
 
 /* To get modhex and crc16 */
 #include <yubikey.h>
@@ -146,14 +147,25 @@ int yk_write_config(YK_KEY *yk, YK_CONFIG *cfg, unsigned char *acc_code)
 
 }
 
-/* As soon as we find a way to safely detect if we're in a threaded environment
-   or not, this should be changed to support per-thread locations.  Until then,
-   we only support non-threaded applications. */
-static int _yk_errno = 0;
-
 int * const _yk_errno_location(void)
 {
-	return &_yk_errno;
+	static int tsd_init = 0;
+	static int nothread_errno = 0;
+	YK_DEFINE_TSD_METADATA(errno_key);
+	int rc = 0;
+
+	if (tsd_init == 0) {
+		if ((rc = YK_TSD_INIT(errno_key, free)) == 0) {
+			YK_TSD_SET(errno_key, calloc(1, sizeof(int)));
+			tsd_init = 1;
+		} else {
+			tsd_init = -1;
+		}
+	}
+	if (tsd_init == 1) {
+		return YK_TSD_GET(int *, errno_key);
+	}
+	return &nothread_errno;
 }
 
 static const char *errtext[] = {
