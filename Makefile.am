@@ -41,7 +41,7 @@ libykpers_la_SOURCES = ykpers.h ykpers.c ykpbkdf2.h ykpbkdf2.c
 libykpers_la_SOURCES += rfc4634/hmac.c rfc4634/usha.c rfc4634/sha.h	\
 	rfc4634/sha1.c rfc4634/sha224-256.c rfc4634/sha384-512.c	\
 	rfc4634/sha-private.h
-libykpers_la_LIBADD = $(LTLIBYUBIKEY) ./ykcore/libykcore.la -lusb
+libykpers_la_LIBADD = $(LTLIBYUBIKEY) ./ykcore/libykcore.la
 libykpers_la_LDFLAGS = -no-undefined \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
