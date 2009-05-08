@@ -1,5 +1,9 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 0.92 (unreleased)
+
+** Mac OS X build fixes.
+
 * Version 0.91 (released 2009-05-07)
 
 ** Added Mac OS X backend.
