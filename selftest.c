@@ -33,7 +33,7 @@
 
 int main (void)
 {
-	ykp_cfg *ykp;
+	YK_CONFIG *ykp;
 	int rc;
 
 	ykp = ykp_create_config ();
