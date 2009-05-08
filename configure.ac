@@ -80,6 +80,10 @@ if test x$with_backend = xlibusb; then
   fi
 fi
 
+if test x$with_backend = xosx; then
+  LDFLAGS="$LDFLAGS -framework IOKit -framework CoreFoundation"
+fi
+
 AC_CONFIG_FILES([
   Makefile
   ykcore/Makefile
