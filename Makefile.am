@@ -63,25 +63,33 @@ ctests = selftest$(EXEEXT)
 check_PROGRAMS = $(ctests)
 TESTS = $(ctests)
 
+# Dist docs from wiki.
+EXTRA_DIST = doc/ReadMe.wiki doc/UsbhidIssue.wiki
+
 # Release
+
+PROJECT=yubikey-personalization
+USER=simon75j
 
 ChangeLog:
 	svn2cl
 
-PROJECT=yubikey-personalization
+check-doc-dist:
+	perl -pe "s,^EXTRA_DIST = .*,EXTRA_DIST = `echo doc/*.wiki`," < Makefile.am > tmp
+	diff -ur Makefile.am tmp || (echo 'error: please update Makefile.am'; exit 1)
 
 release:
 	rm -f ChangeLog
-	make ChangeLog distcheck
+	make check-doc-dist ChangeLog distcheck
 	gpg -b $(PACKAGE)-$(VERSION).tar.gz
 	gpg --verify $(PACKAGE)-$(VERSION).tar.gz.sig
 	svn copy https://$(PROJECT).googlecode.com/svn/trunk/ \
 	 https://$(PROJECT).googlecode.com/svn/tags/$(PACKAGE)-$(VERSION) \
 	 -m "Tagging the $(VERSION) release of the $(PACKAGE) project."
 	googlecode_upload.py -s "OpenPGP signature for $(PACKAGE) $(VERSION)." \
-	 -p $(PROJECT) -u simon75j $(PACKAGE)-$(VERSION).tar.gz.sig
+	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION).tar.gz.sig
 	googlecode_upload.py -s "$(PACKAGE) $(VERSION)" \
-	 -p $(PROJECT) -u simon75j $(PACKAGE)-$(VERSION).tar.gz 
+	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION).tar.gz 
 	cp README ../wiki-$(PROJECT)/ReadMe.wiki && \
 		cd ../wiki-$(PROJECT) && \
 		svn commit -m Sync. ReadMe.wiki
