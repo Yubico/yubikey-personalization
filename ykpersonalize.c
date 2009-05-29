@@ -44,7 +44,7 @@ const char *usage =
 "          (if file is -, send to stdout)\n"
 "-ifile    read configuration from file.\n"
 "          (if file is -, read from stdin)\n"
-"-a=xxx..  A 32 char hex value (not modhex) of a fixed AES key to use\n"
+"-axxx..   A 32 char hex value (not modhex) of a fixed AES key to use\n"
 "-ooption  change configuration option.  Possible option arguments are:\n"
 "          salt=ssssssss       Salt to be used for key generation.  If\n"
 "                              none is given, a unique random one will be\n"
