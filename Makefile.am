@@ -68,8 +68,9 @@ EXTRA_DIST = doc/MakeRelease.wiki doc/ReadMe.wiki doc/UsbhidIssue.wiki
 
 # Release
 
-PROJECT=yubikey-personalization
-USER=simon75j
+PROJECT = yubikey-personalization
+USER = simon75j
+KEYID = B9156397
 
 ChangeLog:
 	svn2cl
@@ -81,7 +82,7 @@ check-doc-dist:
 release:
 	rm -f ChangeLog
 	make check-doc-dist ChangeLog distcheck
-	gpg -b $(PACKAGE)-$(VERSION).tar.gz
+	gpg --detach-sign --default-key $(KEYID) $(PACKAGE)-$(VERSION).tar.gz
 	gpg --verify $(PACKAGE)-$(VERSION).tar.gz.sig
 	svn copy https://$(PROJECT).googlecode.com/svn/trunk/ \
 	 https://$(PROJECT).googlecode.com/svn/tags/$(PACKAGE)-$(VERSION) \
