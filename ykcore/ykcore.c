@@ -64,9 +64,11 @@ YK_KEY *yk_open_first_key(void)
 			yk_close_key(yk);
 			yk = NULL;
 		} else {
-			if (!(st.versionMajor == 1 &&
-			      (st.versionMinor == 2 ||
-			       st.versionMinor == 3))) {
+			if (!((st.versionMajor == 1 &&
+			       (st.versionMinor == 2 ||
+				st.versionMinor == 3)) ||
+			      (st.versionMajor == 2 &&
+			       st.versionMinor == 0))) {
 				rc = YK_EFIRMWARE;
 				yk_close_key(yk);
 				yk = NULL;
