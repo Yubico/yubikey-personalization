@@ -105,7 +105,7 @@ main(int argc, char **argv)
 	bool verbose = false;
 	bool aesviahash = false; const char *aeshash = NULL;
 	YK_KEY *yk = NULL;
-	YK_CONFIG *cfg = ykp_create_config();
+	YKP_CONFIG *cfg = ykp_create_config();
 	YK_STATUS *st = ykds_alloc();
 
 	bool error = false;
@@ -134,6 +134,17 @@ main(int argc, char **argv)
 	if (!yk_get_status(yk, st)) {
 		goto err;
 	}
+
+	printf("Firmware version %d.%d.%d Touch level %d ",
+	       ykds_version_major(st),
+	       ykds_version_minor(st),
+	       ykds_version_build(st),
+	       ykds_touch_level(st));
+	if (ykds_pgm_seq(st))
+		printf("Program sequence %d\n",
+		       ykds_pgm_seq(st));
+	else
+		printf("Unconfigured\n");
 
 	if (ykp_configure_for(cfg, st))
 		goto err;
@@ -333,17 +344,6 @@ main(int argc, char **argv)
 
 		if (verbose)
 			printf(" success\n");
-
-		printf("Firmware version %d.%d.%d Touch level %d ",
-		       ykds_version_major(st),
-		       ykds_version_minor(st),
-		       ykds_version_build(st),
-		       ykds_touch_level(st));
-		if (ykds_pgm_seq(st))
-			printf("Program sequence %d\n",
-			       ykds_pgm_seq(st));
-		else
-			printf("Unconfigured\n");
 
 		ykp_write_config(cfg, writer, stdout);
 	}
