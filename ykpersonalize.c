@@ -36,7 +36,6 @@
 #include <errno.h>
 
 #include <ykpers.h>
-#include <ykstatus.h>
 
 const char *usage =
 "Usage: ykpersonalize [options]\n"
@@ -120,6 +119,25 @@ main(int argc, char **argv)
 	/* Options */
 	char *salt = NULL;
 
+	ykp_errno = 0;
+	yk_errno = 0;
+
+	/* Assume the worst */
+	error = true;
+
+	if (!yk_init())
+		goto err;
+
+	if (!(yk = yk_open_first_key()))
+		goto err;
+
+	if (!yk_get_status(yk, st)) {
+		goto err;
+	}
+
+	if (ykp_configure_for(cfg, st))
+		goto err;
+
 	while((c = getopt(argc, argv, optstring)) != -1) {
 		switch (c) {
 		case 'i':
@@ -144,7 +162,8 @@ main(int argc, char **argv)
 					fprintf(stderr,
 						"Invalid modhex fixed string: %s\n",
 						fixed);
-					exit(1);
+					exit_code = 1;
+					goto err;
 				}
 				yubikey_modhex_decode (fixedbin, fixed,
 						       fixedlen);
@@ -159,7 +178,8 @@ main(int argc, char **argv)
 					fprintf(stderr,
 						"Invalid hex fixed string: %s\n",
 						fixed);
-					exit(1);
+					exit_code = 1;
+					goto err;
 				}
 				yubikey_hex_decode (fixedbin, fixed, fixedlen);
 				ykp_set_fixed(cfg, fixedbin, fixedlen / 2);
@@ -173,7 +193,8 @@ main(int argc, char **argv)
 					fprintf(stderr,
 						"Invalid hex uid string: %s\n",
 						uid);
-					exit(1);
+					exit_code = 1;
+					goto err;
 				}
 				yubikey_hex_decode (uidbin, uid, uidlen);
 				ykp_set_uid(cfg, uidbin, uidlen / 2);
@@ -230,7 +251,8 @@ main(int argc, char **argv)
 				fprintf(stderr, "Unknown option '%s'\n",
 					optarg);
 				fprintf(stderr, usage);
-				exit(1);
+				exit_code = 1;
+				goto err;
 			}
 			break;
 		case 'v':
@@ -239,8 +261,8 @@ main(int argc, char **argv)
 		case 'h':
 		default:
 			fprintf(stderr, usage);
-			exit(0);
-			break;
+			exit_code = 0;
+			goto err;
 		}
 	}
 
@@ -254,7 +276,8 @@ main(int argc, char **argv)
 				"Couldn't open %s for reading: %s\n",
 				infname,
 				strerror(errno));
-			exit(1);
+			exit_code = 1;
+			goto err;
 		}
 	}
 
@@ -272,83 +295,63 @@ main(int argc, char **argv)
 		}
 	}
 
-	/* Using a do-while loop that never loops provides a practical
-	   way to bail out on error without using goto... */
-	do {
-		/* Assume the worst */
-		error = true;
-
-		exit_code = 0;
-		ykp_errno = 0;
-		yk_errno = 0;
-
-		if (inf) {
-			if (!ykp_read_config(cfg, reader, inf))
-				break;
-		} else if (aesviahash) {
-			if (ykp_AES_key_from_hex(cfg, aeshash)) {
-				fprintf(stderr, "Bad AES key: %s\n", aeshash);
-				fflush(stderr);
-				break;
-			}
-		} else {
-			char passphrasebuf[256]; size_t passphraselen;
-			fprintf(stderr, "Passphrase to create AES key: ");
+	if (inf) {
+		if (!ykp_read_config(cfg, reader, inf))
+			goto err;
+	} else if (aesviahash) {
+		if (ykp_AES_key_from_hex(cfg, aeshash)) {
+			fprintf(stderr, "Bad AES key: %s\n", aeshash);
 			fflush(stderr);
-			fgets(passphrasebuf, sizeof(passphrasebuf), stdin);
-			passphraselen = strlen(passphrasebuf);
-			if (passphrasebuf[passphraselen - 1] == '\n')
-				passphrasebuf[passphraselen - 1] == '\0';
-			if (!ykp_AES_key_from_passphrase(cfg,
-							 passphrasebuf, salt))
-				break;
+			goto err;
+		}
+	} else {
+		char passphrasebuf[256]; size_t passphraselen;
+		fprintf(stderr, "Passphrase to create AES key: ");
+		fflush(stderr);
+		fgets(passphrasebuf, sizeof(passphrasebuf), stdin);
+		passphraselen = strlen(passphrasebuf);
+		if (passphrasebuf[passphraselen - 1] == '\n')
+			passphrasebuf[passphraselen - 1] == '\0';
+		if (!ykp_AES_key_from_passphrase(cfg,
+						 passphrasebuf, salt))
+			goto err;
+	}
+
+	if (outf) {
+		if (!ykp_write_config(cfg, writer, outf))
+			goto err;
+	} else {
+		exit_code = 2;
+
+		if (verbose)
+			printf("Attempting to write configuration to the yubikey...");
+		if (!yk_write_config(yk, cfg, NULL)) {
+			if (verbose)
+				printf(" failure\n");
+			goto err;
 		}
 
-		if (outf) {
-			if (!ykp_write_config(cfg, writer, outf))
-				break;
-		} else {
-			/* Assume the worst */
-			exit_code = 2;
+		if (verbose)
+			printf(" success\n");
 
-			if (verbose)
-				printf("Attempting to write configuration to the yubikey...");
-			if (!yk_init())
-				break;
+		printf("Firmware version %d.%d.%d Touch level %d ",
+		       ykds_version_major(st),
+		       ykds_version_minor(st),
+		       ykds_version_build(st),
+		       ykds_touch_level(st));
+		if (ykds_pgm_seq(st))
+			printf("Program sequence %d\n",
+			       ykds_pgm_seq(st));
+		else
+			printf("Unconfigured\n");
 
-			if (!(yk = yk_open_first_key()))
-				break;
+		ykp_write_config(cfg, writer, stdout);
+	}
 
-			if (!yk_write_config(yk, cfg, NULL)) {
-				if (verbose)
-					printf(" failure\n");
-				break;
-			}
+	exit_code = 0;
+	error = false;
 
-			if (verbose)
-				printf(" success\n");
-
-			if (yk_get_status(yk, st)) {
-				printf("Firmware version %d.%d.%d Touch level %d ",
-				       ykds_version_major(st),
-				       ykds_version_minor(st),
-				       ykds_version_build(st),
-				       ykds_touch_level(st));
-				if (ykds_pgm_seq(st))
-					printf("Program sequence %d\n",
-					       ykds_pgm_seq(st));
-				else
-					printf("Unconfigured\n");
-			} else
-				break;
-
-			ykp_write_config(cfg, writer, stdout);
-		}
-
-		exit_code = 0;
-		error = false;
-	} while(false);
-
+err:
 	if (error) {
 		report_yk_error();
 	}
