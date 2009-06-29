@@ -33,39 +33,46 @@
 
 #include <stddef.h>
 #include <stdbool.h>
+#include <ykstatus.h>
 
-#include <ykcore.h>
+typedef struct ykp_config_t YKP_CONFIG;
 
-YK_CONFIG *ykp_create_config(void);
-int ykp_free_config(YK_CONFIG *cfg);
+/* This only works with Yubikey 1 unless it's fed with a YK_STATUS using
+   ykp_configure_for(). */
+YKP_CONFIG *ykp_create_config(void);
+int ykp_free_config(YKP_CONFIG *cfg);
 
-int ykp_AES_key_from_hex(YK_CONFIG *cfg, const char *hexkey);
-int ykp_AES_key_from_passphrase(YK_CONFIG *cfg, const char *passphrase,
+/* This can be used to tell what Yubikey version we're working with.  If
+   this isn't used, Yubikey 1 only will be assumed. */
+int ykp_configure_for(YKP_CONFIG *cfg, YK_STATUS *st);
+
+int ykp_AES_key_from_hex(YKP_CONFIG *cfg, const char *hexkey);
+int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 				const char *salt);
 
-int ykp_set_access_code(YK_CONFIG *cfg, unsigned char *access_code, size_t len);
-int ykp_set_fixed(YK_CONFIG *cfg, unsigned char *fixed, size_t len);
-int ykp_set_uid(YK_CONFIG *cfg, unsigned char *uid, size_t len);
+int ykp_set_access_code(YKP_CONFIG *cfg, unsigned char *access_code, size_t len);
+int ykp_set_fixed(YKP_CONFIG *cfg, unsigned char *fixed, size_t len);
+int ykp_set_uid(YKP_CONFIG *cfg, unsigned char *uid, size_t len);
 
-int ykp_set_tktflag_TAB_FIRST(YK_CONFIG *cfg, bool state);
-int ykp_set_tktflag_APPEND_TAB1(YK_CONFIG *cfg, bool state);
-int ykp_set_tktflag_APPEND_TAB2(YK_CONFIG *cfg, bool state);
-int ykp_set_tktflag_APPEND_DELAY1(YK_CONFIG *cfg, bool state);
-int ykp_set_tktflag_APPEND_DELAY2(YK_CONFIG *cfg, bool state);
-int ykp_set_tktflag_APPEND_CR(YK_CONFIG *cfg, bool state);
+int ykp_set_tktflag_TAB_FIRST(YKP_CONFIG *cfg, bool state);
+int ykp_set_tktflag_APPEND_TAB1(YKP_CONFIG *cfg, bool state);
+int ykp_set_tktflag_APPEND_TAB2(YKP_CONFIG *cfg, bool state);
+int ykp_set_tktflag_APPEND_DELAY1(YKP_CONFIG *cfg, bool state);
+int ykp_set_tktflag_APPEND_DELAY2(YKP_CONFIG *cfg, bool state);
+int ykp_set_tktflag_APPEND_CR(YKP_CONFIG *cfg, bool state);
 
-int ykp_set_cfgflag_SEND_REF(YK_CONFIG *cfg, bool state);
-int ykp_set_cfgflag_TICKET_FIRST(YK_CONFIG *cfg, bool state);
-int ykp_set_cfgflag_PACING_10MS(YK_CONFIG *cfg, bool state);
-int ykp_set_cfgflag_PACING_20MS(YK_CONFIG *cfg, bool state);
-int ykp_set_cfgflag_ALLOW_HIDTRIG(YK_CONFIG *cfg, bool state);
-int ykp_set_cfgflag_STATIC_TICKET(YK_CONFIG *cfg, bool state);
+int ykp_set_cfgflag_SEND_REF(YKP_CONFIG *cfg, bool state);
+int ykp_set_cfgflag_TICKET_FIRST(YKP_CONFIG *cfg, bool state);
+int ykp_set_cfgflag_PACING_10MS(YKP_CONFIG *cfg, bool state);
+int ykp_set_cfgflag_PACING_20MS(YKP_CONFIG *cfg, bool state);
+int ykp_set_cfgflag_ALLOW_HIDTRIG(YKP_CONFIG *cfg, bool state);
+int ykp_set_cfgflag_STATIC_TICKET(YKP_CONFIG *cfg, bool state);
 
-int ykp_write_config(const YK_CONFIG *cfg,
+int ykp_write_config(const YKP_CONFIG *cfg,
 		     int (*writer)(const char *buf, size_t count,
 				   void *userdata),
 		     void *userdata);
-int ykp_read_config(YK_CONFIG *cfg,
+int ykp_read_config(YKP_CONFIG *cfg,
 		    int (*reader)(char *buf, size_t count,
 				  void *userdata),
 		    void *userdata);
@@ -76,5 +83,6 @@ const char *ykp_strerror(int errnum);
 
 #define YKP_ENOTYETIMPL	0x01
 #define YKP_ENOCFG	0x02
+#define YKP_EYUBIKEYVER	0x03
 
 #endif	// __YKPERS_H_INCLUDED__

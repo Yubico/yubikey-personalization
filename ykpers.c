@@ -40,7 +40,12 @@
 
 #include <yubikey.h>
 
+struct ykp_config_t {
+	unsigned int yk_major_version;
+	unsigned int yk_minor_version;
 
+	YK_CONFIG ykcore_config;
+};
 
 static const YK_CONFIG default_config = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* fixed */
@@ -55,27 +60,36 @@ static const YK_CONFIG default_config = {
 	0			/* crc */
 };
 
-YK_CONFIG *ykp_create_config(void)
+YKP_CONFIG *ykp_create_config(void)
 {
-	YK_CONFIG *cfg = malloc(sizeof(YK_CONFIG));
+	YKP_CONFIG *cfg = malloc(sizeof(YKP_CONFIG));
 	if (cfg) {
-		memcpy(cfg, &default_config,
+		memcpy(&cfg->ykcore_config, &default_config,
 		       sizeof(default_config));
 		return cfg;
 	}
 	return 0;
 }
 
-int ykp_free_config(YK_CONFIG *cfg)
+int ykp_free_config(YKP_CONFIG *cfg)
 {
 	if (cfg) {
 		free(cfg);
 		return 1;
 	}
+	cfg->yk_major_version = 1;
+	cfg->yk_minor_version = 3;
 	return 0;
 }
 
-int ykp_AES_key_from_hex(YK_CONFIG *cfg, const char *hexkey) {
+int ykp_configure_for(YKP_CONFIG *cfg, YK_STATUS *st)
+{
+	cfg->yk_major_version = st->versionMajor;
+	cfg->yk_major_version = st->versionMinor;
+	return 0;
+}
+
+int ykp_AES_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
 	char aesbin[256];
 	unsigned long int aeslong;
 
@@ -95,12 +109,12 @@ int ykp_AES_key_from_hex(YK_CONFIG *cfg, const char *hexkey) {
 	}
 
 	yubikey_hex_decode(aesbin, hexkey, sizeof(aesbin));
-	memcpy(cfg->key, aesbin, sizeof(cfg->key));
+	memcpy(cfg->ykcore_config.key, aesbin, sizeof(cfg->ykcore_config.key));
 
 	return 0;
 }
 
-int ykp_AES_key_from_passphrase(YK_CONFIG *cfg, const char *passphrase,
+int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 				const char *salt)
 {
 	if (cfg) {
@@ -128,7 +142,7 @@ int ykp_AES_key_from_passphrase(YK_CONFIG *cfg, const char *passphrase,
 					size_t read_bytes = 0;
 
 					while (read_bytes < sizeof(_salt)) {
-						size_t n = fread(&cfg->key[read_bytes],
+						size_t n = fread(&cfg->ykcore_config.key[read_bytes],
 								 1, KEY_SIZE - read_bytes,
 								 random_file);
 						read_bytes += n;
@@ -160,23 +174,40 @@ int ykp_AES_key_from_passphrase(YK_CONFIG *cfg, const char *passphrase,
 		return yk_pbkdf2(passphrase,
 				 _salt, _salt_len,
 				 1024,
-				 cfg->key, sizeof(cfg->key),
+				 cfg->ykcore_config.key, sizeof(cfg->ykcore_config.key),
 				 &yk_hmac_sha1);
 	}
 	return 0;
 }
 
-#define def_set_charfield(fnname,fieldname,size,extra)		\
-int ykp_set_ ## fnname(YK_CONFIG *cfg, unsigned char *input, size_t len)	\
+static bool vcheck_all(YKP_CONFIG *cfg)
+{
+	return true;
+}
+static bool vcheck_v1(YKP_CONFIG *cfg)
+{
+	return cfg->yk_major_version == 1;
+}
+static bool vcheck_no_v1(YKP_CONFIG *cfg)
+{
+	return cfg->yk_major_version > 1;
+}
+
+#define def_set_charfield(fnname,fieldname,size,extra,vcheck)	\
+int ykp_set_ ## fnname(YKP_CONFIG *cfg, unsigned char *input, size_t len)	\
 {								\
 	if (cfg) {						\
 		size_t max_chars = len;				\
 								\
+		if (!vcheck(cfg)) {				\
+			ykp_errno = YKP_EYUBIKEYVER;		\
+			return 0;				\
+		}						\
 		if (max_chars > (size))				\
 			max_chars = (size);			\
 								\
-		memcpy(cfg->fieldname, (input), max_chars);	\
-		memset(cfg->fieldname + max_chars, 0,		\
+		memcpy(cfg->ykcore_config.fieldname, (input), max_chars);	\
+		memset(cfg->ykcore_config.fieldname + max_chars, 0,		\
 		       (size) - max_chars);			\
 		extra;						\
 								\
@@ -186,51 +217,68 @@ int ykp_set_ ## fnname(YK_CONFIG *cfg, unsigned char *input, size_t len)	\
 	return 0;						\
 }
 
-def_set_charfield(access_code,accCode,ACC_CODE_SIZE,)
-def_set_charfield(fixed,fixed,FIXED_SIZE,cfg->fixedSize = max_chars)
-def_set_charfield(uid,uid,UID_SIZE,)
+def_set_charfield(access_code,accCode,ACC_CODE_SIZE,,vcheck_all)
+def_set_charfield(fixed,fixed,FIXED_SIZE,cfg->ykcore_config.fixedSize = max_chars,vcheck_all)
+def_set_charfield(uid,uid,UID_SIZE,,vcheck_all)
 
-#define def_set_tktflag(type)					\
-int ykp_set_tktflag_ ## type(YK_CONFIG *cfg, bool state)		\
+#define def_set_tktflag(type,vcheck)				\
+int ykp_set_tktflag_ ## type(YKP_CONFIG *cfg, bool state)	\
 {								\
 	if (cfg) {						\
+		if (!vcheck(cfg)) {				\
+			ykp_errno = YKP_EYUBIKEYVER;		\
+			return 0;				\
+		}						\
 		if (state)					\
-			cfg->tktFlags |= TKTFLAG_ ## type;	\
+			cfg->ykcore_config.tktFlags |= TKTFLAG_ ## type;	\
 		else						\
-			cfg->tktFlags &= ~TKTFLAG_ ## type;	\
+			cfg->ykcore_config.tktFlags &= ~TKTFLAG_ ## type;	\
 		return 1;					\
 	}							\
 	ykp_errno = YKP_ENOCFG;					\
 	return 0;						\
 }
 
-#define def_set_cfgflag(type)					\
-int ykp_set_cfgflag_ ## type(YK_CONFIG *cfg, bool state)		\
+#define def_set_cfgflag(type,vcheck)				\
+int ykp_set_cfgflag_ ## type(YKP_CONFIG *cfg, bool state)		\
 {								\
 	if (cfg) {						\
+		if (!vcheck(cfg)) {				\
+			ykp_errno = YKP_EYUBIKEYVER;		\
+			return 0;				\
+		}						\
 		if (state)					\
-			cfg->cfgFlags |= CFGFLAG_ ## type;	\
+			cfg->ykcore_config.cfgFlags |= CFGFLAG_ ## type;	\
 		else						\
-			cfg->cfgFlags &= ~CFGFLAG_ ## type;	\
+			cfg->ykcore_config.cfgFlags &= ~CFGFLAG_ ## type;	\
 		return 1;					\
 	}							\
 	ykp_errno = YKP_ENOCFG;					\
 	return 0;						\
 }
 
-def_set_tktflag(TAB_FIRST)
-def_set_tktflag(APPEND_TAB1)
-def_set_tktflag(APPEND_TAB2)
-def_set_tktflag(APPEND_DELAY1)
-def_set_tktflag(APPEND_DELAY2)
-def_set_tktflag(APPEND_CR)
+def_set_tktflag(TAB_FIRST,vcheck_all)
+def_set_tktflag(APPEND_TAB1,vcheck_all)
+def_set_tktflag(APPEND_TAB2,vcheck_all)
+def_set_tktflag(APPEND_DELAY1,vcheck_all)
+def_set_tktflag(APPEND_DELAY2,vcheck_all)
+def_set_tktflag(APPEND_CR,vcheck_all)
+#if 0
+def_set_tktflag(PROTECT_CFG2,vcheck_no_v1)
+#endif
 
-def_set_cfgflag(SEND_REF)
-def_set_cfgflag(TICKET_FIRST)
-def_set_cfgflag(PACING_10MS)
-def_set_cfgflag(PACING_20MS)
-def_set_cfgflag(ALLOW_HIDTRIG)
-def_set_cfgflag(STATIC_TICKET)
+def_set_cfgflag(SEND_REF,vcheck_all)
+def_set_cfgflag(TICKET_FIRST,vcheck_v1)
+def_set_cfgflag(PACING_10MS,vcheck_all)
+def_set_cfgflag(PACING_20MS,vcheck_all)
+def_set_cfgflag(ALLOW_HIDTRIG,vcheck_v1)
+def_set_cfgflag(STATIC_TICKET,vcheck_all)
+#if 0
+def_set_cfgflag(SHORT_TICKET,vcheck_no_v1)
+def_set_cfgflag(STRONG_PW1,vcheck_no_v1)
+def_set_cfgflag(STRONG_PW2,vcheck_no_v1)
+def_set_cfgflag(MAN_UPDATE,vcheck_no_v1)
+#endif
 
 
 const char str_key_value_separator[] = ":";
@@ -268,7 +316,7 @@ struct map_st config_flags_map[] = {
 	{ 0, "" }
 };
 
-int ykp_write_config(const YK_CONFIG *cfg,
+int ykp_write_config(const YKP_CONFIG *cfg,
 		     int (*writer)(const char *buf, size_t count,
 				   void *userdata),
 		     void *userdata)
@@ -281,7 +329,7 @@ int ykp_write_config(const YK_CONFIG *cfg,
 		writer(str_key_value_separator,
 		       strlen(str_key_value_separator),
 		       userdata);
-		yubikey_modhex_encode(buffer, cfg->fixed, cfg->fixedSize);
+		yubikey_modhex_encode(buffer, cfg->ykcore_config.fixed, cfg->ykcore_config.fixedSize);
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
@@ -289,7 +337,7 @@ int ykp_write_config(const YK_CONFIG *cfg,
 		writer(str_key_value_separator,
 		       strlen(str_key_value_separator),
 		       userdata);
-		yubikey_modhex_encode(buffer, cfg->uid, UID_SIZE);
+		yubikey_modhex_encode(buffer, cfg->ykcore_config.uid, UID_SIZE);
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
@@ -297,7 +345,7 @@ int ykp_write_config(const YK_CONFIG *cfg,
 		writer(str_key_value_separator,
 		       strlen(str_key_value_separator),
 		       userdata);
-		yubikey_modhex_encode(buffer, cfg->key, KEY_SIZE);
+		yubikey_modhex_encode(buffer, cfg->ykcore_config.key, KEY_SIZE);
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
@@ -305,13 +353,13 @@ int ykp_write_config(const YK_CONFIG *cfg,
 		writer(str_key_value_separator,
 		       strlen(str_key_value_separator),
 		       userdata);
-		yubikey_modhex_encode(buffer, cfg->accCode, ACC_CODE_SIZE);
+		yubikey_modhex_encode(buffer, cfg->ykcore_config.accCode, ACC_CODE_SIZE);
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
 		buffer[0] = '\0';
 		for (p = ticket_flags_map; p->flag; p++) {
-			if (cfg->tktFlags & p->flag) {
+			if (cfg->ykcore_config.tktFlags & p->flag) {
 				if (*buffer) {
 					strcat(buffer, str_flags_separator);
 					strcat(buffer, p->flag_text);
@@ -329,7 +377,7 @@ int ykp_write_config(const YK_CONFIG *cfg,
 
 		buffer[0] = '\0';
 		for (p = config_flags_map; p->flag; p++) {
-			if (cfg->cfgFlags & p->flag) {
+			if (cfg->ykcore_config.cfgFlags & p->flag) {
 				if (*buffer) {
 					strcat(buffer, str_flags_separator);
 					strcat(buffer, p->flag_text);
@@ -349,7 +397,7 @@ int ykp_write_config(const YK_CONFIG *cfg,
 	}
 	return 0;
 }
-int ykp_read_config(YK_CONFIG *cfg,
+int ykp_read_config(YKP_CONFIG *cfg,
 		    int (*reader)(char *buf, size_t count,
 				  void *userdata),
 		    void *userdata)
@@ -383,6 +431,7 @@ static const char *errtext[] = {
 	"",
 	"not yet implemented",
 	"no configuration structure given"
+	"option not available for this Yubikey version"
 };
 const char *ykp_strerror(int errnum)
 {
