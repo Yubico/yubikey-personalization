@@ -68,8 +68,9 @@ struct config_st {
 	unsigned short crc;		/* CRC16 value of all fields */
 };
 
-/* Ticket flags */
+/* Ticket flags **************************************************************/
 
+/* Yubikey 1 and newer */
 #define	TKTFLAG_TAB_FIRST	0x01	/* Send TAB before first part */
 #define	TKTFLAG_APPEND_TAB1	0x02	/* Send TAB after first part */
 #define	TKTFLAG_APPEND_TAB2	0x04	/* Send TAB after second part */
@@ -77,17 +78,41 @@ struct config_st {
 #define	TKTFLAG_APPEND_DELAY2	0x10	/* Add 0.5s delay after second part */
 #define	TKTFLAG_APPEND_CR	0x20	/* Append CR as final character */
 
-/* Configuration flags */
+/* Yubikey 2 only */
+#if 0 /* NOT YET VERIFIED */
+#define TKTFLAG_PROTECT_CFG2	0x40	/* Protect configuration #2 */
+#endif
 
+/* Configuration flags *******************************************************/
+
+/* Yubikey 1 and newer */
 #define CFGFLAG_SEND_REF	0x01	/* Send reference string (0..F) before data */
-#define	CFGFLAG_TICKET_FIRST	0x02	/* Send ticket first (default is fixed part) */
 #define CFGFLAG_PACING_10MS	0x04	/* Add 10ms intra-key pacing */
 #define CFGFLAG_PACING_20MS	0x08	/* Add 20ms intra-key pacing */
-#define CFGFLAG_ALLOW_HIDTRIG	0x10	/* Allow trigger through HID/keyboard */
 #define CFGFLAG_STATIC_TICKET	0x20	/* Static ticket generation */
+
+/* Yubikey 1 only */
+#define	CFGFLAG_TICKET_FIRST	0x02	/* Send ticket first (default is fixed part) */
+#define CFGFLAG_ALLOW_HIDTRIG	0x10	/* Allow trigger through HID/keyboard */
+
+/* Yubikey 2 only */
+#if 0 /* NOT YET VERIFIED */
+#define CFGFLAG_SHORT_TICKET	0x02	/* Truncate the OTP to 16 bytes in
+					   static mode.  In non-static mode,
+					   this should enable extended scan
+					   code mode... */
+#define CFGFLAG_STRONG_PW1	0x10	/* Enable generation of mixed case
+					   passwords. */
+#define CFGFLAG_STRONG_PW2	0x40	/* Enable generation of mixed digits
+					   and alpha characters. */
+#define CFGFLAG_MAN_UPDATE	0x40	/* Enable manual update of the static
+					   password. */
+#endif
 
 /* Navigation */
 
+/* NOTE: Navigation isn't available since Yubikey 1.3.5 and is strongly
+   discouraged. */
 #define	MAX_URL			48
 
 struct nav_st {
