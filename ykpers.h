@@ -60,6 +60,7 @@ int ykp_set_tktflag_APPEND_TAB2(YKP_CONFIG *cfg, bool state);
 int ykp_set_tktflag_APPEND_DELAY1(YKP_CONFIG *cfg, bool state);
 int ykp_set_tktflag_APPEND_DELAY2(YKP_CONFIG *cfg, bool state);
 int ykp_set_tktflag_APPEND_CR(YKP_CONFIG *cfg, bool state);
+int ykp_set_tktflag_PROTECT_CFG2(YKP_CONFIG *cfg, bool state);
 
 int ykp_set_cfgflag_SEND_REF(YKP_CONFIG *cfg, bool state);
 int ykp_set_cfgflag_TICKET_FIRST(YKP_CONFIG *cfg, bool state);
@@ -67,6 +68,10 @@ int ykp_set_cfgflag_PACING_10MS(YKP_CONFIG *cfg, bool state);
 int ykp_set_cfgflag_PACING_20MS(YKP_CONFIG *cfg, bool state);
 int ykp_set_cfgflag_ALLOW_HIDTRIG(YKP_CONFIG *cfg, bool state);
 int ykp_set_cfgflag_STATIC_TICKET(YKP_CONFIG *cfg, bool state);
+int ykp_set_cfgflag_SHORT_TICKET(YKP_CONFIG *cfg, bool state);
+int ykp_set_cfgflag_STRONG_PW1(YKP_CONFIG *cfg, bool state);
+int ykp_set_cfgflag_STRONG_PW2(YKP_CONFIG *cfg, bool state);
+int ykp_set_cfgflag_MAN_UPDATE(YKP_CONFIG *cfg, bool state);
 
 int ykp_write_config(const YKP_CONFIG *cfg,
 		     int (*writer)(const char *buf, size_t count,
