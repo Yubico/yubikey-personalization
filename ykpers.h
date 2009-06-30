@@ -77,6 +77,8 @@ int ykp_read_config(YKP_CONFIG *cfg,
 				  void *userdata),
 		    void *userdata);
 
+YK_CONFIG *ykp_core_config(YKP_CONFIG *cfg);
+
 extern int * const _ykp_errno_location(void);
 #define ykp_errno (*_ykp_errno_location())
 const char *ykp_strerror(int errnum);

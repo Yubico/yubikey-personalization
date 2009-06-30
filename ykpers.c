@@ -406,6 +406,14 @@ int ykp_read_config(YKP_CONFIG *cfg,
 	return 0;
 }
 
+YK_CONFIG *ykp_core_config(YKP_CONFIG *cfg)
+{
+	if (cfg)
+		return &cfg->ykcore_config;
+	ykp_errno = YKP_ENOCFG;
+	return 0;
+}
+
 int * const _ykp_errno_location(void)
 {
 	static int tsd_init = 0;
