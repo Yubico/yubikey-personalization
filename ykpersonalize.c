@@ -44,6 +44,9 @@ const char *usage =
 "-ifile    read configuration from file.\n"
 "          (if file is -, read from stdin)\n"
 "-axxx..   A 32 char hex value (not modhex) of a fixed AES key to use\n"
+#if 0
+"-cxxx..   A 12 char modhex value to use as access code for programming\n"
+#endif
 "-ooption  change configuration option.  Possible option arguments are:\n"
 "          salt=ssssssss       Salt to be used for key generation.  If\n"
 "                              none is given, a unique random one will be\n"
@@ -52,8 +55,12 @@ const char *usage =
 "                              This is 0-16 characters long.\n"
 "          hexfixed=fffffff    Fixed part, but encoded in hex.\n"
 "                              This is 0-16 characters long.\n"
-"          uid=uuuuuu          The uid part of the generated ticket.  Can\n"
-"                              be up to 6 characters long.\n"
+"          uid=uuuuuu          The uid part of the generated ticket.\n"
+"                              MUST be 12 characters long.\n"
+#if 0
+"          access=fffffffffff  New modhex access code to set.\n"
+"                              MUST be 12 characters long.\n"
+#endif
 "          [-]tab-first        set/clear the TAB_FIRST ticket flag.\n"
 "          [-]append-tab1      set/clear the APPEND_TAB1 ticket flag.\n"
 "          [-]append-tab2      set/clear the APPEND_TAB1 ticket flag.\n"
@@ -70,7 +77,7 @@ const char *usage =
 "-v        verbose\n"
 "-h        help (this text)\n"
 ;
-const char *optstring = "a:hi:o:s:v";
+const char *optstring = "a:c:hi:o:s:v";
 
 static int reader(char *buf, size_t count, void *stream)
 {
@@ -104,6 +111,8 @@ main(int argc, char **argv)
 	FILE *outf = NULL; const char *outfname = NULL;
 	bool verbose = false;
 	bool aesviahash = false; const char *aeshash = NULL;
+	bool use_access_code = false, new_access_code = false;
+	unsigned char access_code[256];
 	YK_KEY *yk = NULL;
 	YKP_CONFIG *cfg = ykp_create_config();
 	YK_STATUS *st = ykds_alloc();
@@ -161,6 +170,24 @@ main(int argc, char **argv)
 			aesviahash = true;
 			aeshash = optarg;
 			break;
+#if 0
+		case 'c':
+			if (strlen(optarg) != 12) {
+				fprintf(stderr,
+					"Invalid access code string: %s\n",
+					optarg);
+				exit_code = 1;
+				goto err;
+			}
+			yubikey_modhex_decode(access_code,
+					      optarg, strlen(optarg));
+			if (!new_access_code)
+				ykp_set_access_code(cfg,
+						    access_code,
+						    strlen(optarg) / 2);
+			use_access_code = true;
+			break;
+#endif
 		case 'o':
 			if (strncmp(optarg, "salt=", 5) == 0)
 				salt = strdup(optarg+5);
@@ -179,6 +206,7 @@ main(int argc, char **argv)
 				yubikey_modhex_decode (fixedbin, fixed,
 						       fixedlen);
 				ykp_set_fixed(cfg, fixedbin, fixedlen / 2);
+				new_access_code = true;
 			}
 			else if (strncmp(optarg, "hexfixed=", 9) == 0) {
 				const char *fixed = optarg+9;
@@ -210,6 +238,23 @@ main(int argc, char **argv)
 				yubikey_hex_decode (uidbin, uid, uidlen);
 				ykp_set_uid(cfg, uidbin, uidlen / 2);
 			}
+#if 0
+			else if (strncmp(optarg, "access=", 7) == 0) {
+				const char *acc = optarg+7;
+				size_t acclen = strlen (acc);
+				char accbin[256];
+				if (acclen % 2 || acclen != 12)
+				{
+					fprintf(stderr,
+						"Invalid modhex access code string: %s\n",
+						acc);
+					exit_code = 1;
+					goto err;
+				}
+				yubikey_modhex_decode (accbin, acc, acclen);
+				ykp_set_access_code(cfg, accbin, acclen / 2);
+			}
+#endif
 			else if (strcmp(optarg, "tab-first") == 0)
 				ykp_set_tktflag_TAB_FIRST(cfg, true);
 			else if (strcmp(optarg, "-tab-first") == 0)
@@ -336,7 +381,8 @@ main(int argc, char **argv)
 
 		if (verbose)
 			printf("Attempting to write configuration to the yubikey...");
-		if (!yk_write_config(yk, cfg, NULL)) {
+		if (!yk_write_config(yk, ykp_core_config(cfg),
+				     use_access_code ? access_code : NULL)) {
 			if (verbose)
 				printf(" failure\n");
 			goto err;
