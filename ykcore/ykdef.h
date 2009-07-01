@@ -7,6 +7,7 @@
 **		06-06-03	/ 0.9.0		/ J E	/ Main				**
 **		06-08-25	/ 1.0.0		/ J E	/ Rewritten for final spec	**
 **		08-06-03	/ 1.3.0		/ J E	/ Added static OTP feature	**
+**		09-06-02	/ 2.0.0		/ J E	/ Added version 2 flags         **
 **											**
 *****************************************************************************************/
 
@@ -25,8 +26,9 @@
 
 /* Slot entries */
 
-#define	SLOT_CONFIG		1
-#define	SLOT_NAV		2
+#define	SLOT_CONFIG		1   /* First (default / V1) configuration */
+#define	SLOT_NAV		2   /* V1 only */
+#define SLOT_CONFIG2		3   /* Second (V2) configuration */
 
 #define	SLOT_DATA_SIZE		64
 
@@ -79,9 +81,7 @@ struct config_st {
 #define	TKTFLAG_APPEND_CR	0x20	/* Append CR as final character */
 
 /* Yubikey 2 only */
-#if 0 /* NOT YET VERIFIED */
-#define TKTFLAG_PROTECT_CFG2	0x40	/* Protect configuration #2 */
-#endif
+#define TKTFLAG_PROTECT_CFG2	0x80	/* Block update of config 2 unless config 2 is configured and has this bit set */
 
 /* Configuration flags *******************************************************/
 
@@ -96,18 +96,10 @@ struct config_st {
 #define CFGFLAG_ALLOW_HIDTRIG	0x10	/* Allow trigger through HID/keyboard */
 
 /* Yubikey 2 only */
-#if 0 /* NOT YET VERIFIED */
-#define CFGFLAG_SHORT_TICKET	0x02	/* Truncate the OTP to 16 bytes in
-					   static mode.  In non-static mode,
-					   this should enable extended scan
-					   code mode... */
-#define CFGFLAG_STRONG_PW1	0x10	/* Enable generation of mixed case
-					   passwords. */
-#define CFGFLAG_STRONG_PW2	0x40	/* Enable generation of mixed digits
-					   and alpha characters. */
-#define CFGFLAG_MAN_UPDATE	0x40	/* Enable manual update of the static
-					   password. */
-#endif
+#define CFGFLAG_SHORT_TICKET	0x02	/* Send truncated ticket (half length) */
+#define CFGFLAG_STRONG_PW1	0x10	/* Strong password policy flag #1 (mixed case) */
+#define CFGFLAG_STRONG_PW2	0x40	/* Strong password policy flag #2 (subtitute 0..7 to digits) */
+#define CFGFLAG_MAN_UPDATE	0x80	/* Allow manual (local) update of static OTP */
 
 /* Navigation */
 
