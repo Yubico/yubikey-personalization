@@ -17,3 +17,6 @@ Added ykp_AES_key_from_hex and ykpersonalize -a parameter.
 
 Christer Kaivo-oja <christer.kaivooja@gmail.com>
 Mac OS X port.
+
+Tollef Fog Heen <tfheen@err.no>
+Support for libusb-1.0 backend.

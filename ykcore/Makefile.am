@@ -28,7 +28,12 @@
 noinst_LTLIBRARIES = libykcore.la
 libykcore_la_SOURCES = ykdef.h ykcore.h ykcore_lcl.h ykcore_backend.h	\
 	ykcore.c ykstatus.h ykstatus.c yktsd.h
-libykcore_la_LIBADD = $(LTLIBYUBIKEY) $(LTLIBUSB)
+libykcore_la_LIBADD = $(LTLIBYUBIKEY) $(LTLIBUSB) @LIBUSB_LIBS@
+
+if BACKEND_LIBUSB_1_0
+libykcore_la_SOURCES += ykcore_libusb-1.0.c
+AM_CFLAGS = @LIBUSB_CFLAGS@
+endif
 
 if BACKEND_LIBUSB
 libykcore_la_SOURCES += ykcore_libusb.c

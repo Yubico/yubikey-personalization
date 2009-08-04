@@ -62,7 +62,7 @@ AC_ARG_WITH([backend],
   [AS_HELP_STRING([--with-backend=ARG],
     [use specific backend; 'libusb' or 'osx'])])
 AC_MSG_CHECKING([for backend])
-if test x$with_backend != xosx && test x$with_backend != xlibusb; then
+if test x$with_backend != xosx && test x$with_backend != xlibusb && test x$with_backend != xlibusb-1.0; then
   AC_CANONICAL_HOST
   case "$host" in
     *-darwin*) with_backend=osx ;;
@@ -71,7 +71,12 @@ if test x$with_backend != xosx && test x$with_backend != xlibusb; then
 fi
 AC_MSG_RESULT([$with_backend])
 AM_CONDITIONAL([BACKEND_LIBUSB], test x$with_backend = xlibusb)
+AM_CONDITIONAL([BACKEND_LIBUSB_1_0], test x$with_backend = xlibusb-1.0)
 AM_CONDITIONAL([BACKEND_OSX], test x$with_backend = xosx)
+
+if test x$with_backend = xlibusb-1.0; then
+   PKG_CHECK_MODULES([LIBUSB], [libusb-1.0])
+fi
 
 if test x$with_backend = xlibusb; then
   AC_LIB_HAVE_LINKFLAGS(usb,, [#include <usb.h>], [usb_init()])
