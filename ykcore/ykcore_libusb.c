@@ -120,7 +120,7 @@ int _ykusb_read(void *dev, int report_type, int report_number,
 			rc = rc2;
 	}
 	if (rc >= 0)
-		return 1;
+		return rc;
 	yk_errno = YK_EUSBERR;
 	return 0;
 }
