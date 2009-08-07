@@ -51,7 +51,7 @@ CC="$PTHREAD_CC"
 AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
 AC_CANONICAL_HOST
-PKG_PROG_PKG_CONFIG()
+PKG_PROG_PKG_CONFIG
 
 AC_LIB_HAVE_LINKFLAGS(yubikey,,
   [#include <yubikey.h>],
@@ -75,8 +75,8 @@ if test "x$with_backend" = xcheck; then
        			   [with_backend=libusb-1.0],
 			   [with_backend=libusb])
   esac
+  AC_MSG_RESULT([$with_backend])
 fi
-AC_MSG_RESULT([$with_backend])
 AM_CONDITIONAL([BACKEND_LIBUSB], test x$with_backend = xlibusb)
 AM_CONDITIONAL([BACKEND_LIBUSB_1_0], test x$with_backend = xlibusb-1.0)
 AM_CONDITIONAL([BACKEND_OSX], test x$with_backend = xosx)
@@ -105,3 +105,13 @@ AC_CONFIG_FILES([
   ykcore/Makefile
 ])
 AC_OUTPUT
+
+AC_MSG_NOTICE([summary of build options:
+
+  version:          ${VERSION} shared $LT_CURRENT:$LT_REVISION:$LT_AGE
+  Host type:        ${host}
+  Install prefix:   ${prefix}
+  Compiler:         ${CC}
+  Library types:    Shared=${enable_shared}, Static=${enable_static}
+  USB backend:      ${with_backend}
+])
