@@ -1,6 +1,6 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 0.93 (unreleased)
+* Version 0.93 (released 2009-08-07)
 
 ** Support for libusb-1.0 through --with-backend=libusb-1.0.
 Thanks to Tollef Fog Heen.
