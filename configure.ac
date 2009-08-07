@@ -50,6 +50,8 @@ CC="$PTHREAD_CC"
 
 AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
+AC_CANONICAL_HOST
+PKG_PROG_PKG_CONFIG()
 
 AC_LIB_HAVE_LINKFLAGS(yubikey,,
   [#include <yubikey.h>],
@@ -60,13 +62,18 @@ fi
 
 AC_ARG_WITH([backend],
   [AS_HELP_STRING([--with-backend=ARG],
-    [use specific backend; 'libusb' or 'osx'])])
-AC_MSG_CHECKING([for backend])
-if test x$with_backend != xosx && test x$with_backend != xlibusb && test x$with_backend != xlibusb-1.0; then
-  AC_CANONICAL_HOST
-  case "$host" in
+    [use specific backend; 'libusb-1.0', 'libusb' or 'osx'])],
+    [],
+    [with_backend=check])
+
+if test "x$with_backend" = xcheck; then
+   with_backend_orig=check
+   AC_MSG_CHECKING([for backend])
+   case "$host" in
     *-darwin*) with_backend=osx ;;
-    *) with_backend=libusb ;;
+    *) PKG_CHECK_EXISTS([libusb-1.0], 
+       			   [with_backend=libusb-1.0],
+			   [with_backend=libusb])
   esac
 fi
 AC_MSG_RESULT([$with_backend])
@@ -74,14 +81,18 @@ AM_CONDITIONAL([BACKEND_LIBUSB], test x$with_backend = xlibusb)
 AM_CONDITIONAL([BACKEND_LIBUSB_1_0], test x$with_backend = xlibusb-1.0)
 AM_CONDITIONAL([BACKEND_OSX], test x$with_backend = xosx)
 
-if test x$with_backend = xlibusb-1.0; then
+if test "x$with_backend" = "xlibusb-1.0"; then
    PKG_CHECK_MODULES([LIBUSB], [libusb-1.0])
 fi
 
 if test x$with_backend = xlibusb; then
   AC_LIB_HAVE_LINKFLAGS(usb,, [#include <usb.h>], [usb_init()])
   if test "$ac_cv_libusb" != yes; then
-     AC_MSG_ERROR([libusb not found, please install usb.h and libusb.so])
+    if test "$with_backend_orig" = "check"; then
+     AC_MSG_ERROR([libusb-1.0 or libusb not found, please install one of them])
+    else
+      AC_MSG_ERROR([libusb not found, please install usb.h and libusb.so])
+    fi
   fi
 fi
 
