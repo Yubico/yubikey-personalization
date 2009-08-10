@@ -1,0 +1,124 @@
+.\" Copyright (C) 2009 Tollef Fog Heen <tfheen@err.no>
+.\" All rights reserved.
+.\" 
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions are
+.\" met:
+.\" 
+.\"     * Redistributions of source code must retain the above copyright
+.\"       notice, this list of conditions and the following disclaimer.
+.\" 
+.\"     * Redistributions in binary form must reproduce the above
+.\"       copyright notice, this list of conditions and the following
+.\"       disclaimer in the documentation and/or other materials provided
+.\"       with the distribution.
+.\" 
+.\" THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+.\" "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+.\" LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+.\" A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+.\" OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+.\" SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+.\" LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+.\" DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+.\" THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+.\" (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+.\" OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+.\" 
+.\" The following commands are required for all man pages.
+.de URL
+\\$2 \(laURL: \\$1 \(ra\\$3
+..
+.if \n[.g] .mso www.tmac
+.TH ykpersonalize "1" "August 2009" "yubikey-personalization"
+.SH NAME
+ykpersonalize - personalize Yubikey OTP tokens
+.SH SYNOPSIS
+.B ykpersonalize
+[\fI-sfile\fR] [\fI-ifile\fR] [\fI-axxx\fR] [\fI-ooption\fR] [\fI-v\fR] [\fI-h\fR]
+.\".SH DESCRIPTION
+.\" Add any additional description here
+.SH OPTIONS
+.PP
+Set the AES key, user ID and other settings in a Yubikey.
+.TP
+\fB\-s\fIfile\fR
+save configuration to file instead of key.
+(if file is -, send to stdout)
+.TP
+\fB\-i\fIfile\fR
+read configuration from file.
+(if file is -, read from stdin)
+.TP
+\fB\-a\fIxxx\fR
+A 32 char hex value (not modhex) of a fixed AES key to use.
+.TP
+\fB\-o\fIoption\fR
+change configuration option.  Possible option arguments are
+.RS
+.TP
+\fBsalt\fR=\fIssssssss\fR
+Salt to be used for key generation.
+If none is given, a unique random one will be generated.
+.TP
+\fBfixed\fR=\fIfffffffffff\fR
+The public modhex identity of key, 0-16 characters long.
+.TP
+\fBhexfixed\fR=\fIfffffff\fR
+Fixed part, but encoded in hex, 0-16 characters long.
+.TP
+\fBuid\fR=\fIuuuuuu\fR
+The uid part of the generated ticket.
+Must be 12 characters long.
+.TP
+[\-]\fBtab-first\fR
+Set/clear the TAB_FIRST ticket flag.
+.TP
+[\-]\fBappend-tab1\fR
+Set/clear the APPEND_TAB1 ticket flag.
+.TP
+[\-]\fBappend-tab2\fR
+Set/clear the APPEND_TAB2 ticket flag.
+.TP
+[\-]\fBappend-delay1\fR
+Set/clear the APPEND_DELAY1 ticket flag.
+.TP
+[\-]\fBappend-delay2\fR
+Set/clear the APPEND_DELAY2 ticket flag.
+.TP
+[\-]\fBappend-cr\fR
+Set/clear the APPEND_CR ticket flag.
+.TP
+[\-]\fBsend-ref\fR
+Set/clear the SEND_REF configuration flag.
+.TP
+[\-]\fBticket-first\fR
+Set/clear the TICKET_FIRST configuration flag, only available with Yubikey I
+.TP
+[\-]\fBpacing-10ms\fR
+Set/clear the PACING_10MS configuration flag.
+.TP
+[\-]\fBpacing-20ms\fR
+Set/clear the PACING_20MS configuration flag.
+.TP
+[\-]\fBallow-hidtrig\fR
+Set/clear the ALLOW_HIDTRIG configuration flag, only available with Yubikey I
+.TP
+[\-]\fBstatic-ticket\fR
+Set/clear the STATIC_TICKET configuration flag.
+.RE
+.TP
+\fB-v\fR
+Be more verbose
+.TP
+\fB-h\fR
+Help
+.SH BUGS
+Report ykpersonalize bugs in 
+.URL "http://code.google.com/p/yubikey-personalization/issues/list" "the issue tracker"
+.SH "SEE ALSO"
+The 
+.URL "http://code.google.com/p/yubikey-personalization/" "ykpersonalize home page"
+.br
+Yubikeys can be obtained from
+.URL "http://www.yubico.com/products/yubikey/" "Yubico" "."

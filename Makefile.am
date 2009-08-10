@@ -54,6 +54,8 @@ bin_PROGRAMS = ykpersonalize
 ykpersonalize_SOURCES = ykpersonalize.c
 ykpersonalize_LDADD = ./libykpers.la ./ykcore/libykcore.la
 
+man1_MANS = ykpersonalize.1
+
 # Self tests.
 
 AM_LDFLAGS = -no-install
