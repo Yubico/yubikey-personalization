@@ -1,6 +1,6 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 0.94 (unreleased)
+* Version 0.94 (released 2009-08-10)
 
 ** Improve error handling for libusb-1.0 backend.
 Thanks to Tollef Fog Heen.
