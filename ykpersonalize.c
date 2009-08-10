@@ -63,7 +63,7 @@ const char *usage =
 #endif
 "          [-]tab-first        set/clear the TAB_FIRST ticket flag.\n"
 "          [-]append-tab1      set/clear the APPEND_TAB1 ticket flag.\n"
-"          [-]append-tab2      set/clear the APPEND_TAB1 ticket flag.\n"
+"          [-]append-tab2      set/clear the APPEND_TAB2 ticket flag.\n"
 "          [-]append-delay1    set/clear the APPEND_DELAY1 ticket flag.\n"
 "          [-]append-delay2    set/clear the APPEND_DELAY2 ticket flag.\n"
 "          [-]append-cr        set/clear the APPEND_CR ticket flag.\n"
