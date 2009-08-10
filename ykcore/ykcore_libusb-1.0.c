@@ -186,7 +186,50 @@ int _ykusb_close_device(void *yk)
 
 const char *_ykusb_strerror()
 {
-	static char buf[512];
-	snprintf(buf, sizeof(buf), "%s %d", "NOT IMPLEMENTED", ykl_errno);
+	static char *buf;
+	switch (ykl_errno) {
+	case LIBUSB_SUCCESS:
+		buf = "Success (no error)";
+		break;
+	case LIBUSB_ERROR_IO:
+		buf = "Input/output error";
+		break;
+	case LIBUSB_ERROR_INVALID_PARAM:
+		buf = "Invalid parameter";
+		break;
+	case LIBUSB_ERROR_ACCESS:
+		buf = "Access denied (insufficient permissions)";
+		break;
+	case LIBUSB_ERROR_NO_DEVICE:
+		buf = "No such device (it may have been disconnected)";
+		break;
+	case LIBUSB_ERROR_NOT_FOUND:
+		buf = "Entity not found";
+		break;
+	case LIBUSB_ERROR_BUSY:
+		buf = "Resource busy";
+		break;
+	case LIBUSB_ERROR_TIMEOUT:
+		buf = "Operation timed out";
+		break;
+	case LIBUSB_ERROR_OVERFLOW:
+		buf = "Overflow";
+		break;
+	case LIBUSB_ERROR_PIPE:
+		buf = "Pipe error";
+		break;
+	case LIBUSB_ERROR_INTERRUPTED:
+		buf = "System call interrupted (perhaps due to signal)";
+		break;
+	case LIBUSB_ERROR_NO_MEM:
+		buf = "Insufficient memory";
+		break;
+	case LIBUSB_ERROR_NOT_SUPPORTED:
+		buf = "Operation not supported or unimplemented on this platform";
+		break;
+	case LIBUSB_ERROR_OTHER:
+		buf = "Other/unknown error";
+		break;
+	}
 	return buf;
 }
