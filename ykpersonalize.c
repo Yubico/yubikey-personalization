@@ -39,15 +39,15 @@
 
 const char *usage =
 "Usage: ykpersonalize [options]\n"
-"-sfile    save configuration to file instead of key.\n"
-"          (if file is -, send to stdout)\n"
-"-ifile    read configuration from file.\n"
-"          (if file is -, read from stdin)\n"
-"-axxx..   A 32 char hex value (not modhex) of a fixed AES key to use\n"
+"-sFILE    save configuration to FILE instead of key.\n"
+"          (if FILE is -, send to stdout)\n"
+"-iFILE    read configuration from FILE.\n"
+"          (if FILE is -, read from stdin)\n"
+"-aXXX..   A 32 char hex value (not modhex) of a fixed AES key to use\n"
 #if 0
-"-cxxx..   A 12 char modhex value to use as access code for programming\n"
+"-cXXX..   A 12 char modhex value to use as access code for programming\n"
 #endif
-"-ooption  change configuration option.  Possible option arguments are:\n"
+"-oOPTION  change configuration option.  Possible OPTION arguments are:\n"
 "          salt=ssssssss       Salt to be used for key generation.  If\n"
 "                              none is given, a unique random one will be\n"
 "                              generated.\n"
