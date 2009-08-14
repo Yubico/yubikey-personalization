@@ -65,7 +65,8 @@ YK_KEY *yk_open_first_key(void)
 			yk = NULL;
 		} else {
 			if (!((st.versionMajor == 1 &&
-			       (st.versionMinor == 2 ||
+			       (st.versionMinor == 0 ||
+				st.versionMinor == 2 ||
 				st.versionMinor == 3)) ||
 			      (st.versionMajor == 2 &&
 			       st.versionMinor == 0))) {
