@@ -45,6 +45,7 @@ const char *usage =
 "          (if FILE is -, read from stdin)\n"
 "-aXXX..   A 32 char hex value (not modhex) of a fixed AES key to use\n"
 "-cXXX..   A 12 char modhex value to use as access code for programming\n"
+"          (this does NOT SET the access code, that's done with -oaccess=)\n"
 "-oOPTION  change configuration option.  Possible OPTION arguments are:\n"
 "          salt=ssssssss       Salt to be used for key generation.  If\n"
 "                              none is given, a unique random one will be\n"
