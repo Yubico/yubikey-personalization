@@ -71,8 +71,6 @@ EXTRA_DIST = doc/MakeRelease.wiki doc/ReadMe.wiki doc/UsbhidIssue.wiki
 # Release
 
 PROJECT = yubikey-personalization
-USER = simon75j
-KEYID = B9156397
 
 ChangeLog:
 	svn2cl
@@ -82,6 +80,13 @@ check-doc-dist:
 	diff -ur Makefile.am tmp || (echo 'error: please update Makefile.am'; exit 1)
 
 release:
+	@if test -z "$(USER)" || test -z "$(KEYID)"; then \
+		echo "Try this instead:"; \
+		echo "  make release USER=[GOOGLEUSERNAME] KEYID=[PGPKEYID]"; \
+		echo "For example:"; \
+		echo "  make release USER=simon75j KEYID=B9156397"; \
+		exit 1; \
+	fi
 	rm -f ChangeLog
 	make check-doc-dist ChangeLog distcheck
 	gpg --detach-sign --default-key $(KEYID) $(PACKAGE)-$(VERSION).tar.gz
