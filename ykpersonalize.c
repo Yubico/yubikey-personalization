@@ -44,9 +44,7 @@ const char *usage =
 "-iFILE    read configuration from FILE.\n"
 "          (if FILE is -, read from stdin)\n"
 "-aXXX..   A 32 char hex value (not modhex) of a fixed AES key to use\n"
-#if 0
 "-cXXX..   A 12 char modhex value to use as access code for programming\n"
-#endif
 "-oOPTION  change configuration option.  Possible OPTION arguments are:\n"
 "          salt=ssssssss       Salt to be used for key generation.  If\n"
 "                              none is given, a unique random one will be\n"
@@ -57,10 +55,8 @@ const char *usage =
 "                              This is 0-16 characters long.\n"
 "          uid=uuuuuu          The uid part of the generated ticket.\n"
 "                              MUST be 12 characters long.\n"
-#if 0
 "          access=fffffffffff  New modhex access code to set.\n"
 "                              MUST be 12 characters long.\n"
-#endif
 "          [-]tab-first        set/clear the TAB_FIRST ticket flag.\n"
 "          [-]append-tab1      set/clear the APPEND_TAB1 ticket flag.\n"
 "          [-]append-tab2      set/clear the APPEND_TAB2 ticket flag.\n"
@@ -186,7 +182,6 @@ main(int argc, char **argv)
 			aesviahash = true;
 			aeshash = optarg;
 			break;
-#if 0
 		case 'c':
 			if (strlen(optarg) != 12) {
 				fprintf(stderr,
@@ -203,7 +198,6 @@ main(int argc, char **argv)
 						    strlen(optarg) / 2);
 			use_access_code = true;
 			break;
-#endif
 		case 'o':
 			if (strncmp(optarg, "salt=", 5) == 0)
 				salt = strdup(optarg+5);
@@ -254,7 +248,6 @@ main(int argc, char **argv)
 				yubikey_hex_decode (uidbin, uid, uidlen);
 				ykp_set_uid(cfg, uidbin, uidlen / 2);
 			}
-#if 0
 			else if (strncmp(optarg, "access=", 7) == 0) {
 				const char *acc = optarg+7;
 				size_t acclen = strlen (acc);
@@ -270,7 +263,6 @@ main(int argc, char **argv)
 				yubikey_modhex_decode (accbin, acc, acclen);
 				ykp_set_access_code(cfg, accbin, acclen / 2);
 			}
-#endif
 			else if (strcmp(optarg, "tab-first") == 0)
 				ykp_set_tktflag_TAB_FIRST(cfg, true);
 			else if (strcmp(optarg, "-tab-first") == 0)
