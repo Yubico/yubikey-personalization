@@ -35,7 +35,7 @@
 ykpersonalize - personalize Yubikey OTP tokens
 .SH SYNOPSIS
 .B ykpersonalize
-[\fI-sfile\fR] [\fI-ifile\fR] [\fI-axxx\fR] [\fI-ooption\fR] [\fI-v\fR] [\fI-h\fR]
+[\fI-sfile\fR] [\fI-ifile\fR] [\fI-axxx\fR] [\fI-cxxx\fR] [\fI-ooption\fR] [\fI-v\fR] [\fI-h\fR]
 .\".SH DESCRIPTION
 .\" Add any additional description here
 .SH OPTIONS
@@ -53,6 +53,11 @@ read configuration from file.
 \fB\-a\fIxxx\fR
 A 32 char hex value (not modhex) of a fixed AES key to use.
 .TP
+\fB\-c\fIxxx\fR
+A 12 char hex value (not modhex) to use as access code for
+programming.
+NOTE: this does NOT SET the access code, that's done with \fB-oaccess\fI=\fR.
+.TP
 \fB\-o\fIoption\fR
 change configuration option.  Possible option arguments are
 .RS
@@ -69,6 +74,10 @@ Fixed part, but encoded in hex, 0-16 characters long.
 .TP
 \fBuid\fR=\fIuuuuuu\fR
 The uid part of the generated ticket.
+Must be 12 characters long.
+.TP
+\fBaccess\fR=\fIfffffffffff\fR
+New modhex access code to set.
 Must be 12 characters long.
 .TP
 [\-]\fBtab-first\fR
