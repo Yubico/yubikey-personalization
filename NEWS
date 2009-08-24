@@ -1,5 +1,11 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 0.96 (released 2009-08-xx)
+
+** Make all input numbers hex by default.
+It's still possible to give modhex numbers by preceding them with
+`m:'.
+
 * Version 0.95 (released 2009-08-17)
 
 ** Enable handling of programming access code.
