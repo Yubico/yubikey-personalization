@@ -1,5 +1,10 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 0.95 (released 2009-08-17)
+
+** Enable handling of programming access code.
+Includes modification of help (-h) text and manual.
+
 * Version 0.94 (released 2009-08-10)
 
 ** Improve error handling for libusb-1.0 backend.
