@@ -39,6 +39,14 @@
 
 const char *usage =
 "Usage: ykpersonalize [options]\n"
+"-1        change the first configuration.  This is the default and\n"
+"          is normally used for true OTP generation.\n"
+"          In this configuration, TKTFLAG_APPEND_CR is set by default.\n"
+"-2        change the second configuration.  This is for Yubikey II only\n"
+"          and is then normally used for static key generation.\n"
+"          In this configuration, TKTFLAG_APPEND_CR, CFGFLAG_STATIC_TICKET,\n"
+"          CFGFLAG_STRONG_PW1, CFGFLAG_STRONG_PW2 and CFGFLAG_MAN_UPDATE\n"
+"          are set by default.\n"
 "-sFILE    save configuration to FILE instead of key.\n"
 "          (if FILE is -, send to stdout)\n"
 "-iFILE    read configuration from FILE.\n"
@@ -84,11 +92,12 @@ const char *usage =
 "          [-]man_update       set/clear the MAN_UPDATE configuration flag.\n"
 "                              (only with Yubikey II!)\n"
 #endif
+"-y        always commit (do not prompt)\n"
 "\n"
 "-v        verbose\n"
 "-h        help (this text)\n"
 ;
-const char *optstring = "a:c:hi:o:s:v";
+const char *optstring = "12a:c:hi:o:s:vy";
 
 static int reader(char *buf, size_t count, void *stream)
 {
@@ -101,7 +110,7 @@ static int writer(const char *buf, size_t count, void *stream)
 
 static int hex_modhex_decode(char *result, const char *str, size_t strl)
 {
-	if (strlen >= 2
+	if (strl >= 2
 	    && (strncmp(str, "m:", 2) == 0 || strncmp(str, "M:", 2) == 0)) {
 		return yubikey_modhex_decode(result, str+2, strl-2);
 	}
@@ -136,14 +145,10 @@ main(int argc, char **argv)
 	YK_KEY *yk = 0;
 	YKP_CONFIG *cfg = ykp_create_config();
 	YK_STATUS *st = ykds_alloc();
+	bool autocommit = false;
 
 	bool error = false;
 	int exit_code = 0;
-
-	if (!cfg) {
-		fprintf(stderr, "Out of memory!\n");
-		exit(1);
-	}
 
 	/* Options */
 	char *salt = NULL;
@@ -175,11 +180,19 @@ main(int argc, char **argv)
 	else
 		printf("Unconfigured\n");
 
-	if (ykp_configure_for(cfg, st))
+	if (ykp_configure_for(cfg, 1, st))
 		goto err;
 
 	while((c = getopt(argc, argv, optstring)) != -1) {
 		switch (c) {
+		case '1':
+			if (ykp_configure_for(cfg, 1, st))
+				goto err;
+			break;
+		case '2':
+			if (ykp_configure_for(cfg, 2, st))
+				goto err;
+			break;
 		case 'i':
 			infname = optarg;
 			break;
@@ -338,6 +351,9 @@ main(int argc, char **argv)
 		case 'v':
 			verbose = true;
 			break;
+		case 'y':
+			autocommit = true;
+			break;
 		case 'h':
 		default:
 			fprintf(stderr, usage);
@@ -401,21 +417,37 @@ main(int argc, char **argv)
 		if (!ykp_write_config(cfg, writer, outf))
 			goto err;
 	} else {
-		exit_code = 2;
+		char commitbuf[256]; size_t commitlen;
 
-		if (verbose)
-			printf("Attempting to write configuration to the yubikey...");
-		if (!yk_write_config(yk, ykp_core_config(cfg),
-				     use_access_code ? access_code : NULL)) {
-			if (verbose)
-				printf(" failure\n");
-			goto err;
+		fprintf(stderr, "Configuration data to be written to key:\n\n");
+		ykp_write_config(cfg, writer, stderr);
+		fprintf(stderr, "\nCommit? (y/n) [n]: ");
+		if (autocommit) {
+			strcpy(commitbuf, "yes");
+			printf(commitbuf);
+		} else {
+			fgets(commitbuf, sizeof(commitbuf), stdin);
 		}
+		commitlen = strlen(commitbuf);
+		if (commitbuf[commitlen - 1] == '\n')
+			commitbuf[commitlen - 1] == '\0';
+		if (strcmp(commitbuf, "y") == 0
+		    || strcmp(commitbuf, "yes") == 0) {
+			exit_code = 2;
 
-		if (verbose)
-			printf(" success\n");
+			if (verbose)
+				printf("Attempting to write configuration to the yubikey...");
+			if (!yk_write_config(yk,
+					     ykp_core_config(cfg), ykp_config_num(cfg),
+					     use_access_code ? access_code : NULL)) {
+				if (verbose)
+					printf(" failure\n");
+				goto err;
+			}
 
-		ykp_write_config(cfg, writer, stdout);
+			if (verbose)
+				printf(" success\n");
+		}
 	}
 
 	exit_code = 0;
