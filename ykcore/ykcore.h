@@ -91,7 +91,8 @@ extern int yk_get_status(YK_KEY *k, YK_STATUS *status /*, int forceUpdate */);
 /* writes the given configuration to the key.  If the configuration is NULL,
    zap the key configuration.
    acc_code has to be provided of the key has a protecting access code. */
-extern int yk_write_config(YK_KEY *k, YK_CONFIG *cfg, unsigned char *acc_code);
+extern int yk_write_config(YK_KEY *k, YK_CONFIG *cfg, int confnum,
+			   unsigned char *acc_code);
 
 /*************************************************************************
  *

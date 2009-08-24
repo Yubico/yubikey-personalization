@@ -102,7 +102,8 @@ int yk_get_status(YK_KEY *k, YK_STATUS *status)
 	return 1;
 }
 
-int yk_write_config(YK_KEY *yk, YK_CONFIG *cfg, unsigned char *acc_code)
+int yk_write_config(YK_KEY *yk, YK_CONFIG *cfg, int confnum,
+		    unsigned char *acc_code)
 {
 	unsigned char buf[sizeof(YK_CONFIG) + ACC_CODE_SIZE];
 	YK_STATUS stat;
@@ -133,8 +134,16 @@ int yk_write_config(YK_KEY *yk, YK_CONFIG *cfg, unsigned char *acc_code)
 
 	/* Write to Yubikey */
 
-	if (!yk_write_to_key(yk, SLOT_CONFIG, buf, sizeof(buf)))
-		return 0;
+	switch(confnum) {
+	case 1:
+		if (!yk_write_to_key(yk, SLOT_CONFIG, buf, sizeof(buf)))
+			return 0;
+		break;
+	case 2:
+		if (!yk_write_to_key(yk, SLOT_CONFIG2, buf, sizeof(buf)))
+			return 0;
+		break;
+	}
 
 	/* Verify update */
 
