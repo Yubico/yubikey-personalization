@@ -43,11 +43,12 @@
 struct ykp_config_t {
 	unsigned int yk_major_version;
 	unsigned int yk_minor_version;
+	unsigned int configuration_number;
 
 	YK_CONFIG ykcore_config;
 };
 
-static const YK_CONFIG default_config = {
+static const YK_CONFIG default_config1 = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* fixed */
 	{ 0, 0, 0, 0, 0, 0 },	/* uid */
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* key */
@@ -60,12 +61,29 @@ static const YK_CONFIG default_config = {
 	0			/* crc */
 };
 
+static const YK_CONFIG default_config2 = {
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* fixed */
+	{ 0, 0, 0, 0, 0, 0 },	/* uid */
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* key */
+	{ 0, 0, 0, 0, 0, 0 },	/* accCode */
+	0,			/* fixedSize */
+	0,			/* pgmSeq */
+	TKTFLAG_APPEND_CR,	/* tktFlags */
+	/* cfgFlags */
+	CFGFLAG_STATIC_TICKET | CFGFLAG_STRONG_PW1 | CFGFLAG_STRONG_PW2 | CFGFLAG_MAN_UPDATE,
+	0,			/* ctrOffs */
+	0			/* crc */
+};
+
 YKP_CONFIG *ykp_create_config(void)
 {
 	YKP_CONFIG *cfg = malloc(sizeof(YKP_CONFIG));
 	if (cfg) {
-		memcpy(&cfg->ykcore_config, &default_config,
-		       sizeof(default_config));
+		memcpy(&cfg->ykcore_config, &default_config1,
+		       sizeof(default_config1));
+		cfg->yk_major_version = 1;
+		cfg->yk_minor_version = 3;
+		cfg->configuration_number = 1;
 		return cfg;
 	}
 	return 0;
@@ -77,15 +95,33 @@ int ykp_free_config(YKP_CONFIG *cfg)
 		free(cfg);
 		return 1;
 	}
-	cfg->yk_major_version = 1;
-	cfg->yk_minor_version = 3;
 	return 0;
 }
 
-int ykp_configure_for(YKP_CONFIG *cfg, YK_STATUS *st)
+int ykp_configure_for(YKP_CONFIG *cfg, int confnum, YK_STATUS *st)
 {
 	cfg->yk_major_version = st->versionMajor;
 	cfg->yk_major_version = st->versionMinor;
+
+	switch(confnum) {
+	case 1:
+		memcpy(&cfg->ykcore_config, &default_config1,
+		       sizeof(default_config1));
+		cfg->configuration_number = 1;
+		return 1;
+	case 2:
+		if (cfg->yk_major_version >= 2) {
+			memcpy(&cfg->ykcore_config, &default_config2,
+			       sizeof(default_config2));
+			cfg->configuration_number = 2;
+			return 1;
+		}
+		ykp_errno = YKP_EOLDYUBIKEY;
+		break;
+	default:
+		ykp_errno = YKP_EINVCONFNUM;
+		break;
+	}
 	return 0;
 }
 
@@ -414,6 +450,14 @@ YK_CONFIG *ykp_core_config(YKP_CONFIG *cfg)
 	return 0;
 }
 
+int ykp_config_num(YKP_CONFIG *cfg)
+{
+	if (cfg)
+		return cfg->configuration_number;
+	ykp_errno = YKP_ENOCFG;
+	return 0;
+}
+
 int * const _ykp_errno_location(void)
 {
 	static int tsd_init = 0;
@@ -438,8 +482,10 @@ int * const _ykp_errno_location(void)
 static const char *errtext[] = {
 	"",
 	"not yet implemented",
-	"no configuration structure given"
-	"option not available for this Yubikey version"
+	"no configuration structure given",
+	"option not available for this Yubikey version",
+	"too old yubikey for this operation",
+	"invalid configuration number (this is a programming error)",
 };
 const char *ykp_strerror(int errnum)
 {

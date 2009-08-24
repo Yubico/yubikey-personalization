@@ -44,7 +44,7 @@ int ykp_free_config(YKP_CONFIG *cfg);
 
 /* This can be used to tell what Yubikey version we're working with.  If
    this isn't used, Yubikey 1 only will be assumed. */
-int ykp_configure_for(YKP_CONFIG *cfg, YK_STATUS *st);
+int ykp_configure_for(YKP_CONFIG *cfg, int confnum, YK_STATUS *st);
 
 int ykp_AES_key_from_hex(YKP_CONFIG *cfg, const char *hexkey);
 int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
@@ -83,6 +83,7 @@ int ykp_read_config(YKP_CONFIG *cfg,
 		    void *userdata);
 
 YK_CONFIG *ykp_core_config(YKP_CONFIG *cfg);
+int ykp_config_num(YKP_CONFIG *cfg);
 
 extern int * const _ykp_errno_location(void);
 #define ykp_errno (*_ykp_errno_location())
@@ -91,5 +92,7 @@ const char *ykp_strerror(int errnum);
 #define YKP_ENOTYETIMPL	0x01
 #define YKP_ENOCFG	0x02
 #define YKP_EYUBIKEYVER	0x03
+#define YKP_EOLDYUBIKEY	0x04
+#define YKP_EINVCONFNUM	0x05
 
 #endif	// __YKPERS_H_INCLUDED__
