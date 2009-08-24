@@ -6,6 +6,12 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 It's still possible to give modhex numbers by preceding them with
 `m:'.
 
+** Make it possible to program the second configuration.
+Added the two flags -1 and -2 to ykpersonalize.
+
+** Have ykpersonalize show the new configuration and prompt.
+This makes it possible for the user to prevent incorrect configurations.
+
 * Version 0.95 (released 2009-08-17)
 
 ** Enable handling of programming access code.
