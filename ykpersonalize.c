@@ -176,17 +176,17 @@ main(int argc, char **argv)
 	else
 		printf("Unconfigured\n");
 
-	if (ykp_configure_for(cfg, 1, st))
+	if (!ykp_configure_for(cfg, 1, st))
 		goto err;
 
 	while((c = getopt(argc, argv, optstring)) != -1) {
 		switch (c) {
 		case '1':
-			if (ykp_configure_for(cfg, 1, st))
+			if (!ykp_configure_for(cfg, 1, st))
 				goto err;
 			break;
 		case '2':
-			if (ykp_configure_for(cfg, 2, st))
+			if (!ykp_configure_for(cfg, 2, st))
 				goto err;
 			break;
 		case 'i':
@@ -399,7 +399,7 @@ main(int argc, char **argv)
 		fgets(passphrasebuf, sizeof(passphrasebuf), stdin);
 		passphraselen = strlen(passphrasebuf);
 		if (passphrasebuf[passphraselen - 1] == '\n')
-			passphrasebuf[passphraselen - 1] == '\0';
+			passphrasebuf[passphraselen - 1] = '\0';
 		if (!ykp_AES_key_from_passphrase(cfg,
 						 passphrasebuf, salt))
 			goto err;
@@ -422,7 +422,7 @@ main(int argc, char **argv)
 		}
 		commitlen = strlen(commitbuf);
 		if (commitbuf[commitlen - 1] == '\n')
-			commitbuf[commitlen - 1] == '\0';
+			commitbuf[commitlen - 1] = '\0';
 		if (strcmp(commitbuf, "y") == 0
 		    || strcmp(commitbuf, "yes") == 0) {
 			exit_code = 2;
