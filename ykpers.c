@@ -299,9 +299,7 @@ def_set_tktflag(APPEND_TAB2,vcheck_all)
 def_set_tktflag(APPEND_DELAY1,vcheck_all)
 def_set_tktflag(APPEND_DELAY2,vcheck_all)
 def_set_tktflag(APPEND_CR,vcheck_all)
-#if 0
 def_set_tktflag(PROTECT_CFG2,vcheck_no_v1)
-#endif
 
 def_set_cfgflag(SEND_REF,vcheck_all)
 def_set_cfgflag(TICKET_FIRST,vcheck_v1)
@@ -309,12 +307,10 @@ def_set_cfgflag(PACING_10MS,vcheck_all)
 def_set_cfgflag(PACING_20MS,vcheck_all)
 def_set_cfgflag(ALLOW_HIDTRIG,vcheck_v1)
 def_set_cfgflag(STATIC_TICKET,vcheck_all)
-#if 0
 def_set_cfgflag(SHORT_TICKET,vcheck_no_v1)
 def_set_cfgflag(STRONG_PW1,vcheck_no_v1)
 def_set_cfgflag(STRONG_PW2,vcheck_no_v1)
 def_set_cfgflag(MAN_UPDATE,vcheck_no_v1)
-#endif
 
 
 const char str_key_value_separator[] = ":";
