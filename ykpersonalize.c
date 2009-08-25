@@ -70,10 +70,8 @@ const char *usage =
 "          [-]append-delay1    set/clear the APPEND_DELAY1 ticket flag.\n"
 "          [-]append-delay2    set/clear the APPEND_DELAY2 ticket flag.\n"
 "          [-]append-cr        set/clear the APPEND_CR ticket flag.\n"
-#if 0
 "          [-]protect-cfg2     set/clear the PROTECT_CFG2 ticket flag.\n"
 "                              (only with Yubikey II!)\n"
-#endif
 "          [-]send-ref         set/clear the SEND_REF configuration flag.\n"
 "          [-]ticket-first     set/clear the TICKET_FIRST configuration flag.\n"
 "                              (only with Yubikey I!)\n"
@@ -82,7 +80,6 @@ const char *usage =
 "          [-]allow-hidtrig    set/clear the ALLOW_HIDTRIG configuration flag.\n"
 "                              (only with Yubikey I!)\n"
 "          [-]static-ticket    set/clear the STATIC_TICKET configuration flag.\n"
-#if 0
 "          [-]short_ticket     set/clear the SHORT_TICKET configuration flag.\n"
 "                              (only with Yubikey II!)\n"
 "          [-]strong_pw1       set/clear the STRONG_PW1 configuration flag.\n"
@@ -91,7 +88,6 @@ const char *usage =
 "                              (only with Yubikey II!)\n"
 "          [-]man_update       set/clear the MAN_UPDATE configuration flag.\n"
 "                              (only with Yubikey II!)\n"
-#endif
 "-y        always commit (do not prompt)\n"
 "\n"
 "-v        verbose\n"
@@ -292,12 +288,10 @@ main(int argc, char **argv)
 				ykp_set_tktflag_APPEND_CR(cfg, true);
 			else if (strcmp(optarg, "-append-cr") == 0)
 				ykp_set_tktflag_APPEND_CR(cfg, false);
-#if 0
 			else if (strcmp(optarg, "protect-cfg2") == 0)
 				ykp_set_tktflag_PROTECT_CFG2(cfg, true);
 			else if (strcmp(optarg, "-protect-cfg2") == 0)
 				ykp_set_tktflag_PROTECT_CFG2(cfg, false);
-#endif
 			else if (strcmp(optarg, "send-ref") == 0)
 				ykp_set_cfgflag_SEND_REF(cfg, true);
 			else if (strcmp(optarg, "-send-ref") == 0)
@@ -322,7 +316,6 @@ main(int argc, char **argv)
 				ykp_set_cfgflag_STATIC_TICKET(cfg, true);
 			else if (strcmp(optarg, "-static-ticket") == 0)
 				ykp_set_cfgflag_STATIC_TICKET(cfg, false);
-#if 0
 			else if (strcmp(optarg, "short-ticket") == 0)
 				ykp_set_cfgflag_SHORT_TICKET(cfg, true);
 			else if (strcmp(optarg, "-short-ticket") == 0)
@@ -339,7 +332,6 @@ main(int argc, char **argv)
 				ykp_set_cfgflag_MAN_UPDATE(cfg, true);
 			else if (strcmp(optarg, "-man-update") == 0)
 				ykp_set_cfgflag_MAN_UPDATE(cfg, false);
-#endif
 			else {
 				fprintf(stderr, "Unknown option '%s'\n",
 					optarg);
