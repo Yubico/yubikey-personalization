@@ -101,7 +101,7 @@ int ykp_free_config(YKP_CONFIG *cfg)
 int ykp_configure_for(YKP_CONFIG *cfg, int confnum, YK_STATUS *st)
 {
 	cfg->yk_major_version = st->versionMajor;
-	cfg->yk_major_version = st->versionMinor;
+	cfg->yk_minor_version = st->versionMinor;
 
 	switch(confnum) {
 	case 1:
@@ -324,27 +324,33 @@ const char str_flags_separator[] = "|";
 struct map_st {
 	uint8_t flag;
 	const char *flag_text;
+	bool (*vcheck)(YKP_CONFIG *cfg);
 };
 
 const char str_ticket_flags[] = "ticket_flags";
 struct map_st ticket_flags_map[] = {
-	{ TKTFLAG_TAB_FIRST, "TAB_FIRST" },
-	{ TKTFLAG_APPEND_TAB1, "APPEND_TAB1" },
-	{ TKTFLAG_APPEND_TAB1, "APPEND_TAB1" },
-	{ TKTFLAG_APPEND_DELAY1, "APPEND_DELAY1" },
-	{ TKTFLAG_APPEND_DELAY2, "APPEND_DELAY2" },
-	{ TKTFLAG_APPEND_CR, "APPEND_CR" },
+	{ TKTFLAG_TAB_FIRST, "TAB_FIRST", vcheck_all },
+	{ TKTFLAG_APPEND_TAB1, "APPEND_TAB1", vcheck_all },
+	{ TKTFLAG_APPEND_TAB2, "APPEND_TAB2", vcheck_all },
+	{ TKTFLAG_APPEND_DELAY1, "APPEND_DELAY1", vcheck_all },
+	{ TKTFLAG_APPEND_DELAY2, "APPEND_DELAY2", vcheck_all },
+	{ TKTFLAG_APPEND_CR, "APPEND_CR", vcheck_all },
+	{ TKTFLAG_PROTECT_CFG2, "PROTECT_CFG2", vcheck_no_v1 },
 	{ 0, "" }
 };
 
 const char str_config_flags[] = "config_flags";
 struct map_st config_flags_map[] = {
-	{ CFGFLAG_SEND_REF, "SEND_REF" },
-	{ CFGFLAG_TICKET_FIRST, "TICKET_FIRST" },
-	{ CFGFLAG_PACING_10MS, "PACING_10MS" },
-	{ CFGFLAG_PACING_20MS, "PACING_20MS" },
-	{ CFGFLAG_ALLOW_HIDTRIG, "ALLOW_HIDTRIG" },
-	{ CFGFLAG_STATIC_TICKET, "STATIC_TICKET" },
+	{ CFGFLAG_SEND_REF, "SEND_REF", vcheck_all },
+	{ CFGFLAG_TICKET_FIRST, "TICKET_FIRST", vcheck_v1 },
+	{ CFGFLAG_PACING_10MS, "PACING_10MS", vcheck_all },
+	{ CFGFLAG_PACING_20MS, "PACING_20MS", vcheck_all },
+	{ CFGFLAG_ALLOW_HIDTRIG, "ALLOW_HIDTRIG", vcheck_v1 },
+	{ CFGFLAG_STATIC_TICKET, "STATIC_TICKET", vcheck_all },
+	{ CFGFLAG_SHORT_TICKET, "SHORT_TICKET", vcheck_no_v1 },
+	{ CFGFLAG_STRONG_PW1, "STRONG_PW1", vcheck_no_v1 },
+	{ CFGFLAG_STRONG_PW2, "STRONG_PW2", vcheck_no_v1 },
+	{ CFGFLAG_MAN_UPDATE, "MAN_UPDATE", vcheck_no_v1 },
 	{ 0, "" }
 };
 
@@ -391,7 +397,8 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 
 		buffer[0] = '\0';
 		for (p = ticket_flags_map; p->flag; p++) {
-			if (cfg->ykcore_config.tktFlags & p->flag) {
+			if (cfg->ykcore_config.tktFlags & p->flag
+			    && p->vcheck(cfg)) {
 				if (*buffer) {
 					strcat(buffer, str_flags_separator);
 					strcat(buffer, p->flag_text);
@@ -409,7 +416,8 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 
 		buffer[0] = '\0';
 		for (p = config_flags_map; p->flag; p++) {
-			if (cfg->ykcore_config.cfgFlags & p->flag) {
+			if (cfg->ykcore_config.cfgFlags & p->flag
+			    && p->vcheck(cfg)) {
 				if (*buffer) {
 					strcat(buffer, str_flags_separator);
 					strcat(buffer, p->flag_text);
