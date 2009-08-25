@@ -110,7 +110,7 @@ static int hex_modhex_decode(char *result, const char *str, size_t strl)
 	    && (strncmp(str, "m:", 2) == 0 || strncmp(str, "M:", 2) == 0)) {
 		return yubikey_modhex_decode(result, str+2, strl-2);
 	}
-	return yubikey_hex_decode(result, str+2, strl-2);
+	return yubikey_hex_decode(result, str, strl);
 }
 
 static void report_yk_error()
