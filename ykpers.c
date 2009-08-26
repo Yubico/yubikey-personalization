@@ -313,7 +313,9 @@ def_set_cfgflag(STRONG_PW2,vcheck_no_v1)
 def_set_cfgflag(MAN_UPDATE,vcheck_no_v1)
 
 
-const char str_key_value_separator[] = ":";
+const char str_key_value_separator[] = ": ";
+const char str_hex_prefix[] = "h:";
+const char str_modhex_prefix[] = "m:";
 const char str_fixed[] = "fixed";
 const char str_uid[] = "uid";
 const char str_key[] = "key";
@@ -367,6 +369,9 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		writer(str_key_value_separator,
 		       strlen(str_key_value_separator),
 		       userdata);
+		writer(str_modhex_prefix,
+		       strlen(str_key_value_separator),
+		       userdata);
 		yubikey_modhex_encode(buffer, cfg->ykcore_config.fixed, cfg->ykcore_config.fixedSize);
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
@@ -375,7 +380,10 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		writer(str_key_value_separator,
 		       strlen(str_key_value_separator),
 		       userdata);
-		yubikey_modhex_encode(buffer, cfg->ykcore_config.uid, UID_SIZE);
+		writer(str_hex_prefix,
+		       strlen(str_key_value_separator),
+		       userdata);
+		yubikey_hex_encode(buffer, cfg->ykcore_config.uid, UID_SIZE);
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
@@ -383,7 +391,10 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		writer(str_key_value_separator,
 		       strlen(str_key_value_separator),
 		       userdata);
-		yubikey_modhex_encode(buffer, cfg->ykcore_config.key, KEY_SIZE);
+		writer(str_hex_prefix,
+		       strlen(str_key_value_separator),
+		       userdata);
+		yubikey_hex_encode(buffer, cfg->ykcore_config.key, KEY_SIZE);
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
@@ -391,7 +402,10 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		writer(str_key_value_separator,
 		       strlen(str_key_value_separator),
 		       userdata);
-		yubikey_modhex_encode(buffer, cfg->ykcore_config.accCode, ACC_CODE_SIZE);
+		writer(str_hex_prefix,
+		       strlen(str_key_value_separator),
+		       userdata);
+		yubikey_hex_encode(buffer, cfg->ykcore_config.accCode, ACC_CODE_SIZE);
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
