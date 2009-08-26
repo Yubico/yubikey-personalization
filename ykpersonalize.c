@@ -58,11 +58,11 @@ const char *usage =
 "          salt=ssssssss       Salt to be used for key generation.  If\n"
 "                              none is given, a unique random one will be\n"
 "                              generated.\n"
-"          fixed=xxxxxxxxxxx   The public hex identity of key.\n"
+"          fixed=xxxxxxxxxxx   The public identity of key, in MODHEX.\n"
 "                              This is 0-16 characters long.\n"
-"          uid=xxxxxx          The uid part of the generated ticket.\n"
+"          uid=xxxxxx          The uid part of the generated ticket, in HEX.\n"
 "                              MUST be 12 characters long.\n"
-"          access=xxxxxxxxxxx  New access code to set, in hex.\n"
+"          access=xxxxxxxxxxx  New access code to set, in HEX.\n"
 "                              MUST be 12 characters long.\n"
 "          [-]tab-first        set/clear the TAB_FIRST ticket flag.\n"
 "          [-]append-tab1      set/clear the APPEND_TAB1 ticket flag.\n"
@@ -104,11 +104,32 @@ static int writer(const char *buf, size_t count, void *stream)
 	return (int)fwrite(buf, 1, count, (FILE *)stream);
 }
 
-static int hex_modhex_decode(char *result, const char *str, size_t strl)
+static int hex_modhex_decode(char *result, size_t *resultlen,
+			     const char *str, size_t strl,
+			     size_t minsize, size_t maxsize,
+			     bool primarily_modhex)
 {
-	if (strl >= 2
-	    && (strncmp(str, "m:", 2) == 0 || strncmp(str, "M:", 2) == 0)) {
-		return yubikey_modhex_decode(result, str+2, strl-2);
+	if (strl >= 2) {
+		if (strncmp(str, "m:", 2) == 0
+		    || strncmp(str, "M:", 2) == 0) {
+			str += 2;
+			strl -= 2;
+			primarily_modhex = true;
+		} else if (strncmp(str, "h:", 2) == 0
+			   || strncmp(str, "H:", 2) == 0) {
+			str += 2;
+			strl -= 2;
+			primarily_modhex = false;
+		}
+	}
+
+	if ((strl % 2 != 0) || (strl < minsize) || (strl > maxsize)) {
+		return -1;
+	}
+
+	*resultlen = strl / 2;
+	if (primarily_modhex) {
+		return yubikey_modhex_decode(result, str, strl);
 	}
 	return yubikey_hex_decode(result, str, strl);
 }
@@ -199,22 +220,25 @@ main(int argc, char **argv)
 			aesviahash = true;
 			aeshash = optarg;
 			break;
-		case 'c':
-			if (strlen(optarg) != 12) {
+		case 'c': {
+			size_t access_code_len = 0;
+			int rc = hex_modhex_decode(access_code, &access_code_len,
+						   optarg, strlen(optarg),
+						   12, 12, false);
+			if (rc < 0) {
 				fprintf(stderr,
 					"Invalid access code string: %s\n",
 					optarg);
 				exit_code = 1;
 				goto err;
 			}
-			hex_modhex_decode(access_code,
-					  optarg, strlen(optarg));
 			if (!new_access_code)
 				ykp_set_access_code(cfg,
 						    access_code,
-						    strlen(optarg) / 2);
+						    access_code_len);
 			use_access_code = true;
 			break;
+		}
 		case 'o':
 			if (strncmp(optarg, "salt=", 5) == 0)
 				salt = strdup(optarg+5);
@@ -222,47 +246,53 @@ main(int argc, char **argv)
 				const char *fixed = optarg+6;
 				size_t fixedlen = strlen (fixed);
 				char fixedbin[256];
-				if (fixedlen % 2 || fixedlen > 16)
-				{
+				size_t fixedbinlen = 0;
+				int rc = hex_modhex_decode(fixedbin, &fixedbinlen,
+							   fixed, fixedlen,
+							   0, 16, true);
+				if (rc < 0) {
 					fprintf(stderr,
 						"Invalid modhex fixed string: %s\n",
 						fixed);
 					exit_code = 1;
 					goto err;
 				}
-				hex_modhex_decode(fixedbin, fixed, fixedlen);
-				ykp_set_fixed(cfg, fixedbin, fixedlen / 2);
+				ykp_set_fixed(cfg, fixedbin, fixedbinlen);
 				new_access_code = true;
 			}
 			else if (strncmp(optarg, "uid=", 4) == 0) {
 				const char *uid = optarg+4;
 				size_t uidlen = strlen (uid);
 				char uidbin[256];
-				if (uidlen % 2 || uidlen != 12)
-				{
+				size_t uidbinlen = 0;
+				int rc = hex_modhex_decode(uidbin, &uidbinlen,
+							   uid, uidlen,
+							   12, 12, false);
+				if (rc < 0) {
 					fprintf(stderr,
 						"Invalid hex uid string: %s\n",
 						uid);
 					exit_code = 1;
 					goto err;
 				}
-				hex_modhex_decode(uidbin, uid, uidlen);
-				ykp_set_uid(cfg, uidbin, uidlen / 2);
+				ykp_set_uid(cfg, uidbin, uidbinlen);
 			}
 			else if (strncmp(optarg, "access=", 7) == 0) {
 				const char *acc = optarg+7;
 				size_t acclen = strlen (acc);
 				char accbin[256];
-				if (acclen % 2 || acclen != 12)
-				{
+				size_t accbinlen = 0;
+				int rc = hex_modhex_decode (accbin, &accbinlen,
+							    acc, acclen,
+							    12, 12, false);
+				if (rc < 0) {
 					fprintf(stderr,
 						"Invalid modhex access code string: %s\n",
 						acc);
 					exit_code = 1;
 					goto err;
 				}
-				hex_modhex_decode (accbin, acc, acclen);
-				ykp_set_access_code(cfg, accbin, acclen / 2);
+				ykp_set_access_code(cfg, accbin, accbinlen);
 			}
 			else if (strcmp(optarg, "tab-first") == 0)
 				ykp_set_tktflag_TAB_FIRST(cfg, true);
