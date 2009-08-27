@@ -5,6 +5,9 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 ** ykpersonalize: Make -h work even if there is no yubikey present.
 Suggested by Peter Hultqvist <peter.h@nsf.scout.se>.
 
+** ykpersonalize.1: Link to reference manual for explanation of options.
+Suggested by Peter Hultqvist <peter.h@nsf.scout.se>.
+
 * Version 0.96 (released 2009-08-27)
 
 ** Make all input numbers hex by default.
