@@ -173,6 +173,11 @@ main(int argc, char **argv)
 	ykp_errno = 0;
 	yk_errno = 0;
 
+	if (argc == 2 && strcmp (argv[1], "-h") == 0) {
+		fprintf(stderr, usage);
+		goto err;
+	}
+
 	/* Assume the worst */
 	error = true;
 
