@@ -1,4 +1,5 @@
 .\" Copyright (C) 2009 Tollef Fog Heen <tfheen@err.no>
+.\" Copyright (c) 2009 Yubico AB
 .\" All rights reserved.
 .\" 
 .\" Redistribution and use in source and binary forms, with or without
@@ -35,12 +36,23 @@
 ykpersonalize - personalize Yubikey OTP tokens
 .SH SYNOPSIS
 .B ykpersonalize
-[\fI-sfile\fR] [\fI-ifile\fR] [\fI-axxx\fR] [\fI-cxxx\fR] [\fI-ooption\fR] [\fI-v\fR] [\fI-h\fR]
+[\fI-1\fR | \fI-2\fR] [\fI-sfile\fR] [\fI-ifile\fR] [\fI-axxx\fR] [\fI-cxxx\fR] [\fI-ooption\fR] [\fI-v\fR] [\fI-h\fR]
 .\".SH DESCRIPTION
 .\" Add any additional description here
 .SH OPTIONS
 .PP
 Set the AES key, user ID and other settings in a Yubikey.
+.TP
+\fB\-1\fR
+change the first configuration.  This is the default and is
+normally used for true OTP generation.  In this configuration,
+TKTFLAG_APPEND_CR is set by default.
+.TP
+\fB\-2\fR
+change the second configuration.  This is for Yubikey II only and is
+then normally used for static key generation.  In this configuration,
+TKTFLAG_APPEND_CR, CFGFLAG_STATIC_TICKET, CFGFLAG_STRONG_PW1,
+CFGFLAG_STRONG_PW2 and CFGFLAG_MAN_UPDATE are set by default.
 .TP
 \fB\-s\fIfile\fR
 save configuration to file instead of key.
