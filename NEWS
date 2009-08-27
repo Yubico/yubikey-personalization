@@ -7,10 +7,23 @@ It's still possible to give modhex numbers by preceding them with
 `m:'.
 
 ** Make it possible to program the second configuration.
-Added the two flags -1 and -2 to ykpersonalize.
+Added the two flags -1 and -2 to ykpersonalize.  This is to support
+the YubiKey II.
 
 ** Have ykpersonalize show the new configuration and prompt.
 This makes it possible for the user to prevent incorrect configurations.
+
+** Rename installed library to "libykpers-1" and place
+** installed header files in sub-directory ykpers-1/.
+From now on we promise to retain API and ABI under this name forever.
+The shared library will be installed as /usr/lib/libykpers-1.so and
+the header files into /usr/include/ykpers-1/.  If there is ever an
+incompatible API or ABI change in the future, it will be released as a
+a new library libykpers-2 with header files in ykpers-2/.
+
+** Add pkg-config script "ykpers-1".
+To learn which flags to build the applications that uses the library,
+use "pkg-config --cflags --libs ykpers-1".
 
 * Version 0.95 (released 2009-08-17)
 

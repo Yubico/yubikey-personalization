@@ -102,6 +102,7 @@ fi
 
 AC_CONFIG_FILES([
   Makefile
+  ykpers-1.pc
   ykcore/Makefile
 ])
 AC_OUTPUT
