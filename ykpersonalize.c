@@ -446,7 +446,7 @@ main(int argc, char **argv)
 	} else {
 		char commitbuf[256]; size_t commitlen;
 
-		fprintf(stderr, "Configuration data to be written to key:\n\n");
+		fprintf(stderr, "Configuration data to be written to key configuration %d:\n\n", ykp_config_num(cfg));
 		ykp_write_config(cfg, writer, stderr);
 		fprintf(stderr, "\nCommit? (y/n) [n]: ");
 		if (autocommit) {
