@@ -100,6 +100,8 @@ if test x$with_backend = xosx; then
   LDFLAGS="$LDFLAGS -framework IOKit -framework CoreFoundation"
 fi
 
+gl_LD_VERSION_SCRIPT
+
 AC_CONFIG_FILES([
   Makefile
   ykpers-1.pc

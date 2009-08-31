@@ -44,13 +44,19 @@ libykpers_1_la_SOURCES = ykpers.c ykpbkdf2.h ykpbkdf2.c
 libykpers_1_la_SOURCES += rfc4634/hmac.c rfc4634/usha.c rfc4634/sha.h	\
 	rfc4634/sha1.c rfc4634/sha224-256.c rfc4634/sha384-512.c	\
 	rfc4634/sha-private.h
-libykpers_1_la_SOURCES += ykpers-1.pc.in
+libykpers_1_la_SOURCES += ykpers-1.pc.in libykpers-1.map
 libykpers_1_la_LIBADD = $(LTLIBYUBIKEY) ./ykcore/libykcore.la
 libykpers_1_la_LDFLAGS = -no-undefined \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = ykpers-1.pc
+
+if HAVE_LD_VERSION_SCRIPT
+libykpers_1_la_LDFLAGS += -Wl,--version-script=$(srcdir)/libykpers-1.map
+else
+libykpers_1_la_LDFLAGS += -export-symbols-regex '^(ykp|yk|ykds)_.*'
+endif
 
 # The command line tools.
 

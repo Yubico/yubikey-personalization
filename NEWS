@@ -2,6 +2,10 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
 * Version 0.97 (unreleased)
 
+** libykpers-1: Add linker version script.
+If linker scripts are not supported, fall back on Libtool
+-export-symbols-regex.  Suggested by Tollef Fog Heen <tfheen@err.no>.
+
 ** ykpersonalize: Make -h work even if there is no yubikey present.
 Suggested by Peter Hultqvist <peter.h@nsf.scout.se>.
 
