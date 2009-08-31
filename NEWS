@@ -12,6 +12,8 @@ Suggested by Peter Hultqvist <peter.h@nsf.scout.se>.
 ** ykpersonalize.1: Link to reference manual for explanation of options.
 Suggested by Peter Hultqvist <peter.h@nsf.scout.se>.
 
+** Now requires libyubikey v1.5 or later.
+
 * Version 0.96 (released 2009-08-27)
 
 ** Make all input numbers hex by default.
