@@ -216,15 +216,15 @@ int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 	return 0;
 }
 
-static bool vcheck_all(YKP_CONFIG *cfg)
+static bool vcheck_all(const YKP_CONFIG *cfg)
 {
 	return true;
 }
-static bool vcheck_v1(YKP_CONFIG *cfg)
+static bool vcheck_v1(const YKP_CONFIG *cfg)
 {
 	return cfg->yk_major_version == 1;
 }
-static bool vcheck_no_v1(YKP_CONFIG *cfg)
+static bool vcheck_no_v1(const YKP_CONFIG *cfg)
 {
 	return cfg->yk_major_version > 1;
 }
@@ -326,7 +326,7 @@ const char str_flags_separator[] = "|";
 struct map_st {
 	uint8_t flag;
 	const char *flag_text;
-	bool (*vcheck)(YKP_CONFIG *cfg);
+	bool (*vcheck)(const YKP_CONFIG *cfg);
 };
 
 const char str_ticket_flags[] = "ticket_flags";
