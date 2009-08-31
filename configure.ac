@@ -55,9 +55,9 @@ PKG_PROG_PKG_CONFIG
 
 AC_LIB_HAVE_LINKFLAGS(yubikey,,
   [#include <yubikey.h>],
-  [yubikey_modhex_decode(0,0,0)])
+  [yubikey_modhex_p("foo")])
 if test "$ac_cv_libyubikey" != yes; then
-  AC_MSG_ERROR([libyubikey not found, see http://code.google.com/p/yubico-c/])
+  AC_MSG_ERROR([libyubikey v1.5+ not found, see http://code.google.com/p/yubico-c/])
 fi
 
 AC_ARG_WITH([backend],
