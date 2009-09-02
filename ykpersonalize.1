@@ -82,16 +82,15 @@ If none is given, a unique random one will be generated.
 .TP
 \fBfixed\fR=\fIfffffffffff\fR
 The public modhex identity of key, 0-16 characters long.
-.TP
-\fBhexfixed\fR=\fIfffffff\fR
-Fixed part, but encoded in hex, 0-16 characters long.
+It's possible to give the identity in hex as well, just prepend the
+value with `h:'.
 .TP
 \fBuid\fR=\fIuuuuuu\fR
-The uid part of the generated ticket.
+The uid part of the generated ticket, in hex.
 Must be 12 characters long.
 .TP
 \fBaccess\fR=\fIfffffffffff\fR
-New modhex access code to set.
+New hex access code to set.
 Must be 12 characters long.
 .TP
 [\-]\fBtab-first\fR
