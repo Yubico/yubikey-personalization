@@ -1,6 +1,14 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 0.97 (unreleased)
+* Version 0.98 (unreleased)
+
+** ykpersonalize: Exit with non-0 return code when yubikey is not present.
+Reported by Greg Woods <woods@ucar.edu>.
+
+** ykpersonalize.1: Keep in sync with tool.
+By Tollef Fog Heen <tfheen@err.no>.
+
+* Version 0.97 (released 2009-09-03)
 
 ** libykpers-1: Add linker version script.
 If linker scripts are not supported, fall back on Libtool
