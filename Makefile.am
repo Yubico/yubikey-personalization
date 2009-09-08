@@ -98,6 +98,10 @@ release:
 		echo "  make release USER=simon75j KEYID=B9156397"; \
 		exit 1; \
 	fi
+	@if head -3 NEWS | grep -q unreleased; then \
+		echo "You need to update NEWS, see doc/MakeRelease.wiki."; \
+		exit 1; \
+	fi
 	rm -f ChangeLog
 	make check-doc-dist ChangeLog distcheck
 	gpg --detach-sign --default-key $(KEYID) $(PACKAGE)-$(VERSION).tar.gz
