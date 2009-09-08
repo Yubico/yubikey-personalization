@@ -181,13 +181,18 @@ main(int argc, char **argv)
 	/* Assume the worst */
 	error = true;
 
-	if (!yk_init())
+	if (!yk_init()) {
+		exit_code = 1;
 		goto err;
+	}
 
-	if (!(yk = yk_open_first_key()))
+	if (!(yk = yk_open_first_key())) {
+		exit_code = 1;
 		goto err;
+	}
 
 	if (!yk_get_status(yk, st)) {
+		exit_code = 1;
 		goto err;
 	}
 
