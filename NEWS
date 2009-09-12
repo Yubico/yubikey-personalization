@@ -1,5 +1,10 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 0.99 (unreleased)
+
+** libykpers: Fix build error related to _ykp_errno_location on non-Linux.
+Reported by Patrick Neave <p.neave@gmail.com>.
+
 * Version 0.98 (released 2009-09-08)
 
 ** ykpersonalize: Exit with non-0 return code when yubikey is not present.
