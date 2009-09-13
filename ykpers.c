@@ -37,6 +37,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <ctype.h>
 
 #include <yubikey.h>
 
@@ -127,7 +128,6 @@ int ykp_configure_for(YKP_CONFIG *cfg, int confnum, YK_STATUS *st)
 
 int ykp_AES_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
 	char aesbin[256];
-	unsigned long int aeslong;
 
 /* Make sure that the hexkey is exactly 32 characters */
 	if (strlen(hexkey) != 32) {
@@ -372,7 +372,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		writer(str_modhex_prefix,
 		       strlen(str_key_value_separator),
 		       userdata);
-		yubikey_modhex_encode(buffer, cfg->ykcore_config.fixed, cfg->ykcore_config.fixedSize);
+		yubikey_modhex_encode(buffer, (char *)cfg->ykcore_config.fixed, cfg->ykcore_config.fixedSize);
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
@@ -383,7 +383,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		writer(str_hex_prefix,
 		       strlen(str_key_value_separator),
 		       userdata);
-		yubikey_hex_encode(buffer, cfg->ykcore_config.uid, UID_SIZE);
+		yubikey_hex_encode(buffer, (char *)cfg->ykcore_config.uid, UID_SIZE);
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
@@ -394,7 +394,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		writer(str_hex_prefix,
 		       strlen(str_key_value_separator),
 		       userdata);
-		yubikey_hex_encode(buffer, cfg->ykcore_config.key, KEY_SIZE);
+		yubikey_hex_encode(buffer, (char *)cfg->ykcore_config.key, KEY_SIZE);
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
@@ -405,7 +405,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		writer(str_hex_prefix,
 		       strlen(str_key_value_separator),
 		       userdata);
-		yubikey_hex_encode(buffer, cfg->ykcore_config.accCode, ACC_CODE_SIZE);
+		yubikey_hex_encode(buffer, (char *)cfg->ykcore_config.accCode, ACC_CODE_SIZE);
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
