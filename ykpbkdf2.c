@@ -57,7 +57,9 @@ int yk_pbkdf2(const char *passphrase,
 {
 	size_t l = ((dklen - 1 + prf_method->output_size)
 		    / prf_method->output_size);
+#if 0 /* r for "rest" is unused but may be interesting in the future */
 	size_t r = dklen - ((l - 1) * prf_method->output_size);
+#endif
 
 	unsigned int block_count;
 
@@ -75,7 +77,7 @@ int yk_pbkdf2(const char *passphrase,
 
 		for (iteration = 0; iteration < iterations; iteration++) {
 			if (!prf_method->prf_fn(passphrase, strlen(passphrase),
-						block, block_len,
+						(char *)block, block_len,
 						block, sizeof(block)))
 				return 0;
 			block_len = prf_method->output_size;
