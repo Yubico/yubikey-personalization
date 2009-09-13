@@ -73,7 +73,7 @@ int _ykusb_write(void *dev, int report_type, int report_number,
 					     LIBUSB_ENDPOINT_OUT,
 					     HID_SET_REPORT,
 					     report_type << 8 | report_number, 0,
-					     buffer, size,
+					     (unsigned char *)buffer, size,
 					     1000);
 		/* preserve a control message error over an interface
 		   release one */
@@ -118,8 +118,8 @@ int _ykusb_read(void *dev, int report_type, int report_number,
 					     LIBUSB_ENDPOINT_IN,
 					     HID_GET_REPORT,
 					     report_type << 8 | report_number, 0,
-				     buffer, size,
-				     1000);
+					     (unsigned char *)buffer, size,
+					     1000);
 		/* preserve a control message error over an interface
 		   release one */
 		rc2 = libusb_release_interface((libusb_device_handle *)dev, 0);
@@ -134,7 +134,6 @@ int _ykusb_read(void *dev, int report_type, int report_number,
 
 int _ykusb_start(void)
 {
-	int rc;
 	libusb_init(NULL);
 	return 1;
 }
