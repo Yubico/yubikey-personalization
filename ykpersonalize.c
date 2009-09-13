@@ -36,6 +36,7 @@
 #include <errno.h>
 
 #include <ykpers.h>
+#include <yubikey.h> /* To get yubikey_modhex_encode and yubikey_hex_encode */
 
 const char *usage =
 "Usage: ykpersonalize [options]\n"
@@ -104,7 +105,7 @@ static int writer(const char *buf, size_t count, void *stream)
 	return (int)fwrite(buf, 1, count, (FILE *)stream);
 }
 
-static int hex_modhex_decode(char *result, size_t *resultlen,
+static int hex_modhex_decode(unsigned char *result, size_t *resultlen,
 			     const char *str, size_t strl,
 			     size_t minsize, size_t maxsize,
 			     bool primarily_modhex)
@@ -129,9 +130,18 @@ static int hex_modhex_decode(char *result, size_t *resultlen,
 
 	*resultlen = strl / 2;
 	if (primarily_modhex) {
-		return yubikey_modhex_decode(result, str, strl);
+		if (yubikey_modhex_p(str)) {
+			yubikey_modhex_decode((char *)result, str, strl);
+			return 1;
+		}
+	} else {
+		if (yubikey_hex_p(str)) {
+			yubikey_hex_decode((char *)result, str, strl);
+			return 1;
+		}
 	}
-	return yubikey_hex_decode(result, str, strl);
+
+	return 0;
 }
 
 static void report_yk_error()
@@ -150,7 +160,7 @@ static void report_yk_error()
 	}
 }
 
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	char c;
 	FILE *inf = NULL; const char *infname = NULL;
@@ -255,14 +265,14 @@ main(int argc, char **argv)
 			else if (strncmp(optarg, "fixed=", 6) == 0) {
 				const char *fixed = optarg+6;
 				size_t fixedlen = strlen (fixed);
-				char fixedbin[256];
+				unsigned char fixedbin[256];
 				size_t fixedbinlen = 0;
 				int rc = hex_modhex_decode(fixedbin, &fixedbinlen,
 							   fixed, fixedlen,
 							   0, 16, true);
 				if (rc < 0) {
 					fprintf(stderr,
-						"Invalid modhex fixed string: %s\n",
+						"Invalid fixed string: %s\n",
 						fixed);
 					exit_code = 1;
 					goto err;
@@ -273,14 +283,14 @@ main(int argc, char **argv)
 			else if (strncmp(optarg, "uid=", 4) == 0) {
 				const char *uid = optarg+4;
 				size_t uidlen = strlen (uid);
-				char uidbin[256];
+				unsigned char uidbin[256];
 				size_t uidbinlen = 0;
 				int rc = hex_modhex_decode(uidbin, &uidbinlen,
 							   uid, uidlen,
 							   12, 12, false);
 				if (rc < 0) {
 					fprintf(stderr,
-						"Invalid hex uid string: %s\n",
+						"Invalid uid string: %s\n",
 						uid);
 					exit_code = 1;
 					goto err;
@@ -290,14 +300,14 @@ main(int argc, char **argv)
 			else if (strncmp(optarg, "access=", 7) == 0) {
 				const char *acc = optarg+7;
 				size_t acclen = strlen (acc);
-				char accbin[256];
+				unsigned char accbin[256];
 				size_t accbinlen = 0;
 				int rc = hex_modhex_decode (accbin, &accbinlen,
 							    acc, acclen,
 							    12, 12, false);
 				if (rc < 0) {
 					fprintf(stderr,
-						"Invalid modhex access code string: %s\n",
+						"Invalid access code string: %s\n",
 						acc);
 					exit_code = 1;
 					goto err;
