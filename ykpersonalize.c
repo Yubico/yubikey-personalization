@@ -174,7 +174,7 @@ main(int argc, char **argv)
 	yk_errno = 0;
 
 	if (argc == 2 && strcmp (argv[1], "-h") == 0) {
-		fprintf(stderr, usage);
+		fputs(usage, stderr);
 		goto err;
 	}
 
@@ -375,7 +375,7 @@ main(int argc, char **argv)
 			else {
 				fprintf(stderr, "Unknown option '%s'\n",
 					optarg);
-				fprintf(stderr, usage);
+				fputs(usage, stderr);
 				exit_code = 1;
 				goto err;
 			}
@@ -388,7 +388,7 @@ main(int argc, char **argv)
 			break;
 		case 'h':
 		default:
-			fprintf(stderr, usage);
+			fputs(usage, stderr);
 			exit_code = 0;
 			goto err;
 		}
@@ -456,7 +456,7 @@ main(int argc, char **argv)
 		fprintf(stderr, "\nCommit? (y/n) [n]: ");
 		if (autocommit) {
 			strcpy(commitbuf, "yes");
-			printf(commitbuf);
+			puts(commitbuf);
 		} else {
 			fgets(commitbuf, sizeof(commitbuf), stdin);
 		}
