@@ -36,23 +36,22 @@
 #include <yubikey.h>
 
 #ifndef _WIN32
+#include <unistd.h>
 #define Sleep(x) usleep((x)*1000)
 #endif
 
 int yk_init(void)
 {
-	_ykusb_start();
+	return _ykusb_start();
 }
 
 int yk_release(void)
 {
-	_ykusb_start();
+	return _ykusb_stop();
 }
 
 YK_KEY *yk_open_first_key(void)
 {
-	struct usb_bus *bus;
-	struct usb_device *dev;
 	YK_KEY *yk = _ykusb_open_device(YUBICO_VID, YUBIKEY_PID);
 	int rc = yk_errno;
 
@@ -219,7 +218,7 @@ int yk_read_from_key(YK_KEY *yk, uint8_t slot,
 
 	memset(data, 0, sizeof(data));
 
-	if (!_ykusb_read(yk, REPORT_TYPE_FEATURE, 0, data, FEATURE_RPT_SIZE))
+	if (!_ykusb_read(yk, REPORT_TYPE_FEATURE, 0, (char *)data, FEATURE_RPT_SIZE))
 		return 0;
 
 	/* This makes it apparent that there's some mysterious value in
@@ -260,14 +259,14 @@ int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount)
 		   to speed up the transfer */
 
 		for (i = j = 0; i < (FEATURE_RPT_SIZE - 1); i++)
-			if (repbuf[i] = data[pos++]) j = 1;
+			if ((repbuf[i] = data[pos++])) j = 1;
 		if (!j && (part > 0x80) && (pos < SLOT_DATA_SIZE))
 			continue;
 
 		repbuf[i] = part;
 
 		if (!_ykusb_write(yk, REPORT_TYPE_FEATURE, 0,
-				    repbuf, FEATURE_RPT_SIZE))
+				  (char *)repbuf, FEATURE_RPT_SIZE))
 			return 0;
 
 		/* When the last byte in the feature report is cleared by
@@ -276,7 +275,7 @@ int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount)
 		for (i = 0; i < 50; i++) {
 			memset(repbuf, 0, sizeof(repbuf));
 			if (!_ykusb_read(yk, REPORT_TYPE_FEATURE, 0,
-					    repbuf, FEATURE_RPT_SIZE))
+					 (char *)repbuf, FEATURE_RPT_SIZE))
 				return 0;
 			if (!repbuf[FEATURE_RPT_SIZE - 1])
 				break;
@@ -300,7 +299,7 @@ int yk_force_key_update(YK_KEY *yk)
 
 	memset(buf, 0, sizeof(buf));
 	buf[FEATURE_RPT_SIZE - 1] = 0x8a; /* Invalid partition = update only */
-	if (!_ykusb_write(yk, REPORT_TYPE_FEATURE, 0, buf, FEATURE_RPT_SIZE))
+	if (!_ykusb_write(yk, REPORT_TYPE_FEATURE, 0, (char *)buf, FEATURE_RPT_SIZE))
 		return 0;
 
 	return 1;
