@@ -1,5 +1,9 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 0.999 (unreleased)
+
+** Fix build warnings.
+
 * Version 0.99 (released 2009-09-12)
 
 ** libykpers: Fix build error related to _ykp_errno_location on non-Linux.
