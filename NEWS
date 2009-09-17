@@ -1,8 +1,10 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 0.999 (unreleased)
+* Version 0.999 (released 2009-09-17)
 
 ** Fix build warnings.
+May fix decoding issues on some platforms (depending on whether
+returning a 'void' value is treated as true or false).
 
 * Version 0.99 (released 2009-09-12)
 
