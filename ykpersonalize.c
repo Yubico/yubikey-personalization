@@ -245,7 +245,7 @@ int main(int argc, char **argv)
 			int rc = hex_modhex_decode(access_code, &access_code_len,
 						   optarg, strlen(optarg),
 						   12, 12, false);
-			if (rc < 0) {
+			if (rc <= 0) {
 				fprintf(stderr,
 					"Invalid access code string: %s\n",
 					optarg);
@@ -270,7 +270,7 @@ int main(int argc, char **argv)
 				int rc = hex_modhex_decode(fixedbin, &fixedbinlen,
 							   fixed, fixedlen,
 							   0, 16, true);
-				if (rc < 0) {
+				if (rc <= 0) {
 					fprintf(stderr,
 						"Invalid fixed string: %s\n",
 						fixed);
@@ -278,7 +278,6 @@ int main(int argc, char **argv)
 					goto err;
 				}
 				ykp_set_fixed(cfg, fixedbin, fixedbinlen);
-				new_access_code = true;
 			}
 			else if (strncmp(optarg, "uid=", 4) == 0) {
 				const char *uid = optarg+4;
@@ -288,7 +287,7 @@ int main(int argc, char **argv)
 				int rc = hex_modhex_decode(uidbin, &uidbinlen,
 							   uid, uidlen,
 							   12, 12, false);
-				if (rc < 0) {
+				if (rc <= 0) {
 					fprintf(stderr,
 						"Invalid uid string: %s\n",
 						uid);
@@ -305,7 +304,7 @@ int main(int argc, char **argv)
 				int rc = hex_modhex_decode (accbin, &accbinlen,
 							    acc, acclen,
 							    12, 12, false);
-				if (rc < 0) {
+				if (rc <= 0) {
 					fprintf(stderr,
 						"Invalid access code string: %s\n",
 						acc);
@@ -313,6 +312,7 @@ int main(int argc, char **argv)
 					goto err;
 				}
 				ykp_set_access_code(cfg, accbin, accbinlen);
+				new_access_code = true;
 			}
 			else if (strcmp(optarg, "tab-first") == 0)
 				ykp_set_tktflag_TAB_FIRST(cfg, true);
