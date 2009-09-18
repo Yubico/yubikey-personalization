@@ -2,8 +2,11 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
 * Version 1.1 (unreleased)
 
-** Bugfix release.
+** hex and moehex bugfixes
 Check of hex and modhex strings perfected.
+
+** Segfaults and improper error codes when asking for help
+Contributed by Tollef Fog Heen.
 
 * Version 1.0 (released 2009-09-18)
 
