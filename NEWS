@@ -1,5 +1,7 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.0 (unreleased)
+
 * Version 0.999 (released 2009-09-17)
 
 ** Fix build warnings.
