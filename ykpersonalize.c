@@ -183,16 +183,16 @@ int main(int argc, char **argv)
 	ykp_errno = 0;
 	yk_errno = 0;
 
-	if (argc == 2 && strcmp (argv[1], "-h") == 0) {
-		fputs(usage, stderr);
-		goto err;
-	}
-
 	/* Assume the worst */
 	error = true;
 
 	if (!yk_init()) {
 		exit_code = 1;
+		goto err;
+	}
+
+	if (argc == 2 && strcmp (argv[1], "-h") == 0) {
+		fputs(usage, stderr);
 		goto err;
 	}
 
