@@ -41,6 +41,7 @@
 #define HID_SET_REPORT			0x09
 
 static int ykl_errno;
+static int libusb_inited = 0;
 
 /*************************************************************************
  **  function _ykusb_write						**
@@ -135,13 +136,18 @@ int _ykusb_read(void *dev, int report_type, int report_number,
 int _ykusb_start(void)
 {
 	libusb_init(NULL);
+	libusb_inited = 1;
 	return 1;
 }
 
 extern int _ykusb_stop(void)
 {
-	libusb_exit(NULL);
-	return 1;
+	if (libusb_inited == 1) {
+		libusb_exit(NULL);
+		return 1;
+	}
+	yk_errno = YK_EUSBERR;
+	return 0;
 }
 
 void *_ykusb_open_device(int vendor_id, int product_id)
