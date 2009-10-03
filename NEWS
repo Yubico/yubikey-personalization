@@ -1,6 +1,6 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.1 (unreleased)
+* Version 1.1 (released 2009-10-03)
 
 ** hex and modhex bugfixes
 Check of hex and modhex strings perfected.
