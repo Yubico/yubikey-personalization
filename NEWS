@@ -1,6 +1,6 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.2 (unreleased)
+* Version 1.2 (released 2010-01-22)
 
 ** libykpers-1: Whitelist firmware version 2.1 too.
 
