@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2008, 2009, Yubico AB
+ * Copyright (c) 2008, 2009, 2010, Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,7 +69,8 @@ YK_KEY *yk_open_first_key(void)
 				st.versionMinor == 2 ||
 				st.versionMinor == 3)) ||
 			      (st.versionMajor == 2 &&
-			       st.versionMinor == 0))) {
+			       (st.versionMinor == 0 ||
+				st.versionMinor == 1)))) {
 				rc = YK_EFIRMWARE;
 				yk_close_key(yk);
 				yk = NULL;
