@@ -62,19 +62,6 @@ YK_KEY *yk_open_first_key(void)
 			rc = yk_errno;
 			yk_close_key(yk);
 			yk = NULL;
-		} else {
-			if (!((st.versionMajor == 1 &&
-			       (st.versionMinor == 0 ||
-				st.versionMinor == 1 ||
-				st.versionMinor == 2 ||
-				st.versionMinor == 3)) ||
-			      (st.versionMajor == 2 &&
-			       (st.versionMinor == 0 ||
-				st.versionMinor == 1)))) {
-				rc = YK_EFIRMWARE;
-				yk_close_key(yk);
-				yk = NULL;
-			}
 		}
 	}
 	yk_errno = rc;
@@ -84,6 +71,26 @@ YK_KEY *yk_open_first_key(void)
 int yk_close_key(YK_KEY *yk)
 {
 	return _ykusb_close_device(yk);
+}
+
+int yk_check_firmware_version(YK_KEY *k)
+{
+	YK_STATUS st;
+
+	if (!yk_get_status(k, &st))
+		return 0;
+	if (!((st.versionMajor == 1 &&
+	       (st.versionMinor == 0 ||
+		st.versionMinor == 1 ||
+		st.versionMinor == 2 ||
+		st.versionMinor == 3)) ||
+	      (st.versionMajor == 2 &&
+	       (st.versionMinor == 0 ||
+		st.versionMinor == 1)))) {
+		yk_errno = YK_EFIRMWARE;
+		return 0;
+	}
+	return 1;
 }
 
 int yk_get_status(YK_KEY *k, YK_STATUS *status)

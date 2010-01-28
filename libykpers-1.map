@@ -29,6 +29,7 @@
 LIBYKPERS_1.0 {
   global:
 # Functions:
+    yk_check_firmware_version;
     yk_close_key;
     yk_endian_swap_16;
     yk_force_key_update;

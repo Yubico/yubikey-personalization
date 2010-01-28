@@ -217,6 +217,15 @@ int main(int argc, char **argv)
 	else
 		printf("Unconfigured\n");
 
+	if (!(yk_check_firmware_version(yk))) {
+		if (yk_errno == YK_EFIRMWARE) {
+			printf("Unsupported firmware revision - some "
+			       "features may not be available\n");
+		} else {
+			goto err;
+		}
+	}
+
 	if (!ykp_configure_for(cfg, 1, st))
 		goto err;
 

@@ -81,6 +81,8 @@ extern int yk_close_key(YK_KEY *k);		/* closes a previously opened key */
  ****/
 /* fetches key status into the structure given by `status' */
 extern int yk_get_status(YK_KEY *k, YK_STATUS *status /*, int forceUpdate */);
+/* checks that the firmware revision of the key is supported */
+extern int yk_check_firmware_version(YK_KEY *k);
 
 /*************************************************************************
  *
