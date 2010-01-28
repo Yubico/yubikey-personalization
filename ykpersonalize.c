@@ -220,7 +220,10 @@ int main(int argc, char **argv)
 	if (!(yk_check_firmware_version(yk))) {
 		if (yk_errno == YK_EFIRMWARE) {
 			printf("Unsupported firmware revision - some "
-			       "features may not be available\n");
+			       "features may not be available\n"
+			       "Please see \n"
+			       "http://code.google.com/p/yubikey-personalization/wiki/Compatibility\n"
+			       "for more information");
 		} else {
 			goto err;
 		}
