@@ -1,5 +1,5 @@
 # Written by Richard Levitte <richard@levitte.org>.
-# Copyright (c) 2008, 2009 Yubico AB
+# Copyright (c) 2008, 2009, 2010 Yubico AB
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -77,7 +77,7 @@ check_PROGRAMS = $(ctests)
 TESTS = $(ctests)
 
 # Dist docs from wiki.
-EXTRA_DIST = doc/MakeRelease.wiki doc/ReadMe.wiki doc/UsbhidIssue.wiki
+EXTRA_DIST = doc/Compatibility.wiki doc/MakeRelease.wiki doc/ReadMe.wiki doc/UsbhidIssue.wiki
 
 # Release
 
