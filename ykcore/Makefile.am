@@ -42,3 +42,5 @@ endif
 if BACKEND_OSX
 libykcore_la_SOURCES += ykcore_osx.c
 endif
+
+EXTRA_DIST = ykcore_stub.c ykcore_win32.c
