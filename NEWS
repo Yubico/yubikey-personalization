@@ -1,5 +1,18 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.3 (released 2010-01-30)
+
+** libykpers-1: Give warning on unknown firmwares, but don't stop
+
+** OATH-HOTP support
+
+ykpersonalize now supports the OATH-HOTP flags.
+
+** Updated documentation
+
+The documentation has been updated to explain the flags a bit better
+and OATH-HOTP documentation has been added.
+
 * Version 1.2 (released 2010-01-22)
 
 ** libykpers-1: Whitelist firmware version 2.1 too.
