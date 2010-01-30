@@ -3,11 +3,12 @@
 **											**
 **		Y K D E F  -  Common Yubikey project header				**
 **											**
-**		Date		/ Rev		/ Sign	/ Remark			**
-**		06-06-03	/ 0.9.0		/ J E	/ Main				**
-**		06-08-25	/ 1.0.0		/ J E	/ Rewritten for final spec	**
-**		08-06-03	/ 1.3.0		/ J E	/ Added static OTP feature	**
-**		09-06-02	/ 2.0.0		/ J E	/ Added version 2 flags         **
+**	Date		/ Rev		/ Sign	/ Remark				**
+**	06-06-03	/ 0.9.0		/ J E	/ Main					**
+**	06-08-25	/ 1.0.0		/ J E	/ Rewritten for final spec		**
+**	08-06-03	/ 1.3.0		/ J E	/ Added static OTP feature		**
+**	09-06-02	/ 2.0.0		/ J E	/ Added version 2 flags			**
+**	09-09-23	/ 2.1.0		/ J E	/ Added version 2.1 flags (OATH-HOTP)	**
 **											**
 *****************************************************************************************/
 
@@ -55,6 +56,7 @@ struct ticket_st {
 
 #define	FIXED_SIZE		16	/* Max size of fixed field */
 #define	KEY_SIZE		16	/* Size of AES key */
+#define	KEY_SIZE_OATH		20      /* Size of OATH-HOTP key (key field + first 4 of UID field) */
 #define	ACC_CODE_SIZE		6	/* Size of access code to re-program device */
 
 struct config_st {
@@ -72,7 +74,7 @@ struct config_st {
 
 /* Ticket flags **************************************************************/
 
-/* Yubikey 1 and newer */
+/* Yubikey 1 and above */
 #define	TKTFLAG_TAB_FIRST	0x01	/* Send TAB before first part */
 #define	TKTFLAG_APPEND_TAB1	0x02	/* Send TAB after first part */
 #define	TKTFLAG_APPEND_TAB2	0x04	/* Send TAB after second part */
@@ -80,12 +82,15 @@ struct config_st {
 #define	TKTFLAG_APPEND_DELAY2	0x10	/* Add 0.5s delay after second part */
 #define	TKTFLAG_APPEND_CR	0x20	/* Append CR as final character */
 
-/* Yubikey 2 only */
+/* Yubikey 2 and above */
 #define TKTFLAG_PROTECT_CFG2	0x80	/* Block update of config 2 unless config 2 is configured and has this bit set */
+
+/* Yubikey 2.1 and above */
+#define TKTFLAG_OATH_HOTP	0x40	/*  OATH HOTP mode */
 
 /* Configuration flags *******************************************************/
 
-/* Yubikey 1 and newer */
+/* Yubikey 1 and above */
 #define CFGFLAG_SEND_REF	0x01	/* Send reference string (0..F) before data */
 #define CFGFLAG_PACING_10MS	0x04	/* Add 10ms intra-key pacing */
 #define CFGFLAG_PACING_20MS	0x08	/* Add 20ms intra-key pacing */
@@ -95,11 +100,18 @@ struct config_st {
 #define	CFGFLAG_TICKET_FIRST	0x02	/* Send ticket first (default is fixed part) */
 #define CFGFLAG_ALLOW_HIDTRIG	0x10	/* Allow trigger through HID/keyboard */
 
-/* Yubikey 2 only */
+/* Yubikey 2 and above */
 #define CFGFLAG_SHORT_TICKET	0x02	/* Send truncated ticket (half length) */
 #define CFGFLAG_STRONG_PW1	0x10	/* Strong password policy flag #1 (mixed case) */
 #define CFGFLAG_STRONG_PW2	0x40	/* Strong password policy flag #2 (subtitute 0..7 to digits) */
 #define CFGFLAG_MAN_UPDATE	0x80	/* Allow manual (local) update of static OTP */
+
+/* Yubikey 2.1 and above */
+#define CFGFLAG_OATH_HOTP8	0x02	/*  Generate 8 digits HOTP rather than 6 digits */
+#define CFGFLAG_OATH_FIXED_MODHEX1	0x10	/*  First byte in fixed part sent as modhex */
+#define CFGFLAG_OATH_FIXED_MODHEX2	0x40	/*  First two bytes in fixed part sent as modhex */
+#define CFGFLAG_OATH_FIXED_MODHEX	0x50	/*  Fixed part sent as modhex */
+#define CFGFLAG_OATH_FIXED_MASK	0x50	/*  Mask to get out fixed flags */
 
 /* Navigation */
 

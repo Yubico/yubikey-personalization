@@ -229,6 +229,13 @@ static bool vcheck_no_v1(const YKP_CONFIG *cfg)
 	return cfg->yk_major_version > 1;
 }
 
+static bool vcheck_v21_or_greater(const YKP_CONFIG *cfg)
+{
+	return (cfg->yk_major_version == 2 &&
+		cfg->yk_minor_version >= 1) ||
+		cfg->yk_major_version > 2;
+}
+
 #define def_set_charfield(fnname,fieldname,size,extra,vcheck)	\
 int ykp_set_ ## fnname(YKP_CONFIG *cfg, unsigned char *input, size_t len)	\
 {								\
@@ -300,6 +307,7 @@ def_set_tktflag(APPEND_DELAY1,vcheck_all)
 def_set_tktflag(APPEND_DELAY2,vcheck_all)
 def_set_tktflag(APPEND_CR,vcheck_all)
 def_set_tktflag(PROTECT_CFG2,vcheck_no_v1)
+def_set_tktflag(OATH_HOTP,vcheck_v21_or_greater)
 
 def_set_cfgflag(SEND_REF,vcheck_all)
 def_set_cfgflag(TICKET_FIRST,vcheck_v1)
@@ -311,7 +319,10 @@ def_set_cfgflag(SHORT_TICKET,vcheck_no_v1)
 def_set_cfgflag(STRONG_PW1,vcheck_no_v1)
 def_set_cfgflag(STRONG_PW2,vcheck_no_v1)
 def_set_cfgflag(MAN_UPDATE,vcheck_no_v1)
-
+def_set_cfgflag(OATH_HOTP8,vcheck_v21_or_greater)
+def_set_cfgflag(OATH_FIXED_MODHEX1,vcheck_v21_or_greater)
+def_set_cfgflag(OATH_FIXED_MODHEX2,vcheck_v21_or_greater)
+def_set_cfgflag(OATH_FIXED_MODHEX,vcheck_v21_or_greater)
 
 const char str_key_value_separator[] = ": ";
 const char str_hex_prefix[] = "h:";
@@ -338,6 +349,7 @@ struct map_st ticket_flags_map[] = {
 	{ TKTFLAG_APPEND_DELAY2, "APPEND_DELAY2", vcheck_all },
 	{ TKTFLAG_APPEND_CR, "APPEND_CR", vcheck_all },
 	{ TKTFLAG_PROTECT_CFG2, "PROTECT_CFG2", vcheck_no_v1 },
+	{ TKTFLAG_OATH_HOTP, "PROTECT_OATH_HOTP", vcheck_v21_or_greater },
 	{ 0, "" }
 };
 
@@ -353,6 +365,10 @@ struct map_st config_flags_map[] = {
 	{ CFGFLAG_STRONG_PW1, "STRONG_PW1", vcheck_no_v1 },
 	{ CFGFLAG_STRONG_PW2, "STRONG_PW2", vcheck_no_v1 },
 	{ CFGFLAG_MAN_UPDATE, "MAN_UPDATE", vcheck_no_v1 },
+	{ CFGFLAG_OATH_HOTP8, "OATH_HOTP8", vcheck_v21_or_greater },
+	{ CFGFLAG_OATH_FIXED_MODHEX1, "OATH_FIXED_MODHEX1", vcheck_v21_or_greater },
+	{ CFGFLAG_OATH_FIXED_MODHEX2, "OATH_FIXED_MODHEX2", vcheck_v21_or_greater },
+	{ CFGFLAG_OATH_FIXED_MODHEX, "OATH_FIXED_MODHEX", vcheck_v21_or_greater },
 	{ 0, "" }
 };
 

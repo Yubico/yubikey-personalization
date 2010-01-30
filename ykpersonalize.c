@@ -1,6 +1,7 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
  * Copyright (c) 2008, 2009, Yubico AB
+ * Copyright (c) 2010  Tollef Fog Heen <tfheen@err.no>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,30 +66,43 @@ const char *usage =
 "                              MUST be 12 characters long.\n"
 "          access=xxxxxxxxxxx  New access code to set, in HEX.\n"
 "                              MUST be 12 characters long.\n"
-"          [-]tab-first        set/clear the TAB_FIRST ticket flag.\n"
-"          [-]append-tab1      set/clear the APPEND_TAB1 ticket flag.\n"
-"          [-]append-tab2      set/clear the APPEND_TAB2 ticket flag.\n"
-"          [-]append-delay1    set/clear the APPEND_DELAY1 ticket flag.\n"
-"          [-]append-delay2    set/clear the APPEND_DELAY2 ticket flag.\n"
-"          [-]append-cr        set/clear the APPEND_CR ticket flag.\n"
-"          [-]protect-cfg2     set/clear the PROTECT_CFG2 ticket flag.\n"
-"                              (only with Yubikey II!)\n"
-"          [-]send-ref         set/clear the SEND_REF configuration flag.\n"
-"          [-]ticket-first     set/clear the TICKET_FIRST configuration flag.\n"
-"                              (only with Yubikey I!)\n"
-"          [-]pacing-10ms      set/clear the PACING_10MS configuration flag.\n"
-"          [-]pacing-20ms      set/clear the PACING_20MS configuration flag.\n"
-"          [-]allow-hidtrig    set/clear the ALLOW_HIDTRIG configuration flag.\n"
-"                              (only with Yubikey I!)\n"
-"          [-]static-ticket    set/clear the STATIC_TICKET configuration flag.\n"
-"          [-]short-ticket     set/clear the SHORT_TICKET configuration flag.\n"
-"                              (only with Yubikey II!)\n"
-"          [-]strong-pw1       set/clear the STRONG_PW1 configuration flag.\n"
-"                              (only with Yubikey II!)\n"
-"          [-]strong-pw2       set/clear the STRONG_PW2 configuration flag.\n"
-"                              (only with Yubikey II!)\n"
-"          [-]man-update       set/clear the MAN_UPDATE configuration flag.\n"
-"                              (only with Yubikey II!)\n"
+"\n"
+"          Ticket flags for all firmware versions:\n"
+"          [-]tab-first           set/clear TAB_FIRST\n"
+"          [-]append-tab1         set/clear APPEND_TAB1\n"
+"          [-]append-tab2         set/clear APPEND_TAB2\n"
+"          [-]append-delay1       set/clear APPEND_DELAY1\n"
+"          [-]append-delay2       set/clear APPEND_DELAY2\n"
+"          [-]append-cr           set/clear APPEND_CR\n"
+"\n"
+"          Ticket flags for firmware version 2.0 and above:\n"
+"          [-]protect-cfg2        set/clear PROTECT_CFG2\n"
+"\n"
+"          Ticket flags for firmware version 2.1 and above:\n"
+"          [-]oath-hotp           set/clear OATH_HOTP\n"
+"\n"
+"          Configuration flags for all firmware versions:\n"
+"          [-]send-ref            set/clear SEND_REF\n"
+"          [-]pacing-10ms         set/clear PACING_10MS\n"
+"          [-]pacing-20ms         set/clear PACING_20MS\n"
+"          [-]static-ticket       set/clear STATIC_TICKET\n"
+"\n"
+"          Configuration flags for firmware version 1.x only:\n"
+"          [-]ticket-first        set/clear TICKET_FIRST\n"
+"          [-]allow-hidtrig       set/clear ALLOW_HIDTRIG\n"
+"\n"
+"          Configuration flags for firmware version 2.0 and above:\n"
+"          [-]short-ticket        set/clear SHORT_TICKET\n"
+"          [-]strong-pw1          set/clear STRONG_PW1\n"
+"          [-]strong-pw2          set/clear STRONG_PW2\n"
+"          [-]man-update          set/clear MAN_UPDATE\n"
+"\n"
+"          Configuration flags for firmware version 2.1 and above:\n"
+"          [-]oath-hotp8          set/clear OATH_HOTP8\n"
+"          [-]oath-fixed-modhex1  set/clear OATH_FIXED_MODHEX1\n"
+"          [-]oath-fixed-modhex2  set/clear OATH_FIXED_MODHEX2\n"
+"          [-]oath-fixed-modhex   set/clear OATH_MODHEX\n"
+"\n"
 "-y        always commit (do not prompt)\n"
 "\n"
 "-v        verbose\n"
@@ -326,74 +340,41 @@ int main(int argc, char **argv)
 				ykp_set_access_code(cfg, accbin, accbinlen);
 				new_access_code = true;
 			}
-			else if (strcmp(optarg, "tab-first") == 0)
-				ykp_set_tktflag_TAB_FIRST(cfg, true);
-			else if (strcmp(optarg, "-tab-first") == 0)
-				ykp_set_tktflag_TAB_FIRST(cfg, false);
-			else if (strcmp(optarg, "append-tab1") == 0)
-				ykp_set_tktflag_APPEND_TAB1(cfg, true);
-			else if (strcmp(optarg, "-append-tab1") == 0)
-				ykp_set_tktflag_APPEND_TAB1(cfg, false);
-			else if (strcmp(optarg, "append-tab2") == 0)
-				ykp_set_tktflag_APPEND_TAB1(cfg, true);
-			else if (strcmp(optarg, "-append-tab2") == 0)
-				ykp_set_tktflag_APPEND_TAB1(cfg, false);
-			else if (strcmp(optarg, "append-delay1") == 0)
-				ykp_set_tktflag_APPEND_DELAY1(cfg, true);
-			else if (strcmp(optarg, "-append-delay1") == 0)
-				ykp_set_tktflag_APPEND_DELAY1(cfg, false);
-			else if (strcmp(optarg, "append-delay2") == 0)
-				ykp_set_tktflag_APPEND_DELAY2(cfg, true);
-			else if (strcmp(optarg, "-append-delay2") == 0)
-				ykp_set_tktflag_APPEND_DELAY2(cfg, false);
-			else if (strcmp(optarg, "append-cr") == 0)
-				ykp_set_tktflag_APPEND_CR(cfg, true);
-			else if (strcmp(optarg, "-append-cr") == 0)
-				ykp_set_tktflag_APPEND_CR(cfg, false);
-			else if (strcmp(optarg, "protect-cfg2") == 0)
-				ykp_set_tktflag_PROTECT_CFG2(cfg, true);
-			else if (strcmp(optarg, "-protect-cfg2") == 0)
-				ykp_set_tktflag_PROTECT_CFG2(cfg, false);
-			else if (strcmp(optarg, "send-ref") == 0)
-				ykp_set_cfgflag_SEND_REF(cfg, true);
-			else if (strcmp(optarg, "-send-ref") == 0)
-				ykp_set_cfgflag_SEND_REF(cfg, false);
-			else if (strcmp(optarg, "ticket-first") == 0)
-				ykp_set_cfgflag_TICKET_FIRST(cfg, true);
-			else if (strcmp(optarg, "-ticket-first") == 0)
-				ykp_set_cfgflag_TICKET_FIRST(cfg, false);
-			else if (strcmp(optarg, "pacing-10ms") == 0)
-				ykp_set_cfgflag_PACING_10MS(cfg, true);
-			else if (strcmp(optarg, "-pacing-10ms") == 0)
-				ykp_set_cfgflag_PACING_10MS(cfg, false);
-			else if (strcmp(optarg, "pacing-20ms") == 0)
-				ykp_set_cfgflag_PACING_20MS(cfg, true);
-			else if (strcmp(optarg, "-pacing-20ms") == 0)
-				ykp_set_cfgflag_PACING_20MS(cfg, false);
-			else if (strcmp(optarg, "allow-hidtrig") == 0)
-				ykp_set_cfgflag_ALLOW_HIDTRIG(cfg, true);
-			else if (strcmp(optarg, "-allow-hidtrig") == 0)
-				ykp_set_cfgflag_ALLOW_HIDTRIG(cfg, false);
-			else if (strcmp(optarg, "static-ticket") == 0)
-				ykp_set_cfgflag_STATIC_TICKET(cfg, true);
-			else if (strcmp(optarg, "-static-ticket") == 0)
-				ykp_set_cfgflag_STATIC_TICKET(cfg, false);
-			else if (strcmp(optarg, "short-ticket") == 0)
-				ykp_set_cfgflag_SHORT_TICKET(cfg, true);
-			else if (strcmp(optarg, "-short-ticket") == 0)
-				ykp_set_cfgflag_SHORT_TICKET(cfg, false);
-			else if (strcmp(optarg, "strong-pw1") == 0)
-				ykp_set_cfgflag_STRONG_PW1(cfg, true);
-			else if (strcmp(optarg, "-strong-pw1") == 0)
-				ykp_set_cfgflag_STRONG_PW1(cfg, false);
-			else if (strcmp(optarg, "strong-pw2") == 0)
-				ykp_set_cfgflag_STRONG_PW2(cfg, true);
-			else if (strcmp(optarg, "-strong-pw2") == 0)
-				ykp_set_cfgflag_STRONG_PW2(cfg, false);
-			else if (strcmp(optarg, "man-update") == 0)
-				ykp_set_cfgflag_MAN_UPDATE(cfg, true);
-			else if (strcmp(optarg, "-man-update") == 0)
-				ykp_set_cfgflag_MAN_UPDATE(cfg, false);
+#define TKTFLAG(o, f)						\
+			else if (strcmp(optarg, o) == 0)	\
+				ykp_set_tktflag_##f(cfg, true); \
+			else if (strcmp(optarg, "-" o) == 0)   \
+				ykp_set_tktflag_##f(cfg, false)
+			TKTFLAG("tab-first", TAB_FIRST);
+			TKTFLAG("append-tab1", APPEND_TAB1);
+			TKTFLAG("append-tab2", APPEND_TAB2);
+			TKTFLAG("append-delay1", APPEND_DELAY1);
+			TKTFLAG("append-delay2", APPEND_DELAY2);
+			TKTFLAG("append-cr", APPEND_CR);
+			TKTFLAG("protect-cfg2", PROTECT_CFG2);
+			TKTFLAG("oath-hotp", OATH_HOTP);
+#undef TKTFLAG
+
+#define CFGFLAG(o, f) \
+			else if (strcmp(optarg, o) == 0)	\
+				ykp_set_cfgflag_##f(cfg, true); \
+			else if (strcmp(optarg, "-" o) == 0)   \
+				ykp_set_cfgflag_##f(cfg, false)
+			CFGFLAG("send-ref", SEND_REF);
+			CFGFLAG("ticket-first", TICKET_FIRST);
+			CFGFLAG("pacing-10ms", PACING_10MS);
+			CFGFLAG("pacing-20ms", PACING_20MS);
+			CFGFLAG("allow-hidtrig", ALLOW_HIDTRIG);
+			CFGFLAG("static-ticket", STATIC_TICKET);
+			CFGFLAG("short-ticket", SHORT_TICKET);
+			CFGFLAG("strong-pw1", STRONG_PW1);
+			CFGFLAG("strong-pw2", STRONG_PW2);
+			CFGFLAG("man-update", MAN_UPDATE);
+			CFGFLAG("oath-hotp8", OATH_HOTP8);
+			CFGFLAG("oath-fixed-modhex1", OATH_FIXED_MODHEX1);
+			CFGFLAG("oath-fixed-modhex2", OATH_FIXED_MODHEX2);
+			CFGFLAG("oath-fixed-modhex", OATH_FIXED_MODHEX);
+#undef CFGFLAG
 			else {
 				fprintf(stderr, "Unknown option '%s'\n",
 					optarg);

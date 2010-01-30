@@ -70,6 +70,10 @@ LIBYKPERS_1.0 {
     ykp_set_cfgflag_STRONG_PW1;
     ykp_set_cfgflag_STRONG_PW2;
     ykp_set_cfgflag_TICKET_FIRST;
+    ykp_set_cfgflag_OATH_HOTP8;
+    ykp_set_cfgflag_OATH_FIXED_MODHEX1;
+    ykp_set_cfgflag_OATH_FIXED_MODHEX2;
+    ykp_set_cfgflag_OATH_FIXED_MODHEX;
     ykp_set_fixed;
     ykp_set_tktflag_APPEND_CR;
     ykp_set_tktflag_APPEND_DELAY1;
@@ -78,6 +82,7 @@ LIBYKPERS_1.0 {
     ykp_set_tktflag_APPEND_TAB2;
     ykp_set_tktflag_PROTECT_CFG2;
     ykp_set_tktflag_TAB_FIRST;
+    ykp_set_tktflag_OATH_HOTP;
     ykp_set_uid;
     ykp_strerror;
     ykp_write_config;
