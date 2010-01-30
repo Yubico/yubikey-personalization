@@ -201,6 +201,11 @@ When set, the first two bytes of the fixed part is sent as modhex.
 .TP
 [\-]\fBoath-fixed-modhex\fR
 When set, the fixed part is sent as modhex.
+.SH OATH-HOTP Mode
+When using OATH-HOTP mode, the key that is shared with the server
+consists of the AES key plus the first four bytes (eight hex
+characters) of the UID.  The token identifier is defined by the fixed
+prefix.
 .SH BUGS
 Report ykpersonalize bugs in 
 .URL "http://code.google.com/p/yubikey-personalization/issues/list" "the issue tracker"
