@@ -1,4 +1,4 @@
-.\" Copyright (C) 2009 Tollef Fog Heen <tfheen@err.no>
+.\" Copyright (C) 2009, 2010 Tollef Fog Heen <tfheen@err.no>
 .\" Copyright (c) 2009 Yubico AB
 .\" All rights reserved.
 .\" 
@@ -92,54 +92,12 @@ Must be 12 characters long.
 \fBaccess\fR=\fIfffffffffff\fR
 New hex access code to set.
 Must be 12 characters long.
-.TP
-[\-]\fBtab-first\fR
-Set/clear the TAB_FIRST ticket flag.
-.TP
-[\-]\fBappend-tab1\fR
-Set/clear the APPEND_TAB1 ticket flag.
-.TP
-[\-]\fBappend-tab2\fR
-Set/clear the APPEND_TAB2 ticket flag.
-.TP
-[\-]\fBappend-delay1\fR
-Set/clear the APPEND_DELAY1 ticket flag.
-.TP
-[\-]\fBappend-delay2\fR
-Set/clear the APPEND_DELAY2 ticket flag.
-.TP
-[\-]\fBappend-cr\fR
-Set/clear the APPEND_CR ticket flag.
-.TP
-[\-]\fBsend-ref\fR
-Set/clear the SEND_REF configuration flag.
-.TP
-[\-]\fBticket-first\fR
-Set/clear the TICKET_FIRST configuration flag, only available with Yubikey I
-.TP
-[\-]\fBpacing-10ms\fR
-Set/clear the PACING_10MS configuration flag.
-.TP
-[\-]\fBpacing-20ms\fR
-Set/clear the PACING_20MS configuration flag.
-.TP
-[\-]\fBallow-hidtrig\fR
-Set/clear the ALLOW_HIDTRIG configuration flag, only available with Yubikey I
-.TP
-[\-]\fBstatic-ticket\fR
-Set/clear the STATIC_TICKET configuration flag.
-.TP
-[\-]\fBshort-ticket\fR
-Set/clear the SHORT_TICKET configuration flag, only available with II
-.TP
-[\-]\fBstrong-pw1\fR
-Set/clear the STRONG_PW1 configuration flag, only available with II
-.TP
-[\-]\fBstrong-pw2\fR
-Set/clear the STRONG_PW2 configuration flag, only available with II
-.TP
-[\-]\fBman-update\fR
-Set/clear the MAN_UPDATE configuration flag, only available with II
+.TP 
+[\-]\fIticket-flag\fR
+Set/clear ticket flag, see the section `Ticket flags\&'
+.TP 
+[\-]\fIconfiguration-flag\fR
+Set/clear ticket flag, see the section `Configuration flags\&'
 .RE
 .TP
 \fB-y\fR
@@ -150,6 +108,99 @@ Be more verbose
 .TP
 \fB-h\fR
 Help
+.SH Ticket flags
+.TP
+[\-]\fBtab-first\fR
+Send a tab character as the first character.  This is usually used to move
+to the next input field.
+.TP
+[\-]\fBappend-tab1\fR
+Send a tab character between the fixed part and the one-time password
+part. This is useful if you have the fixed portion equal to the user
+name and two input fields that you navigate between using tab.
+.TP
+[\-]\fBappend-tab2\fR
+Send a tab character as the last character.
+.TP
+[\-]\fBappend-delay1\fR
+Add a half-second delay before sending the one-time password part.
+.TP
+[\-]\fBappend-delay2\fR
+Add a half-second delay after sending the one-time password part.
+.TP
+[\-]\fBappend-cr\fR
+Send a carriage return after sending the one-time password part.
+.TP
+\fBYubikey 2.0 firmware and above\fR
+.TP
+[\-]\fBprotect-cfg2\fR
+When written to configuration 1, block later updates to configuration
+2.  When written to configuration 2, prevent configuration 1 from
+having the lock bit set.
+.TP
+\fBYubikey 2.1 firmware and above\fR
+.TP
+[\-]\fBoath-hotp\fR
+Set OATH-HOTP mode rather than Yubikey mode.  In this mode, the token
+functions according to the OATH-HOTP standard.
+.SH Configuration flags
+[\-]\fBsend-ref\fR
+Send a reference string of all 16 modhex characters before the fixed
+part.  This can not be combined with the \fBstrong-pw2\fR flag.
+.TP
+[\-]\fBpacing-10ms\fR
+Add a 10ms delay between key presses.
+.TP
+[\-]\fBpacing-20ms\fR
+Add a 20ms delay between key presses.
+.TP
+[\-]\fBstatic-ticket\fR
+Output a fixed string rather than a one-time password.  The password
+is still based on the AES key and should be hard to guess and
+impossible to remember.
+.TP
+\fBYubikey 1.x firmware only\fR
+.TP
+[\-]\fBticket-first\fR
+Send the one-time password rather than the fixed part first.
+.TP
+[\-]\fBallow-hidtrig\fR
+Allow trigger through HID/keyboard by pressing caps-, num or
+scroll-lock twice.  Not recommended for security reasons.
+.TP
+\fBYubikey 2.0 firmware and above\fR
+.TP
+[\-]\fBshort-ticket\fR
+Limit the length of the static string to max 16 digits.  This flag
+only makes sense with the \fB-ostatic-ticket\fR option.
+.TP
+[\-]\fBstrong-pw1\fR
+Upper-case the two first letters of the output string.  This is for
+compatibility with legacy systems that enforce both uppercase and
+lowercase characters in a password and does not add any security.
+.TP
+[\-]\fBstrong-pw2\fR
+Replace the first eight characters of the modhex alphabet with the
+numbers 0 to 7.  Like \fBstrong-pw1\fR, this is intended to support
+legacy systems.
+.TP
+[\-]\fBman-update\fR
+Enable user-initiated update of the static password.  Only makes sense
+with the \fB-ostatic-ticket\fR option.
+.TP
+\fBYubikey 2.1 firmware and above\fR
+.TP
+[\-]\fBoath-hotp8\fR
+When set, generate an 8-digit HOTP rather than a 6-digit one.
+.TP
+[\-]\fBoath-fixed-modhex1\fR
+When set, the first byte of the fixed part is sent as modhex.
+.TP
+[\-]\fBoath-fixed-modhex2\fR
+When set, the first two bytes of the fixed part is sent as modhex.
+.TP
+[\-]\fBoath-fixed-modhex\fR
+When set, the fixed part is sent as modhex.
 .SH BUGS
 Report ykpersonalize bugs in 
 .URL "http://code.google.com/p/yubikey-personalization/issues/list" "the issue tracker"
