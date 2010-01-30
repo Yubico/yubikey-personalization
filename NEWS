@@ -1,5 +1,9 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.3.1 (released 2010-01-30)
+
+** Fix build failure in some cases
+
 * Version 1.3 (released 2010-01-30)
 
 ** libykpers-1: Give warning on unknown firmwares, but don't stop
