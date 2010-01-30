@@ -54,6 +54,7 @@ pkgconfig_DATA = ykpers-1.pc
 
 if HAVE_LD_VERSION_SCRIPT
 libykpers_1_la_LDFLAGS += -Wl,--version-script=$(srcdir)/libykpers-1.map
+libykpers_1_la_DEPENDENCIES = $(srcdir)/libykpers-1.map $(libykpers_1_la_LIBADD)
 else
 libykpers_1_la_LDFLAGS += -export-symbols-regex '^(ykp|yk|ykds)_.*|_yk.*_errno_location'
 endif
