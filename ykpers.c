@@ -349,7 +349,7 @@ struct map_st ticket_flags_map[] = {
 	{ TKTFLAG_APPEND_DELAY2, "APPEND_DELAY2", vcheck_all },
 	{ TKTFLAG_APPEND_CR, "APPEND_CR", vcheck_all },
 	{ TKTFLAG_PROTECT_CFG2, "PROTECT_CFG2", vcheck_no_v1 },
-	{ TKTFLAG_OATH_HOTP, "PROTECT_OATH_HOTP", vcheck_v21_or_greater },
+	{ TKTFLAG_OATH_HOTP, "OATH_HOTP", vcheck_v21_or_greater },
 	{ 0, "" }
 };
 
