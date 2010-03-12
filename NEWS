@@ -1,5 +1,11 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.3.2 (unreleased)
+
+** Don't warn on YubiKey with firmware 0.9.9, they work fine.
+
+** Fix old firmware error message, it was missing a newline.
+
 * Version 1.3.1 (released 2010-01-30)
 
 ** Fix build failure in some cases
