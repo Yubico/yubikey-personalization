@@ -79,7 +79,10 @@ int yk_check_firmware_version(YK_KEY *k)
 
 	if (!yk_get_status(k, &st))
 		return 0;
-	if (!((st.versionMajor == 1 &&
+	if (!((st.versionMajor == 0 &&
+	       (st.versionMinor == 9 ||
+		st.versionBuild == 9)) ||
+	      (st.versionMajor == 1 &&
 	       (st.versionMinor == 0 ||
 		st.versionMinor == 1 ||
 		st.versionMinor == 2 ||
