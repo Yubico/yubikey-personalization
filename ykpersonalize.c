@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2008, 2009, Yubico AB
+ * Copyright (c) 2008, 2009, 2010, Yubico AB
  * Copyright (c) 2010  Tollef Fog Heen <tfheen@err.no>
  * All rights reserved.
  *
@@ -237,7 +237,7 @@ int main(int argc, char **argv)
 			       "features may not be available\n"
 			       "Please see \n"
 			       "http://code.google.com/p/yubikey-personalization/wiki/Compatibility\n"
-			       "for more information");
+			       "for more information.\n");
 		} else {
 			goto err;
 		}
