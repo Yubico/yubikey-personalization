@@ -89,7 +89,8 @@ int yk_check_firmware_version(YK_KEY *k)
 		st.versionMinor == 3)) ||
 	      (st.versionMajor == 2 &&
 	       (st.versionMinor == 0 ||
-		st.versionMinor == 1)))) {
+		st.versionMinor == 1 ||
+		st.versionMinor == 2)))) {
 		yk_errno = YK_EFIRMWARE;
 		return 0;
 	}

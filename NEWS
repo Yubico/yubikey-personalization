@@ -2,6 +2,7 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
 * Version 1.3.3 (unreleased)
 
+** Don't warn about upcoming YubiKey firmware 2.2.x, it is compatible.
 
 * Version 1.3.2 (released 2010-03-12)
 
