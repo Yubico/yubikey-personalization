@@ -95,7 +95,7 @@ release:
 		echo "Try this instead:"; \
 		echo "  make release USER=[GOOGLEUSERNAME] KEYID=[PGPKEYID]"; \
 		echo "For example:"; \
-		echo "  make release USER=simon75j KEYID=B9156397"; \
+		echo "  make release USER=simon@yubico.com KEYID=B9156397"; \
 		exit 1; \
 	fi
 	@if head -3 NEWS | grep -q unreleased; then \
