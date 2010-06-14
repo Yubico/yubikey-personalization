@@ -2,7 +2,8 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
 * Version 1.3.4 (unreleased)
 
-
+** Add contrib/ sub-directory and contrib/programming.sh from David Dindorp.
+See contrib/README for more information.
 
 * Version 1.3.3 (released 2010-05-20)
 

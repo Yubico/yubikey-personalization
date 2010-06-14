@@ -79,6 +79,9 @@ TESTS = $(ctests)
 # Dist docs from wiki.
 EXTRA_DIST = doc/Compatibility.wiki doc/MakeRelease.wiki doc/ReadMe.wiki doc/UsbhidIssue.wiki
 
+# Dist contrib stuff.
+EXTRA_DIST += contrib/README contrib/programming.sh
+
 # Release
 
 PROJECT = yubikey-personalization

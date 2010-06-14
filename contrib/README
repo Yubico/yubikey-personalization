@@ -1,0 +1,7 @@
+This directory holds some add-ons to the core package for convenience.
+
+programming.sh
+
+	A simple shell script to automate HID unbinding when
+	programming many Yubikeys.  Contributed by "David Dindorp"
+	<ddi@snex.dk>.
