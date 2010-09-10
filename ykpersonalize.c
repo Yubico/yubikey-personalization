@@ -57,7 +57,7 @@ const char *usage =
 "-cXXX..   A 12 char hex value to use as access code for programming\n"
 "          (this does NOT SET the access code, that's done with -oaccess=)\n"
 "-oOPTION  change configuration option.  Possible OPTION arguments are:\n"
-"          salt=ssssssss       Salt to be used when deriving key from a\n
+"          salt=ssssssss       Salt to be used when deriving key from a\n"
 "                              password.  If none is given, a unique random\n"
 "                              one will be generated.\n"
 "          fixed=xxxxxxxxxxx   The public identity of key, in MODHEX.\n"
