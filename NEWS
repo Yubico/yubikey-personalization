@@ -2,6 +2,9 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
 * Version 1.3.4 (unreleased)
 
+** Fix bug that prevented salting during AES key generation
+** from passwords from working.  Reported by Ben.
+
 ** Add contrib/ sub-directory and contrib/programming.sh from David Dindorp.
 See contrib/README for more information.
 

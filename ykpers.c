@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2008, 2009, Yubico AB
+ * Copyright (c) 2008, 2009, 2010, Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -178,8 +178,8 @@ int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 					size_t read_bytes = 0;
 
 					while (read_bytes < sizeof(_salt)) {
-						size_t n = fread(&cfg->ykcore_config.key[read_bytes],
-								 1, KEY_SIZE - read_bytes,
+						size_t n = fread(&_salt[read_bytes],
+								 1, sizeof (_salt) - read_bytes,
 								 random_file);
 						read_bytes += n;
 					}
