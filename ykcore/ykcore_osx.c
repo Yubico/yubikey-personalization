@@ -142,21 +142,23 @@ int _ykusb_close_device(void *dev)
 int _ykusb_read(void *dev, int report_type, int report_number,
 		char *buffer, int size)
 {
+	CFIndex sizecf = (CFIndex)size;
+
 	if (report_type != REPORT_TYPE_FEATURE)
 	{
 		yk_errno = YK_ENOTYETIMPL;
 		return 0;
 	}
 	
-	_ykusb_IOReturn = IOHIDDeviceGetReport( dev, kIOHIDReportTypeFeature, report_number, (uint8_t *)buffer, (CFIndex *) &size );
+	_ykusb_IOReturn = IOHIDDeviceGetReport( dev, kIOHIDReportTypeFeature, report_number, (uint8_t *)buffer, (CFIndex *) &sizecf );
 	
 	if ( _ykusb_IOReturn != kIOReturnSuccess )
 	{
 		yk_errno = YK_EUSBERR;
 		return 0;
 	}
-	
-	return size;
+
+	return (int)sizecf;
 }
 
 int _ykusb_write(void *dev, int report_type, int report_number,

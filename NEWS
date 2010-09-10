@@ -2,6 +2,10 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
 * Version 1.3.4 (unreleased)
 
+** Fix crash on Mac OS X.
+Reported by rosmiitto in Issue #6:
+<http://code.google.com/p/yubikey-personalization/issues/detail?id=6>.
+
 ** Fix bug that prevented salting during AES key generation
 ** from passwords from working.  Reported by Ben.
 
