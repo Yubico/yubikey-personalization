@@ -1,6 +1,6 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.3.4 (unreleased)
+* Version 1.3.4 (released 2010-09-10)
 
 ** Fix crash on Mac OS X.
 Reported by rosmiitto in Issue #6:
