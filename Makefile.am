@@ -120,10 +120,18 @@ release:
 	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION).tar.gz 
 
 upload-ykpers4win:
-	gpg --detach-sign --default-key $(KEYID) $(PACKAGE)-$(VERSION)-win32.zip
-	gpg --verify $(PACKAGE)-$(VERSION)-win32.zip.sig
+	gpg --detach-sign --default-key $(KEYID) \
+		$(PACKAGE)-$(VERSION)-win$(BITS).zip
+	gpg --verify $(PACKAGE)-$(VERSION)-win$(BITS).zip.sig
 	googlecode_upload.py \
-	 -s "OpenPGP signature for $(PACKAGE)-$(VERSION)-win32.zip." \
-	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION)-win32.zip.sig
-	googlecode_upload.py -s "Windows 32-bit binaries of $(PACKAGE) $(VERSION)" \
-	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION)-win32.zip
+	 -s "OpenPGP signature for $(PACKAGE)-$(VERSION)-win$(BITS).zip." \
+	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION)-win$(BITS).zip.sig
+	googlecode_upload.py \
+	 -s "Windows $(BITS)-bit binaries of $(PACKAGE) $(VERSION)" \
+	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION)-win$(BITS).zip
+
+upload-ykpers4win32:
+	make upload-ykpers4win BITS=32
+
+upload-ykpers4win64:
+	make upload-ykpers4win BITS=64
