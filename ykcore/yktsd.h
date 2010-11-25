@@ -2,6 +2,7 @@
 /* Note: this file is copied from Levitte Programming's LPlib and reworked
    for ykcore */
 /*
+ * Copyright (c) 2010 Simon Josefsson <simon@josefsson.org>
  * Copyright (c) 2003, 2004 Richard Levitte <richard@levitte.org>.
  * All rights reserved.
  *
@@ -33,8 +34,9 @@
 /* Define thread-specific data primitives */
 #if defined _WIN32
 #include <windows.h>
+#include <errno.h>
 #define yk__TSD_TYPE			DWORD
-#define yk__TSD_ALLOC(key)		((key = TlsAlloc()) == TLS_OUT_OF_INDEXES ? EAGAIN : 0)
+#define yk__TSD_ALLOC(key,nop)		((key = TlsAlloc()) == TLS_OUT_OF_INDEXES ? EAGAIN : 0)
 #define yk__TSD_FREE(key)		(!TlsFree(key))
 #define yk__TSD_SET(key,value)		(!TlsSetValue(key,value))
 #define yk__TSD_GET(key)		TlsGetValue(key)
