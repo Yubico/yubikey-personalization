@@ -2,6 +2,9 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
 * Version 1.3.5 (unreleased)
 
+** Fixes to make it work under Windows.
+Only tested with libusb-1.0 from trunk.
+
 * Version 1.3.4 (released 2010-09-10)
 
 ** Fix crash on Mac OS X.
