@@ -340,40 +340,50 @@ int main(int argc, char **argv)
 				ykp_set_access_code(cfg, accbin, accbinlen);
 				new_access_code = true;
 			}
-#define TKTFLAG(o, f)						\
-			else if (strcmp(optarg, o) == 0)	\
-				ykp_set_tktflag_##f(cfg, true); \
-			else if (strcmp(optarg, "-" o) == 0)   \
-				ykp_set_tktflag_##f(cfg, false)
-			TKTFLAG("tab-first", TAB_FIRST);
-			TKTFLAG("append-tab1", APPEND_TAB1);
-			TKTFLAG("append-tab2", APPEND_TAB2);
-			TKTFLAG("append-delay1", APPEND_DELAY1);
-			TKTFLAG("append-delay2", APPEND_DELAY2);
-			TKTFLAG("append-cr", APPEND_CR);
-			TKTFLAG("protect-cfg2", PROTECT_CFG2);
-			TKTFLAG("oath-hotp", OATH_HOTP);
+#define TKTFLAG(o, f)							\
+			else if (strcmp(optarg, o) == 0) {		\
+				if (!ykp_set_tktflag_##f(cfg, true)) 	\
+					exit_code = 1;			\
+					goto err;			\
+			} else if (strcmp(optarg, "-" o) == 0) {	\
+				if (! ykp_set_tktflag_##f(cfg, false))	\
+					exit_code = 1;			\
+					goto err;			\
+			}
+			TKTFLAG("tab-first", TAB_FIRST)
+			TKTFLAG("append-tab1", APPEND_TAB1)
+			TKTFLAG("append-tab2", APPEND_TAB2)
+			TKTFLAG("append-delay1", APPEND_DELAY1)
+			TKTFLAG("append-delay2", APPEND_DELAY2)
+			TKTFLAG("append-cr", APPEND_CR)
+			TKTFLAG("protect-cfg2", PROTECT_CFG2)
+			TKTFLAG("oath-hotp", OATH_HOTP)
 #undef TKTFLAG
 
-#define CFGFLAG(o, f) \
-			else if (strcmp(optarg, o) == 0)	\
-				ykp_set_cfgflag_##f(cfg, true); \
-			else if (strcmp(optarg, "-" o) == 0)   \
-				ykp_set_cfgflag_##f(cfg, false)
-			CFGFLAG("send-ref", SEND_REF);
-			CFGFLAG("ticket-first", TICKET_FIRST);
-			CFGFLAG("pacing-10ms", PACING_10MS);
-			CFGFLAG("pacing-20ms", PACING_20MS);
-			CFGFLAG("allow-hidtrig", ALLOW_HIDTRIG);
-			CFGFLAG("static-ticket", STATIC_TICKET);
-			CFGFLAG("short-ticket", SHORT_TICKET);
-			CFGFLAG("strong-pw1", STRONG_PW1);
-			CFGFLAG("strong-pw2", STRONG_PW2);
-			CFGFLAG("man-update", MAN_UPDATE);
-			CFGFLAG("oath-hotp8", OATH_HOTP8);
-			CFGFLAG("oath-fixed-modhex1", OATH_FIXED_MODHEX1);
-			CFGFLAG("oath-fixed-modhex2", OATH_FIXED_MODHEX2);
-			CFGFLAG("oath-fixed-modhex", OATH_FIXED_MODHEX);
+#define CFGFLAG(o, f)							\
+			else if (strcmp(optarg, o) == 0) {		\
+				if (! ykp_set_cfgflag_##f(cfg, true))	\
+					exit_code = 1;			\
+					goto err;			\
+			} else if (strcmp(optarg, "-" o) == 0) {	\
+				if (! ykp_set_cfgflag_##f(cfg, false))	\
+					exit_code = 1;			\
+					goto err;			\
+			}
+			CFGFLAG("send-ref", SEND_REF)
+			CFGFLAG("ticket-first", TICKET_FIRST)
+			CFGFLAG("pacing-10ms", PACING_10MS)
+			CFGFLAG("pacing-20ms", PACING_20MS)
+			CFGFLAG("allow-hidtrig", ALLOW_HIDTRIG)
+			CFGFLAG("static-ticket", STATIC_TICKET)
+			CFGFLAG("short-ticket", SHORT_TICKET)
+			CFGFLAG("strong-pw1", STRONG_PW1)
+			CFGFLAG("strong-pw2", STRONG_PW2)
+			CFGFLAG("man-update", MAN_UPDATE)
+			CFGFLAG("oath-hotp8", OATH_HOTP8)
+			CFGFLAG("oath-fixed-modhex1", OATH_FIXED_MODHEX1)
+			CFGFLAG("oath-fixed-modhex2", OATH_FIXED_MODHEX2)
+			CFGFLAG("oath-fixed-modhex", OATH_FIXED_MODHEX)
 #undef CFGFLAG
 			else {
 				fprintf(stderr, "Unknown option '%s'\n",
