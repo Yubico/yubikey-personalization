@@ -342,13 +342,15 @@ int main(int argc, char **argv)
 			}
 #define TKTFLAG(o, f)							\
 			else if (strcmp(optarg, o) == 0) {		\
-				if (!ykp_set_tktflag_##f(cfg, true)) 	\
+				if (!ykp_set_tktflag_##f(cfg, true)) {	\
 					exit_code = 1;			\
 					goto err;			\
+				}					\
 			} else if (strcmp(optarg, "-" o) == 0) {	\
-				if (! ykp_set_tktflag_##f(cfg, false))	\
+				if (! ykp_set_tktflag_##f(cfg, false)) { \
 					exit_code = 1;			\
 					goto err;			\
+				}					\
 			}
 			TKTFLAG("tab-first", TAB_FIRST)
 			TKTFLAG("append-tab1", APPEND_TAB1)
@@ -362,13 +364,15 @@ int main(int argc, char **argv)
 
 #define CFGFLAG(o, f)							\
 			else if (strcmp(optarg, o) == 0) {		\
-				if (! ykp_set_cfgflag_##f(cfg, true))	\
+				if (! ykp_set_cfgflag_##f(cfg, true)) {	\
 					exit_code = 1;			\
 					goto err;			\
+				}					\
 			} else if (strcmp(optarg, "-" o) == 0) {	\
-				if (! ykp_set_cfgflag_##f(cfg, false))	\
+				if (! ykp_set_cfgflag_##f(cfg, false)) { \
 					exit_code = 1;			\
 					goto err;			\
+				}					\
 			}
 			CFGFLAG("send-ref", SEND_REF)
 			CFGFLAG("ticket-first", TICKET_FIRST)
