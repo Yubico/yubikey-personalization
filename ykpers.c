@@ -427,7 +427,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 
 		buffer[0] = '\0';
 		for (p = ticket_flags_map; p->flag; p++) {
-			if (cfg->ykcore_config.tktFlags & p->flag
+			if ((cfg->ykcore_config.tktFlags & p->flag) == p->flag
 			    && p->vcheck(cfg)) {
 				if (*buffer) {
 					strcat(buffer, str_flags_separator);
@@ -446,7 +446,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 
 		buffer[0] = '\0';
 		for (p = config_flags_map; p->flag; p++) {
-			if (cfg->ykcore_config.cfgFlags & p->flag
+			if ((cfg->ykcore_config.cfgFlags & p->flag) == p->flag
 			    && p->vcheck(cfg)) {
 				if (*buffer) {
 					strcat(buffer, str_flags_separator);
