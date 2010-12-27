@@ -338,37 +338,49 @@ struct map_st {
 	uint8_t flag;
 	const char *flag_text;
 	bool (*vcheck)(const YKP_CONFIG *cfg);
+	unsigned char tkt_context;
 };
 
 const char str_ticket_flags[] = "ticket_flags";
 struct map_st ticket_flags_map[] = {
-	{ TKTFLAG_TAB_FIRST, "TAB_FIRST", vcheck_all },
-	{ TKTFLAG_APPEND_TAB1, "APPEND_TAB1", vcheck_all },
-	{ TKTFLAG_APPEND_TAB2, "APPEND_TAB2", vcheck_all },
-	{ TKTFLAG_APPEND_DELAY1, "APPEND_DELAY1", vcheck_all },
-	{ TKTFLAG_APPEND_DELAY2, "APPEND_DELAY2", vcheck_all },
-	{ TKTFLAG_APPEND_CR, "APPEND_CR", vcheck_all },
-	{ TKTFLAG_PROTECT_CFG2, "PROTECT_CFG2", vcheck_no_v1 },
-	{ TKTFLAG_OATH_HOTP, "OATH_HOTP", vcheck_v21_or_greater },
-	{ 0, "" }
+	{ TKTFLAG_TAB_FIRST,		"TAB_FIRST",		vcheck_all,		0 },
+	{ TKTFLAG_APPEND_TAB1,		"APPEND_TAB1",		vcheck_all,		0 },
+	{ TKTFLAG_APPEND_TAB2,		"APPEND_TAB2",		vcheck_all,		0 },
+	{ TKTFLAG_APPEND_DELAY1,	"APPEND_DELAY1",	vcheck_all,		0 },
+	{ TKTFLAG_APPEND_DELAY2,	"APPEND_DELAY2",	vcheck_all,		0 },
+	{ TKTFLAG_APPEND_CR,		"APPEND_CR",		vcheck_all,		0 },
+	{ TKTFLAG_PROTECT_CFG2,		"PROTECT_CFG2",		vcheck_no_v1,		0 },
+	{ TKTFLAG_OATH_HOTP,		"OATH_HOTP",		vcheck_v21_or_greater,	0 },
+	{ 0, "", 0 }
 };
 
 const char str_config_flags[] = "config_flags";
 struct map_st config_flags_map[] = {
-	{ CFGFLAG_SEND_REF, "SEND_REF", vcheck_all },
-	{ CFGFLAG_TICKET_FIRST, "TICKET_FIRST", vcheck_v1 },
-	{ CFGFLAG_PACING_10MS, "PACING_10MS", vcheck_all },
-	{ CFGFLAG_PACING_20MS, "PACING_20MS", vcheck_all },
-	{ CFGFLAG_ALLOW_HIDTRIG, "ALLOW_HIDTRIG", vcheck_v1 },
-	{ CFGFLAG_STATIC_TICKET, "STATIC_TICKET", vcheck_all },
-	{ CFGFLAG_SHORT_TICKET, "SHORT_TICKET", vcheck_no_v1 },
-	{ CFGFLAG_STRONG_PW1, "STRONG_PW1", vcheck_no_v1 },
-	{ CFGFLAG_STRONG_PW2, "STRONG_PW2", vcheck_no_v1 },
-	{ CFGFLAG_MAN_UPDATE, "MAN_UPDATE", vcheck_no_v1 },
-	{ CFGFLAG_OATH_HOTP8, "OATH_HOTP8", vcheck_v21_or_greater },
-	{ CFGFLAG_OATH_FIXED_MODHEX1, "OATH_FIXED_MODHEX1", vcheck_v21_or_greater },
-	{ CFGFLAG_OATH_FIXED_MODHEX2, "OATH_FIXED_MODHEX2", vcheck_v21_or_greater },
-	{ CFGFLAG_OATH_FIXED_MODHEX, "OATH_FIXED_MODHEX", vcheck_v21_or_greater },
+	/*
+	  Values used to pretty-print a YKP_CONFIG in ykp_write_config().
+	  
+	  The fourth field is a (tkt)context in which this (cfg)flag is valid.
+	  Some cfgFlags share the same value (e.g. CFGFLAG_STRONG_PW2 and
+	  CFGFLAG_OATH_FIXED_MODHEX2, both 0x40). Obvioulsy, STRONG_PW2 is not
+	  in effect when we do OATH, so by setting tkt_context to TKTFLAG_OATH_HOTP
+	  and having the OATH flags before STRONG_PW2 in this struct we will show
+	  cfgFlag 0x40 as OATH_FIXED_MODHEX2 and not STRONG_PW2 if TKTFLAG_OATH_HOTP
+	  is set.
+	*/
+	{ CFGFLAG_OATH_HOTP8,		"OATH_HOTP8",		vcheck_v21_or_greater,	TKTFLAG_OATH_HOTP },
+	{ CFGFLAG_OATH_FIXED_MODHEX1,	"OATH_FIXED_MODHEX1",	vcheck_v21_or_greater,	TKTFLAG_OATH_HOTP },
+	{ CFGFLAG_OATH_FIXED_MODHEX2,	"OATH_FIXED_MODHEX2",	vcheck_v21_or_greater,	TKTFLAG_OATH_HOTP },
+	{ CFGFLAG_OATH_FIXED_MODHEX,	"OATH_FIXED_MODHEX",	vcheck_v21_or_greater,	TKTFLAG_OATH_HOTP },
+	{ CFGFLAG_SEND_REF,		"SEND_REF",		vcheck_all,		0 },
+	{ CFGFLAG_TICKET_FIRST,		"TICKET_FIRST",		vcheck_v1,		0 },
+	{ CFGFLAG_PACING_10MS,		"PACING_10MS",		vcheck_all,		0 },
+	{ CFGFLAG_PACING_20MS,		"PACING_20MS",		vcheck_all,		0 },
+	{ CFGFLAG_ALLOW_HIDTRIG,	"ALLOW_HIDTRIG",	vcheck_v1,		0 },
+	{ CFGFLAG_STATIC_TICKET,	"STATIC_TICKET",	vcheck_all,		0 },
+	{ CFGFLAG_SHORT_TICKET,		"SHORT_TICKET",		vcheck_no_v1,		0 },
+	{ CFGFLAG_STRONG_PW1,		"STRONG_PW1",		vcheck_no_v1,		0 },
+	{ CFGFLAG_STRONG_PW2,		"STRONG_PW2",		vcheck_no_v1,		0 },
+	{ CFGFLAG_MAN_UPDATE,		"MAN_UPDATE",		vcheck_no_v1,		0 },
 	{ 0, "" }
 };
 
@@ -380,7 +392,9 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 	if (cfg) {
 		char buffer[256];
 		struct map_st *p;
+		unsigned char t_flags;
 
+		/* fixed: */
 		writer(str_fixed, strlen(str_fixed), userdata);
 		writer(str_key_value_separator,
 		       strlen(str_key_value_separator),
@@ -392,6 +406,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
+		/* uid: */
 		writer(str_uid, strlen(str_uid), userdata);
 		writer(str_key_value_separator,
 		       strlen(str_key_value_separator),
@@ -403,6 +418,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
+		/* key: */
 		writer(str_key, strlen(str_key), userdata);
 		writer(str_key_value_separator,
 		       strlen(str_key_value_separator),
@@ -414,6 +430,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
+		/* acc_code: */
 		writer(str_acc_code, strlen(str_acc_code), userdata);
 		writer(str_key_value_separator,
 		       strlen(str_key_value_separator),
@@ -425,6 +442,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
+		/* ticket_flags: */
 		buffer[0] = '\0';
 		for (p = ticket_flags_map; p->flag; p++) {
 			if ((cfg->ykcore_config.tktFlags & p->flag) == p->flag
@@ -444,16 +462,23 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
+		/* config_flags: */
 		buffer[0] = '\0';
+		t_flags = cfg->ykcore_config.cfgFlags;
 		for (p = config_flags_map; p->flag; p++) {
-			if ((cfg->ykcore_config.cfgFlags & p->flag) == p->flag
-			    && p->vcheck(cfg)) {
+			if ((t_flags & p->flag) == p->flag
+			    && p->vcheck(cfg)
+			    && (cfg->ykcore_config.tktFlags & p->tkt_context) == p->tkt_context) {
 				if (*buffer) {
 					strcat(buffer, str_flags_separator);
 					strcat(buffer, p->flag_text);
 				} else {
 					strcpy(buffer, p->flag_text);
 				}
+				/* make sure we don't show more than one cfgFlag per value -
+				   some cfgflags share value in different contexts
+				*/
+				t_flags -= p->flag;
 			}
 		}
 		writer(str_config_flags, strlen(str_config_flags), userdata);
@@ -467,6 +492,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 	}
 	return 0;
 }
+
 int ykp_read_config(YKP_CONFIG *cfg,
 		    int (*reader)(char *buf, size_t count,
 				  void *userdata),
