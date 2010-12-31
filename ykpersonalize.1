@@ -247,6 +247,20 @@ configuration, and the other in challenge-response mode).  Instead, a program ca
 sending USB HID feature reports to the token must be used to send it a challenge, and
 read the response.
 
+.SH Modhex
+Modhex is a way of writing hex digits where the \(lqdigits\(rq are
+chosen for being in the same place on most keyboard layouts.
+.TP
+To convert from hex to modhex, you can use
+.RS
+tr "[0123456789abcdef]" "[cbdefghijklnrtuv]"
+.RE
+.TP
+To convert the other way, use
+.RS
+tr "[cbdefghijklnrtuv]" "[0123456789abcdef]"
+.RE
+
 .SH BUGS
 Report ykpersonalize bugs in 
 .URL "https://github.com/Yubico/yubikey-personalization/issues" "the issue tracker"
