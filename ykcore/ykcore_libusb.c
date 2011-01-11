@@ -159,6 +159,8 @@ void *_ykusb_open_device(int vendor_id, int product_id)
 			    && dev->descriptor.idProduct == YUBIKEY_PID) {
 				rc = YK_EUSBERR;
 				h = usb_open(dev);
+				if (h != NULL)
+					usb_detach_kernel_driver_np(h, 0);
 				goto done;
 			}
 	}
