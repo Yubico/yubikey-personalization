@@ -121,7 +121,7 @@ int yk_write_config(YK_KEY *yk, YK_CONFIG *cfg, int confnum,
 	YK_STATUS stat;
 	int seq;
 
-	/* Get current seqence # from status block */
+	/* Get current sequence # from status block */
 
 	if (!yk_get_status(yk, &stat /*, 0*/))
 		return 0;
@@ -243,53 +243,63 @@ int yk_read_from_key(YK_KEY *yk, uint8_t slot,
 
 int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount)
 {
+	YK_FRAME frame;
 	unsigned char repbuf[FEATURE_RPT_SIZE];
-	unsigned char data[SLOT_DATA_SIZE + FEATURE_RPT_SIZE];
-	int i, j, pos, part;
+	int i, seq;
+	unsigned char *ptr, *end;
+
+	if (bufcount > sizeof(frame.payload)) {
+		yk_errno = YK_EWRONGSIZ;
+		return 0;
+	}
 
 	/* Insert data and set slot # */
 
-	memset(data, 0, sizeof(data));
-	memcpy(data, buf, bufcount);
-	data[SLOT_DATA_SIZE] = slot;
+	memset(&frame, 0, sizeof(frame));
+	memcpy(frame.payload, buf, bufcount);
+	frame.slot = slot;
 
 	/* Append slot checksum */
 
-	i = yubikey_crc16 (data, SLOT_DATA_SIZE);
-	data[SLOT_DATA_SIZE + 1] = (unsigned char) (i & 0xff);
-	data[SLOT_DATA_SIZE + 2] = (unsigned char) (i >> 8);
+	i = yubikey_crc16 (frame.payload, sizeof(frame.payload));
+	frame.crc = yk_endian_swap_16(i);
 
 	/* Chop up the data into parts that fits into the payload of a
-	   feature report. Set the part number | 0x80 in the end
+	   feature report. Set the sequence number | 0x80 in the end
 	   of the feature report. When the Yubikey has processed it,
 	   it will clear this byte, signaling that the next part can be
 	   sent */
 
-	for (pos = 0, part = 0x80; pos < (SLOT_DATA_SIZE + 4); part++) {
+	ptr = (unsigned char *) &frame;
+	end = (unsigned char *) &frame + sizeof(frame);
 
+	for (seq = 0; ptr < end; seq++) {
+		int all_zeros = 1;
 		/* Ignore parts that are all zeroes except first and last
 		   to speed up the transfer */
 
-		for (i = j = 0; i < (FEATURE_RPT_SIZE - 1); i++)
-			if ((repbuf[i] = data[pos++])) j = 1;
-		if (!j && (part > 0x80) && (pos < SLOT_DATA_SIZE))
+		for (i = 0; i < (FEATURE_RPT_SIZE - 1); i++) {
+			if (repbuf[i] = *ptr++) all_zeros = 0;
+		}
+		if (all_zeros && (seq > 0) && (ptr < end))
 			continue;
 
-		repbuf[i] = part;
+		/* sequence number goes into lower bits of last byte */
+		repbuf[i] = seq | SLOT_WRITE_FLAG;
 
 		if (!_ykusb_write(yk, REPORT_TYPE_FEATURE, 0,
 				  (char *)repbuf, FEATURE_RPT_SIZE))
 			return 0;
 
-		/* When the last byte in the feature report is cleared by
-		   the Yubikey, the next part can be sent */
+		/* When the Yubikey clears the SLOT_WRITE_FLAG, the
+		   next part can be sent */
 
 		for (i = 0; i < 50; i++) {
 			memset(repbuf, 0, sizeof(repbuf));
 			if (!_ykusb_read(yk, REPORT_TYPE_FEATURE, 0,
 					 (char *)repbuf, FEATURE_RPT_SIZE))
 				return 0;
-			if (!repbuf[FEATURE_RPT_SIZE - 1])
+			if (! (repbuf[FEATURE_RPT_SIZE - 1] & SLOT_WRITE_FLAG))
 				break;
 			Sleep(10);
 		}
@@ -310,7 +320,7 @@ int yk_force_key_update(YK_KEY *yk)
 	unsigned char buf[FEATURE_RPT_SIZE];
 
 	memset(buf, 0, sizeof(buf));
-	buf[FEATURE_RPT_SIZE - 1] = 0x8a; /* Invalid partition = update only */
+	buf[FEATURE_RPT_SIZE - 1] = DUMMY_REPORT_WRITE; /* Invalid sequence = update only */
 	if (!_ykusb_write(yk, REPORT_TYPE_FEATURE, 0, (char *)buf, FEATURE_RPT_SIZE))
 		return 0;
 
