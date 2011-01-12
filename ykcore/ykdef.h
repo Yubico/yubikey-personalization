@@ -9,6 +9,7 @@
 **	08-06-03	/ 1.3.0		/ J E	/ Added static OTP feature		**
 **	09-06-02	/ 2.0.0		/ J E	/ Added version 2 flags			**
 **	09-09-23	/ 2.1.0		/ J E	/ Added version 2.1 flags (OATH-HOTP)	**
+**	10-05-01	/ 2.2.0		/ J E	/ Added support for 2.2 ext. + frame	**
 **											**
 *****************************************************************************************/
 
@@ -31,7 +32,38 @@
 #define	SLOT_NAV		2   /* V1 only */
 #define SLOT_CONFIG2		3   /* Second (V2) configuration */
 
+#define SLOT_DEVICE_SERIAL	0x10	/* Device serial number */
+
+#define SLOT_CHAL_OTP1		0x20	/* Write 6 byte challenge to slot 1, get Yubico OTP response */
+#define SLOT_CHAL_OTP2		0x28	/* Write 6 byte challenge to slot 2, get Yubico OTP response */
+
+#define SLOT_CHAL_HMAC1		0x30	/* Write 64 byte challenge to slot 1, get HMAC-SHA1 response */
+#define SLOT_CHAL_HMAC2		0x38	/* Write 64 byte challenge to slot 2, get HMAC-SHA1 response */
+
+#define RESP_ITEM_MASK		0x07	/* Mask for slice item # in responses */
+
+#define RESP_TIMEOUT_WAIT_MASK	0x1f	/* Mask to get timeout value */
+#define RESP_TIMEOUT_WAIT_FLAG	0x20	/* Waiting for timeout operation - seconds left in lower 5 bits */
+#define RESP_PENDING_FLAG	0x40	/* Response pending flag */
+#define SLOT_WRITE_FLAG		0x80	/* Write flag - set by app - cleared by device */
+
+#define DUMMY_REPORT_WRITE	0x8f	/* Write a dummy report to force update or abort */
+
+#define SHA1_MAX_BLOCK_SIZE	64	/* Max size of input SHA1 block */
+#define SHA1_DIGEST_SIZE	20	/* Size of SHA1 digest = 160 bits */
+
+#define SERIAL_NUMBER_SIZE	4	/* Size of device serial number */
+
+/* Frame structure */
+
 #define	SLOT_DATA_SIZE		64
+
+struct frame_st {
+    unsigned char payload[SLOT_DATA_SIZE]; /* Frame payload */
+    unsigned char slot;                 /* Slot # field */
+    unsigned short crc;                 /* CRC field */
+    unsigned char filler[3];            /* Filler */
+};
 
 /* Ticket structure */
 
@@ -65,10 +97,10 @@ struct config_st {
 	unsigned char key[KEY_SIZE];	/* AES key */
 	unsigned char accCode[ACC_CODE_SIZE]; /* Access code to re-program device */
 	unsigned char fixedSize;	/* Number of bytes in fixed field (0 if not used) */
-	unsigned char pgmSeq;		/* Program sequence number (ignored at programming - updated by firmware) */
+	unsigned char extFlags;		/* Extended flags - YubiKey 2.? and above */
 	unsigned char tktFlags;		/* Ticket configuration flags */
 	unsigned char cfgFlags;		/* General configuration flags */
-	unsigned short ctrOffs;		/* Counter offset value (ignored at programming - updated by firmware) */
+	unsigned char rfu[2];		/* Reserved for future use */
 	unsigned short crc;		/* CRC16 value of all fields */
 };
 
@@ -84,9 +116,6 @@ struct config_st {
 
 /* Yubikey 2 and above */
 #define TKTFLAG_PROTECT_CFG2	0x80	/* Block update of config 2 unless config 2 is configured and has this bit set */
-
-/* Yubikey 2.1 and above */
-#define TKTFLAG_OATH_HOTP	0x40	/*  OATH HOTP mode */
 
 /* Configuration flags *******************************************************/
 
@@ -107,11 +136,24 @@ struct config_st {
 #define CFGFLAG_MAN_UPDATE	0x80	/* Allow manual (local) update of static OTP */
 
 /* Yubikey 2.1 and above */
-#define CFGFLAG_OATH_HOTP8	0x02	/*  Generate 8 digits HOTP rather than 6 digits */
+#define TKTFLAG_OATH_HOTP		0x40	/*  OATH HOTP mode */
+#define CFGFLAG_OATH_HOTP8		0x02	/*  Generate 8 digits HOTP rather than 6 digits */
 #define CFGFLAG_OATH_FIXED_MODHEX1	0x10	/*  First byte in fixed part sent as modhex */
 #define CFGFLAG_OATH_FIXED_MODHEX2	0x40	/*  First two bytes in fixed part sent as modhex */
 #define CFGFLAG_OATH_FIXED_MODHEX	0x50	/*  Fixed part sent as modhex */
-#define CFGFLAG_OATH_FIXED_MASK	0x50	/*  Mask to get out fixed flags */
+#define CFGFLAG_OATH_FIXED_MASK		0x50	/*  Mask to get out fixed flags */
+
+/* Yubikey 2.2 and above */
+
+#define TKTFLAG_CHAL_RESP		0x40	/* Challenge-response enabled (both must be set) */
+#define CFGFLAG_CHAL_YUBICO		0x20	/* Challenge-response enabled - Yubico OTP mode */
+#define CFGFLAG_CHAL_HMAC		0x22	/* Challenge-response enabled - HMAC-SHA1 */
+#define CFGFLAG_HMAC_LT64		0x04	/* Set when HMAC message is less than 64 bytes */
+#define CFGFLAG_CHAL_BTN_TRIG		0x08	/* Challenge-respoonse operation requires button press */
+
+#define EXTFLAG_SERIAL_BTN_VISIBLE	0x01	/* Serial number visible at startup (button press) */
+#define EXTFLAG_SERIAL_USB_VISIBLE	0x02	/* Serial number visible in USB iSerial field */
+#define EXTFLAG_SERIAL_API_VISIBLE	0x04	/* Serial number visible via API call */
 
 /* Navigation */
 
@@ -146,6 +188,9 @@ struct status_st {
 	unsigned char pgmSeq;		/* Programming sequence number. 0 if no valid configuration */
 	unsigned short touchLevel;	/* Level from touch detector */
 };
+
+#define CONFIG1_VALID               0x01        /* Bit in touchLevel indicating that configuration 1 is valid (from firmware 2.1) */
+#define CONFIG2_VALID               0x02        /* Bit in touchLevel indicating that configuration 1 is valid (from firmware 2.1) */
 
 /* Modified hex string mapping */
 
