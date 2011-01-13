@@ -174,25 +174,219 @@ static void report_yk_error()
 	}
 }
 
-int main(int argc, char **argv)
+/*
+ * Parse all arguments supplied to this program and turn it into mainly
+ * a YKP_CONFIG (but return some other parameters as well, like
+ * access_code, verbose etc.).
+ *
+ * Done in this way to be testable (see tests/test_args_to_config.c).
+ */
+int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
+		   const char *infname, const char *outfname,
+		   bool *autocommit, char *salt,
+		   YK_STATUS *st, bool *verbose,
+		   unsigned char *access_code, bool *use_access_code,
+		   bool *aesviahash,
+		   int *exit_code)
 {
 	char c;
+	const char *aeshash = NULL;
+	bool new_access_code = false;
+
+	while((c = getopt(argc, argv, optstring)) != -1) {
+		switch (c) {
+		case '1':
+			if (!ykp_configure_for(cfg, 1, st))
+				return 0;
+			break;
+		case '2':
+			if (!ykp_configure_for(cfg, 2, st))
+				return 0;
+			break;
+		case 'i':
+			infname = optarg;
+			break;
+		case 's':
+			outfname = optarg;
+			break;
+		case 'a':
+			*aesviahash = true;
+			aeshash = optarg;
+			break;
+		case 'c': {
+			size_t access_code_len = 0;
+			int rc = hex_modhex_decode(access_code, &access_code_len,
+						   optarg, strlen(optarg),
+						   12, 12, false);
+			if (rc <= 0) {
+				fprintf(stderr,
+					"Invalid access code string: %s\n",
+					optarg);
+				*exit_code = 1;
+				return 0;
+			}
+			if (!new_access_code)
+				ykp_set_access_code(cfg,
+						    access_code,
+						    access_code_len);
+			*use_access_code = true;
+			break;
+		}
+		case 'o':
+			if (strncmp(optarg, "salt=", 5) == 0)
+				salt = strdup(optarg+5);
+			else if (strncmp(optarg, "fixed=", 6) == 0) {
+				const char *fixed = optarg+6;
+				size_t fixedlen = strlen (fixed);
+				unsigned char fixedbin[256];
+				size_t fixedbinlen = 0;
+				int rc = hex_modhex_decode(fixedbin, &fixedbinlen,
+							   fixed, fixedlen,
+							   0, 16, true);
+				if (rc <= 0) {
+					fprintf(stderr,
+						"Invalid fixed string: %s\n",
+						fixed);
+					*exit_code = 1;
+					return 0;
+				}
+				ykp_set_fixed(cfg, fixedbin, fixedbinlen);
+			}
+			else if (strncmp(optarg, "uid=", 4) == 0) {
+				const char *uid = optarg+4;
+				size_t uidlen = strlen (uid);
+				unsigned char uidbin[256];
+				size_t uidbinlen = 0;
+				int rc = hex_modhex_decode(uidbin, &uidbinlen,
+							   uid, uidlen,
+							   12, 12, false);
+				if (rc <= 0) {
+					fprintf(stderr,
+						"Invalid uid string: %s\n",
+						uid);
+					*exit_code = 1;
+					return 0;
+				}
+				ykp_set_uid(cfg, uidbin, uidbinlen);
+			}
+			else if (strncmp(optarg, "access=", 7) == 0) {
+				const char *acc = optarg+7;
+				size_t acclen = strlen (acc);
+				unsigned char accbin[256];
+				size_t accbinlen = 0;
+				int rc = hex_modhex_decode (accbin, &accbinlen,
+							    acc, acclen,
+							    12, 12, false);
+				if (rc <= 0) {
+					fprintf(stderr,
+						"Invalid access code string: %s\n",
+						acc);
+					*exit_code = 1;
+					return 0;
+				}
+				ykp_set_access_code(cfg, accbin, accbinlen);
+				new_access_code = true;
+			}
+#define TKTFLAG(o, f)							\
+			else if (strcmp(optarg, o) == 0) {		\
+				if (!ykp_set_tktflag_##f(cfg, true)) {	\
+					*exit_code = 1;			\
+					return 0;		\
+				}					\
+			} else if (strcmp(optarg, "-" o) == 0) {	\
+				if (! ykp_set_tktflag_##f(cfg, false)) { \
+					*exit_code = 1;			\
+					return 0;		\
+				}					\
+			}
+			TKTFLAG("tab-first", TAB_FIRST)
+			TKTFLAG("append-tab1", APPEND_TAB1)
+			TKTFLAG("append-tab2", APPEND_TAB2)
+			TKTFLAG("append-delay1", APPEND_DELAY1)
+			TKTFLAG("append-delay2", APPEND_DELAY2)
+			TKTFLAG("append-cr", APPEND_CR)
+			TKTFLAG("protect-cfg2", PROTECT_CFG2)
+			TKTFLAG("oath-hotp", OATH_HOTP)
+#undef TKTFLAG
+
+#define CFGFLAG(o, f)							\
+			else if (strcmp(optarg, o) == 0) {		\
+				if (! ykp_set_cfgflag_##f(cfg, true)) {	\
+					*exit_code = 1;			\
+					return 0;			\
+				}					\
+			} else if (strcmp(optarg, "-" o) == 0) {	\
+				if (! ykp_set_cfgflag_##f(cfg, false)) { \
+					*exit_code = 1;			\
+					return 0;			\
+				}					\
+			}
+			CFGFLAG("send-ref", SEND_REF)
+			CFGFLAG("ticket-first", TICKET_FIRST)
+			CFGFLAG("pacing-10ms", PACING_10MS)
+			CFGFLAG("pacing-20ms", PACING_20MS)
+			CFGFLAG("allow-hidtrig", ALLOW_HIDTRIG)
+			CFGFLAG("static-ticket", STATIC_TICKET)
+			CFGFLAG("short-ticket", SHORT_TICKET)
+			CFGFLAG("strong-pw1", STRONG_PW1)
+			CFGFLAG("strong-pw2", STRONG_PW2)
+			CFGFLAG("man-update", MAN_UPDATE)
+			CFGFLAG("oath-hotp8", OATH_HOTP8)
+			CFGFLAG("oath-fixed-modhex1", OATH_FIXED_MODHEX1)
+			CFGFLAG("oath-fixed-modhex2", OATH_FIXED_MODHEX2)
+			CFGFLAG("oath-fixed-modhex", OATH_FIXED_MODHEX)
+#undef CFGFLAG
+			else {
+				fprintf(stderr, "Unknown option '%s'\n",
+					optarg);
+				fputs(usage, stderr);
+				*exit_code = 1;
+				return 0;
+			}
+			break;
+		case 'v':
+			*verbose = true;
+			break;
+		case 'y':
+			*autocommit = true;
+			break;
+		case 'h':
+		default:
+			fputs(usage, stderr);
+			*exit_code = 0;
+			return 0;
+		}
+	}
+
+	if (*aesviahash) {
+		if (ykp_AES_key_from_hex(cfg, aeshash)) {
+			fprintf(stderr, "Bad AES key: %s\n", aeshash);
+			fflush(stderr);
+			return 0;
+		}
+	}
+
+	return 1;
+}
+
+int main(int argc, char **argv)
+{
 	FILE *inf = NULL; const char *infname = NULL;
 	FILE *outf = NULL; const char *outfname = NULL;
 	bool verbose = false;
-	bool aesviahash = false; const char *aeshash = NULL;
-	bool use_access_code = false, new_access_code = false;
+	bool aesviahash = false;
+	bool use_access_code = false;
 	unsigned char access_code[256];
 	YK_KEY *yk = 0;
 	YKP_CONFIG *cfg = ykp_create_config();
 	YK_STATUS *st = ykds_alloc();
 	bool autocommit = false;
 
-	bool error = false;
-	int exit_code = 0;
-
 	/* Options */
 	char *salt = NULL;
+
+	bool error = false;
+	int exit_code = 0;
 
 	ykp_errno = 0;
 	yk_errno = 0;
@@ -246,169 +440,15 @@ int main(int argc, char **argv)
 	if (!ykp_configure_for(cfg, 1, st))
 		goto err;
 
-	while((c = getopt(argc, argv, optstring)) != -1) {
-		switch (c) {
-		case '1':
-			if (!ykp_configure_for(cfg, 1, st))
-				goto err;
-			break;
-		case '2':
-			if (!ykp_configure_for(cfg, 2, st))
-				goto err;
-			break;
-		case 'i':
-			infname = optarg;
-			break;
-		case 's':
-			outfname = optarg;
-			break;
-		case 'a':
-			aesviahash = true;
-			aeshash = optarg;
-			break;
-		case 'c': {
-			size_t access_code_len = 0;
-			int rc = hex_modhex_decode(access_code, &access_code_len,
-						   optarg, strlen(optarg),
-						   12, 12, false);
-			if (rc <= 0) {
-				fprintf(stderr,
-					"Invalid access code string: %s\n",
-					optarg);
-				exit_code = 1;
-				goto err;
-			}
-			if (!new_access_code)
-				ykp_set_access_code(cfg,
-						    access_code,
-						    access_code_len);
-			use_access_code = true;
-			break;
-		}
-		case 'o':
-			if (strncmp(optarg, "salt=", 5) == 0)
-				salt = strdup(optarg+5);
-			else if (strncmp(optarg, "fixed=", 6) == 0) {
-				const char *fixed = optarg+6;
-				size_t fixedlen = strlen (fixed);
-				unsigned char fixedbin[256];
-				size_t fixedbinlen = 0;
-				int rc = hex_modhex_decode(fixedbin, &fixedbinlen,
-							   fixed, fixedlen,
-							   0, 16, true);
-				if (rc <= 0) {
-					fprintf(stderr,
-						"Invalid fixed string: %s\n",
-						fixed);
-					exit_code = 1;
-					goto err;
-				}
-				ykp_set_fixed(cfg, fixedbin, fixedbinlen);
-			}
-			else if (strncmp(optarg, "uid=", 4) == 0) {
-				const char *uid = optarg+4;
-				size_t uidlen = strlen (uid);
-				unsigned char uidbin[256];
-				size_t uidbinlen = 0;
-				int rc = hex_modhex_decode(uidbin, &uidbinlen,
-							   uid, uidlen,
-							   12, 12, false);
-				if (rc <= 0) {
-					fprintf(stderr,
-						"Invalid uid string: %s\n",
-						uid);
-					exit_code = 1;
-					goto err;
-				}
-				ykp_set_uid(cfg, uidbin, uidbinlen);
-			}
-			else if (strncmp(optarg, "access=", 7) == 0) {
-				const char *acc = optarg+7;
-				size_t acclen = strlen (acc);
-				unsigned char accbin[256];
-				size_t accbinlen = 0;
-				int rc = hex_modhex_decode (accbin, &accbinlen,
-							    acc, acclen,
-							    12, 12, false);
-				if (rc <= 0) {
-					fprintf(stderr,
-						"Invalid access code string: %s\n",
-						acc);
-					exit_code = 1;
-					goto err;
-				}
-				ykp_set_access_code(cfg, accbin, accbinlen);
-				new_access_code = true;
-			}
-#define TKTFLAG(o, f)							\
-			else if (strcmp(optarg, o) == 0) {		\
-				if (!ykp_set_tktflag_##f(cfg, true)) {	\
-					exit_code = 1;			\
-					goto err;			\
-				}					\
-			} else if (strcmp(optarg, "-" o) == 0) {	\
-				if (! ykp_set_tktflag_##f(cfg, false)) { \
-					exit_code = 1;			\
-					goto err;			\
-				}					\
-			}
-			TKTFLAG("tab-first", TAB_FIRST)
-			TKTFLAG("append-tab1", APPEND_TAB1)
-			TKTFLAG("append-tab2", APPEND_TAB2)
-			TKTFLAG("append-delay1", APPEND_DELAY1)
-			TKTFLAG("append-delay2", APPEND_DELAY2)
-			TKTFLAG("append-cr", APPEND_CR)
-			TKTFLAG("protect-cfg2", PROTECT_CFG2)
-			TKTFLAG("oath-hotp", OATH_HOTP)
-#undef TKTFLAG
-
-#define CFGFLAG(o, f)							\
-			else if (strcmp(optarg, o) == 0) {		\
-				if (! ykp_set_cfgflag_##f(cfg, true)) {	\
-					exit_code = 1;			\
-					goto err;			\
-				}					\
-			} else if (strcmp(optarg, "-" o) == 0) {	\
-				if (! ykp_set_cfgflag_##f(cfg, false)) { \
-					exit_code = 1;			\
-					goto err;			\
-				}					\
-			}
-			CFGFLAG("send-ref", SEND_REF)
-			CFGFLAG("ticket-first", TICKET_FIRST)
-			CFGFLAG("pacing-10ms", PACING_10MS)
-			CFGFLAG("pacing-20ms", PACING_20MS)
-			CFGFLAG("allow-hidtrig", ALLOW_HIDTRIG)
-			CFGFLAG("static-ticket", STATIC_TICKET)
-			CFGFLAG("short-ticket", SHORT_TICKET)
-			CFGFLAG("strong-pw1", STRONG_PW1)
-			CFGFLAG("strong-pw2", STRONG_PW2)
-			CFGFLAG("man-update", MAN_UPDATE)
-			CFGFLAG("oath-hotp8", OATH_HOTP8)
-			CFGFLAG("oath-fixed-modhex1", OATH_FIXED_MODHEX1)
-			CFGFLAG("oath-fixed-modhex2", OATH_FIXED_MODHEX2)
-			CFGFLAG("oath-fixed-modhex", OATH_FIXED_MODHEX)
-#undef CFGFLAG
-			else {
-				fprintf(stderr, "Unknown option '%s'\n",
-					optarg);
-				fputs(usage, stderr);
-				exit_code = 1;
-				goto err;
-			}
-			break;
-		case 'v':
-			verbose = true;
-			break;
-		case 'y':
-			autocommit = true;
-			break;
-		case 'h':
-		default:
-			fputs(usage, stderr);
-			exit_code = 0;
-			goto err;
-		}
+	/* Parse all arguments in a testable way */
+	if (! args_to_config(argc, argv, cfg,
+			     infname, outfname,
+			     &autocommit, salt,
+			     st, &verbose,
+			     access_code, &use_access_code,
+			     &aesviahash,
+			     &exit_code)) {
+		goto err;
 	}
 
 	if (infname) {
@@ -443,13 +483,7 @@ int main(int argc, char **argv)
 	if (inf) {
 		if (!ykp_read_config(cfg, reader, inf))
 			goto err;
-	} else if (aesviahash) {
-		if (ykp_AES_key_from_hex(cfg, aeshash)) {
-			fprintf(stderr, "Bad AES key: %s\n", aeshash);
-			fflush(stderr);
-			goto err;
-		}
-	} else {
+	} else if (! aesviahash) {
 		char passphrasebuf[256]; size_t passphraselen;
 		fprintf(stderr, "Passphrase to create AES key: ");
 		fflush(stderr);
