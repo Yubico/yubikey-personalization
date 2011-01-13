@@ -33,6 +33,9 @@ LDADD = ../libykpers-1.la
 
 ykpersonalize_LDADD = ../libykpers-1.la ../ykcore/libykcore.la
 
-ctests = selftest$(EXEEXT)
+ctests = selftest$(EXEEXT) test_args_to_config$(EXEEXT)
 check_PROGRAMS = $(ctests)
 TESTS = $(ctests)
+
+test_args_to_config_LDADD = ../ykpersonalize.o $(LDADD) $(ykpersonalize_LDADD)
+test_args_to_config_LDFLAGS = -z muldefs
