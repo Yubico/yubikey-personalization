@@ -65,7 +65,7 @@ read configuration from file.
 (if file is -, read from stdin)
 .TP
 \fB\-a\fIxxx\fR
-A 32 char hex value (not modhex) of a fixed AES key to use.
+A 32 char (40 for OATH-HOTP and HMAC challenge-response) hex value (not modhex) of a fixed AES key to use.
 .TP
 \fB\-c\fIxxx\fR
 A 12 char hex value (not modhex) to use as access code for
@@ -202,16 +202,21 @@ When set, the first two bytes of the fixed part is sent as modhex.
 [\-]\fBoath-fixed-modhex\fR
 When set, the fixed part is sent as modhex.
 .SH OATH-HOTP Mode
-When using OATH-HOTP mode, the key that is shared with the server
-consists of the AES key plus the first four bytes (eight hex
-characters) of the UID.  The token identifier is defined by the fixed
-prefix.
+When using OATH-HOTP mode, an AES key of 160 bits (20 bytes, 40 chars of hex)
+can be supplied with -a.
+.PP
+The token identifier can be set with the -ofixed= option.
+See section "5.3.4 - OATH-HOTP Token Identifier" of the
+.URL "http://static.yubico.com/var/uploads/pdfs/YubiKey_Manual_2010-09-16.pdf" "Yubikey manual"
+for details, but in short the token identifier is 2 bytes manufacturer prefix,
+2 character token type and then 8 bytes manufacturer unique ID.
+
 .SH BUGS
 Report ykpersonalize bugs in 
 .URL "http://code.google.com/p/yubikey-personalization/issues/list" "the issue tracker"
 .SH "SEE ALSO"
 The 
 .URL "http://code.google.com/p/yubikey-personalization/" "ykpersonalize home page"
-.br
+.PP
 Yubikeys can be obtained from
 .URL "http://www.yubico.com/products/yubikey/" "Yubico" "."

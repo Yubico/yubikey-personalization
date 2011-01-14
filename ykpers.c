@@ -126,26 +126,62 @@ int ykp_configure_for(YKP_CONFIG *cfg, int confnum, YK_STATUS *st)
 	return 0;
 }
 
+/* local helper function to check that a string contains only 0-9a-f */
+static bool is_valid_hexstr(const char *buf)
+{
+	int i;
+	for (i=0; i < strlen(buf); i++) {
+		char c = tolower(*(buf + i));
+		/* In ASCII, 0-9 == 48-57 and a-f == 97-102 */
+		if ( c<48 || (c>57 && c<97) || c>102 ) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/* Decode 128 bit AES key into cfg->ykcore_config.key */
 int ykp_AES_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
 	char aesbin[256];
 
-/* Make sure that the hexkey is exactly 32 characters */
+	/* Make sure that the hexkey is exactly 32 characters */
 	if (strlen(hexkey) != 32) {
 		return 1;  /* Bad AES key */
 	}
 
-/* Make sure that the hexkey is made up of only [0-9a-f] */
-	int i;
-	for (i=0; i < strlen(hexkey); i++) {
-		char c = tolower(hexkey[i]);
-/* In ASCII, 0-9 == 48-57 and a-f == 97-102 */
-		if ( c<48 || (c>57 && c<97) || c>102 ) {
-			return 1;
-		}
-	}
+	/* Make sure that the hexkey is made up of only [0-9a-f] */
+	if (! is_valid_hexstr(hexkey))
+		return 1;
 
 	yubikey_hex_decode(aesbin, hexkey, sizeof(aesbin));
 	memcpy(cfg->ykcore_config.key, aesbin, sizeof(cfg->ykcore_config.key));
+
+	return 0;
+}
+
+/* Decode 160 bits AES key, used with OATH and HMAC challenge-response.
+ *
+ * The first 128 bits of the AES go key into cfg->ykcore_config.key,
+ * and 32 bits into the first four bytes of cfg->ykcore_config.uid.
+*/
+int ykp_AES160_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
+	char aesbin[256];
+	int i;
+
+	/* Make sure that the hexkey is exactly 40 characters */
+	if (strlen(hexkey) != 40) {
+		return 1;  /* Bad AES key */
+	}
+
+	/* Make sure that the hexkey is made up of only [0-9a-f] */
+	if (! is_valid_hexstr(hexkey))
+		return 1;
+
+	yubikey_hex_decode(aesbin, hexkey, sizeof(aesbin));
+	i = sizeof(cfg->ykcore_config.key);
+	memcpy(cfg->ykcore_config.key, aesbin, i);
+	memcpy(cfg->ykcore_config.uid, aesbin + i, 20 - i);
 
 	return 0;
 }

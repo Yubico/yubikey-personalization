@@ -139,7 +139,7 @@ int _test_config_slot1()
 	assert(cfg->yk_minor_version == 3);
 
 	/* verify some specific flags */
-	ycfg = (struct config_st *) &cfg->ykcore_config;
+	ycfg = (struct config_st *) ykp_core_config(cfg);
 	assert(ycfg->tktFlags == TKTFLAG_APPEND_CR);
 
 	/* then check CRC against a known value to bulk check the rest */
@@ -147,7 +147,7 @@ int _test_config_slot1()
 				    offsetof(struct config_st, crc));
 
 	if (ycfg->crc != 0xc046)
-		_yktest_hexdump ("NO-MATCH :\n", ycfg, 64, 8);
+		_yktest_hexdump ("NO-MATCH :\n", ycfg, sizeof(*ycfg), 8);
 
 	assert(ycfg->crc == 0xc046);
 
@@ -176,7 +176,7 @@ int _test_config_static_slot2()
 	assert(cfg->yk_minor_version == 0);
 
 	/* verify some specific flags */
-	ycfg = (struct config_st *) &cfg->ykcore_config;
+	ycfg = (struct config_st *) ykp_core_config(cfg);
 	assert(ycfg->tktFlags == TKTFLAG_APPEND_CR);
 	assert(ycfg->cfgFlags == CFGFLAG_STATIC_TICKET | CFGFLAG_STRONG_PW1 | CFGFLAG_STRONG_PW2 | CFGFLAG_MAN_UPDATE);
 
@@ -185,7 +185,7 @@ int _test_config_static_slot2()
 				    offsetof(struct config_st, crc));
 
 	if (ycfg->crc != 0xf5e9)
-		_yktest_hexdump ("NO-MATCH :\n", ycfg, 64, 8);
+		_yktest_hexdump ("NO-MATCH :\n", ycfg, sizeof(*ycfg), 8);
 
 	assert(ycfg->crc == 0xf5e9);
 
@@ -284,6 +284,44 @@ int _test_non_config_args()
 	free(st);
 }
 
+int _test_oath_hotp_nist_160_bits()
+{
+	YKP_CONFIG *cfg = ykp_create_config();
+	YK_STATUS *st = _test_init_st(2, 1, 0);
+	int rc = 0;
+	struct config_st *ycfg;
+
+	char *argv[] = {
+		"unittest", "-1", "-a303132333435363738393a3b3c3d3e3f40414243", "-ooath-hotp", "-o-append-cr",
+		NULL
+	};
+	int argc = sizeof argv/sizeof argv[0] - 1;
+
+	rc = _test_config(cfg, st, argc, argv);
+	assert(rc == 1);
+
+	/* verify required version for this config */
+	assert(cfg->yk_major_version == 2);
+	assert(cfg->yk_minor_version == 1);
+
+	/* verify some specific flags */
+	ycfg = (struct config_st *) ykp_core_config(cfg);
+	assert(ycfg->tktFlags == TKTFLAG_OATH_HOTP);
+	assert(ycfg->cfgFlags == 0);
+
+	/* then check CRC against a known value to bulk check the rest */
+	ycfg->crc = ~yubikey_crc16 ((unsigned char *) ycfg,
+				    offsetof(struct config_st, crc));
+
+	if (ycfg->crc != 0xb96a)
+		_yktest_hexdump ("NO-MATCH :\n", ycfg, sizeof(*ycfg), 8);
+
+	assert(ycfg->crc == 0xb96a);
+
+	ykp_free_config(cfg);
+	free(st);
+}
+
 int main (int argc, char **argv)
 {
 	_test_config_slot1();
@@ -291,6 +329,7 @@ int main (int argc, char **argv)
 	_test_too_old_key();
 	_test_too_new_key();
 	_test_non_config_args();
+	_test_oath_hotp_nist_160_bits();
 
 	return 0;
 }

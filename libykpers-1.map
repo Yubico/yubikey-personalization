@@ -52,6 +52,7 @@ LIBYKPERS_1.0 {
     ykds_version_major;
     ykds_version_minor;
     ykp_AES_key_from_hex;
+    ykp_AES160_key_from_hex;
     ykp_AES_key_from_passphrase;
     ykp_config_num;
     ykp_configure_for;

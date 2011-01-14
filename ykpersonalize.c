@@ -38,6 +38,7 @@
 
 #include <ykpers.h>
 #include <yubikey.h> /* To get yubikey_modhex_encode and yubikey_hex_encode */
+#include <ykdef.h>
 
 const char *usage =
 "Usage: ykpersonalize [options]\n"
@@ -53,8 +54,9 @@ const char *usage =
 "          (if FILE is -, send to stdout)\n"
 "-iFILE    read configuration from FILE.\n"
 "          (if FILE is -, read from stdin)\n"
-"-aXXX..   A 32 char hex value (not modhex) of a fixed AES key to use\n"
-"-cXXX..   A 12 char hex value to use as access code for programming\n"
+"-aXXX..   The AES secret key as a 32 (or 40 for OATH-HOTP/HMAC CHAL-RESP)\n"
+"          char hex value (not modhex)\n"
+"-cXXX..   A 12 char hex value (not modhex) to use as access code for programming\n"
 "          (this does NOT SET the access code, that's done with -oaccess=)\n"
 "-oOPTION  change configuration option.  Possible OPTION arguments are:\n"
 "          salt=ssssssss       Salt to be used when deriving key from a\n"
@@ -359,7 +361,29 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 	}
 
 	if (*aesviahash) {
-		if (ykp_AES_key_from_hex(cfg, aeshash)) {
+		int long_key_valid = false;
+		struct config_st *ycfg;
+		int res = 0;
+
+		ycfg = (struct config_st *) ykp_core_config(cfg);
+		
+		/* for OATH-HOTP, 160 bits key is also valid */
+		if ((ycfg->tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP)
+			long_key_valid = true;
+
+		/* for HMAC (not Yubico) challenge-response, 160 bits key is also valid */
+		if ((ycfg->tktFlags & TKTFLAG_CHAL_RESP) == TKTFLAG_CHAL_RESP &&
+		    (ycfg->cfgFlags & CFGFLAG_CHAL_HMAC) == CFGFLAG_CHAL_HMAC) {
+			long_key_valid = true;
+		}
+
+		if (long_key_valid && strlen(aeshash) == 40) {
+			res = ykp_AES160_key_from_hex(cfg, aeshash);
+		} else {
+			res = ykp_AES_key_from_hex(cfg, aeshash);
+		}
+			
+		if (res) {
 			fprintf(stderr, "Bad AES key: %s\n", aeshash);
 			fflush(stderr);
 			return 0;
