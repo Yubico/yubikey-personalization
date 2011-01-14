@@ -48,6 +48,7 @@ libykpers_1_la_SOURCES += ykpers-1.pc.in libykpers-1.map
 libykpers_1_la_LIBADD = $(LTLIBYUBIKEY) ./ykcore/libykcore.la
 libykpers_1_la_LDFLAGS = -no-undefined \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+libykpers_1_la_DEPENDENCIES = libykpers-1.map
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = ykpers-1.pc
