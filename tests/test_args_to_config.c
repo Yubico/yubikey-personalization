@@ -33,6 +33,9 @@
 #include <string.h>
 #include <assert.h>
 
+#include <unistd.h>
+#include <stdlib.h>
+
 #include <ykpers.h>
 #include <ykdef.h>
 /*
@@ -67,8 +70,8 @@ void _yktest_hexdump(char *prefix, void *buffer, int size, int break_on)
 
 int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 {
-	FILE *inf = NULL; const char *infname = NULL;
-	FILE *outf = NULL; const char *outfname = NULL;
+	const char *infname = NULL;
+	const char *outfname = NULL;
 	bool verbose = false;
 	bool aesviahash = false;
 	bool use_access_code = false;
@@ -82,9 +85,15 @@ int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 
 	int rc;
 
+	ykp_errno = 0;
+	optind = 0; /* getopt reinit */
+
+	/* copy version number from st into cfg */
+	assert(ykp_configure_for(cfg, 1, st) == 1);
+
 	/* call args_to_config from ykpersonalize.c with a fake set of program arguments */
 	rc = args_to_config(argc, argv, cfg,
-			    infname, outfname,
+			    &infname, &outfname,
 			    &autocommit, salt,
 			    st, &verbose,
 			    access_code, &use_access_code,
@@ -114,11 +123,11 @@ int _test_config_slot1()
 	YKP_CONFIG *cfg = ykp_create_config();
 	YK_STATUS *st = _test_init_st(1, 3, 0);
 	int rc = 0;
-	unsigned char *p;
 	struct config_st *ycfg;
 	
 	char *argv[] = {
-		"unittest", "-1", NULL
+		"unittest", "-1",
+		NULL
 	};
 	int argc = sizeof argv/sizeof argv[0] - 1;
 
@@ -149,9 +158,8 @@ int _test_config_slot1()
 int _test_config_static_slot2()
 {
 	YKP_CONFIG *cfg = ykp_create_config();
-	YK_STATUS *st = _test_init_st(1, 3, 0);
+	YK_STATUS *st = _test_init_st(2, 0, 0);
 	int rc = 0;
-	unsigned char *p;
 	struct config_st *ycfg;
 
 	char *argv[] = {
@@ -164,21 +172,113 @@ int _test_config_static_slot2()
 	assert(rc == 1);
 
 	/* verify required version for this config */
-	assert(cfg->yk_major_version == 1);
-	assert(cfg->yk_minor_version == 3);
+	assert(cfg->yk_major_version == 2);
+	assert(cfg->yk_minor_version == 0);
 
 	/* verify some specific flags */
 	ycfg = (struct config_st *) &cfg->ykcore_config;
 	assert(ycfg->tktFlags == TKTFLAG_APPEND_CR);
+	assert(ycfg->cfgFlags == CFGFLAG_STATIC_TICKET | CFGFLAG_STRONG_PW1 | CFGFLAG_STRONG_PW2 | CFGFLAG_MAN_UPDATE);
 
 	/* then check CRC against a known value to bulk check the rest */
 	ycfg->crc = ~yubikey_crc16 ((unsigned char *) ycfg,
 				    offsetof(struct config_st, crc));
 
-	if (ycfg->crc != 0x79dd)
+	if (ycfg->crc != 0xf5e9)
 		_yktest_hexdump ("NO-MATCH :\n", ycfg, 64, 8);
 
-	assert(ycfg->crc == 0x79dd);
+	assert(ycfg->crc == 0xf5e9);
+
+	ykp_free_config(cfg);
+	free(st);
+}
+
+int _test_too_old_key()
+{
+	YKP_CONFIG *cfg = ykp_create_config();
+	YK_STATUS *st = _test_init_st(1, 3, 0);
+	int rc = 0;
+
+	char *argv[] = {
+		"unittest", "-oshort-ticket",
+		NULL
+	};
+	int argc = sizeof argv/sizeof argv[0] - 1;
+
+	rc = _test_config(cfg, st, argc, argv);
+	assert(rc == 0);
+	assert(ykp_errno == YKP_EYUBIKEYVER);
+
+	ykp_free_config(cfg);
+	free(st);
+}
+
+int _test_too_new_key()
+{
+	YKP_CONFIG *cfg = ykp_create_config();
+	YK_STATUS *st = _test_init_st(2, 2, 0);
+	int rc = 0;
+
+	char *argv[] = {
+		"unittest", "-oticket-first",
+		NULL
+	};
+	int argc = sizeof argv/sizeof argv[0] - 1;
+
+	rc = _test_config(cfg, st, argc, argv);
+	assert(rc == 0);
+	assert(ykp_errno == YKP_EYUBIKEYVER);
+
+	ykp_free_config(cfg);
+	free(st);
+}
+
+int _test_non_config_args()
+{
+	YKP_CONFIG *cfg = ykp_create_config();
+	YK_STATUS *st = _test_init_st(2, 2, 0);
+	int rc = 0;
+
+	const char *infname = NULL;
+	const char *outfname = NULL;
+	bool verbose = false;
+	bool aesviahash = false;
+	bool use_access_code = false;
+	unsigned char access_code[256];
+	YK_KEY *yk = 0;
+	bool autocommit = false;
+	int exit_code = 0;
+	int i;
+
+	/* Options */
+	char *salt = NULL;
+
+	char *argv[] = {
+		"unittest", "-sout", "-iin", "-c313233343536", "-y", "-v",
+		NULL
+	};
+	int argc = sizeof argv/sizeof argv[0] - 1;
+
+	ykp_errno = 0;
+	optind = 0; /* getopt reinit */
+
+	/* copy version number from st into cfg */
+	assert(ykp_configure_for(cfg, 1, st) == 1);
+
+	/* call args_to_config from ykpersonalize.c with a fake set of program arguments */
+	rc = args_to_config(argc, argv, cfg,
+			    &infname, &outfname,
+			    &autocommit, salt,
+			    st, &verbose,
+			    access_code, &use_access_code,
+			    &aesviahash,
+			    &exit_code);
+	assert(rc == 1);
+	i = strcmp(infname, "in"); assert(i == 0);
+	i = strcmp(outfname, "out"); assert(i == 0);
+	i = strcmp(access_code, "123456"); assert(i == 0);
+	assert(autocommit == true);
+	assert(verbose == true);
 
 	ykp_free_config(cfg);
 	free(st);
@@ -188,6 +288,9 @@ int main (int argc, char **argv)
 {
 	_test_config_slot1();
 	_test_config_static_slot2();
+	_test_too_old_key();
+	_test_too_new_key();
+	_test_non_config_args();
 
 	return 0;
 }
