@@ -182,7 +182,7 @@ static void report_yk_error()
  * Done in this way to be testable (see tests/test_args_to_config.c).
  */
 int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
-		   const char *infname, const char *outfname,
+		   const char **infname, const char **outfname,
 		   bool *autocommit, char *salt,
 		   YK_STATUS *st, bool *verbose,
 		   unsigned char *access_code, bool *use_access_code,
@@ -204,10 +204,10 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 				return 0;
 			break;
 		case 'i':
-			infname = optarg;
+			*infname = optarg;
 			break;
 		case 's':
-			outfname = optarg;
+			*outfname = optarg;
 			break;
 		case 'a':
 			*aesviahash = true;
@@ -442,7 +442,7 @@ int main(int argc, char **argv)
 
 	/* Parse all arguments in a testable way */
 	if (! args_to_config(argc, argv, cfg,
-			     infname, outfname,
+			     &infname, &outfname,
 			     &autocommit, salt,
 			     st, &verbose,
 			     access_code, &use_access_code,
