@@ -28,7 +28,7 @@
 
 # Subdirectories
 
-SUBDIRS=ykcore
+SUBDIRS=ykcore tests
 
 ACLOCAL_AMFLAGS = -I m4
 
@@ -66,15 +66,6 @@ ykpersonalize_SOURCES = ykpersonalize.c
 ykpersonalize_LDADD = ./libykpers-1.la ./ykcore/libykcore.la
 
 dist_man1_MANS = ykpersonalize.1
-
-# Self tests.
-
-AM_LDFLAGS = -no-install
-LDADD = ./libykpers-1.la
-
-ctests = selftest$(EXEEXT)
-check_PROGRAMS = $(ctests)
-TESTS = $(ctests)
 
 # Dist docs from wiki.
 EXTRA_DIST = doc/Compatibility.wiki doc/MakeRelease.wiki doc/ReadMe.wiki doc/UsbhidIssue.wiki doc/WindowsBuild.wiki
