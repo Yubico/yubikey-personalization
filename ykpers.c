@@ -126,21 +126,6 @@ int ykp_configure_for(YKP_CONFIG *cfg, int confnum, YK_STATUS *st)
 	return 0;
 }
 
-/* local helper function to check that a string contains only 0-9a-f */
-static bool is_valid_hexstr(const char *buf)
-{
-	int i;
-	for (i=0; i < strlen(buf); i++) {
-		char c = tolower(*(buf + i));
-		/* In ASCII, 0-9 == 48-57 and a-f == 97-102 */
-		if ( c<48 || (c>57 && c<97) || c>102 ) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
 /* Decode 128 bit AES key into cfg->ykcore_config.key */
 int ykp_AES_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
 	char aesbin[256];
@@ -151,7 +136,7 @@ int ykp_AES_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
 	}
 
 	/* Make sure that the hexkey is made up of only [0-9a-f] */
-	if (! is_valid_hexstr(hexkey))
+	if (! yubikey_hex_p(hexkey))
 		return 1;
 
 	yubikey_hex_decode(aesbin, hexkey, sizeof(aesbin));
@@ -175,7 +160,7 @@ int ykp_HMAC_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
 	}
 
 	/* Make sure that the hexkey is made up of only [0-9a-f] */
-	if (! is_valid_hexstr(hexkey))
+	if (! yubikey_hex_p(hexkey))
 		return 1;
 
 	yubikey_hex_decode(aesbin, hexkey, sizeof(aesbin));
