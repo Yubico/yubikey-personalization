@@ -208,16 +208,66 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 	char c;
 	const char *aeshash = NULL;
 	bool new_access_code = false;
+	bool slot_chosen = false;
+	bool mode_chosen = false;
+	bool option_seen = false;
+
+	struct config_st *ycfg;
+	ycfg = (struct config_st *) ykp_core_config(cfg);
 
 	while((c = getopt(argc, argv, optstring)) != -1) {
+		if (c == 'o') {
+			if (strcmp(optarg, "oath-hotp") == 0 ||
+			    strcmp(optarg, "chal-resp") == 0) {
+				if (mode_chosen) {
+					fprintf(stderr, "You may only choose mode (-ooath-hotp / "
+						"-ochal-resp) once.\n");
+					*exit_code = 1;
+					return 0;
+				}
+
+				if (option_seen) {
+					fprintf(stderr, "Mode choosing flags (oath-hotp / chal-resp) "
+						"must be set prior to any other options (-o).\n");
+					*exit_code = 1;
+					return 0;
+				}
+
+				/* The default flags (particularly for slot 2) does not apply to
+				 * these new modes of operation found in Yubikey >= 2.1. Therefor,
+				 * we reset them here and, as a consequence of that, require the
+				 * mode choosing options to be specified before any other.
+				 */
+				ycfg->tktFlags = 0;
+				ycfg->cfgFlags = 0;
+				ycfg->extFlags = 0;
+
+				mode_chosen = 1;
+			}
+
+			option_seen = true;
+		}
+		    
 		switch (c) {
 		case '1':
+			if (slot_chosen) {
+				fprintf(stderr, "You may only choose slot (-1 / -2) once.\n");
+				*exit_code = 1;
+				return 0;
+			}
 			if (!ykp_configure_for(cfg, 1, st))
 				return 0;
+			slot_chosen = true;
 			break;
 		case '2':
+			if (slot_chosen) {
+				fprintf(stderr, "You may only choose slot (-1 / -2) once.\n");
+				*exit_code = 1;
+				return 0;
+			}
 			if (!ykp_configure_for(cfg, 2, st))
 				return 0;
+			slot_chosen = true;
 			break;
 		case 'i':
 			*infname = optarg;
@@ -398,11 +448,8 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 
 	if (*aesviahash) {
 		int long_key_valid = false;
-		struct config_st *ycfg;
 		int res = 0;
 
-		ycfg = (struct config_st *) ykp_core_config(cfg);
-		
 		/* for OATH-HOTP, 160 bits key is also valid */
 		if ((ycfg->tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP)
 			long_key_valid = true;

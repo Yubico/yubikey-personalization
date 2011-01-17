@@ -76,8 +76,10 @@ void _check_success(int rc, YKP_CONFIG *cfg, unsigned char expected[], int calle
 	struct config_st *ycfg;
 	bool config_matches_expected = false;
 
-	if (rc != 1)
-		printf ("Error returned : %i/%i (%s)\n", rc, ykp_errno, ykp_strerror(ykp_errno));
+	if (rc != 1) {
+		fprintf(stderr, "TEST FAILED (line %i of %s)\n", caller_line, __FILE__);
+		fprintf(stderr, "Error returned : %i/%i (%s)\n", rc, ykp_errno, ykp_strerror(ykp_errno));
+	}
 	assert(rc == 1);
 
 	ycfg = (struct config_st *) ykp_core_config(cfg);
@@ -350,7 +352,6 @@ int _test_extended_flags1()
 
 	char *argv[] = {
 		"unittest", "-2", "-a303132333435363738393a3b3c3d3e3f40414243",
-		"-o-append-cr", "-o-static-ticket", "-o-strong-pw1", "-o-strong-pw2", "-o-man-update",
 		"-ochal-resp", "-ochal-hmac", "-ohmac-lt64", "-oserial-api-visible",
 		NULL
 	};
@@ -358,6 +359,86 @@ int _test_extended_flags1()
 
 	rc = _test_config(cfg, st, argc, argv);
 	_check_success(rc, cfg, expected, __LINE__);
+
+	ykp_free_config(cfg);
+	free(st);
+}
+
+int _test_two_slots1()
+{
+	YKP_CONFIG *cfg = ykp_create_config();
+	YK_STATUS *st = _test_init_st(2, 2, 0);
+	int rc = 0;
+
+	/* Test that it is not possible to choose slot more than once */
+	char *argv[] = {
+		"unittest", "-1", "-1",
+		NULL
+	};
+	int argc = sizeof argv/sizeof argv[0] - 1;
+
+	rc = _test_config(cfg, st, argc, argv);
+	assert(rc == 0);
+
+	ykp_free_config(cfg);
+	free(st);
+}
+
+int _test_two_slots2()
+{
+	YKP_CONFIG *cfg = ykp_create_config();
+	YK_STATUS *st = _test_init_st(2, 2, 0);
+	int rc = 0;
+
+	/* Test that it is not possible to choose slot more than once */
+	char *argv[] = {
+		"unittest", "-2", "-1",
+		NULL
+	};
+	int argc = sizeof argv/sizeof argv[0] - 1;
+
+	rc = _test_config(cfg, st, argc, argv);
+	assert(rc == 0);
+
+	ykp_free_config(cfg);
+	free(st);
+}
+
+int _test_two_modes_at_once1()
+{
+	YKP_CONFIG *cfg = ykp_create_config();
+	YK_STATUS *st = _test_init_st(2, 2, 0);
+	int rc = 0;
+
+	/* Test that it is not possible to choose mode (OATH-HOTP/CHAL-RESP) more than once */
+	char *argv[] = {
+		"unittest", "-ochal-resp", "-ooath-hotp",
+		NULL
+	};
+	int argc = sizeof argv/sizeof argv[0] - 1;
+
+	rc = _test_config(cfg, st, argc, argv);
+	assert(rc == 0);
+
+	ykp_free_config(cfg);
+	free(st);
+}
+
+int _test_two_modes_at_once2()
+{
+	YKP_CONFIG *cfg = ykp_create_config();
+	YK_STATUS *st = _test_init_st(2, 2, 0);
+	int rc = 0;
+
+	/* Test that it is not possible to choose mode (OATH-HOTP/CHAL-RESP) more than once */
+	char *argv[] = {
+		"unittest", "-ochal-resp", "-ochal-resp",
+		NULL
+	};
+	int argc = sizeof argv/sizeof argv[0] - 1;
+
+	rc = _test_config(cfg, st, argc, argv);
+	assert(rc == 0);
 
 	ykp_free_config(cfg);
 	free(st);
@@ -372,6 +453,10 @@ int main (int argc, char **argv)
 	_test_non_config_args();
 	_test_oath_hotp_nist_160_bits();
 	_test_extended_flags1();
+	_test_two_slots1();
+	_test_two_slots2();
+	_test_two_modes_at_once1();
+	_test_two_modes_at_once2();
 
 	return 0;
 }
