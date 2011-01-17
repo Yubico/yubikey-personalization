@@ -92,6 +92,9 @@ LIBYKPERS_1.0 {
     ykp_set_uid;
     ykp_strerror;
     ykp_write_config;
+    ykp_set_extflag_SERIAL_BTN_VISIBLE;
+    ykp_set_extflag_SERIAL_USB_VISIBLE;
+    ykp_set_extflag_SERIAL_API_VISIBLE;
 
 # Variables:
    _yk_errno_location;

@@ -114,6 +114,11 @@ const char *usage =
 "          [-]hmac-lt64           set/clear HMAC_LT64\n"
 "          [-]chal-btn-trig       set/clear CHAL_BTN_TRIG\n"
 "\n"
+"          Extended flags for firmware version 2.2 and above:\n"
+"          [-]serial-btn-visible  set/clear SERIAL_BTN_VISIBLE\n"
+"          [-]serial-usb-visible  set/clear SERIAL_USB_VISIBLE\n"
+"          [-]serial-api-visible  set/clear SERIAL_API_VISIBLE\n"
+"\n"
 "-y        always commit (do not prompt)\n"
 "\n"
 "-v        verbose\n"
@@ -352,6 +357,23 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 			CFGFLAG("hmac-lt64", HMAC_LT64)
 			CFGFLAG("chal-btn-trig", CHAL_BTN_TRIG)
 #undef CFGFLAG
+
+#define EXTFLAG(o, f)							\
+			else if (strcmp(optarg, o) == 0) {		\
+				if (! ykp_set_extflag_##f(cfg, true)) {	\
+					*exit_code = 1;			\
+					return 0;			\
+				}					\
+			} else if (strcmp(optarg, "-" o) == 0) {	\
+				if (! ykp_set_extflag_##f(cfg, false)) { \
+					*exit_code = 1;			\
+					return 0;			\
+				}					\
+			}
+			EXTFLAG("serial-btn-visible", SERIAL_BTN_VISIBLE)
+			EXTFLAG("serial-usb-visible", SERIAL_USB_VISIBLE)
+			EXTFLAG("serial-api-visible", SERIAL_API_VISIBLE)
+#undef EXTFLAG
 			else {
 				fprintf(stderr, "Unknown option '%s'\n",
 					optarg);

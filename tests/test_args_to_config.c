@@ -68,6 +68,28 @@ void _yktest_hexdump(char *prefix, void *buffer, int size, int break_on)
 	fflush(stderr);
 }
 
+void _check_success(int rc, YKP_CONFIG *cfg, unsigned char *expected)
+{
+	struct config_st *ycfg;
+	bool config_matches_expected = false;
+
+	if (rc != 1)
+		printf ("Error returned : %i/%i (%s)\n", rc, ykp_errno, ykp_strerror(ykp_errno));
+	assert(rc == 1);
+
+	ycfg = (struct config_st *) ykp_core_config(cfg);
+	/* insert CRC */
+	ycfg->crc = ~yubikey_crc16 ((unsigned char *) ycfg,
+				    offsetof(struct config_st, crc));
+
+	config_matches_expected = ! memcmp(expected, ycfg, sizeof(*ycfg));
+	if (! config_matches_expected) {
+		_yktest_hexdump ("BAD MATCH :\n", ycfg, sizeof(*ycfg), 8);
+		_yktest_hexdump ("EXPECTED :\n", expected, sizeof(*ycfg), 8);
+	}
+	assert(config_matches_expected == true);
+}
+
 int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 {
 	const char *infname = NULL;
@@ -124,7 +146,7 @@ int _test_config_slot1()
 	YK_STATUS *st = _test_init_st(1, 3, 0);
 	int rc = 0;
 	struct config_st *ycfg;
-	
+
 	char *argv[] = {
 		"unittest", "-1",
 		NULL
@@ -322,6 +344,41 @@ int _test_oath_hotp_nist_160_bits()
 	free(st);
 }
 
+int _test_extended_flags1()
+{
+	YKP_CONFIG *cfg = ykp_create_config();
+	YK_STATUS *st = _test_init_st(2, 2, 0);
+	int rc = 0;
+
+	/* this matches the python-yubico test case test_challenge_response_hmac_nist */
+	unsigned char expected[] = {
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x40, 0x41, 0x42, 0x43, 0x00,
+		0x00, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35,
+		0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c,
+		0x3d, 0x3e, 0x3f, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x04, 0x40, 0x26, 0x00,
+		0x00, 0x98, 0x41, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x03, 0x95, 0x56, 0x00, 0x00, 0x00,
+	};
+
+	char *argv[] = {
+		"unittest", "-2", "-a303132333435363738393a3b3c3d3e3f40414243",
+		"-o-append-cr", "-o-static-ticket", "-o-strong-pw1", "-o-strong-pw2", "-o-man-update",
+		"-ochal-resp", "-ochal-hmac", "-ohmac-lt64", "-oserial-api-visible",
+		NULL
+	};
+	int argc = sizeof argv/sizeof argv[0] - 1;
+
+	rc = _test_config(cfg, st, argc, argv);
+	_check_success(rc, cfg, &expected);
+
+	ykp_free_config(cfg);
+	free(st);
+}
+
 int main (int argc, char **argv)
 {
 	_test_config_slot1();
@@ -330,6 +387,7 @@ int main (int argc, char **argv)
 	_test_too_new_key();
 	_test_non_config_args();
 	_test_oath_hotp_nist_160_bits();
+	_test_extended_flags1();
 
 	return 0;
 }

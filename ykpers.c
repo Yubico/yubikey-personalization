@@ -55,7 +55,7 @@ static const YK_CONFIG default_config1 = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* key */
 	{ 0, 0, 0, 0, 0, 0 },	/* accCode */
 	0,			/* fixedSize */
-	0,			/* pgmSeq */
+	0,			/* extFlags */
 	TKTFLAG_APPEND_CR,	/* tktFlags */
 	0,			/* cfgFlags */
 	0,			/* ctrOffs */
@@ -68,7 +68,7 @@ static const YK_CONFIG default_config2 = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* key */
 	{ 0, 0, 0, 0, 0, 0 },	/* accCode */
 	0,			/* fixedSize */
-	0,			/* pgmSeq */
+	0,			/* extFlags */
 	TKTFLAG_APPEND_CR,	/* tktFlags */
 	/* cfgFlags */
 	CFGFLAG_STATIC_TICKET | CFGFLAG_STRONG_PW1 | CFGFLAG_STRONG_PW2 | CFGFLAG_MAN_UPDATE,
@@ -343,6 +343,24 @@ int ykp_set_cfgflag_ ## type(YKP_CONFIG *cfg, bool state)		\
 	return 0;						\
 }
 
+#define def_set_extflag(type,vcheck)				\
+int ykp_set_extflag_ ## type(YKP_CONFIG *cfg, bool state)		\
+{								\
+	if (cfg) {						\
+		if (!vcheck(cfg)) {				\
+			ykp_errno = YKP_EYUBIKEYVER;		\
+			return 0;				\
+		}						\
+		if (state)					\
+			cfg->ykcore_config.extFlags |= EXTFLAG_ ## type;	\
+		else						\
+			cfg->ykcore_config.extFlags &= ~EXTFLAG_ ## type;	\
+		return 1;					\
+	}							\
+	ykp_errno = YKP_ENOCFG;					\
+	return 0;						\
+}
+
 def_set_tktflag(TAB_FIRST,vcheck_all)
 def_set_tktflag(APPEND_TAB1,vcheck_all)
 def_set_tktflag(APPEND_TAB2,vcheck_all)
@@ -371,6 +389,10 @@ def_set_cfgflag(CHAL_YUBICO,vcheck_v22_or_greater)
 def_set_cfgflag(CHAL_HMAC,vcheck_v22_or_greater)
 def_set_cfgflag(HMAC_LT64,vcheck_v22_or_greater)
 def_set_cfgflag(CHAL_BTN_TRIG,vcheck_v22_or_greater)
+
+def_set_extflag(SERIAL_BTN_VISIBLE,vcheck_v22_or_greater)
+def_set_extflag(SERIAL_USB_VISIBLE,vcheck_v22_or_greater)
+def_set_extflag(SERIAL_API_VISIBLE,vcheck_v22_or_greater)
 
 const char str_key_value_separator[] = ": ";
 const char str_hex_prefix[] = "h:";
@@ -435,6 +457,14 @@ struct map_st config_flags_map[] = {
 	{ CFGFLAG_STRONG_PW2,		"STRONG_PW2",		vcheck_no_v1,		0 },
 	{ CFGFLAG_MAN_UPDATE,		"MAN_UPDATE",		vcheck_no_v1,		0 },
 	{ 0, "" }
+};
+
+const char str_extended_flags[] = "extended_flags";
+struct map_st extended_flags_map[] = {
+	{ EXTFLAG_SERIAL_BTN_VISIBLE,	"SERIAL_BTN_VISIBLE",	vcheck_v22_or_greater,	0 },
+	{ EXTFLAG_SERIAL_USB_VISIBLE,	"SERIAL_USB_VISIBLE",	vcheck_v22_or_greater,	0 },
+	{ EXTFLAG_SERIAL_API_VISIBLE,	"SERIAL_API_VISIBLE",	vcheck_v22_or_greater,	0 },
+	{ 0, "", 0 }
 };
 
 int ykp_write_config(const YKP_CONFIG *cfg,
@@ -535,6 +565,26 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 			}
 		}
 		writer(str_config_flags, strlen(str_config_flags), userdata);
+		writer(str_key_value_separator,
+		       strlen(str_key_value_separator),
+		       userdata);
+		writer(buffer, strlen(buffer), userdata);
+		writer("\n", 1, userdata);
+
+		/* extended_flags: */
+		buffer[0] = '\0';
+		for (p = extended_flags_map; p->flag; p++) {
+			if ((cfg->ykcore_config.extFlags & p->flag) == p->flag
+			    && p->vcheck(cfg)) {
+				if (*buffer) {
+					strcat(buffer, str_flags_separator);
+					strcat(buffer, p->flag_text);
+				} else {
+					strcpy(buffer, p->flag_text);
+				}
+			}
+		}
+		writer(str_extended_flags, strlen(str_extended_flags), userdata);
 		writer(str_key_value_separator,
 		       strlen(str_key_value_separator),
 		       userdata);
