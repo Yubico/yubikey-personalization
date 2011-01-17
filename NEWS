@@ -1,5 +1,22 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.4.0 (released 2011-01-17)
+** Add support for new features in YubiKey 2.2.
+Most notably challenge-response, but also serial number retrieval.
+
+** Stricter argument parsing, to help user avoid configuration surprises.
+
+** Bugfixes :
+*** Ask kernel to detach USB HID driver with libusb 0.1 too.
+
+*** Properly reject keys (-a) with upper case hex, instead of just ignoring
+those bits.
+
+*** Really check Yubikey compatibility when setting options.
+
+*** Pretty-printer did not handle bit overloaded cfgflags.
+It is better now, but not perfect.
+
 * Version 1.3.5 (released 2010-11-25)
 
 ** Fixes to make it work under Windows.
