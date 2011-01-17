@@ -1,3 +1,5 @@
+all: ykpers4win32 ykpers4win64
+
 ykpers4win:
 	rm -rf tmp && mkdir tmp && cd tmp && \
 	wget http://yubico-c.googlecode.com/files/libyubikey-1.7.tar.gz && \
