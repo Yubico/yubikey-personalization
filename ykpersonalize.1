@@ -224,21 +224,21 @@ The Yubikey will wait for the user to press the key (within 15 seconds) before
 answering the challenge.
 
 .SH OATH-HOTP Mode
-When using OATH-HOTP mode, an AES key of 160 bits (20 bytes, 40 chars of hex)
+When using OATH-HOTP mode, a HMAC key of 160 bits (20 bytes, 40 chars of hex)
 can be supplied with -a.
 .PP
 The token identifier can be set with the -ofixed= option.
 See section "5.3.4 - OATH-HOTP Token Identifier" of the
 .URL "http://static.yubico.com/var/uploads/pdfs/YubiKey_Manual_2010-09-16.pdf" "Yubikey manual"
 for details, but in short the token identifier is 2 bytes manufacturer prefix,
-2 character token type and then 8 bytes manufacturer unique ID.
+2 bytes token type and then 8 bytes manufacturer unique ID.
 
 .SH Challenge-response Mode
 In \fBCHAL-RESP\fR mode, the token will NOT generate any keypresses when the button
 is pressed (although it is perfectly possible to have one slot with a keypress-generating
 configuration, and the other in challenge-response mode).  Instead, a program capable of
 sending USB HID feature reports to the token must be used to send it a challenge, and
-read the response.  A C-based program to do that will be developed by Yubico shortly.
+read the response.
 
 .SH BUGS
 Report ykpersonalize bugs in 

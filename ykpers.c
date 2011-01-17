@@ -160,18 +160,18 @@ int ykp_AES_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
 	return 0;
 }
 
-/* Decode 160 bits AES key, used with OATH and HMAC challenge-response.
+/* Decode 160 bits HMAC key, used with OATH and HMAC challenge-response.
  *
- * The first 128 bits of the AES go key into cfg->ykcore_config.key,
+ * The first 128 bits of the HMAC go key into cfg->ykcore_config.key,
  * and 32 bits into the first four bytes of cfg->ykcore_config.uid.
 */
-int ykp_AES160_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
+int ykp_HMAC_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
 	char aesbin[256];
 	int i;
 
 	/* Make sure that the hexkey is exactly 40 characters */
 	if (strlen(hexkey) != 40) {
-		return 1;  /* Bad AES key */
+		return 1;  /* Bad HMAC key */
 	}
 
 	/* Make sure that the hexkey is made up of only [0-9a-f] */

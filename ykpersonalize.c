@@ -461,7 +461,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 		}
 
 		if (long_key_valid && strlen(aeshash) == 40) {
-			res = ykp_AES160_key_from_hex(cfg, aeshash);
+			res = ykp_HMAC_key_from_hex(cfg, aeshash);
 		} else {
 			res = ykp_AES_key_from_hex(cfg, aeshash);
 		}

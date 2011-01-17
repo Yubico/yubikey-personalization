@@ -93,7 +93,7 @@ LIBYKPERS_1.0 {
 LIBYKPERS_1.4 {
   global:
 # Functions:
-    ykp_AES160_key_from_hex;
+    ykp_HMAC_key_from_hex;
     ykp_set_tktflag_OATH_HOTP;
     ykp_set_tktflag_CHAL_RESP;
     ykp_set_cfgflag_OATH_HOTP8;
