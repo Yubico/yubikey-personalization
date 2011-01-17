@@ -24,7 +24,7 @@ ykpers4win:
 	zip -r ../../ykpers-1.4.0-win$(ARCH).zip *
 
 ykpers4win32:
-	$(MAKE) -f ykpers4win.mk ykpers4win ARCH=32 HOST=i686-w64-mingw32 CHECK=check
+	$(MAKE) -f ykpers4win.mk ykpers4win ARCH=32 HOST=i686-w64-mingw32 CHECK=
 
 ykpers4win64:
 	$(MAKE) -f ykpers4win.mk ykpers4win ARCH=64 HOST=x86_64-w64-mingw32 CHECK=
