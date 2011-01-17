@@ -59,7 +59,10 @@ void _yktest_hexdump(char *prefix, void *buffer, int size, int break_on)
 	if (prefix != NULL)
 		fprintf(stderr, "%s", prefix);
 	for (i = 0; i < size; i++) {
-		fprintf(stderr, " %02x", *p);
+		fprintf(stderr, "0x%02x", *p);
+		if (i < (size - 1))
+			fprintf(stderr, ", ");
+
 		if (! ((i + 1) % break_on))
 			fprintf(stderr, "\n");
 		p++;
@@ -68,7 +71,7 @@ void _yktest_hexdump(char *prefix, void *buffer, int size, int break_on)
 	fflush(stderr);
 }
 
-void _check_success(int rc, YKP_CONFIG *cfg, unsigned char *expected)
+void _check_success(int rc, YKP_CONFIG *cfg, unsigned char expected[], int caller_line)
 {
 	struct config_st *ycfg;
 	bool config_matches_expected = false;
@@ -84,8 +87,9 @@ void _check_success(int rc, YKP_CONFIG *cfg, unsigned char *expected)
 
 	config_matches_expected = ! memcmp(expected, ycfg, sizeof(*ycfg));
 	if (! config_matches_expected) {
-		_yktest_hexdump ("BAD MATCH :\n", ycfg, sizeof(*ycfg), 8);
-		_yktest_hexdump ("EXPECTED :\n", expected, sizeof(*ycfg), 8);
+		fprintf(stderr, "TEST FAILED (line %i of %s)\n", caller_line, __FILE__);
+		_yktest_hexdump ("BAD MATCH :\n", ycfg, sizeof(*ycfg), 7);
+		_yktest_hexdump ("EXPECTED :\n", expected, sizeof(*ycfg), 7);
 	}
 	assert(config_matches_expected == true);
 }
@@ -147,6 +151,17 @@ int _test_config_slot1()
 	int rc = 0;
 	struct config_st *ycfg;
 
+	unsigned char expected[] = {
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 
+		0x00, 0x46, 0xc0
+	};
+
 	char *argv[] = {
 		"unittest", "-1",
 		NULL
@@ -154,24 +169,7 @@ int _test_config_slot1()
 	int argc = sizeof argv/sizeof argv[0] - 1;
 
 	rc = _test_config(cfg, st, argc, argv);
-	assert(rc == 1);
-
-	/* verify required version for this config */
-	assert(cfg->yk_major_version == 1);
-	assert(cfg->yk_minor_version == 3);
-
-	/* verify some specific flags */
-	ycfg = (struct config_st *) ykp_core_config(cfg);
-	assert(ycfg->tktFlags == TKTFLAG_APPEND_CR);
-
-	/* then check CRC against a known value to bulk check the rest */
-	ycfg->crc = ~yubikey_crc16 ((unsigned char *) ycfg,
-				    offsetof(struct config_st, crc));
-
-	if (ycfg->crc != 0xc046)
-		_yktest_hexdump ("NO-MATCH :\n", ycfg, sizeof(*ycfg), 8);
-
-	assert(ycfg->crc == 0xc046);
+	_check_success(rc, cfg, expected, __LINE__);
 
 	ykp_free_config(cfg);
 	free(st);
@@ -184,6 +182,17 @@ int _test_config_static_slot2()
 	int rc = 0;
 	struct config_st *ycfg;
 
+	unsigned char expected[] = {
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 
+		0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 
+		0x3d, 0x3e, 0x3f, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x20, 0xf0, 0x00, 
+		0x00, 0xe9, 0xf5
+	};
+
 	char *argv[] = {
 		"unittest", "-2", "-a303132333435363738393a3b3c3d3e3f",
 		NULL
@@ -191,25 +200,7 @@ int _test_config_static_slot2()
 	int argc = sizeof argv/sizeof argv[0] - 1;
 
 	rc = _test_config(cfg, st, argc, argv);
-	assert(rc == 1);
-
-	/* verify required version for this config */
-	assert(cfg->yk_major_version == 2);
-	assert(cfg->yk_minor_version == 0);
-
-	/* verify some specific flags */
-	ycfg = (struct config_st *) ykp_core_config(cfg);
-	assert(ycfg->tktFlags == TKTFLAG_APPEND_CR);
-	assert(ycfg->cfgFlags == CFGFLAG_STATIC_TICKET | CFGFLAG_STRONG_PW1 | CFGFLAG_STRONG_PW2 | CFGFLAG_MAN_UPDATE);
-
-	/* then check CRC against a known value to bulk check the rest */
-	ycfg->crc = ~yubikey_crc16 ((unsigned char *) ycfg,
-				    offsetof(struct config_st, crc));
-
-	if (ycfg->crc != 0xf5e9)
-		_yktest_hexdump ("NO-MATCH :\n", ycfg, sizeof(*ycfg), 8);
-
-	assert(ycfg->crc == 0xf5e9);
+	_check_success(rc, cfg, expected, __LINE__);
 
 	ykp_free_config(cfg);
 	free(st);
@@ -313,6 +304,17 @@ int _test_oath_hotp_nist_160_bits()
 	int rc = 0;
 	struct config_st *ycfg;
 
+	unsigned char expected[] = {
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x40, 0x41, 0x42, 0x43, 0x00, 
+		0x00, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 
+		0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 
+		0x3d, 0x3e, 0x3f, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 
+		0x00, 0x6a, 0xb9
+	};
+
 	char *argv[] = {
 		"unittest", "-1", "-a303132333435363738393a3b3c3d3e3f40414243", "-ooath-hotp", "-o-append-cr",
 		NULL
@@ -320,25 +322,7 @@ int _test_oath_hotp_nist_160_bits()
 	int argc = sizeof argv/sizeof argv[0] - 1;
 
 	rc = _test_config(cfg, st, argc, argv);
-	assert(rc == 1);
-
-	/* verify required version for this config */
-	assert(cfg->yk_major_version == 2);
-	assert(cfg->yk_minor_version == 1);
-
-	/* verify some specific flags */
-	ycfg = (struct config_st *) ykp_core_config(cfg);
-	assert(ycfg->tktFlags == TKTFLAG_OATH_HOTP);
-	assert(ycfg->cfgFlags == 0);
-
-	/* then check CRC against a known value to bulk check the rest */
-	ycfg->crc = ~yubikey_crc16 ((unsigned char *) ycfg,
-				    offsetof(struct config_st, crc));
-
-	if (ycfg->crc != 0xb96a)
-		_yktest_hexdump ("NO-MATCH :\n", ycfg, sizeof(*ycfg), 8);
-
-	assert(ycfg->crc == 0xb96a);
+	_check_success(rc, cfg, expected, __LINE__);
 
 	ykp_free_config(cfg);
 	free(st);
@@ -373,7 +357,7 @@ int _test_extended_flags1()
 	int argc = sizeof argv/sizeof argv[0] - 1;
 
 	rc = _test_config(cfg, st, argc, argv);
-	_check_success(rc, cfg, &expected);
+	_check_success(rc, cfg, expected, __LINE__);
 
 	ykp_free_config(cfg);
 	free(st);
