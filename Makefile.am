@@ -101,9 +101,9 @@ release:
 	make check-doc-dist ChangeLog distcheck
 	gpg --detach-sign --default-key $(KEYID) $(PACKAGE)-$(VERSION).tar.gz
 	gpg --verify $(PACKAGE)-$(VERSION).tar.gz.sig
-	svn copy https://$(PROJECT).googlecode.com/svn/trunk/ \
-	 https://$(PROJECT).googlecode.com/svn/tags/$(PACKAGE)-$(VERSION) \
-	 -m "Tagging the $(VERSION) release of the $(PACKAGE) project."
+	git tag -u $(KEYID)! -m $(VERSION) v$(VERSION)
+	git push
+	git push --tags
 	mkdir -p ../releases/$(PACKAGE)/ && \
 		cp -v $(PACKAGE)-$(VERSION).tar.gz* ../releases/$(PACKAGE)/
 	googlecode_upload.py -s "OpenPGP signature for $(PACKAGE) $(VERSION)." \
