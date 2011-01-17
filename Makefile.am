@@ -79,7 +79,7 @@ EXTRA_DIST += contrib/README contrib/programming.sh
 PROJECT = yubikey-personalization
 
 ChangeLog:
-	svn2cl || echo "Missing due to http://code.google.com/p/support/issues/detail?id=4713" > ChangeLog
+	git2cl > ChangeLog
 
 check-doc-dist:
 	perl -pe "s,^EXTRA_DIST = .*,EXTRA_DIST = `echo doc/*.asciidoc`," < Makefile.am > tmp
