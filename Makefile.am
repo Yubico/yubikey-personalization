@@ -1,5 +1,5 @@
 # Written by Richard Levitte <richard@levitte.org>.
-# Copyright (c) 2008, 2009, 2010 Yubico AB
+# Copyright (c) 2008, 2009, 2010, 2011 Yubico AB
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -69,7 +69,7 @@ ykpersonalize_LDADD = ./libykpers-1.la ./ykcore/libykcore.la
 dist_man1_MANS = ykpersonalize.1
 
 # Dist docs from wiki.
-EXTRA_DIST = doc/Compatibility.wiki doc/MakeRelease.wiki doc/ReadMe.wiki doc/UsbhidIssue.wiki doc/WindowsBuild.wiki
+EXTRA_DIST = doc/Compatibility.asciidoc doc/Make-Release.asciidoc doc/Read-Me.asciidoc doc/USB-Hid-Issue.asciidoc doc/Windows-Build.asciidoc
 
 # Dist contrib stuff.
 EXTRA_DIST += contrib/README contrib/programming.sh
@@ -82,7 +82,7 @@ ChangeLog:
 	svn2cl || echo "Missing due to http://code.google.com/p/support/issues/detail?id=4713" > ChangeLog
 
 check-doc-dist:
-	perl -pe "s,^EXTRA_DIST = .*,EXTRA_DIST = `echo doc/*.wiki`," < Makefile.am > tmp
+	perl -pe "s,^EXTRA_DIST = .*,EXTRA_DIST = `echo doc/*.asciidoc`," < Makefile.am > tmp
 	diff -ur Makefile.am tmp || (echo 'error: please update Makefile.am'; exit 1)
 
 release:
