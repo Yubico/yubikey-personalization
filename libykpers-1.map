@@ -52,7 +52,6 @@ LIBYKPERS_1.0 {
     ykds_version_major;
     ykds_version_minor;
     ykp_AES_key_from_hex;
-    ykp_AES160_key_from_hex;
     ykp_AES_key_from_passphrase;
     ykp_config_num;
     ykp_configure_for;
@@ -71,14 +70,6 @@ LIBYKPERS_1.0 {
     ykp_set_cfgflag_STRONG_PW1;
     ykp_set_cfgflag_STRONG_PW2;
     ykp_set_cfgflag_TICKET_FIRST;
-    ykp_set_cfgflag_OATH_HOTP8;
-    ykp_set_cfgflag_OATH_FIXED_MODHEX1;
-    ykp_set_cfgflag_OATH_FIXED_MODHEX2;
-    ykp_set_cfgflag_OATH_FIXED_MODHEX;
-    ykp_set_cfgflag_CHAL_YUBICO;
-    ykp_set_cfgflag_CHAL_HMAC;
-    ykp_set_cfgflag_HMAC_LT64;
-    ykp_set_cfgflag_CHAL_BTN_TRIG;
     ykp_set_fixed;
     ykp_set_tktflag_APPEND_CR;
     ykp_set_tktflag_APPEND_DELAY1;
@@ -87,14 +78,9 @@ LIBYKPERS_1.0 {
     ykp_set_tktflag_APPEND_TAB2;
     ykp_set_tktflag_PROTECT_CFG2;
     ykp_set_tktflag_TAB_FIRST;
-    ykp_set_tktflag_OATH_HOTP;
-    ykp_set_tktflag_CHAL_RESP;
     ykp_set_uid;
     ykp_strerror;
     ykp_write_config;
-    ykp_set_extflag_SERIAL_BTN_VISIBLE;
-    ykp_set_extflag_SERIAL_USB_VISIBLE;
-    ykp_set_extflag_SERIAL_API_VISIBLE;
 
 # Variables:
    _yk_errno_location;
@@ -103,3 +89,23 @@ LIBYKPERS_1.0 {
   local:
     *;
 };
+
+LIBYKPERS_1.4 {
+  global:
+# Functions:
+    ykp_AES160_key_from_hex;
+    ykp_set_tktflag_OATH_HOTP;
+    ykp_set_tktflag_CHAL_RESP;
+    ykp_set_cfgflag_OATH_HOTP8;
+    ykp_set_cfgflag_OATH_FIXED_MODHEX1;
+    ykp_set_cfgflag_OATH_FIXED_MODHEX2;
+    ykp_set_cfgflag_OATH_FIXED_MODHEX;
+    ykp_set_cfgflag_CHAL_YUBICO;
+    ykp_set_cfgflag_CHAL_HMAC;
+    ykp_set_cfgflag_HMAC_LT64;
+    ykp_set_cfgflag_CHAL_BTN_TRIG;
+    ykp_set_extflag_SERIAL_BTN_VISIBLE;
+    ykp_set_extflag_SERIAL_USB_VISIBLE;
+    ykp_set_extflag_SERIAL_API_VISIBLE;
+# Variables:
+} LIBYKPERS_1.0;
