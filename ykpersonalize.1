@@ -143,6 +143,11 @@ having the lock bit set.
 [\-]\fBoath-hotp\fR
 Set OATH-HOTP mode rather than Yubikey mode.  In this mode, the token
 functions according to the OATH-HOTP standard.
+.TP
+\fBYubikey 2.2 firmware and above\fR
+.TP
+[\-]\fBchal-resp\fR
+Set challenge-response mode.
 .SH Configuration flags
 [\-]\fBsend-ref\fR
 Send a reference string of all 16 modhex characters before the fixed
@@ -201,6 +206,23 @@ When set, the first two bytes of the fixed part is sent as modhex.
 .TP
 [\-]\fBoath-fixed-modhex\fR
 When set, the fixed part is sent as modhex.
+.TP
+\fBYubikey 2.1 firmware and above\fR
+.TP
+[\-]\fBchal-yubico\fR
+Yubico OTP challenge-response mode.
+.TP
+[\-]\fBchal-hmac\fR
+Generate HMAC-SHA1 challenge responses.
+.TP
+[\-]\fBhmac-lt64\fR
+Calculate HMAC on less than 64 bytes input.  Whatever is in the last byte
+of the challenge is used as end of input marker (backtracking from end of payload).
+.TP
+[\-]\fBchal-btn-trig\fR
+The Yubikey will wait for the user to press the key (within 15 seconds) before
+answering the challenge.
+
 .SH OATH-HOTP Mode
 When using OATH-HOTP mode, an AES key of 160 bits (20 bytes, 40 chars of hex)
 can be supplied with -a.
@@ -210,6 +232,13 @@ See section "5.3.4 - OATH-HOTP Token Identifier" of the
 .URL "http://static.yubico.com/var/uploads/pdfs/YubiKey_Manual_2010-09-16.pdf" "Yubikey manual"
 for details, but in short the token identifier is 2 bytes manufacturer prefix,
 2 character token type and then 8 bytes manufacturer unique ID.
+
+.SH Challenge-response Mode
+In \fBCHAL-RESP\fR mode, the token will NOT generate any keypresses when the button
+is pressed (although it is perfectly possible to have one slot with a keypress-generating
+configuration, and the other in challenge-response mode).  Instead, a program capable of
+sending USB HID feature reports to the token must be used to send it a challenge, and
+read the response.  A C-based program to do that will be developed by Yubico shortly.
 
 .SH BUGS
 Report ykpersonalize bugs in 

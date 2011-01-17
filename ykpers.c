@@ -272,6 +272,13 @@ static bool vcheck_v21_or_greater(const YKP_CONFIG *cfg)
 		cfg->yk_major_version > 2;
 }
 
+static bool vcheck_v22_or_greater(const YKP_CONFIG *cfg)
+{
+	return (cfg->yk_major_version == 2 &&
+		cfg->yk_minor_version >= 2) ||
+		cfg->yk_major_version > 2;
+}
+
 #define def_set_charfield(fnname,fieldname,size,extra,vcheck)	\
 int ykp_set_ ## fnname(YKP_CONFIG *cfg, unsigned char *input, size_t len)	\
 {								\
@@ -344,6 +351,7 @@ def_set_tktflag(APPEND_DELAY2,vcheck_all)
 def_set_tktflag(APPEND_CR,vcheck_all)
 def_set_tktflag(PROTECT_CFG2,vcheck_no_v1)
 def_set_tktflag(OATH_HOTP,vcheck_v21_or_greater)
+def_set_tktflag(CHAL_RESP,vcheck_v22_or_greater)
 
 def_set_cfgflag(SEND_REF,vcheck_all)
 def_set_cfgflag(TICKET_FIRST,vcheck_v1)
@@ -359,6 +367,10 @@ def_set_cfgflag(OATH_HOTP8,vcheck_v21_or_greater)
 def_set_cfgflag(OATH_FIXED_MODHEX1,vcheck_v21_or_greater)
 def_set_cfgflag(OATH_FIXED_MODHEX2,vcheck_v21_or_greater)
 def_set_cfgflag(OATH_FIXED_MODHEX,vcheck_v21_or_greater)
+def_set_cfgflag(CHAL_YUBICO,vcheck_v22_or_greater)
+def_set_cfgflag(CHAL_HMAC,vcheck_v22_or_greater)
+def_set_cfgflag(HMAC_LT64,vcheck_v22_or_greater)
+def_set_cfgflag(CHAL_BTN_TRIG,vcheck_v22_or_greater)
 
 const char str_key_value_separator[] = ": ";
 const char str_hex_prefix[] = "h:";
@@ -387,6 +399,7 @@ struct map_st ticket_flags_map[] = {
 	{ TKTFLAG_APPEND_CR,		"APPEND_CR",		vcheck_all,		0 },
 	{ TKTFLAG_PROTECT_CFG2,		"PROTECT_CFG2",		vcheck_no_v1,		0 },
 	{ TKTFLAG_OATH_HOTP,		"OATH_HOTP",		vcheck_v21_or_greater,	0 },
+	{ TKTFLAG_CHAL_RESP,		"CHAL_RESP",		vcheck_v22_or_greater,	0 },
 	{ 0, "", 0 }
 };
 
@@ -403,6 +416,10 @@ struct map_st config_flags_map[] = {
 	  cfgFlag 0x40 as OATH_FIXED_MODHEX2 and not STRONG_PW2 if TKTFLAG_OATH_HOTP
 	  is set.
 	*/
+	{ CFGFLAG_CHAL_YUBICO,		"CHAL_YUBICO",		vcheck_v22_or_greater,	TKTFLAG_CHAL_RESP },
+	{ CFGFLAG_CHAL_HMAC,		"CHAL_HMAC",		vcheck_v22_or_greater,	TKTFLAG_CHAL_RESP },
+	{ CFGFLAG_HMAC_LT64,		"HMAC_LT64",		vcheck_v22_or_greater,	TKTFLAG_CHAL_RESP },
+	{ CFGFLAG_CHAL_BTN_TRIG,	"CHAL_BTN_TRIG",	vcheck_v22_or_greater,	TKTFLAG_CHAL_RESP },
 	{ CFGFLAG_OATH_HOTP8,		"OATH_HOTP8",		vcheck_v21_or_greater,	TKTFLAG_OATH_HOTP },
 	{ CFGFLAG_OATH_FIXED_MODHEX1,	"OATH_FIXED_MODHEX1",	vcheck_v21_or_greater,	TKTFLAG_OATH_HOTP },
 	{ CFGFLAG_OATH_FIXED_MODHEX2,	"OATH_FIXED_MODHEX2",	vcheck_v21_or_greater,	TKTFLAG_OATH_HOTP },

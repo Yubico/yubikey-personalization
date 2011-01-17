@@ -83,6 +83,9 @@ const char *usage =
 "          Ticket flags for firmware version 2.1 and above:\n"
 "          [-]oath-hotp           set/clear OATH_HOTP\n"
 "\n"
+"          Ticket flags for firmware version 2.2 and above:\n"
+"          [-]chal-resp           set/clear CHAL_RESP\n"
+"\n"
 "          Configuration flags for all firmware versions:\n"
 "          [-]send-ref            set/clear SEND_REF\n"
 "          [-]pacing-10ms         set/clear PACING_10MS\n"
@@ -104,6 +107,12 @@ const char *usage =
 "          [-]oath-fixed-modhex1  set/clear OATH_FIXED_MODHEX1\n"
 "          [-]oath-fixed-modhex2  set/clear OATH_FIXED_MODHEX2\n"
 "          [-]oath-fixed-modhex   set/clear OATH_MODHEX\n"
+"\n"
+"          Configuration flags for firmware version 2.2 and above:\n"
+"          [-]chal-yubico         set/clear CHAL_YUBICO\n"
+"          [-]chal-hmac           set/clear CHAL_HMAC\n"
+"          [-]hmac-lt64           set/clear HMAC_LT64\n"
+"          [-]chal-btn-trig       set/clear CHAL_BTN_TRIG\n"
 "\n"
 "-y        always commit (do not prompt)\n"
 "\n"
@@ -309,6 +318,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 			TKTFLAG("append-cr", APPEND_CR)
 			TKTFLAG("protect-cfg2", PROTECT_CFG2)
 			TKTFLAG("oath-hotp", OATH_HOTP)
+			TKTFLAG("chal-resp", CHAL_RESP)
 #undef TKTFLAG
 
 #define CFGFLAG(o, f)							\
@@ -337,6 +347,10 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 			CFGFLAG("oath-fixed-modhex1", OATH_FIXED_MODHEX1)
 			CFGFLAG("oath-fixed-modhex2", OATH_FIXED_MODHEX2)
 			CFGFLAG("oath-fixed-modhex", OATH_FIXED_MODHEX)
+			CFGFLAG("chal-yubico", CHAL_YUBICO)
+			CFGFLAG("chal-hmac", CHAL_HMAC)
+			CFGFLAG("hmac-lt64", HMAC_LT64)
+			CFGFLAG("chal-btn-trig", CHAL_BTN_TRIG)
 #undef CFGFLAG
 			else {
 				fprintf(stderr, "Unknown option '%s'\n",
