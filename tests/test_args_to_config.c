@@ -444,6 +444,26 @@ int _test_two_modes_at_once2()
 	free(st);
 }
 
+int _test_mode_after_other_option()
+{
+	YKP_CONFIG *cfg = ykp_create_config();
+	YK_STATUS *st = _test_init_st(2, 2, 0);
+	int rc = 0;
+
+	/* Test that it is not possible to set mode after other options */
+	char *argv[] = {
+		"unittest", "-ohmac-lt64", "-ochal-resp",
+		NULL
+	};
+	int argc = sizeof argv/sizeof argv[0] - 1;
+
+	rc = _test_config(cfg, st, argc, argv);
+	assert(rc == 0);
+
+	ykp_free_config(cfg);
+	free(st);
+}
+
 int main (int argc, char **argv)
 {
 	_test_config_slot1();
@@ -457,6 +477,7 @@ int main (int argc, char **argv)
 	_test_two_slots2();
 	_test_two_modes_at_once1();
 	_test_two_modes_at_once2();
+	_test_mode_after_other_option();
 
 	return 0;
 }
