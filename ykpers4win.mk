@@ -1,3 +1,5 @@
+all: ykpers4win32 ykpers4win64
+
 ykpers4win:
 	rm -rf tmp && mkdir tmp && cd tmp && \
 	wget http://yubico-c.googlecode.com/files/libyubikey-1.7.tar.gz && \
@@ -12,17 +14,17 @@ ykpers4win:
 	./configure --host=$(HOST) --build=x86_64-unknown-linux-gnu --prefix=$(PWD)/tmp/root && \
 	make install && \
 	cd .. && \
-	wget http://yubikey-personalization.googlecode.com/files/ykpers-1.3.5.tar.gz && \
-	tar xfa ykpers-1.3.5.tar.gz && \
-	cd ykpers-1.3.5/ && \
+	wget http://yubikey-personalization.googlecode.com/files/ykpers-1.4.0.tar.gz && \
+	tar xfa ykpers-1.4.0.tar.gz && \
+	cd ykpers-1.4.0/ && \
 	PKG_CONFIG_PATH=$(PWD)/tmp/root/lib/pkgconfig ./configure --host=$(HOST) --build=x86_64-unknown-linux-gnu --prefix=$(PWD)/tmp/root CPPFLAGS=-I$(PWD)/tmp/root/include && \
 	make install $(CHECK) && \
 	cd .. && \
 	cd root && \
-	zip -r ../../ykpers-1.3.5-win$(ARCH).zip *
+	zip -r ../../ykpers-1.4.0-win$(ARCH).zip *
 
 ykpers4win32:
-	$(MAKE) -f ykpers4win.mk ykpers4win ARCH=32 HOST=i686-w64-mingw32 CHECK=check
+	$(MAKE) -f ykpers4win.mk ykpers4win ARCH=32 HOST=i686-w64-mingw32 CHECK=
 
 ykpers4win64:
 	$(MAKE) -f ykpers4win.mk ykpers4win ARCH=64 HOST=x86_64-w64-mingw32 CHECK=
