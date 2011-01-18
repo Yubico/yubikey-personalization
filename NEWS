@@ -1,5 +1,9 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.4.1 (released 2011-01-19)
+** Restore OATH-HOTP symbols for LIBYKPERS_1.0.
+Accidentally moved to LIBYKPERS_1.4 in 1.4.0.
+
 * Version 1.4.0 (released 2011-01-17)
 ** Add support for new features in YubiKey 2.2.
 Most notably challenge-response, but also serial number retrieval.
