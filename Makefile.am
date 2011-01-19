@@ -79,11 +79,14 @@ EXTRA_DIST += contrib/README contrib/programming.sh
 PROJECT = yubikey-personalization
 
 ChangeLog:
-	git2cl > ChangeLog
+	cd $(srcdir) && git2cl > ChangeLog
 
 check-doc-dist:
-	perl -pe "s,^EXTRA_DIST = .*,EXTRA_DIST = `echo doc/*.asciidoc`," < Makefile.am > tmp
-	diff -ur Makefile.am tmp || (echo 'error: please update Makefile.am'; exit 1)
+	perl -pe "s,^EXTRA_DIST = .*,EXTRA_DIST = `cd $(srcdir) && ls doc/*.asciidoc | grep -v Todo.ascii | xargs echo`," \
+		 < $(srcdir)/Makefile.am > check-doc-dist.tmp
+	diff -ur $(srcdir)/Makefile.am check-doc-dist.tmp || \
+		(rm -f check-doc-dist.tmp; echo 'error: please update $(srcdir)/Makefile.am to include all docs'; exit 1)
+	rm -f check-doc-dist.tmp
 
 release:
 	@if test -z "$(USER)" || test -z "$(KEYID)"; then \
@@ -93,11 +96,9 @@ release:
 		echo "  make release USER=simon@yubico.com KEYID=B9156397"; \
 		exit 1; \
 	fi
-	@if head -3 NEWS | grep -q unreleased; then \
-		echo "You need to update NEWS, see doc/MakeRelease.wiki."; \
-		exit 1; \
-	fi
-	rm -f ChangeLog
+	@head -3 $(srcdir)/NEWS | grep -q "Version $(VERSION) .released `date -I`" || \
+		(echo 'error: You need to update date/version in $(srcdir)/NEWS, see doc/MakeRelease.wiki.'; exit 1)
+	rm -f $(srcdir)/ChangeLog
 	make check-doc-dist ChangeLog distcheck
 	gpg --detach-sign --default-key $(KEYID) $(PACKAGE)-$(VERSION).tar.gz
 	gpg --verify $(PACKAGE)-$(VERSION).tar.gz.sig
