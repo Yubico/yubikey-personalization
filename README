@@ -1,1 +1,10 @@
-Documentation is in doc/ and in particular the doc/ReadMe.wiki file.
+Documentation is in doc/ and in particular the doc/ReadMe.asciidoc file.
+
+If you've checked out the source tree and the doc/ dir is empty, do
+
+   $ git submodule init
+   $ git submodule update
+
+The documentation is also available online at
+
+    http://github.com/Yubico/yubikey-personalization/wiki
