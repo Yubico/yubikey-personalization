@@ -37,7 +37,7 @@
 
 /*************************************************************************
  **
- ** N O T E :  For all functions that return a value, 0 och NULL indicates
+ ** N O T E :  For all functions that return a value, 0 and NULL indicates
  ** an error, other values indicate success.
  **
  ************************************************************************/
