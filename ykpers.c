@@ -461,6 +461,18 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		char buffer[256];
 		struct map_st *p;
 		unsigned char t_flags;
+		bool key_bits_in_uid = false;
+
+		/* for OATH-HOTP and HMAC-SHA1 challenge response, there is four bytes
+		 *  additional key data in the uid field
+		 */
+		if ((cfg->ykcore_config.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP)
+			key_bits_in_uid = true;
+		
+		if ((cfg->ykcore_config.tktFlags & TKTFLAG_CHAL_RESP) == TKTFLAG_CHAL_RESP &&
+		    (cfg->ykcore_config.cfgFlags & CFGFLAG_CHAL_HMAC) == CFGFLAG_CHAL_HMAC) {
+			key_bits_in_uid = true;
+		}
 
 		/* fixed: */
 		writer(str_fixed, strlen(str_fixed), userdata);
@@ -479,11 +491,15 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		writer(str_key_value_separator,
 		       strlen(str_key_value_separator),
 		       userdata);
-		writer(str_hex_prefix,
-		       strlen(str_key_value_separator),
-		       userdata);
-		yubikey_hex_encode(buffer, (char *)cfg->ykcore_config.uid, UID_SIZE);
-		writer(buffer, strlen(buffer), userdata);
+		if (key_bits_in_uid) {
+			writer("n/a", 3, userdata);
+		} else {
+			writer(str_hex_prefix,
+			       strlen(str_key_value_separator),
+			       userdata);
+			yubikey_hex_encode(buffer, (char *)cfg->ykcore_config.uid, UID_SIZE);
+			writer(buffer, strlen(buffer), userdata);
+		}
 		writer("\n", 1, userdata);
 
 		/* key: */
@@ -495,6 +511,9 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		       strlen(str_key_value_separator),
 		       userdata);
 		yubikey_hex_encode(buffer, (char *)cfg->ykcore_config.key, KEY_SIZE);
+		if (key_bits_in_uid) {
+			yubikey_hex_encode(buffer + KEY_SIZE * 2, (char *)cfg->ykcore_config.uid, 4);
+		}
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
