@@ -33,7 +33,7 @@ LDADD = ../libykpers-1.la
 
 ykpersonalize_LDADD = ../libykpers-1.la ../ykcore/libykcore.la
 
-ctests = selftest$(EXEEXT) test_args_to_config$(EXEEXT)
+ctests = selftest$(EXEEXT) test_args_to_config$(EXEEXT) test_key_generation$(EXEEXT)
 check_PROGRAMS = $(ctests)
 TESTS = $(ctests)
 

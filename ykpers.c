@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2008, 2009, 2010, Yubico AB
+ * Copyright (c) 2008, 2009, 2010, 2011 Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,7 @@
 #include <string.h>
 #include <time.h>
 #include <ctype.h>
+#include <assert.h>
 
 #include <yubikey.h>
 
@@ -126,6 +127,27 @@ int ykp_configure_for(YKP_CONFIG *cfg, int confnum, YK_STATUS *st)
 	return 0;
 }
 
+/* Return number of bytes of key data for this configuration.
+ * 20 bytes is 160 bits, 16 bytes is 128.
+ */
+int _get_supported_key_length(const YKP_CONFIG *cfg)
+{
+	bool key_bits_in_uid = false;
+
+	/* OATH-HOTP and HMAC-SHA1 challenge response support 20 byte (160 bits)
+	 * keys, holding the last four bytes in the uid field.
+	 */
+	if ((cfg->ykcore_config.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP)
+		return 20;
+		
+	if ((cfg->ykcore_config.tktFlags & TKTFLAG_CHAL_RESP) == TKTFLAG_CHAL_RESP &&
+	    (cfg->ykcore_config.cfgFlags & CFGFLAG_CHAL_HMAC) == CFGFLAG_CHAL_HMAC) {
+		return 20;
+	}
+
+	return 16;
+}
+
 /* Decode 128 bit AES key into cfg->ykcore_config.key */
 int ykp_AES_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
 	char aesbin[256];
@@ -171,6 +193,13 @@ int ykp_HMAC_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
 	return 0;
 }
 
+/* Generate an AES (128 bits) or HMAC (despite the function name) (160 bits)
+ * key from user entered input.
+ *
+ * Use user provided salt, or use salt from an available random device.
+ * If no random device is available we fall back to using 2048 bits of
+ * system time data, together with the user input, as salt.
+ */
 int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 				const char *salt)
 {
@@ -184,6 +213,11 @@ int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 		char **random_place;
 		uint8_t _salt[8];
 		size_t _salt_len = 0;
+		unsigned char buf[sizeof(cfg->ykcore_config.key) + 4];
+		int rc;
+		int key_bytes = _get_supported_key_length(cfg);
+		
+		assert (key_bytes <= sizeof(buf));
 
 		if (salt) {
 			_salt_len = strlen(salt);
@@ -228,11 +262,22 @@ int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 			_salt_len = sizeof(_salt);
 		}
 
-		return yk_pbkdf2(passphrase,
-				 _salt, _salt_len,
-				 1024,
-				 cfg->ykcore_config.key, sizeof(cfg->ykcore_config.key),
-				 &yk_hmac_sha1);
+		rc = yk_pbkdf2(passphrase,
+			       _salt, _salt_len,
+			       1024,
+			       buf, key_bytes,
+			       &yk_hmac_sha1);
+
+		if (rc) {
+			memcpy(cfg->ykcore_config.key, buf, sizeof(cfg->ykcore_config.key));
+
+			if (key_bytes == 20) {
+				memcpy(cfg->ykcore_config.uid, buf + sizeof(cfg->ykcore_config.key), 4);
+			}
+		}
+
+		memset (buf, 0, sizeof(buf));
+		return rc;
 	}
 	return 0;
 }
@@ -466,13 +511,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		/* for OATH-HOTP and HMAC-SHA1 challenge response, there is four bytes
 		 *  additional key data in the uid field
 		 */
-		if ((cfg->ykcore_config.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP)
-			key_bits_in_uid = true;
-		
-		if ((cfg->ykcore_config.tktFlags & TKTFLAG_CHAL_RESP) == TKTFLAG_CHAL_RESP &&
-		    (cfg->ykcore_config.cfgFlags & CFGFLAG_CHAL_HMAC) == CFGFLAG_CHAL_HMAC) {
-			key_bits_in_uid = true;
-		}
+		key_bits_in_uid = (_get_supported_key_length(cfg) == 20);
 
 		/* fixed: */
 		writer(str_fixed, strlen(str_fixed), userdata);
