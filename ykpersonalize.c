@@ -212,8 +212,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 	bool mode_chosen = false;
 	bool option_seen = false;
 
-	struct config_st *ycfg;
-	ycfg = (struct config_st *) ykp_core_config(cfg);
+	struct config_st *ycfg = (struct config_st *) ykp_core_config(cfg);
 
 	while((c = getopt(argc, argv, optstring)) != -1) {
 		if (c == 'o') {
@@ -447,7 +446,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 	}
 
 	if (*aesviahash) {
-		int long_key_valid = false;
+		bool long_key_valid = false;
 		int res = 0;
 
 		/* for OATH-HOTP, 160 bits key is also valid */
