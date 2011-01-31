@@ -1,5 +1,9 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version x (unreleased)
+** When generating keys from passphrase, generate 160 bit keys for modes
+that support it (OATH-HOTP and HMAC challenge response).
+
 * Version 1.4.1 (released 2011-01-19)
 ** Restore OATH-HOTP symbols for LIBYKPERS_1.0.
 Accidentally moved to LIBYKPERS_1.4 in 1.4.0.
