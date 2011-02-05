@@ -117,7 +117,7 @@ const char *yk_usb_strerror();
 #define YK_ENOKEY	0x05
 #define YK_EFIRMWARE	0x06
 #define YK_ENOMEM	0x07
-#define YK_ENOSTATUS	0x07
-#define YK_ENOTYETIMPL	0x08
+#define YK_ENOSTATUS	0x08
+#define YK_ENOTYETIMPL	0x09
 
 #endif	/* __YKCORE_H_INCLUDED__ */
