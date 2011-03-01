@@ -77,9 +77,6 @@ if test "x$with_backend" = xcheck; then
   esac
   AC_MSG_RESULT([$with_backend])
 fi
-AM_CONDITIONAL([BACKEND_LIBUSB], test x$with_backend = xlibusb)
-AM_CONDITIONAL([BACKEND_LIBUSB_1_0], test x$with_backend = xlibusb-1.0)
-AM_CONDITIONAL([BACKEND_OSX], test x$with_backend = xosx)
 
 if test "x$with_backend" = "xlibusb-1.0"; then
    PKG_CHECK_MODULES([LIBUSB], [libusb-1.0])
@@ -88,10 +85,16 @@ fi
 if test x$with_backend = xlibusb; then
   AC_LIB_HAVE_LINKFLAGS(usb,, [#include <usb.h>], [usb_init()])
   if test "$ac_cv_libusb" != yes; then
-    if test "$with_backend_orig" = "check"; then
-     AC_MSG_ERROR([libusb-1.0 or libusb not found, please install one of them])
+    # FreeBSD 8 has an implementation of the libusb-1.0 API in -lusb
+    AC_LIB_HAVE_LINKFLAGS(usb,, [#include <libusb.h>], [libusb_init(NULL)])
+    if test "$ac_cv_libusb" != yes; then
+      if test "$with_backend_orig" = "check"; then
+       AC_MSG_ERROR([libusb-1.0 or libusb not found, please install one of them])
+      else
+        AC_MSG_ERROR([libusb not found, please install usb.h and libusb.so])
+      fi
     else
-      AC_MSG_ERROR([libusb not found, please install usb.h and libusb.so])
+      with_backend=libusb-1.0
     fi
   fi
 fi
@@ -99,6 +102,10 @@ fi
 if test x$with_backend = xosx; then
   LDFLAGS="$LDFLAGS -framework IOKit -framework CoreFoundation"
 fi
+
+AM_CONDITIONAL([BACKEND_LIBUSB], test x$with_backend = xlibusb)
+AM_CONDITIONAL([BACKEND_LIBUSB_1_0], test x$with_backend = xlibusb-1.0)
+AM_CONDITIONAL([BACKEND_OSX], test x$with_backend = xosx)
 
 gl_LD_VERSION_SCRIPT
 
