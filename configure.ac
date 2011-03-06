@@ -83,18 +83,18 @@ if test "x$with_backend" = "xlibusb-1.0"; then
 fi
 
 if test x$with_backend = xlibusb; then
-  AC_LIB_HAVE_LINKFLAGS(usb,, [#include <usb.h>], [usb_init()])
-  if test "$ac_cv_libusb" != yes; then
+  AC_LIB_HAVE_LINKFLAGS(usb,, [#include <libusb.h>], [libusb_init(NULL)])
+  if test "$ac_cv_libusb" = yes; then
     # FreeBSD 8 has an implementation of the libusb-1.0 API in -lusb
-    AC_LIB_HAVE_LINKFLAGS(usb,, [#include <libusb.h>], [libusb_init(NULL)])
+    with_backend=libusb-1.0
+  else
+    AC_LIB_HAVE_LINKFLAGS(usb,, [#include <usb.h>], [usb_init()])
     if test "$ac_cv_libusb" != yes; then
       if test "$with_backend_orig" = "check"; then
        AC_MSG_ERROR([libusb-1.0 or libusb not found, please install one of them])
       else
         AC_MSG_ERROR([libusb not found, please install usb.h and libusb.so])
       fi
-    else
-      with_backend=libusb-1.0
     fi
   fi
 fi
