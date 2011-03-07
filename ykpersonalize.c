@@ -246,7 +246,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 
 			option_seen = true;
 		}
-		    
+
 		switch (c) {
 		case '1':
 			if (slot_chosen) {
@@ -464,7 +464,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 		} else {
 			res = ykp_AES_key_from_hex(cfg, aeshash);
 		}
-			
+
 		if (res) {
 			fprintf(stderr, "Bad %s key: %s\n", long_key_valid ? "HMAC":"AES", aeshash);
 			fflush(stderr);
@@ -556,6 +556,18 @@ int main(int argc, char **argv)
 			     &exit_code)) {
 		goto err;
 	}
+
+	if (verbose && ykds_version_major(st) >= 2) {
+		unsigned int serial;
+		if (! yk_get_serial(yk, 0, 0, &serial)) {
+			printf ("Failed to read serial number (serial-api-visible disabled?).\n");
+
+		} else {
+			printf ("Serial number : %i\n", serial);
+		}
+	}
+
+	printf ("\n");
 
 	if (infname) {
 		if (strcmp(infname, "-") == 0)
