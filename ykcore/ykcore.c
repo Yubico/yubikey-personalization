@@ -41,6 +41,17 @@
 #define Sleep(x) usleep((x)*1000)
 #endif
 
+/*
+ * Yubikey low-level interface section 2.4 (Report arbitration polling) specifies
+ * a 600 ms timeout for a Yubikey to process something written to it.
+ */
+#define WAIT_FOR_WRITE_FLAG	600
+
+int yk_wait_for_key_status(YK_KEY *yk, uint8_t slot, unsigned int flags,
+			   unsigned int max_time_ms,
+			   bool logic_and, unsigned char mask,
+			   unsigned char *last_data);
+
 int yk_init(void)
 {
 	return _ykusb_start();
@@ -121,6 +132,7 @@ int yk_write_config(YK_KEY *yk, YK_CONFIG *cfg, int confnum,
 	unsigned char buf[sizeof(YK_CONFIG) + ACC_CODE_SIZE];
 	YK_STATUS stat;
 	int seq;
+	uint8_t slot;
 
 	/* Get current sequence # from status block */
 
@@ -149,14 +161,23 @@ int yk_write_config(YK_KEY *yk, YK_CONFIG *cfg, int confnum,
 
 	switch(confnum) {
 	case 1:
-		if (!yk_write_to_key(yk, SLOT_CONFIG, buf, sizeof(buf)))
-			return 0;
+		slot = SLOT_CONFIG;
 		break;
 	case 2:
-		if (!yk_write_to_key(yk, SLOT_CONFIG2, buf, sizeof(buf)))
-			return 0;
+		slot = SLOT_CONFIG2;
 		break;
 	}
+
+	if (!yk_write_to_key(yk, slot, buf, sizeof(buf)))
+		return 0;
+
+	/* When the Yubikey clears the SLOT_WRITE_FLAG, it has processed the last write.
+	 * This wait can't be done in yk_write_to_key since some users of that function
+	 * want to get the bytes in the status message, but when writing configuration
+	 * we don't expect any data back.
+	 *
+	 */
+	yk_wait_for_key_status(yk, slot, 0, WAIT_FOR_WRITE_FLAG, false, SLOT_WRITE_FLAG, NULL);
 
 	/* Verify update */
 
@@ -454,11 +475,10 @@ int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount)
 		repbuf[i] = seq | SLOT_WRITE_FLAG;
 
 		/* When the Yubikey clears the SLOT_WRITE_FLAG, the
-		 * next part can be sent. Yubikey low-level interface
-		 * section 2.4 (Report arbitration polling) specifies
-		 * a 600 ms timeout for this operation.
+		 * next part can be sent.
 		 */
-		if (! yk_wait_for_key_status(yk, slot, 0, 600, false, SLOT_WRITE_FLAG, NULL))
+		if (! yk_wait_for_key_status(yk, slot, 0, WAIT_FOR_WRITE_FLAG,
+					     false, SLOT_WRITE_FLAG, NULL))
 			return 0;
 
 		if (!_ykusb_write(yk, REPORT_TYPE_FEATURE, 0,
