@@ -505,6 +505,11 @@ int main(int argc, char **argv)
 		goto err;
 	}
 
+	if (argc == 2 && strcmp (argv[1], "-h") == 0) {
+		fputs(usage, stderr);
+		goto err;
+	}
+
 	if (!(yk = yk_open_first_key())) {
 		exit_code = 1;
 		goto err;
