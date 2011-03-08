@@ -470,6 +470,13 @@ int yk_read_response_from_key(YK_KEY *yk, uint8_t slot, unsigned int flags,
 	return 0;
 }
 
+/*
+ * Send something to the YubiKey. The command, as well as the slot, is
+ * given in the 'slot' parameter (e.g. SLOT_CHAL_HMAC2 to send a HMAC-SHA1
+ * challenge to slot 2).
+ *
+ * The slot parameter is here for future purposes only.
+ */
 int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount)
 {
 	YK_FRAME frame;
