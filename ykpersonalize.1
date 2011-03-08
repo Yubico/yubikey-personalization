@@ -83,11 +83,15 @@ If none is given, a unique random one will be generated.
 \fBfixed\fR=\fIfffffffffff\fR
 The public modhex identity of key, 0-16 characters long.
 It's possible to give the identity in hex as well, just prepend the
-value with `h:'.
+value with `h:'. The fixed part is emitted before the OTP when the
+button on the YubiKey is pressed. It can be used as an identifier for
+the user, for example.
 .TP
 \fBuid\fR=\fIuuuuuu\fR
 The uid part of the generated ticket, in hex.
-Must be 12 characters long.
+Must be 12 characters long. The uid is 6 bytes of data that is encrypted
+in every OTP, and is used to validate that an OTP was in fact encrypted
+with the AES key shared between the YubiKey and validation service.
 .TP
 \fBaccess\fR=\fIfffffffffff\fR
 New hex access code to set.
