@@ -119,5 +119,14 @@ const char *yk_usb_strerror();
 #define YK_ENOMEM	0x07
 #define YK_ENOSTATUS	0x08
 #define YK_ENOTYETIMPL	0x09
+#define YK_ECHECKSUM	0x0a	/* checksum validation failed */
+#define YK_EWOULDBLOCK	0x0b	/* operation would block */
+
+/* Flags for response reading. Use high numbers to not exclude the possibility
+ * to combine these with for example SLOT commands from ykdef.h in the future.
+ */
+#define YK_FLAG_MAYBLOCK	0x01 << 16
+
+#define YK_CRC_OK_RESIDUAL	0xf0b8
 
 #endif	/* __YKCORE_H_INCLUDED__ */

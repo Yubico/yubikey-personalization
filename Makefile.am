@@ -61,10 +61,13 @@ endif
 
 # The command line tools.
 
-bin_PROGRAMS = ykpersonalize
+bin_PROGRAMS = ykpersonalize ykchalresp
 
 ykpersonalize_SOURCES = ykpersonalize.c
 ykpersonalize_LDADD = ./libykpers-1.la ./ykcore/libykcore.la
+
+ykchalresp_SOURCES = ykchalresp.c
+ykchalresp_LDADD = ./libykpers-1.la ./ykcore/libykcore.la
 
 dist_man1_MANS = ykpersonalize.1
 

@@ -35,10 +35,22 @@
 /* To get modhex and crc16 */
 #include <yubikey.h>
 
+#include <stdio.h>
 #ifndef _WIN32
 #include <unistd.h>
 #define Sleep(x) usleep((x)*1000)
 #endif
+
+/*
+ * Yubikey low-level interface section 2.4 (Report arbitration polling) specifies
+ * a 600 ms timeout for a Yubikey to process something written to it.
+ */
+#define WAIT_FOR_WRITE_FLAG	600
+
+int yk_wait_for_key_status(YK_KEY *yk, uint8_t slot, unsigned int flags,
+			   unsigned int max_time_ms,
+			   bool logic_and, unsigned char mask,
+			   unsigned char *last_data);
 
 int yk_init(void)
 {
@@ -120,6 +132,7 @@ int yk_write_config(YK_KEY *yk, YK_CONFIG *cfg, int confnum,
 	unsigned char buf[sizeof(YK_CONFIG) + ACC_CODE_SIZE];
 	YK_STATUS stat;
 	int seq;
+	uint8_t slot;
 
 	/* Get current sequence # from status block */
 
@@ -148,14 +161,23 @@ int yk_write_config(YK_KEY *yk, YK_CONFIG *cfg, int confnum,
 
 	switch(confnum) {
 	case 1:
-		if (!yk_write_to_key(yk, SLOT_CONFIG, buf, sizeof(buf)))
-			return 0;
+		slot = SLOT_CONFIG;
 		break;
 	case 2:
-		if (!yk_write_to_key(yk, SLOT_CONFIG2, buf, sizeof(buf)))
-			return 0;
+		slot = SLOT_CONFIG2;
 		break;
 	}
+
+	if (!yk_write_to_key(yk, slot, buf, sizeof(buf)))
+		return 0;
+
+	/* When the Yubikey clears the SLOT_WRITE_FLAG, it has processed the last write.
+	 * This wait can't be done in yk_write_to_key since some users of that function
+	 * want to get the bytes in the status message, but when writing configuration
+	 * we don't expect any data back.
+	 *
+	 */
+	yk_wait_for_key_status(yk, slot, 0, WAIT_FOR_WRITE_FLAG, false, SLOT_WRITE_FLAG, NULL);
 
 	/* Verify update */
 
@@ -202,7 +224,9 @@ static const char *errtext[] = {
 	"unsupported firmware version",
 	"out of memory",
 	"no status structure given",
-	"not yet implemented"
+	"not yet implemented",
+	"checksum mismatch",
+	"operation would block"
 };
 const char *yk_strerror(int errnum)
 {
@@ -215,9 +239,15 @@ const char *yk_usb_strerror()
 	return _ykusb_strerror();
 }
 
-/* Note: we currently have no idea whatsoever how to read things larger
-   than FEATURE_RPT_SIZE - 1.  We also have no idea what to do with the
-   slot parameter, it currently is there for future purposes only. */
+/* This function would've been better named 'yk_read_status_from_key'. Because
+ * it disregards the first byte in each feature report, it can't be used to read
+ * generic feature reports from the Yubikey, and this behaviour can't be changed
+ * without breaking compatibility with existing programs.
+ *
+ * See yk_read_response_from_key() for a generic purpose data reading function.
+ *
+ * The slot parameter is here for future purposes only.
+ */
 int yk_read_from_key(YK_KEY *yk, uint8_t slot,
 		     void *buf, unsigned int bufsize, unsigned int *bufcount)
 {
@@ -235,10 +265,161 @@ int yk_read_from_key(YK_KEY *yk, uint8_t slot,
 
 	/* This makes it apparent that there's some mysterious value in
 	   the first byte...  I wonder what...  /Richard Levitte */
-	memcpy(buf, data + 1, bufsize); 
+	memcpy(buf, data + 1, bufsize);
 	*bufcount = bufsize;
 
 	return 1;
+}
+
+/* Wait for the Yubikey to either set or clear (controlled by the boolean logic_and)
+ * the bits in mask.
+ *
+ * The slot parameter is here for future purposes only.
+ */
+int yk_wait_for_key_status(YK_KEY *yk, uint8_t slot, unsigned int flags,
+			   unsigned int max_time_ms,
+			   bool logic_and, unsigned char mask,
+			   unsigned char *last_data)
+{
+	unsigned char data[FEATURE_RPT_SIZE];
+	unsigned int bytes_read;
+
+	int sleepval = 10;
+	int slept_time = 0;
+	int blocking = 0;
+
+	while (slept_time < max_time_ms) {
+		/* Read a status report from the key */
+		memset(data, 0, sizeof(data));
+		if (!_ykusb_read(yk, REPORT_TYPE_FEATURE, slot, (char *) &data, FEATURE_RPT_SIZE))
+			return 0;
+
+		if (last_data != NULL)
+			memcpy(last_data, data, sizeof(data));
+
+		/* The status byte from the key is now in last byte of data */
+		if (logic_and) {
+			/* Check if Yubikey has SET the bit(s) in mask */
+			if ((data[FEATURE_RPT_SIZE - 1] & mask) == mask) {
+				return 1;
+			}
+		} else {
+			/* Check if Yubikey has CLEARED the bit(s) in mask */
+			if (! (data[FEATURE_RPT_SIZE - 1] & mask)) {
+				return 1;
+			}
+		}
+
+		/* Check if Yubikey says it will wait for user interaction */
+		if ((data[FEATURE_RPT_SIZE - 1] & RESP_TIMEOUT_WAIT_FLAG) == RESP_TIMEOUT_WAIT_FLAG) {
+			if ((flags & YK_FLAG_MAYBLOCK) == YK_FLAG_MAYBLOCK) {
+				if (! blocking) {
+					/* Extend timeout first time we see RESP_TIMEOUT_WAIT_FLAG. */
+					blocking = 1;
+					max_time_ms += 15000;
+				}
+			} else {
+				/* Reset read mode of Yubikey before aborting. */
+				yk_force_key_update(yk);
+				yk_errno = YK_EWOULDBLOCK;
+				return 0;
+			}
+		} else {
+			if (blocking) {
+				/* YubiKey timed out waiting for user interaction */
+				break;
+			}
+		}
+
+		Sleep(sleepval);
+		slept_time += sleepval;
+		/* exponential backoff, up to 500 ms */
+		sleepval *= 2;
+		if (sleepval > 500)
+			sleepval = 500;
+	}
+
+	yk_errno = YK_ETIMEOUT;
+	return 0;
+}
+
+/* Read one or more feature reports from a Yubikey and put them together.
+ *
+ * Bufsize must be able to hold at least 2 more bytes than you are expecting
+ * (the CRC), but since all read requests return 7 bytes of data bufsize needs
+ * to be up to 7 bytes more than you expect.
+ *
+ * If the key returns more data than bufsize, we fail and set yk_errno to
+ * YK_EWRONGSIZ. If that happens there will be partial data in buf.
+ *
+ * If we read a response from a Yubikey that is configured to block and wait for
+ * a button press (in challenge response), this function will abort unless
+ * flags contain YK_FLAG_MAYBLOCK, in which case it might take up to 15 seconds
+ * for this function to return.
+ *
+ * The slot parameter is here for future purposes only.
+ */
+int yk_read_response_from_key(YK_KEY *yk, uint8_t slot, unsigned int flags,
+			      void *buf, unsigned int bufsize, unsigned int expect_bytes,
+			      unsigned int *bytes_read)
+{
+	unsigned char data[FEATURE_RPT_SIZE];
+	memset(data, 0, sizeof(data));
+
+	memset(buf, 0, bufsize);
+	*bytes_read = 0;
+
+	/* Wait for the key to turn on RESP_PENDING_FLAG */
+	if (! yk_wait_for_key_status(yk, slot, flags, 1000, true, RESP_PENDING_FLAG, (char *) &data))
+		return 0;
+
+	/* The first part of the response was read by yk_wait_for_key_status(). We need
+	 * to copy it to buf.
+	 */
+	memcpy(buf + *bytes_read, data, sizeof(data) - 1);
+	*bytes_read += sizeof(data) - 1;
+
+	while (*bytes_read + FEATURE_RPT_SIZE <= bufsize) {
+		memset(data, 0, sizeof(data));
+
+		if (!_ykusb_read(yk, REPORT_TYPE_FEATURE, 0, (char *)data, FEATURE_RPT_SIZE))
+			return 0;
+
+		if (data[FEATURE_RPT_SIZE - 1] & RESP_PENDING_FLAG) {
+			/* The lower five bits of the status byte has the response sequence
+			 * number. If that gets reset to zero we are done.
+			 */
+			if ((data[FEATURE_RPT_SIZE - 1] & 31) == 0) {
+				if (expect_bytes > 0) {
+					/* Size of response is known. Verify CRC. */
+					int crc = yubikey_crc16(buf, expect_bytes + 2);
+					if (crc != YK_CRC_OK_RESIDUAL) {
+						yk_errno = YK_ECHECKSUM;
+						return 0;
+					}
+				}
+
+				/* Reset read mode of Yubikey before returning. */
+				yk_force_key_update(yk);
+
+				return 1;
+			}
+
+			memcpy(buf + *bytes_read, data, sizeof(data) - 1);
+			*bytes_read += sizeof(data) - 1;
+		} else {
+			/* Reset read mode of Yubikey before returning. */
+			yk_force_key_update(yk);
+
+			return 0;
+		}
+	}
+
+	/* We're out of buffer space, abort reading */
+	yk_force_key_update(yk);
+
+	yk_errno = YK_EWRONGSIZ;
+	return 0;
 }
 
 int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount)
@@ -273,6 +454,12 @@ int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount)
 	ptr = (unsigned char *) &frame;
 	end = (unsigned char *) &frame + sizeof(frame);
 
+	/* Initial check that the YubiKey is in a state where it will accept
+	 * a write.
+	 *
+	if (! yk_wait_for_key_status(yk, slot, 0, 1000, false, SLOT_WRITE_FLAG, NULL))
+		return 0;
+	*/
 	for (seq = 0; ptr < end; seq++) {
 		int all_zeros = 1;
 		/* Ignore parts that are all zeroes except first and last
@@ -287,29 +474,16 @@ int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount)
 		/* sequence number goes into lower bits of last byte */
 		repbuf[i] = seq | SLOT_WRITE_FLAG;
 
+		/* When the Yubikey clears the SLOT_WRITE_FLAG, the
+		 * next part can be sent.
+		 */
+		if (! yk_wait_for_key_status(yk, slot, 0, WAIT_FOR_WRITE_FLAG,
+					     false, SLOT_WRITE_FLAG, NULL))
+			return 0;
+
 		if (!_ykusb_write(yk, REPORT_TYPE_FEATURE, 0,
 				  (char *)repbuf, FEATURE_RPT_SIZE))
 			return 0;
-
-		/* When the Yubikey clears the SLOT_WRITE_FLAG, the
-		   next part can be sent */
-
-		for (i = 0; i < 50; i++) {
-			memset(repbuf, 0, sizeof(repbuf));
-			if (!_ykusb_read(yk, REPORT_TYPE_FEATURE, 0,
-					 (char *)repbuf, FEATURE_RPT_SIZE))
-				return 0;
-			if (! (repbuf[FEATURE_RPT_SIZE - 1] & SLOT_WRITE_FLAG))
-				break;
-			Sleep(10);
-		}
-
-		/* If timeout, something has gone wrong */
-
-		if (i >= 50) {
-			yk_errno = YK_ETIMEOUT;
-			return 0;
-		}
 	}
 
 	return 1;
@@ -346,3 +520,15 @@ uint16_t yk_endian_swap_16(uint16_t x)
 	return x;
 }
 
+/* Private little hexdump function for debugging */
+void _yk_hexdump(void *buffer, int size)
+{
+       unsigned char *p = buffer;
+       int i;
+       for (i = 0; i < size; i++) {
+               fprintf(stderr, "\\x%02x", *p);
+               p++;
+      }
+      fprintf(stderr, "\n");
+      fflush(stderr);
+}

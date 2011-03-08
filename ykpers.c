@@ -518,11 +518,15 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		writer(str_key_value_separator,
 		       strlen(str_key_value_separator),
 		       userdata);
-		writer(str_modhex_prefix,
-		       strlen(str_key_value_separator),
-		       userdata);
-		yubikey_modhex_encode(buffer, (char *)cfg->ykcore_config.fixed, cfg->ykcore_config.fixedSize);
-		writer(buffer, strlen(buffer), userdata);
+		if (key_bits_in_uid) {
+			writer("n/a", 3, userdata);
+		} else {
+			writer(str_modhex_prefix,
+			       strlen(str_key_value_separator),
+			       userdata);
+			yubikey_modhex_encode(buffer, (char *)cfg->ykcore_config.fixed, cfg->ykcore_config.fixedSize);
+			writer(buffer, strlen(buffer), userdata);
+		}
 		writer("\n", 1, userdata);
 
 		/* uid: */

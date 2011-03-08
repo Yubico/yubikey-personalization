@@ -466,7 +466,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 		}
 			
 		if (res) {
-			fprintf(stderr, "Bad AES key: %s\n", aeshash);
+			fprintf(stderr, "Bad %s key: %s\n", long_key_valid ? "HMAC":"AES", aeshash);
 			fflush(stderr);
 			return 0;
 		}
