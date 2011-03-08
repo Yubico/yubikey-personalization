@@ -28,7 +28,7 @@
 
 # Subdirectories
 
-SUBDIRS=ykcore tests
+SUBDIRS= ykcore . tests
 
 ACLOCAL_AMFLAGS = -I m4
 
