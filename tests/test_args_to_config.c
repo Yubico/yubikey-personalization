@@ -146,6 +146,27 @@ YK_STATUS * _test_init_st(int major, int minor, int build)
 	return st;
 }
 
+/*
+ * Utility function to parse arguments and just return the result code.
+ * The calling function does the assert() to get function name in assert output.
+ */
+int _parse_args_rc(char **argv)
+
+{
+	YKP_CONFIG *cfg = ykp_create_config();
+	YK_STATUS *st = _test_init_st(2, 2, 0);
+	int rc = 0;
+
+	int argc = sizeof *argv/sizeof *argv[0] - 1;
+
+	rc = _test_config(cfg, st, argc, argv);
+
+	ykp_free_config(cfg);
+	free(st);
+
+	return rc;
+}
+
 int _test_config_slot1()
 {
 	YKP_CONFIG *cfg = ykp_create_config();
@@ -486,6 +507,28 @@ int _test_key_mixed_case1()
 	free(st);
 }
 
+int _test_uid_for_oath()
+{
+	/* Test that it is not possible to specify UID with OATH */
+	char *argv[] = {
+		"unittest", "-ooath-hotp", "-ouid=h:010203040506",
+		NULL
+	};
+	int rc = _parse_args_rc (argv);
+	assert(rc == 0);
+}
+
+int _test_uid_for_chal_resp()
+{
+	/* Test that it is not possible to specify UID with Challenge Response */
+	char *argv[] = {
+		"unittest", "-ochal-resp", "-ouid=h:010203040506",
+		NULL
+	};
+	int rc = _parse_args_rc (argv);
+	assert(rc == 0);
+}
+
 int main (int argc, char **argv)
 {
 	_test_config_slot1();
@@ -501,6 +544,8 @@ int main (int argc, char **argv)
 	_test_two_modes_at_once2();
 	_test_mode_after_other_option();
 	_test_key_mixed_case1();
+	_test_uid_for_oath();
+	_test_uid_for_chal_resp();
 
 	return 0;
 }

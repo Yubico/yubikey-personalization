@@ -332,6 +332,15 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 					*exit_code = 1;
 					return 0;
 				}
+				/* for OATH-HOTP and CHAL-RESP, uid is not applicable */
+				if ((ycfg->tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP ||
+				    (ycfg->tktFlags & TKTFLAG_CHAL_RESP) == TKTFLAG_CHAL_RESP) {
+					fprintf(stderr,
+						"Option uid= not valid with -ooath-hotp or -ochal-resp.\n"
+						);
+					*exit_code = 1;
+					return 0;
+				}
 				ykp_set_uid(cfg, uidbin, uidbinlen);
 			}
 			else if (strncmp(optarg, "access=", 7) == 0) {
