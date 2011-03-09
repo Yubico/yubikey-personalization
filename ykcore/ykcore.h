@@ -84,6 +84,17 @@ extern int yk_close_key(YK_KEY *k);		/* closes a previously opened key */
 extern int yk_get_status(YK_KEY *k, YK_STATUS *status /*, int forceUpdate */);
 /* checks that the firmware revision of the key is supported */
 extern int yk_check_firmware_version(YK_KEY *k);
+/* Read the factory set serial number from a YubiKey 2.0 or higher. */
+extern int yk_get_serial(YK_KEY *yk, uint8_t slot, unsigned int flags, unsigned int *serial);
+/* Wait for the key to either set or clear bits in it's status byte */
+extern int yk_wait_for_key_status(YK_KEY *yk, uint8_t slot, unsigned int flags,
+				  unsigned int max_time_ms,
+				  bool logic_and, unsigned char mask,
+				  unsigned char *last_data);
+/* Read the response to a command from the YubiKey */
+extern int yk_read_response_from_key(YK_KEY *yk, uint8_t slot, unsigned int flags,
+				     void *buf, unsigned int bufsize, unsigned int expect_bytes,
+				     unsigned int *bytes_read);
 
 /*************************************************************************
  *
@@ -96,6 +107,8 @@ extern int yk_check_firmware_version(YK_KEY *k);
    acc_code has to be provided of the key has a protecting access code. */
 extern int yk_write_config(YK_KEY *k, YK_CONFIG *cfg, int confnum,
 			   unsigned char *acc_code);
+/* Write something to the YubiKey (a command that is). */
+extern int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount);
 
 /*************************************************************************
  *

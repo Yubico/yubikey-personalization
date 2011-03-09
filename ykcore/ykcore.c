@@ -52,6 +52,10 @@ int yk_wait_for_key_status(YK_KEY *yk, uint8_t slot, unsigned int flags,
 			   bool logic_and, unsigned char mask,
 			   unsigned char *last_data);
 
+int yk_read_response_from_key(YK_KEY *yk, uint8_t slot, unsigned int flags,
+			      void *buf, unsigned int bufsize, unsigned int expect_bytes,
+			      unsigned int *bytes_read);
+
 int yk_init(void)
 {
 	return _ykusb_start();
@@ -122,6 +126,50 @@ int yk_get_status(YK_KEY *k, YK_STATUS *status)
 	}
 
 	status->touchLevel = yk_endian_swap_16(status->touchLevel);
+
+	return 1;
+}
+
+/* Read the factory programmed serial number from a YubiKey.
+ * The possibility to retreive the serial number might be disabled
+ * using configuration, so it should not be considered a fatal error
+ * to not be able to read the serial number using this function.
+ *
+ * Serial number reading might also be configured to require user
+ * interaction (YubiKey button press) on startup, in which case flags
+ * might have to have YK_FLAG_MAYBLOCK set - haven't tried that.
+ *
+ * The slot parameter is here for future purposes only.
+ */
+int yk_get_serial(YK_KEY *yk, uint8_t slot, unsigned int flags, unsigned int *serial)
+{
+	unsigned char buf[FEATURE_RPT_SIZE * 2];
+	int yk_cmd;
+	unsigned int response_len = 0;
+	unsigned int expect_bytes = 0;
+
+	memset(buf, 0, sizeof(buf));
+
+	if (!yk_write_to_key(yk, SLOT_DEVICE_SERIAL, &buf, 0))
+		return 0;
+
+	expect_bytes = 4;
+
+	if (! yk_read_response_from_key(yk, slot, flags,
+					&buf, sizeof(buf),
+					expect_bytes,
+					&response_len))
+		return 0;
+
+	/* Serial number is stored in big endian byte order, despite
+	 * everything else in the YubiKey being little endian - for
+	 * some good reason I don't remember.
+	 */
+	*serial =
+		(buf[0] << 24) +
+		(buf[1] << 16) +
+		(buf[2] << 8) +
+		(buf[3]);
 
 	return 1;
 }
@@ -422,6 +470,13 @@ int yk_read_response_from_key(YK_KEY *yk, uint8_t slot, unsigned int flags,
 	return 0;
 }
 
+/*
+ * Send something to the YubiKey. The command, as well as the slot, is
+ * given in the 'slot' parameter (e.g. SLOT_CHAL_HMAC2 to send a HMAC-SHA1
+ * challenge to slot 2).
+ *
+ * The slot parameter is here for future purposes only.
+ */
 int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount)
 {
 	YK_FRAME frame;
