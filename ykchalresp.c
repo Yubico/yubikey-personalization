@@ -158,7 +158,7 @@ int parse_args(int argc, char **argv,
 int check_firmware(YK_KEY *yk, bool verbose)
 {
 	YK_STATUS *st = ykds_alloc();
-		
+
 	if (!yk_get_status(yk, st)) {
 		free(st);
 		return 0;
@@ -219,7 +219,7 @@ int challenge_response(YK_KEY *yk, int slot,
 	if (verbose) {
 		fprintf(stderr, "Reading response...\n");
 	}
-	
+
 	/* HMAC responses are 160 bits, Yubico 128 */
 	expect_bytes = (hmac == true) ? 20 : 16;
 
@@ -233,7 +233,7 @@ int challenge_response(YK_KEY *yk, int slot,
 		response_len = 20;
 	if (! hmac && response_len > 16)
 		response_len = 16;
-	
+
 	memset(output_buf, 0, sizeof(output_buf));
 	if (hmac) {
 		yubikey_hex_encode(output_buf, (char *)response, response_len);

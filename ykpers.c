@@ -139,7 +139,7 @@ int _get_supported_key_length(const YKP_CONFIG *cfg)
 	 */
 	if ((cfg->ykcore_config.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP)
 		return 20;
-		
+
 	if ((cfg->ykcore_config.tktFlags & TKTFLAG_CHAL_RESP) == TKTFLAG_CHAL_RESP &&
 	    (cfg->ykcore_config.cfgFlags & CFGFLAG_CHAL_HMAC) == CFGFLAG_CHAL_HMAC) {
 		return 20;
@@ -216,7 +216,7 @@ int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 		unsigned char buf[sizeof(cfg->ykcore_config.key) + 4];
 		int rc;
 		int key_bytes = _get_supported_key_length(cfg);
-		
+
 		assert (key_bytes <= sizeof(buf));
 
 		if (salt) {
@@ -459,7 +459,7 @@ const char str_config_flags[] = "config_flags";
 struct map_st config_flags_map[] = {
 	/*
 	  Values used to pretty-print a YKP_CONFIG in ykp_write_config().
-	  
+
 	  The fourth field is a (tkt)context in which this (cfg)flag is valid.
 	  Some cfgFlags share the same value (e.g. CFGFLAG_STRONG_PW2 and
 	  CFGFLAG_OATH_FIXED_MODHEX2, both 0x40). Obvioulsy, STRONG_PW2 is not
