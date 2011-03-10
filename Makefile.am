@@ -69,7 +69,7 @@ ykpersonalize_LDADD = ./libykpers-1.la ./ykcore/libykcore.la
 ykchalresp_SOURCES = ykchalresp.c
 ykchalresp_LDADD = ./libykpers-1.la ./ykcore/libykcore.la
 
-dist_man1_MANS = ykpersonalize.1
+dist_man1_MANS = ykpersonalize.1 ykchalresp.1
 
 # Dist docs from wiki.
 EXTRA_DIST = doc/Compatibility.asciidoc doc/Make-Release.asciidoc doc/Read-Me.asciidoc doc/USB-Hid-Issue.asciidoc doc/Windows-Build.asciidoc
