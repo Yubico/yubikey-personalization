@@ -49,6 +49,7 @@ int ykp_configure_for(YKP_CONFIG *cfg, int confnum, YK_STATUS *st);
 int ykp_AES_key_from_hex(YKP_CONFIG *cfg, const char *hexkey);
 int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 				const char *salt);
+int ykp_HMAC_key_from_hex(YKP_CONFIG *cfg, const char *hexkey);
 
 int ykp_set_access_code(YKP_CONFIG *cfg, unsigned char *access_code, size_t len);
 int ykp_set_fixed(YKP_CONFIG *cfg, unsigned char *fixed, size_t len);
@@ -82,6 +83,10 @@ int ykp_set_cfgflag_CHAL_YUBICO(YKP_CONFIG *cfg, bool state);
 int ykp_set_cfgflag_CHAL_HMAC(YKP_CONFIG *cfg, bool state);
 int ykp_set_cfgflag_HMAC_LT64(YKP_CONFIG *cfg, bool state);
 int ykp_set_cfgflag_CHAL_BTN_TRIG(YKP_CONFIG *cfg, bool state);
+
+int ykp_set_extflag_SERIAL_BTN_VISIBLE(YKP_CONFIG *cfg, bool state);
+int ykp_set_extflag_SERIAL_USB_VISIBLE(YKP_CONFIG *cfg, bool state);
+int ykp_set_extflag_SERIAL_API_VISIBLE (YKP_CONFIG *cfg, bool state);
 
 int ykp_write_config(const YKP_CONFIG *cfg,
 		     int (*writer)(const char *buf, size_t count,
