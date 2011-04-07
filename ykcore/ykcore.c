@@ -223,7 +223,6 @@ int yk_write_config(YK_KEY *yk, YK_CONFIG *cfg, int confnum,
 	 * This wait can't be done in yk_write_to_key since some users of that function
 	 * want to get the bytes in the status message, but when writing configuration
 	 * we don't expect any data back.
-	 *
 	 */
 	yk_wait_for_key_status(yk, slot, 0, WAIT_FOR_WRITE_FLAG, false, SLOT_WRITE_FLAG, NULL);
 
@@ -335,6 +334,14 @@ int yk_wait_for_key_status(YK_KEY *yk, uint8_t slot, unsigned int flags,
 	int sleepval = 10;
 	int slept_time = 0;
 	int blocking = 0;
+
+	/* Non-zero slot breaks on Windows (libusb-1.0.8-win32), while working fine
+	 * on Linux (and probably MacOS X).
+	 *
+	 * The YubiKey doesn't support per-slot status anyways at the moment (2.2),
+	 * so we just set it to 0 (meaning slot 1).
+	 */
+	slot = 0;
 
 	while (slept_time < max_time_ms) {
 		/* Read a status report from the key */
