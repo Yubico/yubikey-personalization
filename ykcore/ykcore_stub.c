@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2008, Yubico AB
+ * Copyright (c) 2008, 2011, Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,10 @@
 
 #error "To be implemented!"
 
+#include "ykcore.h"
+#include "ykdef.h"
+#include "ykcore_backend.h"
+
 int _ykusb_start(void)
 {
 	yk_errno = YK_ENOTYETIMPL;
@@ -48,7 +52,7 @@ void * _ykusb_open_device(int vendor_id, int product_id)
 	return NULL;
 }
 
-int _ykusb_close_device(void *)
+int _ykusb_close_device(void *yk)
 {
 	yk_errno = YK_ENOTYETIMPL;
 	return 0;
@@ -68,7 +72,7 @@ int _ykusb_write(void *dev, int report_type, int report_number,
 	return 0;
 }
 
-const char *_ykusb_strerror()
+const char *_ykusb_strerror(void)
 {
 	yk_errno = YK_ENOTYETIMPL;
 	return 0;
