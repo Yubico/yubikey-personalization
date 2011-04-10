@@ -389,8 +389,8 @@ int _test_two_slots1(void)
 		"unittest", "-1", "-1",
 		NULL
 	};
-	int rc = _parse_args_rc (2, argv);
-	assert(rc == 1);
+	int rc = _parse_args_rc (3, argv);
+	assert(rc == 0);
 }
 
 int _test_two_slots2(void)
@@ -400,8 +400,8 @@ int _test_two_slots2(void)
 		"unittest", "-2", "-1",
 		NULL
 	};
-	int rc = _parse_args_rc (2, argv);
-	assert(rc == 1);
+	int rc = _parse_args_rc (3, argv);
+	assert(rc == 0);
 }
 
 int _test_two_modes_at_once1(void)
@@ -411,8 +411,8 @@ int _test_two_modes_at_once1(void)
 		"unittest", "-ochal-resp", "-ooath-hotp",
 		NULL
 	};
-	int rc = _parse_args_rc (2, argv);
-	assert(rc == 1);
+	int rc = _parse_args_rc (3, argv);
+	assert(rc == 0);
 }
 
 int _test_two_modes_at_once2(void)
@@ -422,8 +422,8 @@ int _test_two_modes_at_once2(void)
 		"unittest", "-ochal-resp", "-ochal-resp",
 		NULL
 	};
-	int rc = _parse_args_rc (2, argv);
-	assert(rc == 1);
+	int rc = _parse_args_rc (3, argv);
+	assert(rc == 0);
 }
 
 int _test_mode_after_other_option(void)
@@ -433,8 +433,8 @@ int _test_mode_after_other_option(void)
 		"unittest", "-ohmac-lt64", "-ochal-resp",
 		NULL
 	};
-	int rc = _parse_args_rc (2, argv);
-	assert(rc == 1);
+	int rc = _parse_args_rc (3, argv);
+	assert(rc == 0);
 }
 
 int _test_key_mixed_case1(void)
@@ -446,8 +446,8 @@ int _test_key_mixed_case1(void)
 		"unittest", "-1", "-a0000000000000000000000000000000E",
 		NULL
 	};
-	int rc = _parse_args_rc (2, argv);
-	assert(rc == 1);
+	int rc = _parse_args_rc (3, argv);
+	assert(rc == 0);
 }
 
 int _test_uid_for_oath(void)
@@ -457,8 +457,8 @@ int _test_uid_for_oath(void)
 		"unittest", "-ooath-hotp", "-ouid=h:010203040506",
 		NULL
 	};
-	int rc = _parse_args_rc (2, argv);
-	assert(rc == 1);
+	int rc = _parse_args_rc (3, argv);
+	assert(rc == 0);
 }
 
 int _test_uid_for_chal_resp(void)
@@ -468,8 +468,8 @@ int _test_uid_for_chal_resp(void)
 		"unittest", "-ochal-resp", "-ouid=h:010203040506",
 		NULL
 	};
-	int rc = _parse_args_rc (2, argv);
-	assert(rc == 1);
+	int rc = _parse_args_rc (3, argv);
+	assert(rc == 0);
 }
 
 int main (int argc, char **argv)
