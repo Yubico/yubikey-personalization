@@ -150,14 +150,11 @@ YK_STATUS * _test_init_st(int major, int minor, int build)
  * Utility function to parse arguments and just return the result code.
  * The calling function does the assert() to get function name in assert output.
  */
-int _parse_args_rc(char **argv)
-
+int _parse_args_rc(int argc, char *argv[])
 {
 	YKP_CONFIG *cfg = ykp_create_config();
 	YK_STATUS *st = _test_init_st(2, 2, 0);
 	int rc = 0;
-
-	int argc = sizeof *argv/sizeof *argv[0] - 1;
 
 	rc = _test_config(cfg, st, argc, argv);
 
@@ -167,7 +164,7 @@ int _parse_args_rc(char **argv)
 	return rc;
 }
 
-int _test_config_slot1()
+int _test_config_slot1(void)
 {
 	YKP_CONFIG *cfg = ykp_create_config();
 	YK_STATUS *st = _test_init_st(1, 3, 0);
@@ -198,7 +195,7 @@ int _test_config_slot1()
 	free(st);
 }
 
-int _test_config_static_slot2()
+int _test_config_static_slot2(void)
 {
 	YKP_CONFIG *cfg = ykp_create_config();
 	YK_STATUS *st = _test_init_st(2, 0, 0);
@@ -229,7 +226,7 @@ int _test_config_static_slot2()
 	free(st);
 }
 
-int _test_too_old_key()
+int _test_too_old_key(void)
 {
 	YKP_CONFIG *cfg = ykp_create_config();
 	YK_STATUS *st = _test_init_st(1, 3, 0);
@@ -249,7 +246,7 @@ int _test_too_old_key()
 	free(st);
 }
 
-int _test_too_new_key()
+int _test_too_new_key(void)
 {
 	YKP_CONFIG *cfg = ykp_create_config();
 	YK_STATUS *st = _test_init_st(2, 2, 0);
@@ -269,7 +266,7 @@ int _test_too_new_key()
 	free(st);
 }
 
-int _test_non_config_args()
+int _test_non_config_args(void)
 {
 	YKP_CONFIG *cfg = ykp_create_config();
 	YK_STATUS *st = _test_init_st(2, 2, 0);
@@ -320,7 +317,7 @@ int _test_non_config_args()
 	free(st);
 }
 
-int _test_oath_hotp_nist_160_bits()
+int _test_oath_hotp_nist_160_bits(void)
 {
 	YKP_CONFIG *cfg = ykp_create_config();
 	YK_STATUS *st = _test_init_st(2, 1, 0);
@@ -351,7 +348,7 @@ int _test_oath_hotp_nist_160_bits()
 	free(st);
 }
 
-int _test_extended_flags1()
+int _test_extended_flags1(void)
 {
 	YKP_CONFIG *cfg = ykp_create_config();
 	YK_STATUS *st = _test_init_st(2, 2, 0);
@@ -385,62 +382,62 @@ int _test_extended_flags1()
 	free(st);
 }
 
-int _test_two_slots1()
+int _test_two_slots1(void)
 {
 	/* Test that it is not possible to choose slot more than once */
 	char *argv[] = {
 		"unittest", "-1", "-1",
 		NULL
 	};
-	int rc = _parse_args_rc (argv);
-	assert(rc == 0);
+	int rc = _parse_args_rc (2, argv);
+	assert(rc == 1);
 }
 
-int _test_two_slots2()
+int _test_two_slots2(void)
 {
 	/* Test that it is not possible to choose slot more than once */
 	char *argv[] = {
 		"unittest", "-2", "-1",
 		NULL
 	};
-	int rc = _parse_args_rc (argv);
-	assert(rc == 0);
+	int rc = _parse_args_rc (2, argv);
+	assert(rc == 1);
 }
 
-int _test_two_modes_at_once1()
+int _test_two_modes_at_once1(void)
 {
 	/* Test that it is not possible to choose mode (OATH-HOTP/CHAL-RESP) more than once */
 	char *argv[] = {
 		"unittest", "-ochal-resp", "-ooath-hotp",
 		NULL
 	};
-	int rc = _parse_args_rc (argv);
-	assert(rc == 0);
+	int rc = _parse_args_rc (2, argv);
+	assert(rc == 1);
 }
 
-int _test_two_modes_at_once2()
+int _test_two_modes_at_once2(void)
 {
 	/* Test that it is not possible to choose mode (OATH-HOTP/CHAL-RESP) more than once */
 	char *argv[] = {
 		"unittest", "-ochal-resp", "-ochal-resp",
 		NULL
 	};
-	int rc = _parse_args_rc (argv);
-	assert(rc == 0);
+	int rc = _parse_args_rc (2, argv);
+	assert(rc == 1);
 }
 
-int _test_mode_after_other_option()
+int _test_mode_after_other_option(void)
 {
 	/* Test that it is not possible to set mode after other options */
 	char *argv[] = {
 		"unittest", "-ohmac-lt64", "-ochal-resp",
 		NULL
 	};
-	int rc = _parse_args_rc (argv);
-	assert(rc == 0);
+	int rc = _parse_args_rc (2, argv);
+	assert(rc == 1);
 }
 
-int _test_key_mixed_case1()
+int _test_key_mixed_case1(void)
 {
 	/* Make sure key with mixed case is rejected (parsing function yubikey_hex_decode
 	 * only handles lower case hex)
@@ -449,30 +446,30 @@ int _test_key_mixed_case1()
 		"unittest", "-1", "-a0000000000000000000000000000000E",
 		NULL
 	};
-	int rc = _parse_args_rc (argv);
-	assert(rc == 0);
+	int rc = _parse_args_rc (2, argv);
+	assert(rc == 1);
 }
 
-int _test_uid_for_oath()
+int _test_uid_for_oath(void)
 {
 	/* Test that it is not possible to specify UID with OATH */
 	char *argv[] = {
 		"unittest", "-ooath-hotp", "-ouid=h:010203040506",
 		NULL
 	};
-	int rc = _parse_args_rc (argv);
-	assert(rc == 0);
+	int rc = _parse_args_rc (2, argv);
+	assert(rc == 1);
 }
 
-int _test_uid_for_chal_resp()
+int _test_uid_for_chal_resp(void)
 {
 	/* Test that it is not possible to specify UID with Challenge Response */
 	char *argv[] = {
 		"unittest", "-ochal-resp", "-ouid=h:010203040506",
 		NULL
 	};
-	int rc = _parse_args_rc (argv);
-	assert(rc == 0);
+	int rc = _parse_args_rc (2, argv);
+	assert(rc == 1);
 }
 
 int main (int argc, char **argv)

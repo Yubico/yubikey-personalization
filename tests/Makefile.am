@@ -27,7 +27,7 @@
 
 # Self tests.
 
-AM_LDFLAGS = -no-install
+AM_LDFLAGS = -no-install -static
 AM_CFLAGS=-I$(srcdir)/.. -I$(srcdir)/../ykcore
 LDADD = ../libykpers-1.la
 
