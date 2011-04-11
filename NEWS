@@ -1,5 +1,13 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.5.1 (unreleased)
+
+** Added native Windows backend.
+It is used automatically when building with a Mingw compiler, but you
+use --with-backend=windows to request it.
+
+** Fixed a crash in the self test on 64-bit platforms.
+
 * Version 1.5.0 (released 2011-03-09)
 ** An additional binary (ykchalresp) to perform challenge-response was added.
 
