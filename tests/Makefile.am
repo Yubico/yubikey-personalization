@@ -39,3 +39,5 @@ TESTS = $(ctests)
 
 test_args_to_config_LDADD = ../ykpersonalize.o $(LDADD) $(ykpersonalize_LDADD)
 test_args_to_config_LDFLAGS = -z muldefs
+
+TESTS_ENVIRONMENT = $(VALGRIND)

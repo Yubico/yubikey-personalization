@@ -121,6 +121,7 @@ AM_CONDITIONAL([BACKEND_OSX], test x$with_backend = xosx)
 AM_CONDITIONAL([BACKEND_WINDOWS], test x$with_backend = xwindows)
 
 gl_LD_VERSION_SCRIPT
+gl_VALGRIND_TESTS
 
 AC_CONFIG_FILES([
   Makefile
