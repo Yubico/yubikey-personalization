@@ -1,7 +1,13 @@
 LIBYUBIKEYVERSION=1.7
 YKPERSVERSION=1.5.1
 
-all: ykpers4win32 ykpers4win64
+all: hack-wine ykpers4win32 ykpers4win64
+
+DLLS=$(HOME)/.wine/drive_c/windows/system32
+.PHONY: hack-wine
+hack-wine:
+	test -L $(DLLS)/libyubikey-0.dll || \
+		ln -sv $(PWD)/tmp/root/bin/libyubikey-0.dll $(DLLS)/
 
 ykpers4win:
 	rm -rf tmp && mkdir tmp && cd tmp && \
@@ -22,7 +28,7 @@ ykpers4win:
 	zip -r ../../ykpers-$(YKPERSVERSION)-win$(ARCH).zip *
 
 ykpers4win32:
-	$(MAKE) -f ykpers4win.mk ykpers4win ARCH=32 HOST=i686-w64-mingw32 CHECK=
+	$(MAKE) -f ykpers4win.mk ykpers4win ARCH=32 HOST=i686-w64-mingw32 CHECK=check
 
 ykpers4win64:
 	$(MAKE) -f ykpers4win.mk ykpers4win ARCH=64 HOST=x86_64-w64-mingw32 CHECK=
