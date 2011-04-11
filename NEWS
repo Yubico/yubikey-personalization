@@ -6,7 +6,16 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 It is used automatically when building with a Mingw compiler, but you
 use --with-backend=windows to request it.
 
-** Fixed a crash in the self test on 64-bit platforms.
+** Distribute ykdef.h needed by challenge-response applications.
+
+** Bugfixes :
+
+*** Fixed a crash in the self test on 64-bit platforms.
+
+*** -ofixed= was incorrectly excluded from pretty-printing of configuration
+for OATH-HOTP. 
+
+*** Configuring slot 2 was broken on Windows.
 
 * Version 1.5.0 (released 2011-03-09)
 ** An additional binary (ykchalresp) to perform challenge-response was added.
