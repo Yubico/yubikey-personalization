@@ -1,4 +1,4 @@
-# Copyright (c) 2008, 2009, Yubico AB
+# Copyright (c) 2008, 2009, 2011, Yubico AB
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -43,4 +43,8 @@ if BACKEND_OSX
 libykcore_la_SOURCES += ykcore_osx.c
 endif
 
-EXTRA_DIST = ykcore_stub.c ykcore_win32.c
+if BACKEND_WINDOWS
+libykcore_la_SOURCES += ykcore_windows.c
+endif
+
+EXTRA_DIST = ykcore_stub.c
