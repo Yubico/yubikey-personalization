@@ -1,5 +1,7 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.5.2 (unreleased)
+
 * Version 1.5.1 (released 2011-04-11)
 
 ** Added native Windows backend.
