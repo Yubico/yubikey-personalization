@@ -12,6 +12,8 @@ use --with-backend=windows to request it.
 
 *** Fixed a crash in the self test on 64-bit platforms.
 
+*** Fixed a build error in self tests when "-z muldefs" is not supported.
+
 *** -ofixed= was incorrectly excluded from pretty-printing of configuration
 for OATH-HOTP. 
 

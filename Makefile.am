@@ -63,7 +63,7 @@ endif
 
 bin_PROGRAMS = ykpersonalize ykchalresp
 
-ykpersonalize_SOURCES = ykpersonalize.c
+ykpersonalize_SOURCES = ykpersonalize.c ykpers-args.h ykpers-args.c
 ykpersonalize_LDADD = ./libykpers-1.la ./ykcore/libykcore.la
 
 ykchalresp_SOURCES = ykchalresp.c
