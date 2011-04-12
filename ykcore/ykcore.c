@@ -588,7 +588,7 @@ void _yk_hexdump(void *buffer, int size)
        unsigned char *p = buffer;
        int i;
        for (i = 0; i < size; i++) {
-               fprintf(stderr, "\\x%02x", *p);
+               fprintf(stderr, "%02x ", *p);
                p++;
       }
       fprintf(stderr, "\n");
