@@ -245,6 +245,11 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 				*exit_code = 1;
 				return 0;
 			}
+			if (option_seen) {
+				fprintf(stderr, "You must choose slot before any options (-o).\n");
+				*exit_code = 1;
+				return 0;
+			}
 			if (!ykp_configure_for(cfg, 1, st))
 				return 0;
 			slot_chosen = true;
@@ -252,6 +257,11 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 		case '2':
 			if (slot_chosen) {
 				fprintf(stderr, "You may only choose slot (-1 / -2) once.\n");
+				*exit_code = 1;
+				return 0;
+			}
+			if (option_seen) {
+				fprintf(stderr, "You must choose slot before any options (-o).\n");
 				*exit_code = 1;
 				return 0;
 			}
