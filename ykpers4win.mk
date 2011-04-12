@@ -21,7 +21,7 @@ ykpers4win:
 		|| wget http://yubikey-personalization.googlecode.com/files/ykpers-$(YKPERSVERSION).tar.gz && \
 	tar xfa ykpers-$(YKPERSVERSION).tar.gz && \
 	cd ykpers-$(YKPERSVERSION)/ && \
-	./configure --host=$(HOST) --build=x86_64-unknown-linux-gnu --prefix=$(PWD)/tmp/root LDFLAGS=-L$(PWD)/tmp/root/lib CPPFLAGS=-I$(PWD)/tmp/root/include && \
+	lt_cv_deplibs_check_method=pass_all ./configure --host=$(HOST) --build=x86_64-unknown-linux-gnu --prefix=$(PWD)/tmp/root LDFLAGS=-L$(PWD)/tmp/root/lib CPPFLAGS=-I$(PWD)/tmp/root/include && \
 	make install $(CHECK) && \
 	cd .. && \
 	cd root && \
