@@ -63,7 +63,7 @@ endif
 
 bin_PROGRAMS = ykpersonalize ykchalresp
 
-ykpersonalize_SOURCES = ykpersonalize.c
+ykpersonalize_SOURCES = ykpersonalize.c ykpers-args.h ykpers-args.c
 ykpersonalize_LDADD = ./libykpers-1.la ./ykcore/libykcore.la
 
 ykchalresp_SOURCES = ykchalresp.c
@@ -96,7 +96,7 @@ release:
 		echo "Try this instead:"; \
 		echo "  make release USER=[GOOGLEUSERNAME] KEYID=[PGPKEYID]"; \
 		echo "For example:"; \
-		echo "  make release USER=simon@yubico.com KEYID=B9156397"; \
+		echo "  make release USER=simon@yubico.com KEYID=2117364A"; \
 		exit 1; \
 	fi
 	@head -3 $(srcdir)/NEWS | grep -q "Version $(VERSION) .released `date -I`" || \
@@ -114,20 +114,3 @@ release:
 	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION).tar.gz.sig
 	googlecode_upload.py -s "$(PACKAGE) $(VERSION)" \
 	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION).tar.gz 
-
-upload-ykpers4win:
-	gpg --detach-sign --default-key $(KEYID) \
-		$(PACKAGE)-$(VERSION)-win$(BITS).zip
-	gpg --verify $(PACKAGE)-$(VERSION)-win$(BITS).zip.sig
-	googlecode_upload.py \
-	 -s "OpenPGP signature for $(PACKAGE)-$(VERSION)-win$(BITS).zip." \
-	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION)-win$(BITS).zip.sig
-	googlecode_upload.py \
-	 -s "Windows $(BITS)-bit binaries of $(PACKAGE) $(VERSION)" \
-	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION)-win$(BITS).zip
-
-upload-ykpers4win32:
-	make upload-ykpers4win BITS=32
-
-upload-ykpers4win64:
-	make upload-ykpers4win BITS=64

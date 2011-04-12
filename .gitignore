@@ -4,6 +4,7 @@ ChangeLog
 INSTALL
 Makefile
 Makefile.in
+TAGS
 aclocal.m4
 autom4te.cache/
 build-aux/config.guess
@@ -38,6 +39,7 @@ tests/test_args_to_config
 tests/test_args_to_config.o
 tests/test_key_generation
 tests/test_key_generation.o
+tmp/
 usha.lo
 usha.o
 ykchalresp
@@ -54,7 +56,10 @@ ykcore/ykstatus.o
 ykpbkdf2.lo
 ykpbkdf2.o
 ykpers-*.tar.gz
+ykpers-1.5.1-win32.zip
+ykpers-1.5.1-win64.zip
 ykpers-1.pc
+ykpers-args.o
 ykpers.lo
 ykpers.o
 ykpersonalize

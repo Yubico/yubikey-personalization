@@ -1,6 +1,8 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.5.1 (unreleased)
+* Version 1.5.2 (unreleased)
+
+* Version 1.5.1 (released 2011-04-11)
 
 ** Added native Windows backend.
 It is used automatically when building with a Mingw compiler, but you
@@ -11,6 +13,8 @@ use --with-backend=windows to request it.
 ** Bugfixes :
 
 *** Fixed a crash in the self test on 64-bit platforms.
+
+*** Fixed a build error in self tests when "-z muldefs" is not supported.
 
 *** -ofixed= was incorrectly excluded from pretty-printing of configuration
 for OATH-HOTP. 
