@@ -121,12 +121,12 @@ int parse_args(int argc, char **argv,
 	}
 
 	if (hex_encoded) {
-		static unsigned char decoded[64];
+		static unsigned char decoded[SHA1_MAX_BLOCK_SIZE];
 		int decoded_len;
 
 		int strl = strlen(argv[optind]);
 
-		if (strl >= sizeof(decoded) * 2) {
+		if (strl > sizeof(decoded) * 2) {
 			fprintf(stderr, "Hex-encoded challenge too long (max %i chars)\n",
 				sizeof(decoded) * 2);
 			return 0;
@@ -140,7 +140,7 @@ int parse_args(int argc, char **argv,
 		memset(decoded, 0, sizeof(decoded));
 
 		if (yubikey_hex_p(argv[optind])) {
-			yubikey_hex_decode((char *)decoded, argv[optind], strl);
+			yubikey_hex_decode((char *)decoded, argv[optind], sizeof(decoded));
 		} else {
 			fprintf(stderr, "Bad hex-encoded string '%s'\n", argv[optind]);
 			return 0;
@@ -188,7 +188,7 @@ int challenge_response(YK_KEY *yk, int slot,
 		       bool hmac, bool may_block, bool verbose)
 {
 	unsigned char response[64];
-	unsigned char output_buf[sizeof(response) * 2];
+	unsigned char output_buf[(SHA1_MAX_BLOCK_SIZE * 2) + 1];
 	int yk_cmd;
 	unsigned int flags = 0;
 	unsigned int response_len = 0;
