@@ -36,7 +36,6 @@
 #include <windows.h>
 #include <setupapi.h>
 #include <ntddkbd.h>
-#include <hidpi.h>
 #include <hidsdi.h>
 
 int _ykusb_start(void)
