@@ -1,7 +1,7 @@
 LIBYUBIKEYVERSION=1.7
 PROJECT=yubikey-personalization
 PACKAGE=ykpers
-VERSION=1.5.1
+VERSION=1.5.2
 USER=simon@yubico.com
 KEYID=2117364A
 
@@ -49,7 +49,7 @@ upload-ykpers4win:
 	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION)-win$(BITS).zip
 
 upload-ykpers4win32:
-	make upload-ykpers4win BITS=32
+	$(MAKE) -f ykpers4win.mk upload-ykpers4win BITS=32
 
 upload-ykpers4win64:
-	make upload-ykpers4win BITS=64
+	$(MAKE) -f ykpers4win.mk upload-ykpers4win BITS=64
