@@ -36,23 +36,8 @@
 #include <windows.h>
 #include <setupapi.h>
 #include <ntddkbd.h>
-typedef LONG NTSTATUS;
 #include <hidpi.h>
-
-BOOLEAN __stdcall HidD_GetAttributes(
-	HANDLE HidDeviceObject,
-	PHIDD_ATTRIBUTES Attributes
-	);
-BOOLEAN __stdcall HidD_GetFeature(
-	HANDLE HidDeviceObject,
-	PVOID ReportBuffer,
-	ULONG ReportBufferLength
-	);
-BOOLEAN __stdcall HidD_SetFeature(
-	HANDLE HidDeviceObject,
-	PVOID ReportBuffer,
-	ULONG ReportBufferLength
-	);
+#include <hidsdi.h>
 
 int _ykusb_start(void)
 {
