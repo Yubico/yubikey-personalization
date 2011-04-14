@@ -120,6 +120,12 @@ AM_CONDITIONAL([BACKEND_LIBUSB_1_0], test x$with_backend = xlibusb-1.0)
 AM_CONDITIONAL([BACKEND_OSX], test x$with_backend = xosx)
 AM_CONDITIONAL([BACKEND_WINDOWS], test x$with_backend = xwindows)
 
+AC_ARG_WITH([udevrulesdir],
+        AS_HELP_STRING([--with-udevrulesdir=DIR], [Diectory for udev rules]),
+        [],
+        [])
+AC_SUBST([udevrulesdir], [$with_udevrulesdir])
+
 gl_LD_VERSION_SCRIPT
 gl_VALGRIND_TESTS
 

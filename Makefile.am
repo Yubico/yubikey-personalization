@@ -77,6 +77,10 @@ EXTRA_DIST = doc/Compatibility.asciidoc doc/Make-Release.asciidoc doc/Read-Me.as
 # Dist contrib stuff.
 EXTRA_DIST += contrib/README contrib/programming.sh
 
+udevrulesdir=@udevrulesdir@
+dist_udevrules_DATA = \
+        70-yubikey.rules
+
 # Release
 
 PROJECT = yubikey-personalization
