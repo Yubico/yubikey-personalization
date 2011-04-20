@@ -145,4 +145,5 @@ AC_MSG_NOTICE([summary of build options:
   Compiler:         ${CC}
   Library types:    Shared=${enable_shared}, Static=${enable_static}
   USB backend:      ${with_backend}
+  udev rules:       ${with_udevrulesdir:-N/A}
 ])
