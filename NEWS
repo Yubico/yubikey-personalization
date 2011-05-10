@@ -2,7 +2,17 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
 * Version 1.5.2 (unreleased)
 
+** Added an udev file.
+Use --with-udevrulesdir=/lib/udev/rules.d or similar.  Contributed by
+Tollef Fog Heen.
+
 ** Improve and distribute ykpers4win.mk.
+
+** Cleanup native Windows backend code.
+
+** Fix coredump for challenges of 128 characters in hex decoding.
+
+** Demand that slot choosing parameters comes first on command line.
 
 * Version 1.5.1 (released 2011-04-11)
 
