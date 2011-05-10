@@ -1,6 +1,6 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.5.2 (unreleased)
+* Version 1.5.2 (released 2011-05-10)
 
 ** Added an udev file.
 Use --with-udevrulesdir=/lib/udev/rules.d or similar.  Contributed by
