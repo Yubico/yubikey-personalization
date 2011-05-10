@@ -77,6 +77,9 @@ EXTRA_DIST = doc/Compatibility.asciidoc doc/Make-Release.asciidoc doc/Read-Me.as
 # Dist contrib stuff.
 EXTRA_DIST += contrib/README contrib/programming.sh
 
+# Windows rules.
+EXTRA_DIST += ykpers4win.mk
+
 udevrulesdir=@udevrulesdir@
 dist_udevrules_DATA = \
         70-yubikey.rules
