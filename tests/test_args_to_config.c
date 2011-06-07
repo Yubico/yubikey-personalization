@@ -186,7 +186,7 @@ int _test_config_slot1(void)
 		"unittest", "-1",
 		NULL
 	};
-	int argc = sizeof argv/sizeof argv[0] - 1;
+	int argc = 2;
 
 	rc = _test_config(cfg, st, argc, argv);
 	_check_success(rc, cfg, expected, __LINE__);
@@ -217,7 +217,7 @@ int _test_config_static_slot2(void)
 		"unittest", "-2", "-a303132333435363738393a3b3c3d3e3f",
 		NULL
 	};
-	int argc = sizeof argv/sizeof argv[0] - 1;
+	int argc = 3;
 
 	rc = _test_config(cfg, st, argc, argv);
 	_check_success(rc, cfg, expected, __LINE__);
@@ -236,7 +236,7 @@ int _test_too_old_key(void)
 		"unittest", "-oshort-ticket",
 		NULL
 	};
-	int argc = sizeof argv/sizeof argv[0] - 1;
+	int argc = 2;
 
 	rc = _test_config(cfg, st, argc, argv);
 	assert(rc == 0);
@@ -256,7 +256,7 @@ int _test_too_new_key(void)
 		"unittest", "-oticket-first",
 		NULL
 	};
-	int argc = sizeof argv/sizeof argv[0] - 1;
+	int argc = 2;
 
 	rc = _test_config(cfg, st, argc, argv);
 	assert(rc == 0);
@@ -290,7 +290,7 @@ int _test_non_config_args(void)
 		"unittest", "-sout", "-iin", "-c313233343536", "-y", "-v",
 		NULL
 	};
-	int argc = sizeof argv/sizeof argv[0] - 1;
+	int argc = 6;
 
 	ykp_errno = 0;
 	optind = 0; /* getopt reinit */
@@ -339,7 +339,7 @@ int _test_oath_hotp_nist_160_bits(void)
 		"unittest", "-1", "-a303132333435363738393a3b3c3d3e3f40414243", "-ooath-hotp", "-o-append-cr",
 		NULL
 	};
-	int argc = sizeof argv/sizeof argv[0] - 1;
+	int argc = 5;
 
 	rc = _test_config(cfg, st, argc, argv);
 	_check_success(rc, cfg, expected, __LINE__);
@@ -373,7 +373,7 @@ int _test_extended_flags1(void)
 		"-ochal-resp", "-ochal-hmac", "-ohmac-lt64", "-oserial-api-visible",
 		NULL
 	};
-	int argc = sizeof argv/sizeof argv[0] - 1;
+	int argc = 7;
 
 	rc = _test_config(cfg, st, argc, argv);
 	_check_success(rc, cfg, expected, __LINE__);
