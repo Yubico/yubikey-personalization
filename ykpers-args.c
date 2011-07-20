@@ -113,6 +113,7 @@ const char *usage =
 "          [-]chal-hmac           set/clear CHAL_HMAC\n"
 "          [-]hmac-lt64           set/clear HMAC_LT64\n"
 "          [-]chal-btn-trig       set/clear CHAL_BTN_TRIG\n"
+"          oath-imf=IMF           set OATH Initial Moving Factor\n"
 "\n"
 "          Extended flags for firmware version 2.2 and above:\n"
 "          [-]serial-btn-visible  set/clear SERIAL_BTN_VISIBLE\n"
@@ -416,6 +417,31 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 			CFGFLAG("hmac-lt64", HMAC_LT64)
 			CFGFLAG("chal-btn-trig", CHAL_BTN_TRIG)
 #undef CFGFLAG
+			else if (strncmp(optarg, "oath-imf=", 9) == 0) {
+				unsigned long imf;
+
+				if (!(ycfg->tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP) {
+					fprintf(stderr,
+						"Option oath-imf= only valid with -ooath-hotp or -ooath-hotp8.\n"
+						);
+					*exit_code = 1;
+					return 0;
+				}
+
+				if (sscanf(optarg+9, "%lu", &imf) != 1 ||
+				    /* yubikey limitations */
+				    imf > 65535*16 || imf % 16 != 0) {
+					fprintf(stderr,
+						"Invalid value %s for oath-imf=.\n", optarg+9
+						);
+					*exit_code = 1;
+					return 0;
+				}
+				if (! ykp_set_oath_imf(cfg, imf)) {
+					*exit_code = 1;
+					return 0;
+				}
+			}
 
 #define EXTFLAG(o, f)							\
 			else if (strcmp(optarg, o) == 0) {		\

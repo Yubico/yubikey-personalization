@@ -309,6 +309,36 @@ static bool vcheck_v22_or_greater(const YKP_CONFIG *cfg)
 		cfg->yk_major_version > 2;
 }
 
+int ykp_set_oath_imf(YKP_CONFIG *cfg, unsigned long imf)
+{
+	if (!vcheck_v22_or_greater(cfg)) {
+		ykp_errno = YKP_EYUBIKEYVER;
+		return 0;		
+	}
+	if (imf > 65535*16) {
+		ykp_errno = YKP_EINVAL;
+		return 0;		
+	}
+	if (imf % 16 != 0) {
+		ykp_errno = YKP_EINVAL;
+		return 0;		
+	}
+	/* IMF/16 is 16 bits stored big-endian in uid[4] */
+	imf /= 16;
+	cfg->ykcore_config.uid[4] = imf >> 8;
+	cfg->ykcore_config.uid[5] = imf;
+	return 1;
+}
+
+unsigned long ykp_get_oath_imf(YKP_CONFIG *cfg)
+{
+	if (!vcheck_v22_or_greater(cfg))
+		return 0;		
+
+	/* we can't do a simple cast due to alignment issues */
+	return ((cfg->ykcore_config.uid[4] << 8) | cfg->ykcore_config.uid[5]) << 4;
+}
+
 #define def_set_charfield(fnname,fieldname,size,extra,vcheck)	\
 int ykp_set_ ## fnname(YKP_CONFIG *cfg, unsigned char *input, size_t len)	\
 {								\
@@ -431,6 +461,7 @@ const char str_fixed[] = "fixed";
 const char str_uid[] = "uid";
 const char str_key[] = "key";
 const char str_acc_code[] = "acc_code";
+const char str_oath_imf[] = "OATH IMF";
 
 const char str_flags_separator[] = "|";
 
@@ -569,6 +600,21 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
+		/* OATH IMF: */
+		if ((cfg->ykcore_config.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP &&
+		    vcheck_v22_or_greater(cfg)) {
+			writer(str_oath_imf, strlen(str_oath_imf), userdata);
+			writer(str_key_value_separator,
+				strlen(str_key_value_separator),
+				userdata);
+			writer(str_hex_prefix,
+				strlen(str_hex_prefix),
+				userdata);
+			sprintf(buffer, "%lx", ykp_get_oath_imf(cfg));
+			writer(buffer, strlen(buffer), userdata);
+			writer("\n", 1, userdata);
+		}
+
 		/* ticket_flags: */
 		buffer[0] = '\0';
 		for (p = ticket_flags_map; p->flag; p++) {
@@ -693,6 +739,7 @@ static const char *errtext[] = {
 	"option not available for this Yubikey version",
 	"too old yubikey for this operation",
 	"invalid configuration number (this is a programming error)",
+	"invalid option/argument value",
 };
 const char *ykp_strerror(int errnum)
 {
