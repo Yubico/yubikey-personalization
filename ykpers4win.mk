@@ -29,11 +29,19 @@
 LIBYUBIKEYVERSION=1.7
 PROJECT=yubikey-personalization
 PACKAGE=ykpers
-VERSION=1.5.2
-USER=simon@yubico.com
-KEYID=2117364A
 
-all: hack-wine ykpers4win32 ykpers4win64
+all: usage hack-wine ykpers4win32 ykpers4win64
+
+.PHONY: usage
+usage:
+	@if test -z "$(USER)" || test -z "$(VERSION)" || test -z "$(PGPKEYID)"; then \
+		echo "Try this instead:"; \
+		echo "  make USER=[GOOGLEUSERNAME] PGPKEYID=[PGPKEYID] VERSION=[VERSION]"; \
+		echo "For example:"; \
+		echo "  make USER=simonyubico@gmail.com PGPKEYID=2117364A VERSION=1.6.0"; \
+		exit 1; \
+	fi
+
 
 DLLS=$(HOME)/.wine/drive_c/windows/system32
 .PHONY: hack-wine
@@ -66,7 +74,7 @@ ykpers4win64:
 	$(MAKE) -f ykpers4win.mk ykpers4win ARCH=64 HOST=x86_64-w64-mingw32 CHECK=
 
 upload-ykpers4win:
-	gpg --detach-sign --default-key $(KEYID) \
+	gpg --detach-sign --default-key $(PGPKEYID) \
 		$(PACKAGE)-$(VERSION)-win$(BITS).zip
 	gpg --verify $(PACKAGE)-$(VERSION)-win$(BITS).zip.sig
 	googlecode_upload.py \

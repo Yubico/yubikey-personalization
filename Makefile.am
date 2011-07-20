@@ -103,7 +103,7 @@ release:
 		echo "Try this instead:"; \
 		echo "  make release USER=[GOOGLEUSERNAME] KEYID=[PGPKEYID]"; \
 		echo "For example:"; \
-		echo "  make release USER=simon@yubico.com KEYID=2117364A"; \
+		echo "  make release USER=simonyubico@gmail.com KEYID=2117364A"; \
 		exit 1; \
 	fi
 	@head -3 $(srcdir)/NEWS | grep -q "Version $(VERSION) .released `date -I`" || \
