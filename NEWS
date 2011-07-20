@@ -1,5 +1,9 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.5.3 (unreleased)
+
+** Accept firmware version 2.3.x too.
+
 * Version 1.5.2 (released 2011-05-10)
 
 ** Added an udev file.
