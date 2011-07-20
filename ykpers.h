@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2008, 2009, Yubico AB
+ * Copyright (c) 2008, 2009, 2010, 2011  Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,7 +55,7 @@ int ykp_set_access_code(YKP_CONFIG *cfg, unsigned char *access_code, size_t len)
 int ykp_set_fixed(YKP_CONFIG *cfg, unsigned char *fixed, size_t len);
 int ykp_set_uid(YKP_CONFIG *cfg, unsigned char *uid, size_t len);
 int ykp_set_oath_imf(YKP_CONFIG *cfg, unsigned long imf);
-unsigned long ykp_get_oath_imf(YKP_CONFIG *cfg);
+unsigned long ykp_get_oath_imf(const YKP_CONFIG *cfg);
 
 int ykp_set_tktflag_TAB_FIRST(YKP_CONFIG *cfg, bool state);
 int ykp_set_tktflag_APPEND_TAB1(YKP_CONFIG *cfg, bool state);

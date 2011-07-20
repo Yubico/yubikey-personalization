@@ -330,7 +330,7 @@ int ykp_set_oath_imf(YKP_CONFIG *cfg, unsigned long imf)
 	return 1;
 }
 
-unsigned long ykp_get_oath_imf(YKP_CONFIG *cfg)
+unsigned long ykp_get_oath_imf(const YKP_CONFIG *cfg)
 {
 	if (!vcheck_v22_or_greater(cfg)) {
 		return 0;
