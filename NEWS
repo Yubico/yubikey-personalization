@@ -1,8 +1,14 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.5.3 (unreleased)
+* Version 1.6.0 (unreleased)
 
 ** Accept firmware version 2.3.x too.
+
+** ykpersonalize: New parameter -oath-imf for OATH Initial Moving Factor.
+Contributed by Frank Cusack <frank@google.com>.
+
+** libykpers: New apis for setting/getting OATH Initial Moving Factor.
+The APIs are ykp_set_oath_imf and ykp_get_oath_imf.
 
 * Version 1.5.2 (released 2011-05-10)
 

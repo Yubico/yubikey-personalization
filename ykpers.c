@@ -313,15 +313,15 @@ int ykp_set_oath_imf(YKP_CONFIG *cfg, unsigned long imf)
 {
 	if (!vcheck_v22_or_greater(cfg)) {
 		ykp_errno = YKP_EYUBIKEYVER;
-		return 0;		
+		return 0;
 	}
 	if (imf > 65535*16) {
 		ykp_errno = YKP_EINVAL;
-		return 0;		
+		return 0;
 	}
 	if (imf % 16 != 0) {
 		ykp_errno = YKP_EINVAL;
-		return 0;		
+		return 0;
 	}
 	/* IMF/16 is 16 bits stored big-endian in uid[4] */
 	imf /= 16;
@@ -332,11 +332,13 @@ int ykp_set_oath_imf(YKP_CONFIG *cfg, unsigned long imf)
 
 unsigned long ykp_get_oath_imf(YKP_CONFIG *cfg)
 {
-	if (!vcheck_v22_or_greater(cfg))
-		return 0;		
+	if (!vcheck_v22_or_greater(cfg)) {
+		return 0;
+	}
 
 	/* we can't do a simple cast due to alignment issues */
-	return ((cfg->ykcore_config.uid[4] << 8) | cfg->ykcore_config.uid[5]) << 4;
+	return ((cfg->ykcore_config.uid[4] << 8)
+		| cfg->ykcore_config.uid[5]) << 4;
 }
 
 #define def_set_charfield(fnname,fieldname,size,extra,vcheck)	\
