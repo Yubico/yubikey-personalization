@@ -1,6 +1,6 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.6.1 (unreleased)
+* Version 1.6.1 (released 2011-10-15)
 
 ** Fix test_args_to_config crash on some platform.
 The problem was due to mixing PIC and non-PIC object code.
