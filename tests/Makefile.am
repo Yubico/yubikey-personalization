@@ -31,12 +31,11 @@ AM_LDFLAGS = -no-install -static
 AM_CFLAGS=-I$(srcdir)/.. -I$(srcdir)/../ykcore
 LDADD = ../libykpers-1.la
 
-ykpersonalize_LDADD = ../libykpers-1.la ../ykcore/libykcore.la
-
 ctests = selftest$(EXEEXT) test_args_to_config$(EXEEXT) test_key_generation$(EXEEXT)
 check_PROGRAMS = $(ctests)
 TESTS = $(ctests)
 
-test_args_to_config_LDADD = ../ykpers-args.o $(LDADD) $(ykpersonalize_LDADD)
+test_args_to_config_SOURCES = test_args_to_config.c \
+	../ykpers-args.h ../ykpers-args.c
 
 TESTS_ENVIRONMENT = $(VALGRIND)

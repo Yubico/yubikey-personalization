@@ -2,6 +2,9 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
 * Version 1.6.1 (unreleased)
 
+** Fix test_args_to_config crash on some platform.
+The problem was due to mixing PIC and non-PIC object code.
+
 * Version 1.6.0 (released 2011-07-20)
 
 ** Accept firmware version 2.3.x too.
