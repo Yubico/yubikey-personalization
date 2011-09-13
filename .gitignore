@@ -51,6 +51,8 @@ ykcore/ykcore.lo
 ykcore/ykcore.o
 ykcore/ykcore_libusb-1.0.lo
 ykcore/ykcore_libusb-1.0.o
+ykcore/ykcore_libusb.lo
+ykcore/ykcore_libusb.o
 ykcore/ykstatus.lo
 ykcore/ykstatus.o
 ykpbkdf2.lo
