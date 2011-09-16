@@ -113,4 +113,4 @@ const char *ykp_strerror(int errnum);
 #define YKP_EINVCONFNUM	0x05
 #define YKP_EINVAL	0x06
 
-#endif	// __YKPERS_H_INCLUDED__
+#endif	/* __YKPERS_H_INCLUDED__ */
