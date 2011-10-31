@@ -80,7 +80,7 @@ int parse_args(int argc, char **argv,
 	       bool *hmac, bool *may_block,
 	       int *exit_code)
 {
-	char c;
+	int c;
 	bool hex_encoded = false;
 
 	while((c = getopt(argc, argv, optstring)) != -1) {

@@ -197,7 +197,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 		   bool *aesviahash,
 		   int *exit_code)
 {
-	char c;
+	int c;
 	const char *aeshash = NULL;
 	bool new_access_code = false;
 	bool slot_chosen = false;
