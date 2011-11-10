@@ -173,7 +173,8 @@ int check_firmware(YK_KEY *yk, bool verbose)
 	}
 
 	if (ykds_version_major(st) < 2 ||
-	    ykds_version_minor(st) < 2) {
+	    (ykds_version_major(st) == 2
+	     && ykds_version_minor(st) < 2)) {
 		fprintf(stderr, "Challenge-response not supported before YubiKey 2.2.\n");
 		free(st);
 		return 0;

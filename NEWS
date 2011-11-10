@@ -5,6 +5,9 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 ** Header files are now usable from C++.
 Reported by Giampaolo Bellini.
 
+** ykchalresp incorrectly rejected some newer firmwares.
+Reported by Giampaolo Bellini.
+
 * Version 1.6.1 (released 2011-08-15)
 
 ** Fix test_args_to_config crash on some platform.
