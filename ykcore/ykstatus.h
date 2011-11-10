@@ -1,7 +1,7 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
  * Written by Richard Levitte <richard@levitte.org>
- * Copyright (c) 2008, Yubico AB
+ * Copyright (c) 2008-2011, Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,10 @@
 
 #include <ykcore.h>
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 /* Allocate and free status structures */
 extern YK_STATUS *ykds_alloc(void);
 extern void ykds_free(YK_STATUS *st);
@@ -48,5 +52,9 @@ extern int ykds_version_minor(const YK_STATUS *st);
 extern int ykds_version_build(const YK_STATUS *st);
 extern int ykds_pgm_seq(const YK_STATUS *st);
 extern int ykds_touch_level(const YK_STATUS *st);
+
+# ifdef __cplusplus
+}
+# endif
 
 #endif /* __YKSTATUS_H_INCLUDED__ */

@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2008, 2009, Yubico AB
+ * Copyright (c) 2008-2011, Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
+
+# ifdef __cplusplus
+extern "C" {
+# endif
 
 /*************************************************************************
  **
@@ -141,5 +145,9 @@ const char *yk_usb_strerror();
 #define YK_FLAG_MAYBLOCK	0x01 << 16
 
 #define YK_CRC_OK_RESIDUAL	0xf0b8
+
+# ifdef __cplusplus
+}
+# endif
 
 #endif	/* __YKCORE_H_INCLUDED__ */

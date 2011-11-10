@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2008, 2009, 2010, 2011  Yubico AB
+ * Copyright (c) 2008-2011  Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,10 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <ykstatus.h>
+
+# ifdef __cplusplus
+extern "C" {
+# endif
 
 typedef struct ykp_config_t YKP_CONFIG;
 
@@ -112,5 +116,9 @@ const char *ykp_strerror(int errnum);
 #define YKP_EOLDYUBIKEY	0x04
 #define YKP_EINVCONFNUM	0x05
 #define YKP_EINVAL	0x06
+
+# ifdef __cplusplus
+}
+# endif
 
 #endif	/* __YKPERS_H_INCLUDED__ */
