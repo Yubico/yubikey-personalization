@@ -1,6 +1,14 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.6.2 (unreleased)
+* Version 1.6.2 (released 2011-11-28)
+
+** Check return value of calloc() when creating errno variables.
+
+** Fix build on OpenBSD with it's own libusb. Reported and patched by
+Doug Huff <mith@jrbobdobbs.org>.
+
+** Use correct return type for getopt() - fixes problem on CPUs where
+'char' defaults to unsigned. Reported by <serge.hallyn@canonical.com>.
 
 ** Header files are now usable from C++.
 Reported by Giampaolo Bellini.
