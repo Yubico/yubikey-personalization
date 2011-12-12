@@ -86,6 +86,7 @@ void _check_success(int rc, YKP_CONFIG *cfg, unsigned char expected[], int calle
 	/* insert CRC */
 	ycfg->crc = ~yubikey_crc16 ((unsigned char *) ycfg,
 				    offsetof(struct config_st, crc));
+	ycfg->crc = yk_endian_swap_16(ycfg->crc);
 
 	config_matches_expected = ! memcmp(expected, ycfg, sizeof(*ycfg));
 	if (! config_matches_expected) {
