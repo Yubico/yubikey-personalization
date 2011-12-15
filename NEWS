@@ -1,5 +1,10 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.6.3 (released 2011-12-15)
+
+** No real change for regular users. Fix a bug in a test case for
+big endian systems.
+
 * Version 1.6.2 (released 2011-11-28)
 
 ** Check return value of calloc() when creating errno variables.
