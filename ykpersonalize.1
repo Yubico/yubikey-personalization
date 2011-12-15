@@ -99,6 +99,10 @@ the AES key.
 \fBaccess\fR=\fIfffffffffff\fR
 New hex access code to set. Must be 12 characters long.
 If an access code is set, it will be required for subsequent reprogramming of the Yubikey.
+.TP
+\fBoath-imf\fR=\fIxxx\fR
+Set OATH Initial Moving Factor. This is the initial counter value for the YubiKey.
+This should be a value between 0 and 1048560, evenly dividable by 16.
 .TP 
 [\-]\fIticket-flag\fR
 Set/clear ticket flag, see the section `Ticket flags\&'
@@ -229,6 +233,15 @@ of the challenge is used as end of input marker (backtracking from end of payloa
 [\-]\fBchal-btn-trig\fR
 The Yubikey will wait for the user to press the key (within 15 seconds) before
 answering the challenge.
+.TP
+[\-]\fBserial-btn-visible\fR
+The Yubikey will emit it's serial number if the button is pressed during power-up.
+.TP
+[\-]\fBserial-usb-visible\fR
+The Yubikey will indicate it's serial number in the USB iSerial field.
+.TP
+[\-]\fBserial-api-visible\fR
+The Yubikey will allow it's serial number to be read using an API call.
 
 .SH OATH-HOTP Mode
 When using OATH-HOTP mode, a HMAC key of 160 bits (20 bytes, 40 chars of hex)
