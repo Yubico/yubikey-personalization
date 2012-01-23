@@ -1,5 +1,7 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.6.4 (unreleased)
+
 * Version 1.6.3 (released 2011-12-15)
 
 ** No real change for regular users. Fix a bug in a test case for

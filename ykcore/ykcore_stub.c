@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2008, 2011, Yubico AB
+ * Copyright (c) 2008-2012 Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

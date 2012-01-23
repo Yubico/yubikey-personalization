@@ -1,7 +1,7 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
  * Written by Richard Levitte <richar@levitte.org>
- * Copyright (c) 2008, Yubico AB
+ * Copyright (c) 2008-2012 Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

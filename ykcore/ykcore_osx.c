@@ -1,7 +1,7 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2008, 2009, Yubico AB
- * Copyright (c) 2009, Christer Kaivo-oja <christer.kaivooja@gmail.com>
+ * Copyright (c) 2008-2012 Yubico AB
+ * Copyright (c) 2009 Christer Kaivo-oja <christer.kaivooja@gmail.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

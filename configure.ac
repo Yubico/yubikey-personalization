@@ -1,5 +1,5 @@
 # Written by Richard Levitte <richard@levitte.org>.
-# Copyright (c) 2008, 2009, 2010, 2011, Yubico AB
+# Copyright (c) 2008-2012 Yubico AB
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-AC_INIT([yubikey-personalization], [1.6.2],
+AC_INIT([yubikey-personalization], [1.6.4],
   [yubico-devel@googlegroups.com], [ykpers],
   [http://code.google.com/p/yubikey-personalization/])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -41,6 +41,7 @@ AC_SUBST(LT_REVISION, 2)
 AC_SUBST(LT_AGE, 6)
 
 AM_INIT_AUTOMAKE([-Wall -Werror])
+AM_SILENT_RULES([yes])
 AC_PROG_CC
 
 ACX_PTHREAD

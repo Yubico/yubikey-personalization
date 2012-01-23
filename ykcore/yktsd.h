@@ -2,6 +2,7 @@
 /* Note: this file is copied from Levitte Programming's LPlib and reworked
    for ykcore */
 /*
+ * Copyright (c) 2008-2012 Yubico AB
  * Copyright (c) 2010 Simon Josefsson <simon@josefsson.org>
  * Copyright (c) 2003, 2004 Richard Levitte <richard@levitte.org>.
  * All rights reserved.
