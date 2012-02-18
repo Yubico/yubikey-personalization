@@ -148,8 +148,8 @@ int parse_args(int argc, char **argv,
 		*challenge = (unsigned char *) &decoded;
 		*challenge_len = strl / 2;
 	} else {
-		*challenge = argv[optind];
-		*challenge_len = strlen(*challenge);
+		*challenge = (unsigned char *) argv[optind];
+		*challenge_len = strlen(argv[optind]);
 	}
 
 	return 1;
