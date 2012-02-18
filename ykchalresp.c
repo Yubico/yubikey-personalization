@@ -237,9 +237,9 @@ int challenge_response(YK_KEY *yk, int slot,
 
 	memset(output_buf, 0, sizeof(output_buf));
 	if (hmac) {
-		yubikey_hex_encode(output_buf, (char *)response, response_len);
+		yubikey_hex_encode((char *)output_buf, (char *)response, response_len);
 	} else {
-		yubikey_modhex_encode(output_buf, (char *)response, response_len);
+		yubikey_modhex_encode((char *)output_buf, (char *)response, response_len);
 	}
 	printf("%s\n", output_buf);
 
