@@ -56,6 +56,8 @@ int yk_read_response_from_key(YK_KEY *yk, uint8_t slot, unsigned int flags,
 			      void *buf, unsigned int bufsize, unsigned int expect_bytes,
 			      unsigned int *bytes_read);
 
+int yk_force_key_update(YK_KEY *yk);
+
 int yk_init(void)
 {
 	return _ykusb_start();
