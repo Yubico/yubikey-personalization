@@ -544,7 +544,7 @@ int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount)
 		   to speed up the transfer */
 
 		for (i = 0; i < (FEATURE_RPT_SIZE - 1); i++) {
-			if (repbuf[i] = *ptr++) all_zeros = 0;
+			if ((repbuf[i] = *ptr++)) all_zeros = 0;
 		}
 		if (all_zeros && (seq > 0) && (ptr < end))
 			continue;
