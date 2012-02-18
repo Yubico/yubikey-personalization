@@ -121,7 +121,8 @@ void *_ykusb_open_device(int vendor_id, int product_id)
 			yk_release();
 			return 0;
 		}
-		
+
+		yk_errno = 0;
 		return yk;
 	}
 	

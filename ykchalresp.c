@@ -127,7 +127,7 @@ int parse_args(int argc, char **argv,
 		int strl = strlen(argv[optind]);
 
 		if (strl > sizeof(decoded) * 2) {
-			fprintf(stderr, "Hex-encoded challenge too long (max %i chars)\n",
+			fprintf(stderr, "Hex-encoded challenge too long (max %lu chars)\n",
 				sizeof(decoded) * 2);
 			return 0;
 		}
@@ -148,8 +148,8 @@ int parse_args(int argc, char **argv,
 		*challenge = (unsigned char *) &decoded;
 		*challenge_len = strl / 2;
 	} else {
-		*challenge = argv[optind];
-		*challenge_len = strlen(*challenge);
+		*challenge = (unsigned char *) argv[optind];
+		*challenge_len = strlen(argv[optind]);
 	}
 
 	return 1;
@@ -237,9 +237,9 @@ int challenge_response(YK_KEY *yk, int slot,
 
 	memset(output_buf, 0, sizeof(output_buf));
 	if (hmac) {
-		yubikey_hex_encode(output_buf, (char *)response, response_len);
+		yubikey_hex_encode((char *)output_buf, (char *)response, response_len);
 	} else {
-		yubikey_modhex_encode(output_buf, (char *)response, response_len);
+		yubikey_modhex_encode((char *)output_buf, (char *)response, response_len);
 	}
 	printf("%s\n", output_buf);
 
