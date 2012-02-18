@@ -436,7 +436,7 @@ int yk_read_response_from_key(YK_KEY *yk, uint8_t slot, unsigned int flags,
 	fprintf(stderr, "YK_DEBUG: Read %i bytes from YubiKey :\n", expect_bytes);
 #endif
 	/* Wait for the key to turn on RESP_PENDING_FLAG */
-	if (! yk_wait_for_key_status(yk, slot, flags, 1000, true, RESP_PENDING_FLAG, (char *) &data))
+	if (! yk_wait_for_key_status(yk, slot, flags, 1000, true, RESP_PENDING_FLAG, (unsigned char *) &data))
 		return 0;
 
 	/* The first part of the response was read by yk_wait_for_key_status(). We need
