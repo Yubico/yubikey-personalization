@@ -127,7 +127,7 @@ int parse_args(int argc, char **argv,
 		int strl = strlen(argv[optind]);
 
 		if (strl > sizeof(decoded) * 2) {
-			fprintf(stderr, "Hex-encoded challenge too long (max %i chars)\n",
+			fprintf(stderr, "Hex-encoded challenge too long (max %lu chars)\n",
 				sizeof(decoded) * 2);
 			return 0;
 		}
