@@ -241,35 +241,26 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 
 		switch (c) {
 		case '1':
-			if (slot_chosen) {
-				fprintf(stderr, "You may only choose slot (-1 / -2) once.\n");
-				*exit_code = 1;
-				return 0;
+		case '2': {
+				int slot = 1;
+				if(c == '2') {
+					slot = 2;
+				}
+				if (slot_chosen) {
+					fprintf(stderr, "You may only choose slot (-1 / -2) once.\n");
+					*exit_code = 1;
+					return 0;
+				}
+				if (option_seen) {
+					fprintf(stderr, "You must choose slot before any options (-o).\n");
+					*exit_code = 1;
+					return 0;
+				}
+				if (!ykp_configure_for(cfg, slot, st))
+					return 0;
+				slot_chosen = true;
+				break;
 			}
-			if (option_seen) {
-				fprintf(stderr, "You must choose slot before any options (-o).\n");
-				*exit_code = 1;
-				return 0;
-			}
-			if (!ykp_configure_for(cfg, 1, st))
-				return 0;
-			slot_chosen = true;
-			break;
-		case '2':
-			if (slot_chosen) {
-				fprintf(stderr, "You may only choose slot (-1 / -2) once.\n");
-				*exit_code = 1;
-				return 0;
-			}
-			if (option_seen) {
-				fprintf(stderr, "You must choose slot before any options (-o).\n");
-				*exit_code = 1;
-				return 0;
-			}
-			if (!ykp_configure_for(cfg, 2, st))
-				return 0;
-			slot_chosen = true;
-			break;
 		case 'i':
 			*infname = optarg;
 			break;
