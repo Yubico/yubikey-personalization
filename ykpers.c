@@ -119,6 +119,8 @@ int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command, YK_STATUS *st)
 		  return 0;
 		}
 		break;
+	case SLOT_UPDATE1:
+	case SLOT_UPDATE2:
 	case SLOT_SWAP:
 		if (!((cfg->yk_major_version == 2 && cfg->yk_minor_version >= 3)
 			  || cfg->yk_major_version > 2)) {
