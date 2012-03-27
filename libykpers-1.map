@@ -132,5 +132,6 @@ LIBYKPERS_1.7 {
 # Functions:
   ykp_command;
   ykp_configure_command;
+  yk_write_command;
 # Variables:
 } LIBYKPERS_1.6;
