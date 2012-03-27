@@ -42,6 +42,8 @@
 
 const char *usage =
 "Usage: ykpersonalize [options]\n"
+"-u        update configuration without overwriting.  This is only available\n"
+"          in YubiKey 2.3 and later.\n"
 "-1        change the first configuration.  This is the default and\n"
 "          is normally used for true OTP generation.\n"
 "          In this configuration, TKTFLAG_APPEND_CR is set by default.\n"
@@ -127,7 +129,7 @@ const char *usage =
 "-v        verbose\n"
 "-h        help (this text)\n"
 ;
-const char *optstring = "12xa:c:hi:o:s:vy";
+const char *optstring = "u12xa:c:hi:o:s:vy";
 
 static int hex_modhex_decode(unsigned char *result, size_t *resultlen,
 			     const char *str, size_t strl,
@@ -206,6 +208,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 	bool mode_chosen = false;
 	bool option_seen = false;
 	bool swap_seen = false;
+	bool update_seen = false;
 
 	struct config_st *ycfg = (struct config_st *) ykp_core_config(cfg);
 
@@ -243,11 +246,28 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 		}
 
 		switch (c) {
+		case 'u':
+			if(slot_chosen) {
+			  fprintf(stderr, "You must use update before slot (-1 / -2).\n");
+			  *exit_code = 1;
+			  return 0;
+			}
+			if(swap_seen) {
+			  fprintf(stderr, "Update (-u) and swap (-x) can't be combined.\n");
+			  *exit_code = 1;
+			  return 0;
+			}
+			update_seen = true;
+			break;
 		case '1':
 		case '2': {
-				int slot = 1;
-				if(c == '2') {
-					slot = 2;
+				int command = SLOT_CONFIG;
+				if (update_seen && c == '1') {
+					command = SLOT_UPDATE1;
+				} else if (update_seen && c == '2') {
+					command = SLOT_UPDATE2;
+				} else if (c == '2') {
+					command = SLOT_CONFIG2;
 				}
 				if (slot_chosen) {
 					fprintf(stderr, "You may only choose slot (-1 / -2) once.\n");
@@ -264,7 +284,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 					*exit_code = 1;
 					return 0;
 				}
-				if (!ykp_configure_for(cfg, slot, st))
+				if (!ykp_configure_command(cfg, command, st))
 					return 0;
 				slot_chosen = true;
 				break;
@@ -277,6 +297,11 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 			}
 			if (option_seen) {
 				fprintf(stderr, "You must set slot swap before any options (-o).\n");
+				*exit_code = 1;
+				return 0;
+			}
+			if (update_seen) {
+				fprintf(stderr, "Update (-u) and swap (-x) can't be combined.\n");
 				*exit_code = 1;
 				return 0;
 			}
