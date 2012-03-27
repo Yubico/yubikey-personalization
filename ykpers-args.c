@@ -50,6 +50,8 @@ const char *usage =
 "          In this configuration, TKTFLAG_APPEND_CR, CFGFLAG_STATIC_TICKET,\n"
 "          CFGFLAG_STRONG_PW1, CFGFLAG_STRONG_PW2 and CFGFLAG_MAN_UPDATE\n"
 "          are set by default.\n"
+"-x        swap the configuration in slot 1 and 2.  This is for YubiKey 2.3\n"
+"          and newer only\n"
 "-sFILE    save configuration to FILE instead of key.\n"
 "          (if FILE is -, send to stdout)\n"
 "-iFILE    read configuration from FILE.\n"
@@ -125,7 +127,7 @@ const char *usage =
 "-v        verbose\n"
 "-h        help (this text)\n"
 ;
-const char *optstring = "12a:c:hi:o:s:vy";
+const char *optstring = "12xa:c:hi:o:s:vy";
 
 static int hex_modhex_decode(unsigned char *result, size_t *resultlen,
 			     const char *str, size_t strl,
@@ -203,6 +205,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 	bool slot_chosen = false;
 	bool mode_chosen = false;
 	bool option_seen = false;
+	bool swap_seen = false;
 
 	struct config_st *ycfg = (struct config_st *) ykp_core_config(cfg);
 
@@ -256,11 +259,32 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 					*exit_code = 1;
 					return 0;
 				}
+				if (swap_seen) {
+					fprintf(stderr, "You can not combine slot swap (-x) with configuring a slot.\n");
+					*exit_code = 1;
+					return 0;
+				}
 				if (!ykp_configure_for(cfg, slot, st))
 					return 0;
 				slot_chosen = true;
 				break;
 			}
+		case 'x':
+			if (slot_chosen) {
+				fprintf(stderr, "You can not use slot swap with a chosen slot (-1 / -2).\n");
+				*exit_code = 1;
+				return 0;
+			}
+			if (option_seen) {
+				fprintf(stderr, "You must set slot swap before any options (-o).\n");
+				*exit_code = 1;
+				return 0;
+			}
+			if (!ykp_configure_command(cfg, SLOT_SWAP, st)) {
+				return 0;
+			}
+			swap_seen = true;
+			break;
 		case 'i':
 			*infname = optarg;
 			break;
