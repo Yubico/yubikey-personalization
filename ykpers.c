@@ -131,6 +131,7 @@ int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command, YK_STATUS *st)
 		return 0;
   }
   cfg->command = command;
+  return 1;
 }
 
 int ykp_configure_for(YKP_CONFIG *cfg, int confnum, YK_STATUS *st)
