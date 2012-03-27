@@ -46,8 +46,11 @@ typedef struct ykp_config_t YKP_CONFIG;
 YKP_CONFIG *ykp_create_config(void);
 int ykp_free_config(YKP_CONFIG *cfg);
 
-/* This can be used to tell what Yubikey version we're working with.  If
-   this isn't used, Yubikey 1 only will be assumed. */
+/* This is used to tell what YubiKey version we're working with and what
+   command we want to send to it. If this isn't used YubiKey 1 only will
+   be assumed. */
+int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command, YK_STATUS *st);
+/* wrapper function for ykp_configure_command */
 int ykp_configure_for(YKP_CONFIG *cfg, int confnum, YK_STATUS *st);
 
 int ykp_AES_key_from_hex(YKP_CONFIG *cfg, const char *hexkey);
@@ -104,6 +107,7 @@ int ykp_read_config(YKP_CONFIG *cfg,
 		    void *userdata);
 
 YK_CONFIG *ykp_core_config(YKP_CONFIG *cfg);
+int ykp_command(YKP_CONFIG *cfg);
 int ykp_config_num(YKP_CONFIG *cfg);
 
 extern int * const _ykp_errno_location(void);
