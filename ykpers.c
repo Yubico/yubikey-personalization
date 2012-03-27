@@ -45,7 +45,7 @@
 struct ykp_config_t {
 	unsigned int yk_major_version;
 	unsigned int yk_minor_version;
-	unsigned int configuration_number;
+	unsigned int command;
 
 	YK_CONFIG ykcore_config;
 };
@@ -85,7 +85,7 @@ YKP_CONFIG *ykp_create_config(void)
 		       sizeof(default_config1));
 		cfg->yk_major_version = 1;
 		cfg->yk_minor_version = 3;
-		cfg->configuration_number = 1;
+		cfg->command = SLOT_CONFIG;
 		return cfg;
 	}
 	return 0;
@@ -100,31 +100,50 @@ int ykp_free_config(YKP_CONFIG *cfg)
 	return 0;
 }
 
-int ykp_configure_for(YKP_CONFIG *cfg, int confnum, YK_STATUS *st)
+int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command, YK_STATUS *st)
 {
 	cfg->yk_major_version = st->versionMajor;
 	cfg->yk_minor_version = st->versionMinor;
 
-	switch(confnum) {
-	case 1:
+	switch(command) {
+	case SLOT_CONFIG:
 		memcpy(&cfg->ykcore_config, &default_config1,
-		       sizeof(default_config1));
-		cfg->configuration_number = 1;
-		return 1;
-	case 2:
+			sizeof(default_config1));
+		break;
+	case SLOT_CONFIG2:
 		if (cfg->yk_major_version >= 2) {
-			memcpy(&cfg->ykcore_config, &default_config2,
-			       sizeof(default_config2));
-			cfg->configuration_number = 2;
-			return 1;
+		  memcpy(&cfg->ykcore_config, &default_config2,
+			  sizeof(default_config2));
+		} else {
+		  ykp_errno = YKP_EOLDYUBIKEY;
+		  return 0;
 		}
-		ykp_errno = YKP_EOLDYUBIKEY;
+		break;
+	case SLOT_SWAP:
+		if (!((cfg->yk_major_version == 2 && cfg->yk_minor_version >= 3)
+			  || cfg->yk_major_version > 2)) {
+			ykp_errno = YKP_EOLDYUBIKEY;
+			return 0;
+		}
 		break;
 	default:
 		ykp_errno = YKP_EINVCONFNUM;
-		break;
+		return 0;
+  }
+  cfg->command = command;
+}
+
+int ykp_configure_for(YKP_CONFIG *cfg, int confnum, YK_STATUS *st)
+{
+	switch(confnum) {
+	case 1:
+		return ykp_configure_command(cfg, SLOT_CONFIG, st);
+	case 2:
+		return ykp_configure_command(cfg, SLOT_CONFIG2, st);
+	default:
+		ykp_errno = YKP_EINVCONFNUM;
+		return 0;
 	}
-	return 0;
 }
 
 /* Return number of bytes of key data for this configuration.
@@ -712,10 +731,23 @@ YK_CONFIG *ykp_core_config(YKP_CONFIG *cfg)
 	return 0;
 }
 
+int ykp_command(YKP_CONFIG *cfg) {
+	if (cfg) {
+		return cfg->command;
+	}
+	ykp_errno = YKP_ENOCFG;
+	return 0;
+}
+
 int ykp_config_num(YKP_CONFIG *cfg)
 {
-	if (cfg)
-		return cfg->configuration_number;
+	if (cfg) {
+		if (cfg->command == SLOT_CONFIG) {
+			return 1;
+		} else if (cfg->command == SLOT_CONFIG2) {
+			return 2;
+		}
+	}
 	ykp_errno = YKP_ENOCFG;
 	return 0;
 }

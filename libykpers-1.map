@@ -126,3 +126,11 @@ LIBYKPERS_1.6 {
   ykp_get_oath_imf;
 # Variables:
 } LIBYKPERS_1.5;
+
+LIBYKPERS_1.7 {
+  global:
+# Functions:
+  ykp_command;
+  ykp_configure_command;
+# Variables:
+} LIBYKPERS_1.6;
