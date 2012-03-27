@@ -215,9 +215,9 @@ int main(int argc, char **argv)
 
 			if (verbose)
 				printf("Attempting to write configuration to the yubikey...");
-			if (!yk_write_config(yk,
-					     ykp_core_config(cfg), ykp_config_num(cfg),
-					     use_access_code ? access_code : NULL)) {
+			if (!yk_write_command(yk,
+					     ykp_core_config(cfg), ykp_command(cfg),
+						 use_access_code ? access_code : NULL)) {
 				if (verbose)
 					printf(" failure\n");
 				goto err;
