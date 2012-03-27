@@ -28,9 +28,12 @@
 
 /* Slot entries */
 
-#define	SLOT_CONFIG		1   /* First (default / V1) configuration */
-#define	SLOT_NAV		2   /* V1 only */
-#define SLOT_CONFIG2		3   /* Second (V2) configuration */
+#define	SLOT_CONFIG		0x01   /* First (default / V1) configuration */
+#define	SLOT_NAV		0x02   /* V1 only */
+#define	SLOT_CONFIG2	0x03   /* Second (V2) configuration */
+#define	SLOT_UPDATE1	0x04   /* update first configuration */
+#define	SLOT_UPDATE2	0x05   /* update second configuration */
+#define	SLOT_SWAP		0x06   /* swap the two slots */
 
 #define SLOT_DEVICE_SERIAL	0x10	/* Device serial number */
 
