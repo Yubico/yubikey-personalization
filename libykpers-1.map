@@ -133,5 +133,9 @@ LIBYKPERS_1.7 {
   ykp_command;
   ykp_configure_command;
   yk_write_command;
+  ykp_set_extflag_USE_NUMERIC_KEYPAD;
+  ykp_set_extflag_FAST_TRIG;
+  ykp_set_extflag_ALLOW_UPDATE;
+  ykp_set_extflag_DORMANT;
 # Variables:
 } LIBYKPERS_1.6;

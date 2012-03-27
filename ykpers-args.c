@@ -124,6 +124,12 @@ const char *usage =
 "          [-]serial-usb-visible  set/clear SERIAL_USB_VISIBLE\n"
 "          [-]serial-api-visible  set/clear SERIAL_API_VISIBLE\n"
 "\n"
+"          Extended flags for firmware version 2.3 and above:\n"
+"          [-]use-numeric-keypad  set/clear USE_NUMERIC_KEYPAD\n"
+"          [-]fast-trig           set/clear FAST_TRIG\n"
+"          [-]allow-update        set/clear ALLOW_UPDATE\n"
+"          [-]dormant             set/clear DORMANT\n"
+"\n"
 "-y        always commit (do not prompt)\n"
 "\n"
 "-v        verbose\n"
@@ -498,6 +504,10 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 			EXTFLAG("serial-btn-visible", SERIAL_BTN_VISIBLE)
 			EXTFLAG("serial-usb-visible", SERIAL_USB_VISIBLE)
 			EXTFLAG("serial-api-visible", SERIAL_API_VISIBLE)
+      EXTFLAG("use-numeric-keypad", USE_NUMERIC_KEYPAD)
+      EXTFLAG("fast-trig", FAST_TRIG)
+			EXTFLAG("allow-update", ALLOW_UPDATE)
+      EXTFLAG("dormant", DORMANT)
 #undef EXTFLAG
 			else {
 				fprintf(stderr, "Unknown option '%s'\n",

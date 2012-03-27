@@ -484,6 +484,10 @@ def_set_cfgflag(CHAL_BTN_TRIG,vcheck_v22_or_greater)
 def_set_extflag(SERIAL_BTN_VISIBLE,vcheck_v22_or_greater)
 def_set_extflag(SERIAL_USB_VISIBLE,vcheck_v22_or_greater)
 def_set_extflag(SERIAL_API_VISIBLE,vcheck_v22_or_greater)
+def_set_extflag(USE_NUMERIC_KEYPAD,vcheck_v23_or_greater)
+def_set_extflag(FAST_TRIG,vcheck_v23_or_greater)
+def_set_extflag(ALLOW_UPDATE,vcheck_v23_or_greater)
+def_set_extflag(DORMANT,vcheck_v23_or_greater)
 
 const char str_key_value_separator[] = ": ";
 const char str_hex_prefix[] = "h:";
@@ -556,6 +560,10 @@ struct map_st extended_flags_map[] = {
 	{ EXTFLAG_SERIAL_BTN_VISIBLE,	"SERIAL_BTN_VISIBLE",	vcheck_v22_or_greater,	0 },
 	{ EXTFLAG_SERIAL_USB_VISIBLE,	"SERIAL_USB_VISIBLE",	vcheck_v22_or_greater,	0 },
 	{ EXTFLAG_SERIAL_API_VISIBLE,	"SERIAL_API_VISIBLE",	vcheck_v22_or_greater,	0 },
+	{ EXTFLAG_USE_NUMERIC_KEYPAD,	"USE_NUMERIC_KEYPAD",	vcheck_v23_or_greater,	0 },
+	{ EXTFLAG_FAST_TRIG,		"FAST_TRIG",		vcheck_v23_or_greater,	0 },
+	{ EXTFLAG_ALLOW_UPDATE,		"ALLOW_UPDATE",		vcheck_v23_or_greater,	0 },
+	{ EXTFLAG_DORMANT,		"DORMANT",		vcheck_v23_or_greater,	0 },
 	{ 0, "", 0 }
 };
 
