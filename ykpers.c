@@ -309,6 +309,13 @@ static bool vcheck_v22_or_greater(const YKP_CONFIG *cfg)
 		cfg->yk_major_version > 2;
 }
 
+static bool vcheck_v23_or_greater(const YKP_CONFIG *cfg)
+{
+	return (cfg->yk_major_version == 2 &&
+		cfg->yk_minor_version >= 3) ||
+		cfg->yk_major_version > 2;
+}
+
 int ykp_set_oath_imf(YKP_CONFIG *cfg, unsigned long imf)
 {
 	if (!vcheck_v22_or_greater(cfg)) {
