@@ -112,11 +112,11 @@ int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command, YK_STATUS *st)
 		break;
 	case SLOT_CONFIG2:
 		if (cfg->yk_major_version >= 2) {
-		  memcpy(&cfg->ykcore_config, &default_config2,
-			  sizeof(default_config2));
+			memcpy(&cfg->ykcore_config, &default_config2,
+				sizeof(default_config2));
 		} else {
-		  ykp_errno = YKP_EOLDYUBIKEY;
-		  return 0;
+			ykp_errno = YKP_EOLDYUBIKEY;
+			return 0;
 		}
 		break;
 	case SLOT_UPDATE1:
