@@ -121,6 +121,10 @@ int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command, YK_STATUS *st)
 		break;
 	case SLOT_UPDATE1:
 	case SLOT_UPDATE2:
+		{
+			struct config_st *core_config = (struct config_st *) ykp_core_config(cfg);
+			core_config->extFlags |= EXTFLAG_ALLOW_UPDATE;
+		}
 	case SLOT_SWAP:
 		if (!((cfg->yk_major_version == 2 && cfg->yk_minor_version >= 3)
 			  || cfg->yk_major_version > 2)) {
@@ -131,9 +135,9 @@ int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command, YK_STATUS *st)
 	default:
 		ykp_errno = YKP_EINVCONFNUM;
 		return 0;
-  }
-  cfg->command = command;
-  return 1;
+	}
+	cfg->command = command;
+	return 1;
 }
 
 int ykp_configure_for(YKP_CONFIG *cfg, int confnum, YK_STATUS *st)
