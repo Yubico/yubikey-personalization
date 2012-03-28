@@ -531,6 +531,25 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 		}
 	}
 
+	if (update_seen) {
+		struct config_st *core_config = (struct config_st *) ykp_core_config(cfg);
+		if ((core_config->tktFlags & TKTFLAG_UPDATE_MASK) != core_config->tktFlags) {
+			fprintf(stderr, "Unallowed ticket flags with update.\n");
+			*exit_code = 1;
+			return 0;
+		}
+		if ((core_config->cfgFlags & CFGFLAG_UPDATE_MASK) != core_config->cfgFlags) {
+			fprintf(stderr, "Unallowed cfg flags with update.\n");
+			*exit_code = 1;
+			return 0;
+		}
+		if ((core_config->extFlags & EXTFLAG_UPDATE_MASK) != core_config->extFlags) {
+			fprintf(stderr, "Unallowed ext flags with update.\n");
+			*exit_code = 1;
+			return 0;
+		}
+	}
+
 	if (*aesviahash) {
 		bool long_key_valid = false;
 		int res = 0;
