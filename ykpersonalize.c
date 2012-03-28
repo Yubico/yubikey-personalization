@@ -197,8 +197,16 @@ int main(int argc, char **argv)
 	} else {
 		char commitbuf[256]; size_t commitlen;
 
-		fprintf(stderr, "Configuration data to be written to key configuration %d:\n\n", ykp_config_num(cfg));
-		ykp_write_config(cfg, writer, stderr);
+		if (ykp_command(cfg) == SLOT_SWAP) {
+			fprintf(stderr, "Configuration in slot 1 and 2 will be swapped\n");
+		} else {
+			if (ykp_command(cfg) == SLOT_CONFIG || ykp_command(cfg) == SLOT_CONFIG2) {
+				fprintf(stderr, "Configuration data to be written to key configuration %d:\n\n", ykp_config_num(cfg));
+			} else {
+				fprintf(stderr, "Configuration data to be updated in key configuration %d:\n\n", ykp_command(cfg) == SLOT_UPDATE1 ? 1 : 2);
+			}
+			ykp_write_config(cfg, writer, stderr);
+		}
 		fprintf(stderr, "\nCommit? (y/n) [n]: ");
 		if (autocommit) {
 			strcpy(commitbuf, "yes");
