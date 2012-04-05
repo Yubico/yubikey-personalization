@@ -46,10 +46,17 @@ typedef struct ykp_config_t YKP_CONFIG;
 YKP_CONFIG *ykp_create_config(void);
 int ykp_free_config(YKP_CONFIG *cfg);
 
+/* allocate an empty YKP_CONFIG, use ykp_configure_version() to set
+   version information. */
+YKP_CONFIG *ykp_alloc(void);
+
+/* Set the version information in st in cfg. */
+void ykp_configure_version(YKP_CONFIG *cfg, YK_STATUS *st);
+
 /* This is used to tell what YubiKey version we're working with and what
    command we want to send to it. If this isn't used YubiKey 1 only will
    be assumed. */
-int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command, YK_STATUS *st);
+int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command);
 /* wrapper function for ykp_configure_command */
 int ykp_configure_for(YKP_CONFIG *cfg, int confnum, YK_STATUS *st);
 

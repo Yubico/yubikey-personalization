@@ -29,6 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "ykcore_lcl.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stddef.h>
@@ -43,7 +45,8 @@
 const char *usage =
 "Usage: ykpersonalize [options]\n"
 "-u        update configuration without overwriting.  This is only available\n"
-"          in YubiKey 2.3 and later.\n"
+"          in YubiKey 2.3 and later. EXTFLAG_ALLOW_UPDATE will be set by\n"
+"          default\n"
 "-1        change the first configuration.  This is the default and\n"
 "          is normally used for true OTP generation.\n"
 "          In this configuration, TKTFLAG_APPEND_CR is set by default.\n"
@@ -137,6 +140,46 @@ const char *usage =
 ;
 const char *optstring = "u12xa:c:hi:o:s:vy";
 
+static const YK_CONFIG default_config1 = {
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* fixed */
+        { 0, 0, 0, 0, 0, 0 },   /* uid */
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* key */
+        { 0, 0, 0, 0, 0, 0 },   /* accCode */
+        0,                      /* fixedSize */
+        0,                      /* extFlags */
+        TKTFLAG_APPEND_CR,      /* tktFlags */
+        0,                      /* cfgFlags */
+        0,                      /* ctrOffs */
+        0                       /* crc */
+};
+
+static const YK_CONFIG default_config2 = {
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* fixed */
+        { 0, 0, 0, 0, 0, 0 },   /* uid */
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* key */
+        { 0, 0, 0, 0, 0, 0 },   /* accCode */
+        0,                      /* fixedSize */
+        0,                      /* extFlags */
+        TKTFLAG_APPEND_CR,      /* tktFlags */
+        /* cfgFlags */
+        CFGFLAG_STATIC_TICKET | CFGFLAG_STRONG_PW1 | CFGFLAG_STRONG_PW2 | CFGFLAG_MAN_UPDATE,
+        0,                      /* ctrOffs */
+        0                       /* crc */
+};
+
+static const YK_CONFIG default_update = {
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* fixed */
+        { 0, 0, 0, 0, 0, 0 },   /* uid */
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* key */
+        { 0, 0, 0, 0, 0, 0 },   /* accCode */
+        0,                      /* fixedSize */
+        EXTFLAG_ALLOW_UPDATE,   /* extFlags */
+        TKTFLAG_APPEND_CR,      /* tktFlags */
+        0,                      /* cfgFlags */
+        0,                      /* ctrOffs */
+        0                       /* crc */
+};
+
 static int hex_modhex_decode(unsigned char *result, size_t *resultlen,
 			     const char *str, size_t strl,
 			     size_t minsize, size_t maxsize,
@@ -216,6 +259,8 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 	bool swap_seen = false;
 	bool update_seen = false;
 
+	ykp_configure_version(cfg, st);
+
 	struct config_st *ycfg = (struct config_st *) ykp_core_config(cfg);
 
 	while((c = getopt(argc, argv, optstring)) != -1) {
@@ -267,14 +312,6 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 			break;
 		case '1':
 		case '2': {
-				int command = SLOT_CONFIG;
-				if (update_seen && c == '1') {
-					command = SLOT_UPDATE1;
-				} else if (update_seen && c == '2') {
-					command = SLOT_UPDATE2;
-				} else if (c == '2') {
-					command = SLOT_CONFIG2;
-				}
 				if (slot_chosen) {
 					fprintf(stderr, "You may only choose slot (-1 / -2) once.\n");
 					*exit_code = 1;
@@ -290,7 +327,22 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 					*exit_code = 1;
 					return 0;
 				}
-				if (!ykp_configure_command(cfg, command, st))
+				int command;
+				if (update_seen) {
+					memcpy(ycfg, &default_update, sizeof(default_update));
+					if(c == '1') {
+						command = SLOT_UPDATE1;
+					} else if(c == '2') {
+						command = SLOT_UPDATE2;
+					}
+				} else if (c == '1') {
+					command = SLOT_CONFIG;
+					memcpy(ycfg, &default_config1, sizeof(default_config1));
+				} else if (c == '2') {
+					command = SLOT_CONFIG2;
+					memcpy(ycfg, &default_config2, sizeof(default_config2));
+				}
+				if (!ykp_configure_command(cfg, command))
 					return 0;
 				slot_chosen = true;
 				break;
@@ -311,7 +363,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 				*exit_code = 1;
 				return 0;
 			}
-			if (!ykp_configure_command(cfg, SLOT_SWAP, st)) {
+			if (!ykp_configure_command(cfg, SLOT_SWAP)) {
 				return 0;
 			}
 			swap_seen = true;
@@ -529,6 +581,12 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 			*exit_code = 0;
 			return 0;
 		}
+	}
+
+	if (!slot_chosen) {
+		fprintf(stderr, "A slot must be chosen with -1 or -2.\n");
+		*exit_code = 1;
+		return 0;
 	}
 
 	if (update_seen) {

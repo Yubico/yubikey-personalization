@@ -91,6 +91,16 @@ YKP_CONFIG *ykp_create_config(void)
 	return 0;
 }
 
+YKP_CONFIG *ykp_alloc(void)
+{
+	YKP_CONFIG *cfg = malloc(sizeof(YKP_CONFIG));
+	if(cfg) {
+		memset(cfg, 0, sizeof(YKP_CONFIG));
+		return cfg;
+	}
+	return 0;
+}
+
 int ykp_free_config(YKP_CONFIG *cfg)
 {
 	if (cfg) {
@@ -100,31 +110,25 @@ int ykp_free_config(YKP_CONFIG *cfg)
 	return 0;
 }
 
-int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command, YK_STATUS *st)
+void ykp_configure_version(YKP_CONFIG *cfg, YK_STATUS *st)
 {
 	cfg->yk_major_version = st->versionMajor;
 	cfg->yk_minor_version = st->versionMinor;
+}
 
+int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command)
+{
 	switch(command) {
 	case SLOT_CONFIG:
-		memcpy(&cfg->ykcore_config, &default_config1,
-			sizeof(default_config1));
 		break;
 	case SLOT_CONFIG2:
-		if (cfg->yk_major_version >= 2) {
-			memcpy(&cfg->ykcore_config, &default_config2,
-				sizeof(default_config2));
-		} else {
+		if (!cfg->yk_major_version >= 2) {
 			ykp_errno = YKP_EOLDYUBIKEY;
 			return 0;
 		}
 		break;
 	case SLOT_UPDATE1:
 	case SLOT_UPDATE2:
-		{
-			struct config_st *core_config = (struct config_st *) ykp_core_config(cfg);
-			core_config->extFlags |= EXTFLAG_ALLOW_UPDATE;
-		}
 	case SLOT_SWAP:
 		if (!((cfg->yk_major_version == 2 && cfg->yk_minor_version >= 3)
 			  || cfg->yk_major_version > 2)) {
@@ -142,11 +146,16 @@ int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command, YK_STATUS *st)
 
 int ykp_configure_for(YKP_CONFIG *cfg, int confnum, YK_STATUS *st)
 {
+	ykp_configure_version(cfg, st);
 	switch(confnum) {
 	case 1:
-		return ykp_configure_command(cfg, SLOT_CONFIG, st);
+		memcpy(&cfg->ykcore_config, &default_config1,
+				sizeof(default_config1));
+		return ykp_configure_command(cfg, SLOT_CONFIG);
 	case 2:
-		return ykp_configure_command(cfg, SLOT_CONFIG2, st);
+		memcpy(&cfg->ykcore_config, &default_config2,
+				sizeof(default_config2));
+		return ykp_configure_command(cfg, SLOT_CONFIG2);
 	default:
 		ykp_errno = YKP_EINVCONFNUM;
 		return 0;

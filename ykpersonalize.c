@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 	bool use_access_code = false;
 	unsigned char access_code[256];
 	YK_KEY *yk = 0;
-	YKP_CONFIG *cfg = ykp_create_config();
+	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = ykds_alloc();
 	bool autocommit = false;
 
@@ -117,9 +117,6 @@ int main(int argc, char **argv)
 			goto err;
 		}
 	}
-
-	if (!ykp_configure_for(cfg, 1, st))
-		goto err;
 
 	/* Parse all arguments in a testable way */
 	if (! args_to_config(argc, argv, cfg,

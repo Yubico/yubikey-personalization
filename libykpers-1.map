@@ -130,6 +130,8 @@ LIBYKPERS_1.6 {
 LIBYKPERS_1.7 {
   global:
 # Functions:
+  ykp_alloc;
+  ykp_configure_version;
   ykp_command;
   ykp_configure_command;
   yk_write_command;
