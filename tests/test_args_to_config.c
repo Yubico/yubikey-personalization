@@ -474,6 +474,39 @@ int _test_uid_for_chal_resp(void)
 	assert(rc == 0);
 }
 
+int _test_swap_with_slot(void)
+{
+	/* Test that you can not both swap and set slot */
+	char *argv[] = {
+		"unittest", "-x", "-1",
+		NULL
+	};
+	int rc = _parse_args_rc (3, argv);
+	assert(rc == 0);
+}
+
+int _test_slot_with_update(void)
+{
+	/* Test the update must be before slot */
+	char *argv[] = {
+		"unittest", "-1", "-u",
+		NULL
+	};
+	int rc = _parse_args_rc (3, argv);
+	assert(rc == 0);
+}
+
+int _test_swap_with_update(void)
+{
+	/* Test the update must be before slot */
+	char *argv[] = {
+		"unittest", "-u", "-x",
+		NULL
+	};
+	int rc = _parse_args_rc (3, argv);
+	assert(rc == 0);
+}
+
 int main (int argc, char **argv)
 {
 	_test_config_slot1();
@@ -491,6 +524,9 @@ int main (int argc, char **argv)
 	_test_key_mixed_case1();
 	_test_uid_for_oath();
 	_test_uid_for_chal_resp();
+	_test_swap_with_slot();
+	_test_slot_with_update();
+	_test_swap_with_update();
 
 	return 0;
 }
