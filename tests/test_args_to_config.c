@@ -153,7 +153,7 @@ YK_STATUS * _test_init_st(int major, int minor, int build)
  */
 int _parse_args_rc(int argc, char *argv[])
 {
-	YKP_CONFIG *cfg = ykp_create_config();
+	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 2, 0);
 	int rc = 0;
 
@@ -167,7 +167,7 @@ int _parse_args_rc(int argc, char *argv[])
 
 int _test_config_slot1(void)
 {
-	YKP_CONFIG *cfg = ykp_create_config();
+	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(1, 3, 0);
 	int rc = 0;
 	struct config_st *ycfg;
@@ -198,7 +198,7 @@ int _test_config_slot1(void)
 
 int _test_config_static_slot2(void)
 {
-	YKP_CONFIG *cfg = ykp_create_config();
+	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 0, 0);
 	int rc = 0;
 	struct config_st *ycfg;
@@ -229,7 +229,7 @@ int _test_config_static_slot2(void)
 
 int _test_too_old_key(void)
 {
-	YKP_CONFIG *cfg = ykp_create_config();
+	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(1, 3, 0);
 	int rc = 0;
 
@@ -249,7 +249,7 @@ int _test_too_old_key(void)
 
 int _test_too_new_key(void)
 {
-	YKP_CONFIG *cfg = ykp_create_config();
+	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 2, 0);
 	int rc = 0;
 
@@ -269,7 +269,7 @@ int _test_too_new_key(void)
 
 int _test_non_config_args(void)
 {
-	YKP_CONFIG *cfg = ykp_create_config();
+	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 2, 0);
 	int rc = 0;
 
@@ -288,16 +288,17 @@ int _test_non_config_args(void)
 	char *salt = NULL;
 
 	char *argv[] = {
-		"unittest", "-sout", "-iin", "-c313233343536", "-y", "-v",
+		"unittest", "-1", "-sout", "-iin", "-c313233343536", "-y", "-v",
 		NULL
 	};
-	int argc = 6;
+	int argc = 7;
 
 	ykp_errno = 0;
 	optind = 0; /* getopt reinit */
 
 	/* copy version number from st into cfg */
-	assert(ykp_configure_for(cfg, 1, st) == 1);
+  ykp_configure_version(cfg, st);
+	//assert(ykp_configure_for(cfg, 1, st) == 1);
 
 	/* call args_to_config from ykpersonalize.c with a fake set of program arguments */
 	rc = args_to_config(argc, argv, cfg,
@@ -320,7 +321,7 @@ int _test_non_config_args(void)
 
 int _test_oath_hotp_nist_160_bits(void)
 {
-	YKP_CONFIG *cfg = ykp_create_config();
+	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 1, 0);
 	int rc = 0;
 	struct config_st *ycfg;
@@ -351,7 +352,7 @@ int _test_oath_hotp_nist_160_bits(void)
 
 int _test_extended_flags1(void)
 {
-	YKP_CONFIG *cfg = ykp_create_config();
+	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 2, 0);
 	int rc = 0;
 

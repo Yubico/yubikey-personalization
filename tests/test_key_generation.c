@@ -73,10 +73,10 @@ int main (void)
 	struct config_st *ycfg;
 	int rc;
 
-	ykp = ykp_create_config ();
+	ykp = ykp_alloc ();
 	if (!ykp)
 	{
-		printf ("ykp_create_config returned NULL\n");
+		printf ("ykp_alloc returned NULL\n");
 		return 1;
 	}
 
