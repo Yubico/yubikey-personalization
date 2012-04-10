@@ -231,7 +231,6 @@ int yk_write_command(YK_KEY *yk, YK_CONFIG *cfg, uint8_t command,
 	return stat.pgmSeq == 0;
 }
 
-/* deprecated wrapper function for yk_write_command */
 int yk_write_config(YK_KEY *yk, YK_CONFIG *cfg, int confnum,
 		    unsigned char *acc_code)
 {
