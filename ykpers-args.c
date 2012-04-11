@@ -45,7 +45,7 @@
 const char *usage =
 "Usage: ykpersonalize [options]\n"
 "-u        update configuration without overwriting.  This is only available\n"
-"          in YubiKey 2.3 and later. EXTFLAG_ALLOW_UPDATE will be set by\n"
+"          in YubiKey 2.3 and later.  EXTFLAG_ALLOW_UPDATE will be set by\n"
 "          default\n"
 "-1        change the first configuration.  This is the default and\n"
 "          is normally used for true OTP generation.\n"
@@ -299,14 +299,14 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 		switch (c) {
 		case 'u':
 			if(slot_chosen) {
-			  fprintf(stderr, "You must use update before slot (-1 / -2).\n");
-			  *exit_code = 1;
-			  return 0;
+				fprintf(stderr, "You must use update before slot (-1 / -2).\n");
+				*exit_code = 1;
+				return 0;
 			}
 			if(swap_seen) {
-			  fprintf(stderr, "Update (-u) and swap (-x) can't be combined.\n");
-			  *exit_code = 1;
-			  return 0;
+				fprintf(stderr, "Update (-u) and swap (-x) can't be combined.\n");
+				*exit_code = 1;
+				return 0;
 			}
 			update_seen = true;
 			break;
