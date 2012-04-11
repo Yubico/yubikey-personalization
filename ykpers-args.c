@@ -65,7 +65,7 @@ const char *usage =
 "          char hex value (not modhex)\n"
 "-cXXX..   A 12 char hex value (not modhex) to use as access code for programming\n"
 "          (this does NOT SET the access code, that's done with -oaccess=)\n"
-"-nXXX..   The url to prepend to the OTP when sending OTP over NFC as ndef-type2\n"
+"-nXXX..   The URI to prepend to the OTP when sending OTP over NFC as ndef-type2\n"
 "          smart-tag.  Only available with the YubiKey NEO.\n"
 "-oOPTION  change configuration option.  Possible OPTION arguments are:\n"
 "          salt=ssssssss       Salt to be used when deriving key from a\n"
