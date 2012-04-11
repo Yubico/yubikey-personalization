@@ -301,13 +301,18 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 
 		switch (c) {
 		case 'u':
-			if(slot_chosen) {
+			if (slot_chosen) {
 				fprintf(stderr, "You must use update before slot (-1 / -2).\n");
 				*exit_code = 1;
 				return 0;
 			}
-			if(swap_seen) {
+			if (swap_seen) {
 				fprintf(stderr, "Update (-u) and swap (-x) can't be combined.\n");
+				*exit_code = 1;
+				return 0;
+			}
+			if (ndef_seen) {
+				fprintf(stderr, "Update (-u) can not be combined with ndef (-n).\n");
 				*exit_code = 1;
 				return 0;
 			}
@@ -327,6 +332,11 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 				}
 				if (swap_seen) {
 					fprintf(stderr, "You can not combine slot swap (-x) with configuring a slot.\n");
+					*exit_code = 1;
+					return 0;
+				}
+				if (ndef_seen) {
+					fprintf(stderr, "Slot (-1 / -2) can not be combined with ndef (-n)\n");
 					*exit_code = 1;
 					return 0;
 				}
@@ -366,6 +376,11 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 				*exit_code = 1;
 				return 0;
 			}
+			if (ndef_seen) {
+				fprintf(stderr, "Swap (-x) can not be combined with ndef (-n).\n");
+				*exit_code = 1;
+				return 0;
+			}
 			if (!ykp_configure_command(cfg, SLOT_SWAP)) {
 				return 0;
 			}
@@ -401,7 +416,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 			break;
 		}
 		case 'n':
-			  if (slot_chosen || swap_seen || update_seen) {
+			  if (slot_chosen || swap_seen || update_seen || option_seen) {
 				fprintf(stderr, "Ndef (-n) must be used on it's own.\n");
 				*exit_code = 1;
 				return 0;
