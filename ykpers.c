@@ -129,6 +129,12 @@ int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command)
 			ykp_errno = YKP_EOLDYUBIKEY;
 			return 0;
 		}
+		/* The NEO Beta key is versioned from 2.1.4 but doesn't support slot2 */
+		else if( cfg->yk_major_version == 2 && cfg->yk_minor_version == 1 &&
+			  cfg->yk_build_version >= 4 && cfg->yk_build_version != 9) {
+			ykp_errno = YKP_EYUBIKEYVER;
+			return 0;
+		}
 		break;
 	case SLOT_UPDATE1:
 	case SLOT_UPDATE2:
@@ -335,9 +341,10 @@ static bool vcheck_no_v1(const YKP_CONFIG *cfg)
 
 static bool vcheck_v21_or_greater(const YKP_CONFIG *cfg)
 {
-	return (cfg->yk_major_version == 2 &&
-		cfg->yk_minor_version >= 1) ||
-		cfg->yk_major_version > 2;
+	/* the NEO Beta is versioned from 2.1.4 but shouldn't be identified as a 2.1 above key */
+	return (cfg->yk_major_version == 2 && cfg->yk_minor_version > 1) ||
+		(cfg->yk_major_version == 2 && cfg->yk_minor_version == 1 && cfg->yk_build_version <= 3)
+		|| cfg->yk_major_version > 2;
 }
 
 static bool vcheck_v22_or_greater(const YKP_CONFIG *cfg)
