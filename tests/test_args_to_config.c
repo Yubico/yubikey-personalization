@@ -111,6 +111,7 @@ int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 
 	/* Options */
 	char *salt = NULL;
+	char *ndef = NULL;
 
 	int rc;
 
@@ -126,7 +127,7 @@ int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 			    &autocommit, salt,
 			    st, &verbose,
 			    access_code, &use_access_code,
-			    &aesviahash,
+			    &aesviahash, ndef,
 			    &exit_code);
 
 	return rc;

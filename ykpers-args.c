@@ -421,7 +421,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 				*exit_code = 1;
 				return 0;
 			  }
-			  ndef = optarg;
+			  ndef = strdup(optarg);
 			  ndef_seen = true;
 			  break;
 		case 'o':

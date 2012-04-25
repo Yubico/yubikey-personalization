@@ -38,7 +38,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 		   bool *autocommit, char *salt,
 		   YK_STATUS *st, bool *verbose,
 		   unsigned char *access_code, bool *use_access_code,
-		   bool *aesviahash,
+		   bool *aesviahash, char *ndef,
 		   int *exit_code);
 
 void report_yk_error();

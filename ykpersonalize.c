@@ -65,6 +65,7 @@ int main(int argc, char **argv)
 
 	/* Options */
 	char *salt = NULL;
+	char *ndef = NULL;
 
 	bool error = false;
 	int exit_code = 0;
@@ -124,7 +125,7 @@ int main(int argc, char **argv)
 			     &autocommit, salt,
 			     st, &verbose,
 			     access_code, &use_access_code,
-			     &aesviahash,
+			     &aesviahash, ndef,
 			     &exit_code)) {
 		goto err;
 	}
