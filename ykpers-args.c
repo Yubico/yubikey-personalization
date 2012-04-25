@@ -416,14 +416,17 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 			break;
 		}
 		case 'n':
-			  if (slot_chosen || swap_seen || update_seen || option_seen) {
+			if (slot_chosen || swap_seen || update_seen || option_seen) {
 				fprintf(stderr, "Ndef (-n) must be used on it's own.\n");
 				*exit_code = 1;
 				return 0;
-			  }
-			  ndef = strdup(optarg);
-			  ndef_seen = true;
-			  break;
+			}
+			if (!ykp_configure_command(cfg, SLOT_NDEF)) {
+				return 0;
+			}
+			ndef = strdup(optarg);
+			ndef_seen = true;
+			break;
 		case 'o':
 			if (strncmp(optarg, "salt=", 5) == 0)
 				salt = strdup(optarg+5);
