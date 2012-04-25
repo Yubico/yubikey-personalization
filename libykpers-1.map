@@ -139,5 +139,7 @@ LIBYKPERS_1.7 {
   ykp_set_extflag_FAST_TRIG;
   ykp_set_extflag_ALLOW_UPDATE;
   ykp_set_extflag_DORMANT;
+  yk_write_ndef;
+  ykp_construct_ndef;
 # Variables:
 } LIBYKPERS_1.6;
