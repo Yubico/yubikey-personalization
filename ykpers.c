@@ -78,6 +78,45 @@ static const YK_CONFIG default_config2 = {
 	0			/* crc */
 };
 
+/* From nfcforum-ts-rtd-uri-1.0.pdf */
+static char *ndef_identifiers[] = {
+	"http://www.",
+	"https://www.",
+	"http://",
+	"https://",
+	"tel:",
+	"mailto:",
+	"ftp://anonymous:anonymous@",
+	"ftp://ftp.",
+	"ftps://",
+	"sftp://",
+	"smb://",
+	"nfs://",
+	"ftp://",
+	"dav://",
+	"news:",
+	"telnet://",
+	"imap:",
+	"rtsp://",
+	"urn:",
+	"pop:",
+	"sip:",
+	"sips:",
+	"tftp:",
+	"btspp://",
+	"btl2cap://",
+	"btgoep://",
+	"tcpobex://",
+	"irdaobex://",
+	"file://",
+	"urn:epc:id:",
+	"urn:epc:tag:",
+	"urn:epc:pat:",
+	"urn:epc:raw:",
+	"urn:epc:",
+	"urn:nfc:"
+};
+
 YKP_CONFIG *ykp_create_config(void)
 {
 	YKP_CONFIG *cfg = malloc(sizeof(YKP_CONFIG));
@@ -329,6 +368,33 @@ int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 		memset (buf, 0, sizeof(buf));
 		return rc;
 	}
+	return 0;
+}
+
+/* Fill in the data and len parts of the YKNDEF struct based on supplied uri. */
+int ykp_construct_ndef(YKNDEF *ndef, const char *uri)
+{
+	int num_identifiers = sizeof(ndef_identifiers) / sizeof(char*);
+	int index = 0;
+	for(; index < num_identifiers; index++) {
+		size_t len = strlen(ndef_identifiers[index]);
+		if(strncmp(uri, ndef_identifiers[index], len) == 0) {
+			uri += len;
+			break;
+		}
+	}
+	if(index > num_identifiers) {
+		ndef->data[0] = 0;
+	} else {
+		ndef->data[0] = index + 1;
+	}
+	size_t data_length = strlen(uri);
+	if(data_length + 1 > NDEF_DATA_SIZE) {
+		ykp_errno = YKP_EINVAL;
+		return 1;
+	}
+	memcpy(ndef->data + 1, uri, data_length);
+	ndef->len = data_length + 1;
 	return 0;
 }
 
