@@ -424,7 +424,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 			if (!ykp_configure_command(cfg, SLOT_NDEF)) {
 				return 0;
 			}
-			ndef = strdup(optarg);
+			memcpy(ndef, optarg, strnlen(optarg, 128));
 			ndef_seen = true;
 			break;
 		case 'o':
@@ -613,7 +613,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 		}
 	}
 
-	if (!slot_chosen) {
+	if (!slot_chosen && !ndef_seen) {
 		fprintf(stderr, "A slot must be chosen with -1 or -2.\n");
 		*exit_code = 1;
 		return 0;
