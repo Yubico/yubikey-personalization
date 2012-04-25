@@ -250,6 +250,45 @@ int yk_write_config(YK_KEY *yk, YK_CONFIG *cfg, int confnum,
 	}
 }
 
+int yk_write_ndef(YK_KEY *yk, YKNDEF *ndef)
+{
+	unsigned char buf[sizeof(YKNDEF)];
+	YK_STATUS stat;
+	int seq;
+
+	/* Get current sequence # from status block */
+
+	if (!yk_get_status(yk, &stat))
+		return 0;
+
+	seq = stat.pgmSeq;
+
+	/* Insert config block in buffer */
+
+	memset(buf, 0, sizeof(buf));
+	memcpy(buf, ndef, sizeof(YKNDEF));
+
+	/* Write to Yubikey */
+	if (!yk_write_to_key(yk, SLOT_NDEF, buf, sizeof(buf)))
+		return 0;
+
+	/* When the Yubikey clears the SLOT_WRITE_FLAG, it has processed the last write.
+	 * This wait can't be done in yk_write_to_key since some users of that function
+	 * want to get the bytes in the status message, but when writing configuration
+	 * we don't expect any data back.
+	 */
+	yk_wait_for_key_status(yk, SLOT_NDEF, 0, WAIT_FOR_WRITE_FLAG, false, SLOT_WRITE_FLAG, NULL);
+
+	/* Verify update */
+
+	if (!yk_get_status(yk, &stat /*, 0*/))
+		return 0;
+
+	yk_errno = YK_EWRITEERR;
+	return stat.pgmSeq != seq;
+}
+
+
 int * const _yk_errno_location(void)
 {
 	static int tsd_init = 0;
