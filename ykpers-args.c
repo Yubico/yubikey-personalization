@@ -423,6 +423,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 			  }
 			  ndef = optarg;
 			  ndef_seen = true;
+			  break;
 		case 'o':
 			if (strncmp(optarg, "salt=", 5) == 0)
 				salt = strdup(optarg+5);
