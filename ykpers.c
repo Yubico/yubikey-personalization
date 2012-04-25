@@ -45,6 +45,7 @@
 struct ykp_config_t {
 	unsigned int yk_major_version;
 	unsigned int yk_minor_version;
+	unsigned int yk_build_version;
 	unsigned int command;
 
 	YK_CONFIG ykcore_config;
@@ -85,6 +86,7 @@ YKP_CONFIG *ykp_create_config(void)
 		       sizeof(default_config1));
 		cfg->yk_major_version = 1;
 		cfg->yk_minor_version = 3;
+		cfg->yk_build_version = 0;
 		cfg->command = SLOT_CONFIG;
 		return cfg;
 	}
@@ -114,6 +116,7 @@ void ykp_configure_version(YKP_CONFIG *cfg, YK_STATUS *st)
 {
 	cfg->yk_major_version = st->versionMajor;
 	cfg->yk_minor_version = st->versionMinor;
+	cfg->yk_build_version = st->versionBuild;
 }
 
 int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command)
