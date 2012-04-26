@@ -483,9 +483,14 @@ static bool capability_has_oath_imf(const YKP_CONFIG *cfg)
 	return vcheck_v22_or_greater(cfg) || vcheck_neo(cfg);
 }
 
-static bool capability_has_serial(const YKP_CONFIG *cfg)
+static bool capability_has_serial_api(const YKP_CONFIG *cfg)
 {
 	return vcheck_v22_or_greater(cfg) || vcheck_neo(cfg);
+}
+
+static bool capability_has_serial(const YKP_CONFIG *cfg)
+{
+	return vcheck_v22_or_greater(cfg);
 }
 
 static bool capability_has_oath(const YKP_CONFIG *cfg)
@@ -663,7 +668,7 @@ def_set_cfgflag(CHAL_BTN_TRIG,capability_has_chal_resp)
 
 def_set_extflag(SERIAL_BTN_VISIBLE,capability_has_serial)
 def_set_extflag(SERIAL_USB_VISIBLE,capability_has_serial)
-def_set_extflag(SERIAL_API_VISIBLE,capability_has_serial)
+def_set_extflag(SERIAL_API_VISIBLE,capability_has_serial_api)
 def_set_extflag(USE_NUMERIC_KEYPAD,capability_has_numeric)
 def_set_extflag(FAST_TRIG,capability_has_fast)
 def_set_extflag(ALLOW_UPDATE,capability_has_update)
@@ -737,13 +742,13 @@ struct map_st config_flags_map[] = {
 
 const char str_extended_flags[] = "extended_flags";
 struct map_st extended_flags_map[] = {
-	{ EXTFLAG_SERIAL_BTN_VISIBLE,	"SERIAL_BTN_VISIBLE",	capability_has_serial,	0 },
-	{ EXTFLAG_SERIAL_USB_VISIBLE,	"SERIAL_USB_VISIBLE",	capability_has_serial ,	0 },
-	{ EXTFLAG_SERIAL_API_VISIBLE,	"SERIAL_API_VISIBLE",	capability_has_serial,	0 },
-	{ EXTFLAG_USE_NUMERIC_KEYPAD,	"USE_NUMERIC_KEYPAD",	capability_has_numeric,	0 },
-	{ EXTFLAG_FAST_TRIG,		"FAST_TRIG",		capability_has_fast,	0 },
-	{ EXTFLAG_ALLOW_UPDATE,		"ALLOW_UPDATE",		capability_has_update,	0 },
-	{ EXTFLAG_DORMANT,		"DORMANT",		capability_has_dormant,	0 },
+	{ EXTFLAG_SERIAL_BTN_VISIBLE,	"SERIAL_BTN_VISIBLE",	capability_has_serial,		0 },
+	{ EXTFLAG_SERIAL_USB_VISIBLE,	"SERIAL_USB_VISIBLE",	capability_has_serial ,		0 },
+	{ EXTFLAG_SERIAL_API_VISIBLE,	"SERIAL_API_VISIBLE",	capability_has_serial_api,	0 },
+	{ EXTFLAG_USE_NUMERIC_KEYPAD,	"USE_NUMERIC_KEYPAD",	capability_has_numeric,		0 },
+	{ EXTFLAG_FAST_TRIG,		"FAST_TRIG",		capability_has_fast,		0 },
+	{ EXTFLAG_ALLOW_UPDATE,		"ALLOW_UPDATE",		capability_has_update,		0 },
+	{ EXTFLAG_DORMANT,		"DORMANT",		capability_has_dormant,		0 },
 	{ 0, "", 0 }
 };
 
