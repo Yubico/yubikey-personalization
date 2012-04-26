@@ -48,7 +48,7 @@ struct ykp_config_t {
 	unsigned int yk_major_version;
 	unsigned int yk_minor_version;
 	unsigned int yk_build_version;
-	unsigned int configuration_number;
+	unsigned int command;
 
 	struct config_st *ykcore_config;
 };
