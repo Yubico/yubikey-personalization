@@ -65,8 +65,8 @@ const char *usage =
 "          char hex value (not modhex)\n"
 "-cXXX..   A 12 char hex value (not modhex) to use as access code for programming\n"
 "          (this does NOT SET the access code, that's done with -oaccess=)\n"
-"-nXXX..   The URI to prepend to the OTP when sending OTP over NFC as ndef-type2\n"
-"          smart-tag.  Only available with the YubiKey NEO.\n"
+"-nXXX..   Write NDEF type 2 URI to YubiKey NEO, must be used on it's own\n"
+"-tXXX..   Write NDEF type 2 text to YubiKey NEO, must be used on it's own\n"
 "-oOPTION  change configuration option.  Possible OPTION arguments are:\n"
 "          salt=ssssssss       Salt to be used when deriving key from a\n"
 "                              password.  If none is given, a unique random\n"
@@ -140,7 +140,7 @@ const char *usage =
 "-v        verbose\n"
 "-h        help (this text)\n"
 ;
-const char *optstring = "u12xa:c:n:hi:o:s:vy";
+const char *optstring = "u12xa:c:n:t:hi:o:s:vy";
 
 static const YK_CONFIG default_config1 = {
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* fixed */
@@ -249,7 +249,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 		   bool *autocommit, char *salt,
 		   YK_STATUS *st, bool *verbose,
 		   unsigned char *access_code, bool *use_access_code,
-		   bool *aesviahash, char *ndef,
+		   bool *aesviahash, char *ndef_type, char *ndef,
 		   int *exit_code)
 {
 	int c;
@@ -415,9 +415,14 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 			*use_access_code = true;
 			break;
 		}
+		case 't':
+			*ndef_type = 'T';
 		case 'n':
+			if(!*ndef_type) {
+				*ndef_type = 'U';
+			}
 			if (slot_chosen || swap_seen || update_seen || option_seen) {
-				fprintf(stderr, "Ndef (-n) must be used on it's own.\n");
+				fprintf(stderr, "Ndef (-n/-t) must be used on it's own.\n");
 				*exit_code = 1;
 				return 0;
 			}

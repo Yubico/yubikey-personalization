@@ -65,7 +65,8 @@ int main(int argc, char **argv)
 
 	/* Options */
 	char *salt = NULL;
-	char ndef_uri[128];
+	char ndef_string[128];
+	char ndef_type;
 
 	bool error = false;
 	int exit_code = 0;
@@ -125,7 +126,7 @@ int main(int argc, char **argv)
 			     &autocommit, salt,
 			     st, &verbose,
 			     access_code, &use_access_code,
-			     &aesviahash, ndef_uri,
+			     &aesviahash, &ndef_type, ndef_string,
 			     &exit_code)) {
 		goto err;
 	}
@@ -229,11 +230,14 @@ int main(int argc, char **argv)
 			if(ykp_command(cfg) == SLOT_NDEF) {
 				YKNDEF ndef;
 				memset(&ndef, 0, sizeof(YKNDEF));
-				ykp_construct_ndef(&ndef, ndef_uri);
+				if(ndef_type == 'U') {
+					ykp_construct_ndef_uri(&ndef, ndef_string);
+				} else if(ndef_type == 'T') {
+					ykp_construct_ndef_text(&ndef, ndef_string);
+				}
 				if(use_access_code) {
 					memcpy(ndef.curAccCode, access_code, ACC_CODE_SIZE);
 				}
-				ndef.type = 'U';
 				if (!yk_write_ndef(yk, &ndef)) {
 					if (verbose)
 						printf(" failure\n");

@@ -372,7 +372,7 @@ int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 }
 
 /* Fill in the data and len parts of the YKNDEF struct based on supplied uri. */
-int ykp_construct_ndef(YKNDEF *ndef, const char *uri)
+int ykp_construct_ndef_uri(YKNDEF *ndef, const char *uri)
 {
 	int num_identifiers = sizeof(ndef_identifiers) / sizeof(char*);
 	int index = 0;
@@ -395,6 +395,21 @@ int ykp_construct_ndef(YKNDEF *ndef, const char *uri)
 	}
 	memcpy(ndef->data + 1, uri, data_length);
 	ndef->len = data_length + 1;
+	ndef->type = 'U';
+	return 0;
+}
+
+/* Fill in the data and len parts of the YKNDEF struct based on supplied text. */
+int ykp_construct_ndef_text(YKNDEF *ndef, const char *text)
+{
+	size_t data_length = strlen(text);
+	if(data_length > NDEF_DATA_SIZE) {
+		ykp_errno = YKP_EINVAL;
+		return 1;
+	}
+	memcpy(ndef->data, text, data_length);
+	ndef->len = data_length;
+	ndef->type = 'T';
 	return 0;
 }
 
@@ -443,7 +458,7 @@ static bool vcheck_neo(const YKP_CONFIG *cfg)
 
 static bool vcheck_neo_before_5(const YKP_CONFIG *cfg)
 {
-	return vcheck_neo && cfg->yk_build_version < 5;
+	return vcheck_neo(cfg) && cfg->yk_build_version < 5;
 }
 
 static bool capability_has_hidtrig(const YKP_CONFIG *cfg)
