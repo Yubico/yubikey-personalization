@@ -170,7 +170,7 @@ int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command)
 		}
 		/* The NEO Beta key is versioned from 2.1.4 but doesn't support slot2 */
 		else if( cfg->yk_major_version == 2 && cfg->yk_minor_version == 1 &&
-			  cfg->yk_build_version >= 4 && cfg->yk_build_version != 9) {
+			  cfg->yk_build_version >= 4) {
 			ykp_errno = YKP_EYUBIKEYVER;
 			return 0;
 		}
@@ -187,7 +187,7 @@ int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command)
 	case SLOT_NDEF:
 		/* NDEF is available for neo, thus within 2.1 from build 4 */
 		if (!(cfg->yk_major_version == 2 && cfg->yk_minor_version == 1 &&
-			  cfg->yk_build_version >= 4 && cfg->yk_build_version != 9))
+			  cfg->yk_build_version >= 4))
 			ykp_errno = YKP_EYUBIKEYVER;
 		break;
 	default:
@@ -437,8 +437,7 @@ static bool vcheck_neo(const YKP_CONFIG *cfg)
 {
 	return (cfg->yk_major_version == 2 &&
 			cfg->yk_minor_version == 1 &&
-			cfg->yk_build_version >= 4 &&
-			cfg->yk_build_version != 9);
+			cfg->yk_build_version >= 4);
 
 }
 
@@ -446,8 +445,7 @@ static bool vcheck_neo_after_4(const YKP_CONFIG *cfg)
 {
 	return (cfg->yk_major_version == 2 &&
 			cfg->yk_minor_version == 1 &&
-			cfg->yk_build_version > 4 &&
-			cfg->yk_build_version != 9);
+			cfg->yk_build_version > 4);
 }
 
 static bool capability_has_hidtrig(const YKP_CONFIG *cfg)

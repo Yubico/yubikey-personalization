@@ -135,8 +135,7 @@ int main(int argc, char **argv)
 			 ykds_version_minor(st) >= 2) ||
 			(ykds_version_major(st) == 2 && // neo has serial functions
 			 ykds_version_minor(st) == 1 &&
-			 ykds_version_build(st) >= 4 &&
-			 ykds_version_build(st) != 9))) {
+			 ykds_version_build(st) >= 4))) {
 		unsigned int serial;
 		if (! yk_get_serial(yk, 0, 0, &serial)) {
 			printf ("Failed to read serial number (serial-api-visible disabled?).\n");
