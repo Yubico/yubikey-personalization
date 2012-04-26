@@ -441,11 +441,9 @@ static bool vcheck_neo(const YKP_CONFIG *cfg)
 
 }
 
-static bool vcheck_neo_after_4(const YKP_CONFIG *cfg)
+static bool vcheck_neo_before_5(const YKP_CONFIG *cfg)
 {
-	return (cfg->yk_major_version == 2 &&
-			cfg->yk_minor_version == 1 &&
-			cfg->yk_build_version > 4);
+	return vcheck_neo && cfg->yk_build_version < 5;
 }
 
 static bool capability_has_hidtrig(const YKP_CONFIG *cfg)
@@ -460,12 +458,12 @@ static bool capability_has_ticket_first(const YKP_CONFIG *cfg)
 
 static bool capability_has_static(const YKP_CONFIG *cfg)
 {
-	return vcheck_all(cfg) && !vcheck_neo_after_4(cfg);
+	return vcheck_all(cfg) && !vcheck_neo_before_5(cfg);
 }
 
 static bool capability_has_static_extras(const YKP_CONFIG *cfg)
 {
-	return vcheck_no_v1(cfg) && !vcheck_neo_after_4(cfg);
+	return vcheck_no_v1(cfg) && !vcheck_neo_before_5(cfg);
 }
 
 static bool capability_has_slot_two(const YKP_CONFIG *cfg)
