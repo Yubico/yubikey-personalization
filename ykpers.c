@@ -385,15 +385,15 @@ int ykp_construct_ndef_uri(YKNDEF *ndef, const char *uri)
 			break;
 		}
 	}
-	if(index > num_identifiers) {
-		ndef->data[0] = 0;
-	} else {
-		ndef->data[0] = index + 1;
-	}
 	size_t data_length = strlen(uri);
 	if(data_length + 1 > NDEF_DATA_SIZE) {
 		ykp_errno = YKP_EINVAL;
 		return 1;
+	}
+	if(index > num_identifiers) {
+		ndef->data[0] = 0;
+	} else {
+		ndef->data[0] = index + 1;
 	}
 	memcpy(ndef->data + 1, uri, data_length);
 	ndef->len = data_length + 1;
