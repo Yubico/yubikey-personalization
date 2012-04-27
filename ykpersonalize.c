@@ -233,7 +233,7 @@ int main(int argc, char **argv)
 				if(ndef_type == 'U') {
 					ykp_construct_ndef_uri(&ndef, ndef_string);
 				} else if(ndef_type == 'T') {
-					ykp_construct_ndef_text(&ndef, ndef_string);
+					ykp_construct_ndef_text(&ndef, ndef_string, "en", false);
 				}
 				if(use_access_code) {
 					memcpy(ndef.curAccCode, access_code, ACC_CODE_SIZE);

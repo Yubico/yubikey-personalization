@@ -76,12 +76,29 @@ void _test_exact_text()
 {
 	YKNDEF ndef;
 	memset(&ndef, 0, sizeof(YKNDEF));
-	char text[] = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-	int rc = ykp_construct_ndef_text(&ndef, text);
+	char text[] = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+	int rc = ykp_construct_ndef_text(&ndef, text, "en", false);
 	assert(rc == 0);
 	assert(ndef.type == 'T');
-	assert(strncmp(ndef.data, text, NDEF_DATA_SIZE) == 0);
+	assert(ndef.data[0] == 2);
+	assert(strncmp(ndef.data + 1, "en", 2) == 0);
+	assert(strncmp(ndef.data + 3, text, NDEF_DATA_SIZE - 3) == 0);
 	assert(ndef.len == NDEF_DATA_SIZE);
+}
+
+void _test_other_lang_text()
+{
+	YKNDEF ndef;
+	memset(&ndef, 0, sizeof(YKNDEF));
+	char text[] = "aaaaaaaaaaaaaaa";
+	size_t text_len = strlen(text);
+	int rc = ykp_construct_ndef_text(&ndef, text, "sv-SE", true);
+	assert(rc == 0);
+	assert(ndef.type == 'T');
+	assert(ndef.data[0] == (0x80 & 5));
+	assert(strncmp(ndef.data + 1, "sv-SE", 5) == 0);
+	assert(strncmp(ndef.data + 6, text, text_len) == 0);
+	assert(ndef.len == text_len + 6);
 }
 
 int main (void)
@@ -90,6 +107,7 @@ int main (void)
 	_test_to_long_uri();
 	_test_exact_uri();
 	_test_exact_text();
+	_test_other_lang_text();
 
 	return 0;
 }
