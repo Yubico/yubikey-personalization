@@ -402,15 +402,22 @@ int ykp_construct_ndef_uri(YKNDEF *ndef, const char *uri)
 }
 
 /* Fill in the data and len parts of the YKNDEF struct based on supplied text. */
-int ykp_construct_ndef_text(YKNDEF *ndef, const char *text)
+int ykp_construct_ndef_text(YKNDEF *ndef, const char *text, const char *lang, bool isutf16)
 {
 	size_t data_length = strlen(text);
-	if(data_length > NDEF_DATA_SIZE) {
+	size_t lang_length = strlen(lang);
+	char status = lang_length;
+	if(isutf16) {
+		status &= 0x80;
+	}
+	if((data_length + lang_length + 1) > NDEF_DATA_SIZE) {
 		ykp_errno = YKP_EINVAL;
 		return 1;
 	}
-	memcpy(ndef->data, text, data_length);
-	ndef->len = data_length;
+	ndef->data[0] = status;
+	memcpy(ndef->data + 1, lang, lang_length);
+	memcpy(ndef->data + lang_length + 1, text, data_length);
+	ndef->len = data_length + lang_length + 1;
 	ndef->type = 'T';
 	return 0;
 }
