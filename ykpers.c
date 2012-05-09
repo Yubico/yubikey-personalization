@@ -470,6 +470,11 @@ static bool vcheck_neo_before_5(const YKP_CONFIG *cfg)
 	return vcheck_neo(cfg) && cfg->yk_build_version < 5;
 }
 
+static bool vcheck_neo_after_6(const YKP_CONFIG *cfg)
+{
+	return vcheck_neo(cfg) && cfg->yk_build_version > 6;
+}
+
 static bool capability_has_hidtrig(const YKP_CONFIG *cfg)
 {
 	return vcheck_v1(cfg);
@@ -502,7 +507,7 @@ static bool capability_has_chal_resp(const YKP_CONFIG *cfg)
 
 static bool capability_has_oath_imf(const YKP_CONFIG *cfg)
 {
-	return vcheck_v22_or_greater(cfg) || vcheck_neo(cfg);
+	return vcheck_v22_or_greater(cfg) || vcheck_neo_after_6(cfg);
 }
 
 static bool capability_has_serial_api(const YKP_CONFIG *cfg)
