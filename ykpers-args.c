@@ -303,21 +303,13 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 			if (strncmp(optarg, "salt=", 5) == 0)
 				salt = strdup(optarg+5);
 			else if (strncmp(optarg, "fixed=", 6) == 0) {
-				const char *fixed = optarg+6;
-				size_t fixedlen = strlen (fixed);
-				unsigned char fixedbin[256];
-				size_t fixedbinlen = 0;
-				int rc = hex_modhex_decode(fixedbin, &fixedbinlen,
-							   fixed, fixedlen,
-							   0, 16, true);
-				if (rc <= 0) {
+				if (_set_fixed(optarg + 6, cfg) != 1) {
 					fprintf(stderr,
 						"Invalid fixed string: %s\n",
-						fixed);
+						optarg + 6);
 					*exit_code = 1;
 					return 0;
 				}
-				ykp_set_fixed(cfg, fixedbin, fixedbinlen);
 			}
 			else if (strncmp(optarg, "uid=", 4) == 0) {
 				const char *uid = optarg+4;
@@ -508,5 +500,20 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		}
 	}
 
+	return 1;
+}
+
+int _set_fixed(char *optarg, YKP_CONFIG *cfg) {
+	const char *fixed = optarg;
+	size_t fixedlen = strlen (fixed);
+	unsigned char fixedbin[256];
+	size_t fixedbinlen = 0;
+	int rc = hex_modhex_decode(fixedbin, &fixedbinlen,
+				   fixed, fixedlen,
+				   0, 16, true);
+	if (rc <= 0)
+		return 0;
+
+	ykp_set_fixed(cfg, fixedbin, fixedbinlen);
 	return 1;
 }
