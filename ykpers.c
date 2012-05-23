@@ -460,6 +460,7 @@ const char str_key_value_separator[] = ": ";
 const char str_hex_prefix[] = "h:";
 const char str_modhex_prefix[] = "m:";
 const char str_fixed[] = "fixed";
+const char str_oath_id[] = "OATH id";
 const char str_uid[] = "uid";
 const char str_key[] = "key";
 const char str_acc_code[] = "acc_code";
@@ -546,18 +547,49 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		 */
 		key_bits_in_uid = (_get_supported_key_length(cfg) == 20);
 
-		/* fixed: */
-		writer(str_fixed, strlen(str_fixed), userdata);
-		writer(str_key_value_separator,
-		       strlen(str_key_value_separator),
-		       userdata);
-		/* XXX print OATH-HOTP fixed differently based on oath-fixed-modhex etc. */
-		writer(str_modhex_prefix,
-		       strlen(str_modhex_prefix),
-		       userdata);
-		yubikey_modhex_encode(buffer, (char *)cfg->ykcore_config.fixed, cfg->ykcore_config.fixedSize);
-		writer(buffer, strlen(buffer), userdata);
-		writer("\n", 1, userdata);
+		/* fixed: or OATH id: */
+		if ((cfg->ykcore_config.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP &&
+		    cfg->ykcore_config.fixedSize) {
+			writer(str_oath_id, strlen(str_oath_id), userdata);
+			writer(str_key_value_separator,
+			       strlen(str_key_value_separator),
+			       userdata);
+			/* First byte (vendor id) */
+			if ((cfg->ykcore_config.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX1) == CFGFLAG_OATH_FIXED_MODHEX1 ||
+			    (cfg->ykcore_config.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX2) == CFGFLAG_OATH_FIXED_MODHEX2 ||
+			    (cfg->ykcore_config.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX) == CFGFLAG_OATH_FIXED_MODHEX) {
+				yubikey_modhex_encode(buffer, (char *)cfg->ykcore_config.fixed, 1);
+			} else {
+				yubikey_hex_encode(buffer, (char *)cfg->ykcore_config.fixed, 1);
+			}
+			/* Second byte (token type) */
+			if ((cfg->ykcore_config.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX2) == CFGFLAG_OATH_FIXED_MODHEX2 ||
+			    (cfg->ykcore_config.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX) == CFGFLAG_OATH_FIXED_MODHEX) {
+				yubikey_modhex_encode(buffer + 2, (char *)cfg->ykcore_config.fixed + 1, 1);
+			} else {
+				yubikey_hex_encode(buffer + 2, (char *)cfg->ykcore_config.fixed + 1, 1);
+			}
+			/* bytes 3-12 - MUI */
+			if ((cfg->ykcore_config.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX) == CFGFLAG_OATH_FIXED_MODHEX) {
+				yubikey_modhex_encode(buffer + 4, (char *)cfg->ykcore_config.fixed + 2, 8);
+			} else {
+				yubikey_hex_encode(buffer + 4, (char *)cfg->ykcore_config.fixed + 2, 8);
+			}
+			buffer[12] = 0;
+			writer(buffer, strlen(buffer), userdata);
+			writer("\n", 1, userdata);
+		} else {
+			writer(str_fixed, strlen(str_fixed), userdata);
+			writer(str_key_value_separator,
+			       strlen(str_key_value_separator),
+			       userdata);
+			writer(str_modhex_prefix,
+			       strlen(str_modhex_prefix),
+			       userdata);
+			yubikey_modhex_encode(buffer, (char *)cfg->ykcore_config.fixed, cfg->ykcore_config.fixedSize);
+			writer(buffer, strlen(buffer), userdata);
+			writer("\n", 1, userdata);
+		}
 
 		/* uid: */
 		writer(str_uid, strlen(str_uid), userdata);
