@@ -189,7 +189,7 @@ void report_yk_error()
  *
  * Done in this way to be testable (see tests/test_args_to_config.c).
  */
-int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
+int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		   const char **infname, const char **outfname,
 		   bool *autocommit, char *salt,
 		   YK_STATUS *st, bool *verbose,

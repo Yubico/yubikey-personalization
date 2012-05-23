@@ -42,6 +42,7 @@
 #include <ykcore.h>
 #include <ykcore_lcl.h>
 */
+#include <ykpers-args.h>
 
 /* duplicated from ykpers.c */
 struct ykp_config_t {
@@ -120,8 +121,8 @@ int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 	/* copy version number from st into cfg */
 	assert(ykp_configure_for(cfg, 1, st) == 1);
 
-	/* call args_to_config from ykpersonalize.c with a fake set of program arguments */
-	rc = args_to_config(argc, argv, cfg,
+	/* call args_to_config from ykpers-args.c with a fake set of program arguments */
+	rc = args_to_config(argc, argv, cfg, yk,
 			    &infname, &outfname,
 			    &autocommit, salt,
 			    st, &verbose,
@@ -299,8 +300,8 @@ int _test_non_config_args(void)
 	/* copy version number from st into cfg */
 	assert(ykp_configure_for(cfg, 1, st) == 1);
 
-	/* call args_to_config from ykpersonalize.c with a fake set of program arguments */
-	rc = args_to_config(argc, argv, cfg,
+	/* call args_to_config from ykpers-args.c with a fake set of program arguments */
+	rc = args_to_config(argc, argv, cfg, yk,
 			    &infname, &outfname,
 			    &autocommit, salt,
 			    st, &verbose,
