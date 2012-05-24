@@ -1,6 +1,11 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.6.4 (unreleased)
+* Version 1.6.4 (released 2012-05-24)
+
+** Implement option -ooath-id to easily set OATH token identifier.
+
+** Fix numerous compiler warnings from clang. Thanks to
+Clemens Lang <neverpanic@gmail.com>.
 
 * Version 1.6.3 (released 2011-12-15)
 
