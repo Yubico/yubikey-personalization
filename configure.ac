@@ -37,7 +37,7 @@ AC_CONFIG_MACRO_DIR([m4])
 # Interfaces added:                             AGE++
 # Interfaces removed:                           AGE=0
 AC_SUBST(LT_CURRENT, 7)
-AC_SUBST(LT_REVISION, 2)
+AC_SUBST(LT_REVISION, 3)
 AC_SUBST(LT_AGE, 6)
 
 AM_INIT_AUTOMAKE([-Wall -Werror])
