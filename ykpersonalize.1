@@ -218,6 +218,12 @@ When set, the first two bytes of the fixed part is sent as modhex.
 [\-]\fBoath-fixed-modhex\fR
 When set, the fixed part is sent as modhex.
 .TP
+\fBoath-id=m:OOTTUUUUUUUU\fR
+Configure OATH token id with a provided value.  See description of
+this option under the 2.2 section for details, but note that a YubiKey
+2.1 key can't report it's serial number and thus a token identifier value
+must be specified.
+.TP
 \fBYubiKey 2.2 firmware and above\fR
 .TP
 [\-]\fBchal-yubico\fR
@@ -242,16 +248,30 @@ The YubiKey will indicate it's serial number in the USB iSerial field.
 .TP
 [\-]\fBserial-api-visible\fR
 The YubiKey will allow it's serial number to be read using an API call.
+.TP
+\fBoath-id[=m:OOTTUUUUUUUU]\fR
+Configure OATH token id with a provided value, or if used without a value use the
+standard YubiKey token identifier.
+
+The standard OATH token id for a Yubico YubiKey is (modhex) OO=ub, TT=he,
+(decimal) UUUUUUUU=serial number.
+
+The reason for the decimal serial number is to make it easy for humans to correlate
+the serial number on the back of the YubiKey to an entry in a list of associated
+tokens for example.  Other encodings can be accomplished using the appropriate
+oath-fixed-modhex options.
+
+Note that the YubiKey must be programmed to allow reading it's serial number,
+otherwise automatic token id creation is not possible.
+
+See section "5.3.4 - OATH-HOTP Token Identifier" of the
+.URL "http://yubico.com/files/YubiKey_manual-2.0.pdf" "YubiKey manual"
+for further details.
 
 .SH OATH-HOTP Mode
 When using OATH-HOTP mode, a HMAC key of 160 bits (20 bytes, 40 chars of hex)
 can be supplied with -a.
 .PP
-The token identifier can be set with the -ofixed= option.
-See section "5.3.4 - OATH-HOTP Token Identifier" of the
-.URL "http://yubico.com/files/YubiKey_manual-2.0.pdf" "YubiKey manual"
-for details, but in short the token identifier is 2 bytes manufacturer prefix,
-2 bytes token type and then 8 bytes manufacturer unique ID.
 
 .SH Challenge-response Mode
 In \fBCHAL-RESP\fR mode, the token will NOT generate any keypresses when the button
