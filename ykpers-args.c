@@ -561,12 +561,6 @@ int _format_oath_id(uint8_t *dst, size_t dst_len, uint8_t vendor, uint8_t type, 
 	/* Make the YubiKey output the MUI number in decimal */
 	snprintf(buf, sizeof(buf), "%08i", mui);
 
-	{
-		char buffer[256];
-		yubikey_hex_encode(buffer, (char *)buf, sizeof(buf));
-		printf ("INPUT: %s\n", buffer);
-	}
-
 	dst[0] = vendor;
 	dst[1] = type;
 
