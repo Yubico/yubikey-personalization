@@ -121,7 +121,7 @@ int main(int argc, char **argv)
 	}
 
 	/* Parse all arguments in a testable way */
-	if (! args_to_config(argc, argv, cfg,
+	if (! args_to_config(argc, argv, cfg, yk,
 			     &infname, &outfname,
 			     &autocommit, salt,
 			     st, &verbose,

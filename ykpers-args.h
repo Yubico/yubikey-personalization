@@ -33,7 +33,7 @@
 
 const char *usage;
 
-int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
+int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		   const char **infname, const char **outfname,
 		   bool *autocommit, char *salt,
 		   YK_STATUS *st, bool *verbose,

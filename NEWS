@@ -27,6 +27,13 @@ yk_write_ndef() to write the constructed NDEF.
 Writing NDEF URI with -n http://example.com/foo/
 Writing NDEF Text record with -t example
 
+* Version 1.6.4 (released 2012-05-24)
+
+** Implement option -ooath-id to easily set OATH token identifier.
+
+** Fix numerous compiler warnings from clang. Thanks to
+Clemens Lang <neverpanic@gmail.com>.
+
 * Version 1.6.3 (released 2011-12-15)
 
 ** No real change for regular users. Fix a bug in a test case for

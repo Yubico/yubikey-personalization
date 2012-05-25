@@ -117,6 +117,8 @@ extern int yk_write_config(YK_KEY *k, YK_CONFIG *cfg, int confnum,
 /* Write something to the YubiKey (a command that is). */
 extern int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount);
 
+extern int yk_force_key_update(YK_KEY *yk);
+
 /*************************************************************************
  *
  * Error handling fuctions

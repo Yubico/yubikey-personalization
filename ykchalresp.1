@@ -74,7 +74,7 @@ The YubiKey challenge-response operation can be demonstrated using the
 First, program a YubiKey with the test vector :
 .HP
 .nf
-$ \fBykpersonalize -2 -ochal-resp -ochal-hmac -ohmac-lt64 -a 303132333435363738393a3b3c3d3e3f40414243\fR
+$ \fBykpersonalize \-2 \-ochal\-resp \-ochal\-hmac \-ohmac\-lt64 \-a 303132333435363738393a3b3c3d3e3f40414243\fR
  ...
 Commit? (y/n) [n]: y
 $
@@ -84,7 +84,7 @@ Now, send the NIST test challenge to the YubiKey and verify the result matches t
 expected :
 .HP
 .nf
-$ \fBykchalresp -2 'Sample #2'\fR
+$ \fBykchalresp \-2 'Sample #2'\fR
 0922d3405faa3d194f82a45830737d5cc6c75d24
 $
 .fi

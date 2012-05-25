@@ -42,6 +42,9 @@
 #include <yubikey.h> /* To get yubikey_modhex_encode and yubikey_hex_encode */
 #include <ykdef.h>
 
+#define YUBICO_OATH_VENDOR_ID_HEX	0xe1	/* UB as hex */
+#define YUBICO_HOTP_EVENT_TOKEN_TYPE	0x63	/* HE as hex */
+
 const char *usage =
 "Usage: ykpersonalize [options]\n"
 "-u        update configuration without overwriting.  This is only available\n"
@@ -78,6 +81,7 @@ const char *usage =
 "          access=xxxxxxxxxxx  New access code to set, in HEX.\n"
 "                              MUST be 12 characters long.\n"
 "          oath-imf=IMF        OATH Initial Moving Factor to use.\n"
+"          oath-id[=h:OOTT...] OATH Token Identifier (none for serial-based)\n"
 "\n"
 "          Ticket flags for all firmware versions:\n"
 "          [-]tab-first           set/clear TAB_FIRST\n"
@@ -244,7 +248,7 @@ void report_yk_error()
  *
  * Done in this way to be testable (see tests/test_args_to_config.c).
  */
-int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
+int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		   const char **infname, const char **outfname,
 		   bool *autocommit, char *salt,
 		   YK_STATUS *st, bool *verbose,
@@ -436,21 +440,13 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 			if (strncmp(optarg, "salt=", 5) == 0)
 				salt = strdup(optarg+5);
 			else if (strncmp(optarg, "fixed=", 6) == 0) {
-				const char *fixed = optarg+6;
-				size_t fixedlen = strlen (fixed);
-				unsigned char fixedbin[256];
-				size_t fixedbinlen = 0;
-				int rc = hex_modhex_decode(fixedbin, &fixedbinlen,
-							   fixed, fixedlen,
-							   0, 16, true);
-				if (rc <= 0) {
+				if (_set_fixed(optarg + 6, cfg) != 1) {
 					fprintf(stderr,
 						"Invalid fixed string: %s\n",
-						fixed);
+						optarg + 6);
 					*exit_code = 1;
 					return 0;
 				}
-				ykp_set_fixed(cfg, fixedbin, fixedbinlen);
 			}
 			else if (strncmp(optarg, "uid=", 4) == 0) {
 				const char *uid = optarg+4;
@@ -575,6 +571,12 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 					return 0;
 				}
 			}
+			else if (strncmp(optarg, "oath-id=", 8) == 0 || strcmp(optarg, "oath-id") == 0) {
+				if (_set_oath_id(optarg, cfg, ycfg, yk, st) != 1) {
+					*exit_code = 1;
+					return 0;
+				}
+			}
 
 #define EXTFLAG(o, f)							\
 			else if (strcmp(optarg, o) == 0) {		\
@@ -666,6 +668,127 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg,
 		if (res) {
 			fprintf(stderr, "Bad %s key: %s\n", long_key_valid ? "HMAC":"AES", aeshash);
 			fflush(stderr);
+			return 0;
+		}
+	}
+
+	return 1;
+}
+
+int _set_fixed(char *optarg, YKP_CONFIG *cfg) {
+	const char *fixed = optarg;
+	size_t fixedlen = strlen (fixed);
+	unsigned char fixedbin[256];
+	size_t fixedbinlen = 0;
+	int rc = hex_modhex_decode(fixedbin, &fixedbinlen,
+				   fixed, fixedlen,
+				   0, 16, true);
+	if (rc <= 0)
+		return 0;
+
+	ykp_set_fixed(cfg, fixedbin, fixedbinlen);
+	return 1;
+}
+
+
+/* re-format decimal 12345678 into 'hex' 0x12 0x34 0x56 0x78 */
+int _format_decimal_as_hex(uint8_t *dst, size_t dst_len, uint8_t *src)
+{
+	uint8_t *end;
+
+	end = dst + dst_len;
+	while (src[0] && src[1]) {
+		if (dst >= end)
+			return 0;
+		*dst = ((src[0] - '0') * 0x10) + src[1] - '0';
+		dst++;
+		src += 2;
+	}
+
+	return 1;
+}
+
+/* For details, see YubiKey Manual 2010-09-16 section 5.3.4 - OATH-HOTP Token Identifier */
+int _format_oath_id(uint8_t *dst, size_t dst_len, uint8_t vendor, uint8_t type, uint32_t mui)
+{
+	uint8_t buf[8 + 1];
+
+	if (mui > 99999999)
+		return 0;
+
+	/* two bytes vendor and token type, and eight bytes MUI */
+	if (dst_len < 2 + 8)
+		return 0;
+
+	/* Make the YubiKey output the MUI number in decimal */
+	snprintf(buf, sizeof(buf), "%08i", mui);
+
+	dst[0] = vendor;
+	dst[1] = type;
+
+	if (_format_decimal_as_hex(dst + 2, dst_len - 2, buf) != 1)
+		return 0;
+
+	return 1;
+}
+
+int _set_oath_id(char *optarg, YKP_CONFIG *cfg, struct config_st *ycfg, YK_KEY *yk, YK_STATUS *st) {
+	/* For details, see YubiKey Manual 2010-09-16 section 5.3.4 - OATH-HOTP Token Identifier */
+	if (!(ycfg->tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP) {
+		fprintf(stderr,
+			"Option oath-id= only valid with -ooath-hotp or -ooath-hotp8.\n"
+			);
+		return 0;
+	}
+	if (! ykp_set_cfgflag_OATH_FIXED_MODHEX2(cfg, true))
+		return 0;
+	if (! ykp_set_extflag_SERIAL_API_VISIBLE(cfg, true))
+		return 0;
+
+	if (strlen(optarg) > 7) {
+		if (_set_fixed(optarg + 8, cfg) != 1) {
+			fprintf(stderr,
+				"Invalid OATH token identifier %s supplied with oath-id=.\n", optarg + 8
+				);
+			return 0;
+		}
+	} else {
+		/* No Token Id supplied, try to create one automatically based on
+		 * the serial number of the YubiKey.
+		 */
+		unsigned int serial;
+		uint8_t oath_id[12] = {0};
+		if (ykds_version_major(st) > 2 ||
+		    (ykds_version_major(st) == 2 &&
+		     ykds_version_minor(st) >= 2)) {
+			if (! yk_get_serial(yk, 0, 0, &serial)) {
+				fprintf(stderr,
+					"YubiKey refuses reading serial number. "
+					"Can't use -ooath-id.\n"
+					);
+				return 0;
+			}
+		} else {
+			fprintf(stderr,
+				"YubiKey %d.%d.%d does not support reading serial number. "
+				"Can't use -ooath-id.\n",
+				ykds_version_major(st),
+				ykds_version_minor(st),
+				ykds_version_build(st)
+				);
+			return 0;
+		}
+
+		if (_format_oath_id(oath_id, sizeof(oath_id), YUBICO_OATH_VENDOR_ID_HEX,
+				    YUBICO_HOTP_EVENT_TOKEN_TYPE, serial) != 1) {
+			fprintf(stderr, "Failed formatting OATH token identifier.\n");
+			return 0;
+		}
+
+		if (ykp_set_fixed(cfg, oath_id, 6) != 1) {
+			fprintf(stderr,
+				"Failed setting OATH token identifier.\n"
+				);
 			return 0;
 		}
 	}
