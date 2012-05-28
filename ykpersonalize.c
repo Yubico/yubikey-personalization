@@ -66,7 +66,7 @@ int main(int argc, char **argv)
 	/* Options */
 	char *salt = NULL;
 	char ndef_string[128] = {0};
-	char ndef_type;
+	char ndef_type = NULL;
 
 	bool error = false;
 	int exit_code = 0;

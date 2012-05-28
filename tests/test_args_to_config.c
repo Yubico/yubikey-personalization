@@ -114,7 +114,7 @@ int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 	/* Options */
 	char *salt = NULL;
 	char ndef[128];
-	char ndef_type;
+	char ndef_type = NULL;
 
 	int rc;
 
@@ -290,6 +290,8 @@ int _test_non_config_args(void)
 
 	/* Options */
 	char *salt = NULL;
+	char ndef[128];
+	char ndef_type = NULL;
 
 	char *argv[] = {
 		"unittest", "-1", "-sout", "-iin", "-c313233343536", "-y", "-v",
@@ -310,7 +312,7 @@ int _test_non_config_args(void)
 			    &autocommit, salt,
 			    st, &verbose,
 			    access_code, &use_access_code,
-			    &aesviahash,
+			    &aesviahash, &ndef_type, ndef,
 			    &exit_code);
 	assert(rc == 1);
 	i = strcmp(infname, "in"); assert(i == 0);
