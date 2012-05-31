@@ -26,11 +26,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-LIBYUBIKEYVERSION=1.7
+LIBYUBIKEYVERSION=1.8
 PROJECT=yubikey-personalization
 PACKAGE=ykpers
 
-all: usage hack-wine ykpers4win32 ykpers4win64
+all: usage ykpers4win32 ykpers4win64
 
 .PHONY: usage
 usage:
@@ -43,11 +43,11 @@ usage:
 	fi
 
 
-DLLS=$(HOME)/.wine/drive_c/windows/system32
-.PHONY: hack-wine
-hack-wine:
-	test -L $(DLLS)/libyubikey-0.dll || \
-		ln -sv $(PWD)/tmp/root/bin/libyubikey-0.dll $(DLLS)/
+#DLLS=$(HOME)/.wine/drive_c/windows/system32
+#.PHONY: hack-wine
+#hack-wine:
+#	test -L $(DLLS)/libyubikey-0.dll || \
+#		ln -sv $(PWD)/tmp/root/bin/libyubikey-0.dll $(DLLS)/
 
 ykpers4win:
 	rm -rf tmp && mkdir tmp && cd tmp && \
