@@ -29,7 +29,7 @@
 
 AM_LDFLAGS = -no-install
 AM_CFLAGS=-I$(srcdir)/.. -I$(srcdir)/../ykcore
-LDADD = ../libykpers-1.la
+LDADD = ../libykpers-1.la $(LTLIBYUBIKEY)
 
 ctests = selftest test_args_to_config test_key_generation
 check_PROGRAMS = $(ctests)
