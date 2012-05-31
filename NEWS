@@ -2,6 +2,8 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
 * Version 1.6.5 (unreleased)
 
+** Windows: Bump yubico-c dependency to version 1.9.
+
 ** Windows: Build fixes related to self checks.
 
 * Version 1.6.4 (released 2012-05-24)

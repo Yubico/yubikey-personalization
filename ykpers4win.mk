@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-LIBYUBIKEYVERSION=1.7
+LIBYUBIKEYVERSION=1.9
 PROJECT=yubikey-personalization
 PACKAGE=ykpers
 
@@ -44,7 +44,8 @@ usage:
 
 ykpers4win:
 	rm -rf tmp && mkdir tmp && cd tmp && \
-	wget http://yubico-c.googlecode.com/files/libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
+	cp ../libyubikey-$(LIBYUBIKEYVERSION).tar.gz . \
+		|| 	wget http://yubico-c.googlecode.com/files/libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
 	tar xfa libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
 	cd libyubikey-$(LIBYUBIKEYVERSION) && \
 	./configure --host=$(HOST) --build=x86_64-unknown-linux-gnu --prefix=$(PWD)/tmp/root && \
