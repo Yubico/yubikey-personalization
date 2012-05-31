@@ -71,7 +71,7 @@ ykpers4win32:
 	$(MAKE) -f ykpers4win.mk ykpers4win ARCH=32 HOST=i686-w64-mingw32 CHECK=check
 
 ykpers4win64:
-	$(MAKE) -f ykpers4win.mk ykpers4win ARCH=64 HOST=x86_64-w64-mingw32 CHECK=
+	$(MAKE) -f ykpers4win.mk ykpers4win ARCH=64 HOST=x86_64-w64-mingw32 CHECK=check
 
 upload-ykpers4win:
 	gpg --detach-sign --default-key $(PGPKEYID) \
