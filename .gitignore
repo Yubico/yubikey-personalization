@@ -60,8 +60,11 @@ ykcore/ykstatus.o
 ykpbkdf2.lo
 ykpbkdf2.o
 ykpers-*.tar.gz
-ykpers-1.5.1-win32.zip
-ykpers-1.5.1-win64.zip
+ykpers-*.tar.gz.sig
+ykpers-*-win32.zip
+ykpers-*-win32.zip.sig
+ykpers-*-win64.zip
+ykpers-*-win64.zip.sig
 ykpers-1.pc
 ykpers-args.o
 ykpers.lo
