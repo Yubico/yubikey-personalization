@@ -1,5 +1,7 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.7.1 (unreleased)
+
 * Version 1.7.0 (released 2012-06-07)
 
 ** Add support for new features in YubiKey 2.3:
