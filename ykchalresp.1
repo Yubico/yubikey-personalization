@@ -36,14 +36,13 @@ ykchalresp - Perform challenge-response operation with YubiKey
 .SH SYNOPSIS
 .B ykchalresp
 [\fI-1\fR | \fI-2\fR] [\fI-H\fR] [\fI-Y\fR] [\fI-N\fR] [\fI-x\fR] [\fI-v\fR] [\fI-h\fR]
-.\".SH DESCRIPTION
-.\" Add any additional description here
-.SH OPTIONS
+.SH DESCRIPTION
 .PP
 Send a challenge to a YubiKey, and read the response.  The YubiKey can be configured
 with two different C/R modes -- the standard one is a 160 bits HMAC-SHA1, and the other
 is a YubiKey OTP mimicing mode, meaning two subsequent calls with the same challenge
 will result in different responses.
+.SH OPTIONS
 .TP
 \fB\-1\fR
 send the challenge to slot 1.  This is the default.
