@@ -1,6 +1,6 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.7.0 (unreleased)
+* Version 1.7.0 (released 2012-06-07)
 
 ** Add support for new features in YubiKey 2.3:
 ALLOW_UPDATE flag that allows updating of configuration in slots.
