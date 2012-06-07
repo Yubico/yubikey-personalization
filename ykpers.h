@@ -34,6 +34,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <ykstatus.h>
+#include <ykdef.h>
 
 # ifdef __cplusplus
 extern "C" {
@@ -46,14 +47,28 @@ typedef struct ykp_config_t YKP_CONFIG;
 YKP_CONFIG *ykp_create_config(void);
 int ykp_free_config(YKP_CONFIG *cfg);
 
-/* This can be used to tell what Yubikey version we're working with.  If
-   this isn't used, Yubikey 1 only will be assumed. */
+/* allocate an empty YKP_CONFIG, use ykp_configure_version() to set
+   version information. */
+YKP_CONFIG *ykp_alloc(void);
+
+/* Set the version information in st in cfg. */
+void ykp_configure_version(YKP_CONFIG *cfg, YK_STATUS *st);
+
+/* This is used to tell what YubiKey version we're working with and what
+   command we want to send to it. If this isn't used YubiKey 1 only will
+   be assumed. */
+int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command);
+/* wrapper function for ykp_configure_command */
 int ykp_configure_for(YKP_CONFIG *cfg, int confnum, YK_STATUS *st);
 
 int ykp_AES_key_from_hex(YKP_CONFIG *cfg, const char *hexkey);
 int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 				const char *salt);
 int ykp_HMAC_key_from_hex(YKP_CONFIG *cfg, const char *hexkey);
+
+/* Functions for constructing the YKNDEF struct before writing it to a neo */
+int ykp_construct_ndef_uri(YKNDEF *ndef, const char *uri);
+int ykp_construct_ndef_text(YKNDEF *ndef, const char *text, const char *lang, bool isutf16);
 
 int ykp_set_access_code(YKP_CONFIG *cfg, unsigned char *access_code, size_t len);
 int ykp_set_fixed(YKP_CONFIG *cfg, unsigned char *fixed, size_t len);
@@ -93,6 +108,10 @@ int ykp_set_cfgflag_CHAL_BTN_TRIG(YKP_CONFIG *cfg, bool state);
 int ykp_set_extflag_SERIAL_BTN_VISIBLE(YKP_CONFIG *cfg, bool state);
 int ykp_set_extflag_SERIAL_USB_VISIBLE(YKP_CONFIG *cfg, bool state);
 int ykp_set_extflag_SERIAL_API_VISIBLE (YKP_CONFIG *cfg, bool state);
+int ykp_set_extflag_USE_NUMERIC_KEYPAD (YKP_CONFIG *cfg, bool state);
+int ykp_set_extflag_FAST_TRIG (YKP_CONFIG *cfg, bool state);
+int ykp_set_extflag_ALLOW_UPDATE (YKP_CONFIG *cfg, bool state);
+int ykp_set_extflag_DORMANT (YKP_CONFIG *cfg, bool state);
 
 int ykp_write_config(const YKP_CONFIG *cfg,
 		     int (*writer)(const char *buf, size_t count,
@@ -104,6 +123,7 @@ int ykp_read_config(YKP_CONFIG *cfg,
 		    void *userdata);
 
 YK_CONFIG *ykp_core_config(YKP_CONFIG *cfg);
+int ykp_command(YKP_CONFIG *cfg);
 int ykp_config_num(YKP_CONFIG *cfg);
 
 extern int * const _ykp_errno_location(void);

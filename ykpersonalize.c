@@ -59,12 +59,14 @@ int main(int argc, char **argv)
 	bool use_access_code = false;
 	unsigned char access_code[256];
 	YK_KEY *yk = 0;
-	YKP_CONFIG *cfg = ykp_create_config();
+	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = ykds_alloc();
 	bool autocommit = false;
 
 	/* Options */
 	char *salt = NULL;
+	char ndef_string[128] = {0};
+	char ndef_type = NULL;
 
 	bool error = false;
 	int exit_code = 0;
@@ -118,23 +120,23 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (!ykp_configure_for(cfg, 1, st))
-		goto err;
-
 	/* Parse all arguments in a testable way */
 	if (! args_to_config(argc, argv, cfg, yk,
 			     &infname, &outfname,
 			     &autocommit, salt,
 			     st, &verbose,
 			     access_code, &use_access_code,
-			     &aesviahash,
+			     &aesviahash, &ndef_type, ndef_string,
 			     &exit_code)) {
 		goto err;
 	}
 
 	if (verbose && (ykds_version_major(st) > 2 ||
 			(ykds_version_major(st) == 2 &&
-			 ykds_version_minor(st) >= 2))) {
+			 ykds_version_minor(st) >= 2) ||
+			(ykds_version_major(st) == 2 && // neo has serial functions
+			 ykds_version_minor(st) == 1 &&
+			 ykds_version_build(st) >= 4))) {
 		unsigned int serial;
 		if (! yk_get_serial(yk, 0, 0, &serial)) {
 			printf ("Failed to read serial number (serial-api-visible disabled?).\n");
@@ -178,7 +180,7 @@ int main(int argc, char **argv)
 	if (inf) {
 		if (!ykp_read_config(cfg, reader, inf))
 			goto err;
-	} else if (! aesviahash) {
+	} else if (! aesviahash && (ykp_command(cfg) == SLOT_CONFIG || ykp_command(cfg) == SLOT_CONFIG2)) {
 		char passphrasebuf[256]; size_t passphraselen;
 		fprintf(stderr, "Passphrase to create AES key: ");
 		fflush(stderr);
@@ -197,8 +199,18 @@ int main(int argc, char **argv)
 	} else {
 		char commitbuf[256]; size_t commitlen;
 
-		fprintf(stderr, "Configuration data to be written to key configuration %d:\n\n", ykp_config_num(cfg));
-		ykp_write_config(cfg, writer, stderr);
+		if (ykp_command(cfg) == SLOT_SWAP) {
+			fprintf(stderr, "Configuration in slot 1 and 2 will be swapped\n");
+		} else if(ykp_command(cfg) == SLOT_NDEF) {
+			fprintf(stderr, "New NDEF URI will be written\n");
+		} else {
+			if (ykp_command(cfg) == SLOT_CONFIG || ykp_command(cfg) == SLOT_CONFIG2) {
+				fprintf(stderr, "Configuration data to be written to key configuration %d:\n\n", ykp_config_num(cfg));
+			} else {
+				fprintf(stderr, "Configuration data to be updated in key configuration %d:\n\n", ykp_command(cfg) == SLOT_UPDATE1 ? 1 : 2);
+			}
+			ykp_write_config(cfg, writer, stderr);
+		}
 		fprintf(stderr, "\nCommit? (y/n) [n]: ");
 		if (autocommit) {
 			strcpy(commitbuf, "yes");
@@ -215,12 +227,30 @@ int main(int argc, char **argv)
 
 			if (verbose)
 				printf("Attempting to write configuration to the yubikey...");
-			if (!yk_write_config(yk,
-					     ykp_core_config(cfg), ykp_config_num(cfg),
-					     use_access_code ? access_code : NULL)) {
-				if (verbose)
-					printf(" failure\n");
-				goto err;
+			if(ykp_command(cfg) == SLOT_NDEF) {
+				YKNDEF ndef;
+				memset(&ndef, 0, sizeof(YKNDEF));
+				if(ndef_type == 'U') {
+					ykp_construct_ndef_uri(&ndef, ndef_string);
+				} else if(ndef_type == 'T') {
+					ykp_construct_ndef_text(&ndef, ndef_string, "en", false);
+				}
+				if(use_access_code) {
+					memcpy(ndef.curAccCode, access_code, ACC_CODE_SIZE);
+				}
+				if (!yk_write_ndef(yk, &ndef)) {
+					if (verbose)
+						printf(" failure\n");
+					goto err;
+				}
+			} else {
+				if (!yk_write_command(yk,
+							ykp_core_config(cfg), ykp_command(cfg),
+							use_access_code ? access_code : NULL)) {
+					if (verbose)
+						printf(" failure\n");
+					goto err;
+				}
 			}
 
 			if (verbose)

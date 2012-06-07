@@ -29,6 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stddef.h>
@@ -36,6 +37,7 @@
 #include <unistd.h>
 #include <errno.h>
 
+#include <ykcore_lcl.h>
 #include <ykpers.h>
 #include <yubikey.h> /* To get yubikey_modhex_encode and yubikey_hex_encode */
 #include <ykdef.h>
@@ -45,6 +47,9 @@
 
 const char *usage =
 "Usage: ykpersonalize [options]\n"
+"-u        update configuration without overwriting.  This is only available\n"
+"          in YubiKey 2.3 and later.  EXTFLAG_ALLOW_UPDATE will be set by\n"
+"          default\n"
 "-1        change the first configuration.  This is the default and\n"
 "          is normally used for true OTP generation.\n"
 "          In this configuration, TKTFLAG_APPEND_CR is set by default.\n"
@@ -53,6 +58,8 @@ const char *usage =
 "          In this configuration, TKTFLAG_APPEND_CR, CFGFLAG_STATIC_TICKET,\n"
 "          CFGFLAG_STRONG_PW1, CFGFLAG_STRONG_PW2 and CFGFLAG_MAN_UPDATE\n"
 "          are set by default.\n"
+"-x        swap the configuration in slot 1 and 2.  This is for YubiKey 2.3\n"
+"          and newer only\n"
 "-sFILE    save configuration to FILE instead of key.\n"
 "          (if FILE is -, send to stdout)\n"
 "-iFILE    read configuration from FILE.\n"
@@ -61,6 +68,8 @@ const char *usage =
 "          char hex value (not modhex)\n"
 "-cXXX..   A 12 char hex value (not modhex) to use as access code for programming\n"
 "          (this does NOT SET the access code, that's done with -oaccess=)\n"
+"-nXXX..   Write NDEF type 2 URI to YubiKey NEO, must be used on it's own\n"
+"-tXXX..   Write NDEF type 2 text to YubiKey NEO, must be used on it's own\n"
 "-oOPTION  change configuration option.  Possible OPTION arguments are:\n"
 "          salt=ssssssss       Salt to be used when deriving key from a\n"
 "                              password.  If none is given, a unique random\n"
@@ -124,12 +133,58 @@ const char *usage =
 "          [-]serial-usb-visible  set/clear SERIAL_USB_VISIBLE\n"
 "          [-]serial-api-visible  set/clear SERIAL_API_VISIBLE\n"
 "\n"
+"          Extended flags for firmware version 2.3 and above:\n"
+"          [-]use-numeric-keypad  set/clear USE_NUMERIC_KEYPAD\n"
+"          [-]fast-trig           set/clear FAST_TRIG\n"
+"          [-]allow-update        set/clear ALLOW_UPDATE\n"
+"          [-]dormant             set/clear DORMANT\n"
+"\n"
 "-y        always commit (do not prompt)\n"
 "\n"
 "-v        verbose\n"
 "-h        help (this text)\n"
 ;
-const char *optstring = "12a:c:hi:o:s:vy";
+const char *optstring = "u12xa:c:n:t:hi:o:s:vy";
+
+static const YK_CONFIG default_config1 = {
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* fixed */
+        { 0, 0, 0, 0, 0, 0 },   /* uid */
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* key */
+        { 0, 0, 0, 0, 0, 0 },   /* accCode */
+        0,                      /* fixedSize */
+        0,                      /* extFlags */
+        TKTFLAG_APPEND_CR,      /* tktFlags */
+        0,                      /* cfgFlags */
+        0,                      /* ctrOffs */
+        0                       /* crc */
+};
+
+static const YK_CONFIG default_config2 = {
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* fixed */
+        { 0, 0, 0, 0, 0, 0 },   /* uid */
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* key */
+        { 0, 0, 0, 0, 0, 0 },   /* accCode */
+        0,                      /* fixedSize */
+        0,                      /* extFlags */
+        TKTFLAG_APPEND_CR,      /* tktFlags */
+        /* cfgFlags */
+        CFGFLAG_STATIC_TICKET | CFGFLAG_STRONG_PW1 | CFGFLAG_STRONG_PW2 | CFGFLAG_MAN_UPDATE,
+        0,                      /* ctrOffs */
+        0                       /* crc */
+};
+
+static const YK_CONFIG default_update = {
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* fixed */
+        { 0, 0, 0, 0, 0, 0 },   /* uid */
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* key */
+        { 0, 0, 0, 0, 0, 0 },   /* accCode */
+        0,                      /* fixedSize */
+        EXTFLAG_ALLOW_UPDATE,   /* extFlags */
+        TKTFLAG_APPEND_CR,      /* tktFlags */
+        0,                      /* cfgFlags */
+        0,                      /* ctrOffs */
+        0                       /* crc */
+};
 
 static int hex_modhex_decode(unsigned char *result, size_t *resultlen,
 			     const char *str, size_t strl,
@@ -198,7 +253,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		   bool *autocommit, char *salt,
 		   YK_STATUS *st, bool *verbose,
 		   unsigned char *access_code, bool *use_access_code,
-		   bool *aesviahash,
+		   bool *aesviahash, char *ndef_type, char *ndef,
 		   int *exit_code)
 {
 	int c;
@@ -207,6 +262,11 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 	bool slot_chosen = false;
 	bool mode_chosen = false;
 	bool option_seen = false;
+	bool swap_seen = false;
+	bool update_seen = false;
+	bool ndef_seen = false;
+
+	ykp_configure_version(cfg, st);
 
 	struct config_st *ycfg = (struct config_st *) ykp_core_config(cfg);
 
@@ -244,35 +304,91 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		}
 
 		switch (c) {
-		case '1':
+		case 'u':
 			if (slot_chosen) {
-				fprintf(stderr, "You may only choose slot (-1 / -2) once.\n");
+				fprintf(stderr, "You must use update before slot (-1 / -2).\n");
 				*exit_code = 1;
 				return 0;
 			}
-			if (option_seen) {
-				fprintf(stderr, "You must choose slot before any options (-o).\n");
+			if (swap_seen) {
+				fprintf(stderr, "Update (-u) and swap (-x) can't be combined.\n");
 				*exit_code = 1;
 				return 0;
 			}
-			if (!ykp_configure_for(cfg, 1, st))
+			if (ndef_seen) {
+				fprintf(stderr, "Update (-u) can not be combined with ndef (-n).\n");
+				*exit_code = 1;
 				return 0;
-			slot_chosen = true;
+			}
+			update_seen = true;
 			break;
-		case '2':
+		case '1':
+		case '2': {
+				if (slot_chosen) {
+					fprintf(stderr, "You may only choose slot (-1 / -2) once.\n");
+					*exit_code = 1;
+					return 0;
+				}
+				if (option_seen) {
+					fprintf(stderr, "You must choose slot before any options (-o).\n");
+					*exit_code = 1;
+					return 0;
+				}
+				if (swap_seen) {
+					fprintf(stderr, "You can not combine slot swap (-x) with configuring a slot.\n");
+					*exit_code = 1;
+					return 0;
+				}
+				if (ndef_seen) {
+					fprintf(stderr, "Slot (-1 / -2) can not be combined with ndef (-n)\n");
+					*exit_code = 1;
+					return 0;
+				}
+				int command;
+				if (update_seen) {
+					memcpy(ycfg, &default_update, sizeof(default_update));
+					if(c == '1') {
+						command = SLOT_UPDATE1;
+					} else if(c == '2') {
+						command = SLOT_UPDATE2;
+					}
+				} else if (c == '1') {
+					command = SLOT_CONFIG;
+					memcpy(ycfg, &default_config1, sizeof(default_config1));
+				} else if (c == '2') {
+					command = SLOT_CONFIG2;
+					memcpy(ycfg, &default_config2, sizeof(default_config2));
+				}
+				if (!ykp_configure_command(cfg, command))
+					return 0;
+				slot_chosen = true;
+				break;
+			}
+		case 'x':
 			if (slot_chosen) {
-				fprintf(stderr, "You may only choose slot (-1 / -2) once.\n");
+				fprintf(stderr, "You can not use slot swap with a chosen slot (-1 / -2).\n");
 				*exit_code = 1;
 				return 0;
 			}
 			if (option_seen) {
-				fprintf(stderr, "You must choose slot before any options (-o).\n");
+				fprintf(stderr, "You must set slot swap before any options (-o).\n");
 				*exit_code = 1;
 				return 0;
 			}
-			if (!ykp_configure_for(cfg, 2, st))
+			if (update_seen) {
+				fprintf(stderr, "Update (-u) and swap (-x) can't be combined.\n");
+				*exit_code = 1;
 				return 0;
-			slot_chosen = true;
+			}
+			if (ndef_seen) {
+				fprintf(stderr, "Swap (-x) can not be combined with ndef (-n).\n");
+				*exit_code = 1;
+				return 0;
+			}
+			if (!ykp_configure_command(cfg, SLOT_SWAP)) {
+				return 0;
+			}
+			swap_seen = true;
 			break;
 		case 'i':
 			*infname = optarg;
@@ -303,6 +419,23 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 			*use_access_code = true;
 			break;
 		}
+		case 't':
+			*ndef_type = 'T';
+		case 'n':
+			if(!*ndef_type) {
+				*ndef_type = 'U';
+			}
+			if (slot_chosen || swap_seen || update_seen || option_seen) {
+				fprintf(stderr, "Ndef (-n/-t) must be used on it's own.\n");
+				*exit_code = 1;
+				return 0;
+			}
+			if (!ykp_configure_command(cfg, SLOT_NDEF)) {
+				return 0;
+			}
+			memcpy(ndef, optarg, strnlen(optarg, 128));
+			ndef_seen = true;
+			break;
 		case 'o':
 			if (strncmp(optarg, "salt=", 5) == 0)
 				salt = strdup(optarg+5);
@@ -460,6 +593,10 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 			EXTFLAG("serial-btn-visible", SERIAL_BTN_VISIBLE)
 			EXTFLAG("serial-usb-visible", SERIAL_USB_VISIBLE)
 			EXTFLAG("serial-api-visible", SERIAL_API_VISIBLE)
+      EXTFLAG("use-numeric-keypad", USE_NUMERIC_KEYPAD)
+      EXTFLAG("fast-trig", FAST_TRIG)
+			EXTFLAG("allow-update", ALLOW_UPDATE)
+      EXTFLAG("dormant", DORMANT)
 #undef EXTFLAG
 			else {
 				fprintf(stderr, "Unknown option '%s'\n",
@@ -479,6 +616,31 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		default:
 			fputs(usage, stderr);
 			*exit_code = 0;
+			return 0;
+		}
+	}
+
+	if (!slot_chosen && !ndef_seen) {
+		fprintf(stderr, "A slot must be chosen with -1 or -2.\n");
+		*exit_code = 1;
+		return 0;
+	}
+
+	if (update_seen) {
+		struct config_st *core_config = (struct config_st *) ykp_core_config(cfg);
+		if ((core_config->tktFlags & TKTFLAG_UPDATE_MASK) != core_config->tktFlags) {
+			fprintf(stderr, "Unallowed ticket flags with update.\n");
+			*exit_code = 1;
+			return 0;
+		}
+		if ((core_config->cfgFlags & CFGFLAG_UPDATE_MASK) != core_config->cfgFlags) {
+			fprintf(stderr, "Unallowed cfg flags with update.\n");
+			*exit_code = 1;
+			return 0;
+		}
+		if ((core_config->extFlags & EXTFLAG_UPDATE_MASK) != core_config->extFlags) {
+			fprintf(stderr, "Unallowed ext flags with update.\n");
+			*exit_code = 1;
 			return 0;
 		}
 	}

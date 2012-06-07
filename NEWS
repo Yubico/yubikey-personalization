@@ -1,6 +1,31 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.6.5 (unreleased)
+* Version 1.7.0 (unreleased)
+
+** Add support for new features in YubiKey 2.3:
+ALLOW_UPDATE flag that allows updating of configuration in slots.
+Update command (-u) to do update of existing config.
+Swap command (-x) to swap contents of two updatable slots
+DORMANT flag that's settable/removable if ALLOW_UPDATE is set
+USE_NUMERIC_KEYPAD flag for sending the OATH OTP using keypad scan codes instead
+FAST_TRIG flag for faster triggering of slot one if slot two is empty
+
+** Change the library around some to make the 2.3 features available.
+Use ykp_alloc() instead of ykp_create_config().
+Use ykp_configure_version() instead of ykp_configure_for() to set the version.
+Use ykp_configure_command() instead of ykp_configure_for() to set slot.
+Use yk_write_command() instead of yk_write_config().
+
+The new commands doesn't set any default configuration at all.
+
+** Add library support for the YubiKey NEO beta
+ykp_construct_ndef_uri() for preparing a URI to write.
+ykp_construct_ndef_text() for preparing a text to write.
+yk_write_ndef() to write the constructed NDEF.
+
+** Add support for the YubiKey NEO beta
+Writing NDEF URI with -n http://example.com/foo/
+Writing NDEF Text record with -t example
 
 ** Windows: Bump yubico-c dependency to version 1.9.
 

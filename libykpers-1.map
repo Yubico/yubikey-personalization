@@ -126,3 +126,21 @@ LIBYKPERS_1.6 {
   ykp_get_oath_imf;
 # Variables:
 } LIBYKPERS_1.5;
+
+LIBYKPERS_1.7 {
+  global:
+# Functions:
+  ykp_alloc;
+  ykp_configure_version;
+  ykp_command;
+  ykp_configure_command;
+  yk_write_command;
+  ykp_set_extflag_USE_NUMERIC_KEYPAD;
+  ykp_set_extflag_FAST_TRIG;
+  ykp_set_extflag_ALLOW_UPDATE;
+  ykp_set_extflag_DORMANT;
+  yk_write_ndef;
+  ykp_construct_ndef_uri;
+  ykp_construct_ndef_text;
+# Variables:
+} LIBYKPERS_1.6;

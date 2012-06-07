@@ -10,6 +10,8 @@
 **	09-06-02	/ 2.0.0		/ J E	/ Added version 2 flags			**
 **	09-09-23	/ 2.1.0		/ J E	/ Added version 2.1 flags (OATH-HOTP)	**
 **	10-05-01	/ 2.2.0		/ J E	/ Added support for 2.2 ext. + frame	**
+**	11-04-15	/ 2.3.0		/ J E	/ Added support for 2.3 extensions	**
+**	11-12-05	/ 2.4.0		/ J E	/ Added support for NFC and NDEF	**
 **											**
 *****************************************************************************************/
 
@@ -30,7 +32,11 @@
 
 #define	SLOT_CONFIG		1   /* First (default / V1) configuration */
 #define	SLOT_NAV		2   /* V1 only */
-#define SLOT_CONFIG2		3   /* Second (V2) configuration */
+#define	SLOT_CONFIG2		3   /* Second (V2) configuration */
+#define	SLOT_UPDATE1		4   /* Update slot 1 */
+#define	SLOT_UPDATE2		5   /* Update slot 2 */
+#define	SLOT_SWAP		6   /* Swap slot 1 and 2 */
+#define	SLOT_NDEF		8   /* Write NDEF record */
 
 #define SLOT_DEVICE_SERIAL	0x10	/* Device serial number */
 
@@ -149,11 +155,35 @@ struct config_st {
 #define CFGFLAG_CHAL_YUBICO		0x20	/* Challenge-response enabled - Yubico OTP mode */
 #define CFGFLAG_CHAL_HMAC		0x22	/* Challenge-response enabled - HMAC-SHA1 */
 #define CFGFLAG_HMAC_LT64		0x04	/* Set when HMAC message is less than 64 bytes */
-#define CFGFLAG_CHAL_BTN_TRIG		0x08	/* Challenge-respoonse operation requires button press */
+#define CFGFLAG_CHAL_BTN_TRIG		0x08	/* Challenge-response operation requires button press */
 
 #define EXTFLAG_SERIAL_BTN_VISIBLE	0x01	/* Serial number visible at startup (button press) */
 #define EXTFLAG_SERIAL_USB_VISIBLE	0x02	/* Serial number visible in USB iSerial field */
 #define EXTFLAG_SERIAL_API_VISIBLE	0x04	/* Serial number visible via API call */
+
+/* V2.3 flags only */
+
+#define EXTFLAG_USE_NUMERIC_KEYPAD	0x08	/* Use numeric keypad for digits */
+#define EXTFLAG_FAST_TRIG		0x10	/* Use fast trig if only cfg1 set */
+#define EXTFLAG_ALLOW_UPDATE		0x20	/* Allow update of existing configuration (selected flags + access code) */
+#define EXTFLAG_DORMANT			0x40	/* Dormant configuration (can be woken up and flag removed = requires update flag) */
+
+/* Flags valid for update */
+
+#define TKTFLAG_UPDATE_MASK         (TKTFLAG_TAB_FIRST | TKTFLAG_APPEND_TAB1 | TKTFLAG_APPEND_TAB2 | TKTFLAG_APPEND_DELAY1 | TKTFLAG_APPEND_DELAY2 | TKTFLAG_APPEND_CR)
+#define CFGFLAG_UPDATE_MASK         (CFGFLAG_PACING_10MS | CFGFLAG_PACING_20MS)
+#define EXTFLAG_UPDATE_MASK         (EXTFLAG_SERIAL_BTN_VISIBLE | EXTFLAG_SERIAL_USB_VISIBLE |  EXTFLAG_SERIAL_API_VISIBLE | EXTFLAG_USE_NUMERIC_KEYPAD | EXTFLAG_FAST_TRIG | EXTFLAG_ALLOW_UPDATE | EXTFLAG_DORMANT)
+
+/* NDEF structure */
+#define	NDEF_DATA_SIZE			54
+
+typedef struct {
+	unsigned char len;				/* Payload length */
+	unsigned char type;				/* NDEF type specifier */
+	unsigned char data[NDEF_DATA_SIZE];		/* Payload size */
+	unsigned char curAccCode[ACC_CODE_SIZE];	/* Access code */
+} YKNDEF;
+
 
 /* Navigation */
 
@@ -190,7 +220,7 @@ struct status_st {
 };
 
 #define CONFIG1_VALID               0x01        /* Bit in touchLevel indicating that configuration 1 is valid (from firmware 2.1) */
-#define CONFIG2_VALID               0x02        /* Bit in touchLevel indicating that configuration 1 is valid (from firmware 2.1) */
+#define CONFIG2_VALID               0x02        /* Bit in touchLevel indicating that configuration 2 is valid (from firmware 2.1) */
 
 /* Modified hex string mapping */
 

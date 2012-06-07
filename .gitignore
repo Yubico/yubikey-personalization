@@ -39,6 +39,8 @@ tests/test_args_to_config
 tests/test_args_to_config.o
 tests/test_key_generation
 tests/test_key_generation.o
+tests/test_ndef_construction
+tests/test_ndef_construction.o
 tmp/
 usha.lo
 usha.o

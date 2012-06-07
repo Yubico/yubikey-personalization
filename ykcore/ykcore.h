@@ -109,6 +109,9 @@ extern int yk_read_response_from_key(YK_KEY *yk, uint8_t slot, unsigned int flag
 /* writes the given configuration to the key.  If the configuration is NULL,
    zap the key configuration.
    acc_code has to be provided of the key has a protecting access code. */
+extern int yk_write_command(YK_KEY *k, YK_CONFIG *cfg, uint8_t command,
+			   unsigned char *acc_code);
+/* wrapper function of yk_write_command */
 extern int yk_write_config(YK_KEY *k, YK_CONFIG *cfg, int confnum,
 			   unsigned char *acc_code);
 /* Write something to the YubiKey (a command that is). */

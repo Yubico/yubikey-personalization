@@ -36,7 +36,8 @@
 ykpersonalize - personalize YubiKey OTP tokens
 .SH SYNOPSIS
 .B ykpersonalize
-[\fI-1\fR | \fI-2\fR] [\fI-sfile\fR] [\fI-ifile\fR] [\fI-axxx\fR] [\fI-cxxx\fR] [\fI-ooption\fR] [\fI-v\fR] [\fI-h\fR]
+[\fI-1\fR | \fI-2\fR] [\fI-sfile\fR] [\fI-ifile\fR] [\fI-axxx\fR] [\fI-cxxx\fR] [\fI-ooption\fR]
+[\fI-y\fR] [\fI-v\fR] [\fI-h\fR] [\fI-n\fR] [\fI-t\fR] [\fI-u\fR] [\fI-x\fR]
 .\".SH DESCRIPTION
 .\" Add any additional description here
 .SH OPTIONS
@@ -119,6 +120,26 @@ Be more verbose
 .TP
 \fB-h\fR
 Help
+.TP
+\fBYubiKey NEO only\fR
+.RS
+.TP
+\fB-n URI\fR
+Program NFC NDEF type 2 URI
+.TP
+\fB-t text\fR
+Program NFC NDEF type 2 text
+.RE
+.TP
+\fBYubiKey 2.3 and above\fR
+.RS
+.TP
+\fB-u\fR
+Update existing configuration, rather than overwriting
+.TP
+\fB-x\fR
+Swap configuration slot 1 and 2 inside the YubiKey
+.RE
 .SH Ticket flags
 .TP
 [\-]\fBtab-first\fR
@@ -267,6 +288,21 @@ otherwise automatic token id creation is not possible.
 See section "5.3.4 - OATH-HOTP Token Identifier" of the
 .URL "http://yubico.com/files/YubiKey_manual-2.0.pdf" "YubiKey manual"
 for further details.
+.TP
+\fBYubiKey 2.3 firmware and above\fR
+.TP
+[\-]\fBuse-numeric-keypad\fR
+Send scancodes for numeric keypad keypresses when sending digits - helps with some
+keyboard layouts.
+.TP
+[\-]\fBfast-trig\fR
+Faster triggering when only configuration 1 is available.
+.TP
+[\-]\fBallow-update\fR
+Allow updating of certain parameters in a configuration at a later time.
+.TP
+[\-]\fBdormant\fR
+Hides/unhides a configuration stored in a YubiKey.
 
 .SH OATH-HOTP Mode
 When using OATH-HOTP mode, a HMAC key of 160 bits (20 bytes, 40 chars of hex)
