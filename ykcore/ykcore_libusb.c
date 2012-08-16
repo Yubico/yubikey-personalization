@@ -163,6 +163,9 @@ void *_ykusb_open_device(int vendor_id, int product_id)
 				if (h != NULL)
 					usb_detach_kernel_driver_np(h, 0);
 #endif
+				/* This is needed for yubikey-personalization to work inside virtualbox virtualization. */
+				if (h != NULL)
+					usb_set_configuration(h, 1);
 				goto done;
 			}
 	}
