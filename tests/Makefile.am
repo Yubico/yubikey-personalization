@@ -30,8 +30,10 @@
 AM_LDFLAGS = -no-install
 AM_CFLAGS=-I$(srcdir)/.. -I$(srcdir)/../ykcore
 LDADD = ../libykpers-1.la $(LTLIBYUBIKEY)
+#test_threaded_calls_LDADD = libpthread
 
-ctests = selftest test_args_to_config test_key_generation test_ndef_construction
+ctests = selftest test_args_to_config test_key_generation \
+	test_ndef_construction test_threaded_calls
 check_PROGRAMS = $(ctests)
 TESTS = $(ctests)
 

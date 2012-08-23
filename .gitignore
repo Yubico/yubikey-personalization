@@ -41,6 +41,8 @@ tests/test_key_generation
 tests/test_key_generation.o
 tests/test_ndef_construction
 tests/test_ndef_construction.o
+tests/test_threaded_calls
+tests/test_threaded_calls.o
 tmp/
 usha.lo
 usha.o
