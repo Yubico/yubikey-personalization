@@ -489,7 +489,7 @@ int yk_read_response_from_key(YK_KEY *yk, uint8_t slot, unsigned int flags,
 	/* The first part of the response was read by yk_wait_for_key_status(). We need
 	 * to copy it to buf.
 	 */
-	memcpy(buf + *bytes_read, data, sizeof(data) - 1);
+	memcpy((char*)buf + *bytes_read, data, sizeof(data) - 1);
 	*bytes_read += sizeof(data) - 1;
 
 	while (*bytes_read + FEATURE_RPT_SIZE <= bufsize) {
@@ -520,7 +520,7 @@ int yk_read_response_from_key(YK_KEY *yk, uint8_t slot, unsigned int flags,
 				return 1;
 			}
 
-			memcpy(buf + *bytes_read, data, sizeof(data) - 1);
+			memcpy((char*)buf + *bytes_read, data, sizeof(data) - 1);
 			*bytes_read += sizeof(data) - 1;
 		} else {
 			/* Reset read mode of Yubikey before returning. */

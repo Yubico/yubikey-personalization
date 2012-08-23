@@ -32,6 +32,7 @@
 #include "ykdef.h"
 #include "ykcore_backend.h"
 
+#define INITGUID
 #include <stdio.h>
 #include <windows.h>
 #include <setupapi.h>
