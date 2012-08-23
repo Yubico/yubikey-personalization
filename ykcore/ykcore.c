@@ -296,15 +296,18 @@ int * const _yk_errno_location(void)
 
 	if (tsd_init == 0) {
 		if ((rc = YK_TSD_INIT(errno_key, free)) == 0) {
-			void *p = calloc(1, sizeof(int));
-			if (!p) {
-				tsd_init = -1;
-			} else {
-				YK_TSD_SET(errno_key, p);
-				tsd_init = 1;
-			}
+			tsd_init = 1;
 		} else {
 			tsd_init = -1;
+		}
+	}
+
+	if(YK_TSD_GET(int *, errno_key) == NULL) {
+		void *p = calloc(1, sizeof(int));
+		if (!p) {
+			tsd_init = -1;
+		} else {
+			YK_TSD_SET(errno_key, p);
 		}
 	}
 	if (tsd_init == 1) {
