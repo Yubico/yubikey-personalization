@@ -2,7 +2,10 @@ language: c
 compiler:
   - gcc
   - clang
-script: autoreconf -i && ./configure && make check
+env:
+  - LIBUSB=libusb
+  - LIBUSB=libusb-1.0
+script: autoreconf -i && ./configure --with-backend=$LIBUSB && make check
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -qq libyubikey-dev
+  - sudo apt-get install -qq libyubikey-dev libusb-1.0-0-dev libusb-dev
