@@ -42,6 +42,7 @@
 
 static int ykl_errno;
 static int libusb_inited = 0;
+static libusb_context *usb_ctx = NULL;
 
 /*************************************************************************
  **  function _ykusb_write						**
@@ -135,7 +136,7 @@ int _ykusb_read(void *dev, int report_type, int report_number,
 
 int _ykusb_start(void)
 {
-	ykl_errno = libusb_init(NULL);
+	ykl_errno = libusb_init(&usb_ctx);
 	if(ykl_errno) {
 		yk_errno = YK_EUSBERR;
 		return ykl_errno;
@@ -147,7 +148,7 @@ int _ykusb_start(void)
 extern int _ykusb_stop(void)
 {
 	if (libusb_inited == 1) {
-		libusb_exit(NULL);
+		libusb_exit(usb_ctx);
 		return 1;
 	}
 	yk_errno = YK_EUSBERR;
@@ -160,7 +161,7 @@ void *_ykusb_open_device(int vendor_id, int product_id)
 	libusb_device_handle *h = NULL;
 	struct libusb_device_descriptor desc;
 	libusb_device **list;
-	size_t cnt = libusb_get_device_list(NULL, &list);
+	size_t cnt = libusb_get_device_list(usb_ctx, &list);
 	size_t i = 0;
 	int rc = YK_ENOKEY;
 
