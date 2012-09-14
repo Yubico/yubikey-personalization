@@ -139,7 +139,7 @@ int _ykusb_start(void)
 	ykl_errno = libusb_init(&usb_ctx);
 	if(ykl_errno) {
 		yk_errno = YK_EUSBERR;
-		return ykl_errno;
+		return 0;
 	}
 	libusb_inited = 1;
 	return 1;
