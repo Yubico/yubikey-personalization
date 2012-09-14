@@ -135,7 +135,11 @@ int _ykusb_read(void *dev, int report_type, int report_number,
 
 int _ykusb_start(void)
 {
-	libusb_init(NULL);
+	ykl_errno = libusb_init(NULL);
+	if(ykl_errno) {
+		yk_errno = YK_EUSBERR;
+		return ykl_errno;
+	}
 	libusb_inited = 1;
 	return 1;
 }
