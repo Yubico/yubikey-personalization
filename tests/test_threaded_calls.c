@@ -40,7 +40,7 @@ void *start_thread(void *arg)
 {
 	if(!yk_init()) {
 		printf("failed to init usb..\n");
-		return;
+		return NULL;
 	}
 	YK_STATUS *st = ykds_alloc();
 	YK_KEY *yk = 0;
