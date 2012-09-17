@@ -155,7 +155,7 @@ static const YK_CONFIG default_config1 = {
         0,                      /* extFlags */
         TKTFLAG_APPEND_CR,      /* tktFlags */
         0,                      /* cfgFlags */
-        0,                      /* ctrOffs */
+	{0},                    /* ctrOffs */
         0                       /* crc */
 };
 
@@ -169,7 +169,7 @@ static const YK_CONFIG default_config2 = {
         TKTFLAG_APPEND_CR,      /* tktFlags */
         /* cfgFlags */
         CFGFLAG_STATIC_TICKET | CFGFLAG_STRONG_PW1 | CFGFLAG_STRONG_PW2 | CFGFLAG_MAN_UPDATE,
-        0,                      /* ctrOffs */
+	{0},                    /* ctrOffs */
         0                       /* crc */
 };
 
@@ -182,7 +182,7 @@ static const YK_CONFIG default_update = {
         EXTFLAG_ALLOW_UPDATE,   /* extFlags */
         TKTFLAG_APPEND_CR,      /* tktFlags */
         0,                      /* cfgFlags */
-        0,                      /* ctrOffs */
+	{0},                    /* ctrOffs */
         0                       /* crc */
 };
 
