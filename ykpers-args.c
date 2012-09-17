@@ -225,7 +225,7 @@ static int hex_modhex_decode(unsigned char *result, size_t *resultlen,
 	return 0;
 }
 
-void report_yk_error()
+void report_yk_error(void)
 {
 	if (ykp_errno)
 		fprintf(stderr, "Yubikey personalization error: %s\n",
