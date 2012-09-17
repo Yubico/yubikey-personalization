@@ -675,8 +675,8 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 	return 1;
 }
 
-int _set_fixed(char *optarg, YKP_CONFIG *cfg) {
-	const char *fixed = optarg;
+int _set_fixed(char *opt, YKP_CONFIG *cfg) {
+	const char *fixed = opt;
 	size_t fixedlen = strlen (fixed);
 	unsigned char fixedbin[256];
 	size_t fixedbinlen = 0;
@@ -732,7 +732,7 @@ int _format_oath_id(uint8_t *dst, size_t dst_len, uint8_t vendor, uint8_t type, 
 	return 1;
 }
 
-int _set_oath_id(char *optarg, YKP_CONFIG *cfg, struct config_st *ycfg, YK_KEY *yk, YK_STATUS *st) {
+int _set_oath_id(char *opt, YKP_CONFIG *cfg, struct config_st *ycfg, YK_KEY *yk, YK_STATUS *st) {
 	/* For details, see YubiKey Manual 2010-09-16 section 5.3.4 - OATH-HOTP Token Identifier */
 	if (!(ycfg->tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP) {
 		fprintf(stderr,
@@ -745,10 +745,10 @@ int _set_oath_id(char *optarg, YKP_CONFIG *cfg, struct config_st *ycfg, YK_KEY *
 	if (! ykp_set_extflag_SERIAL_API_VISIBLE(cfg, true))
 		return 0;
 
-	if (strlen(optarg) > 7) {
-		if (_set_fixed(optarg + 8, cfg) != 1) {
+	if (strlen(opt) > 7) {
+		if (_set_fixed(opt + 8, cfg) != 1) {
 			fprintf(stderr,
-				"Invalid OATH token identifier %s supplied with oath-id=.\n", optarg + 8
+				"Invalid OATH token identifier %s supplied with oath-id=.\n", opt + 8
 				);
 			return 0;
 		}
