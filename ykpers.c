@@ -221,7 +221,7 @@ int ykp_configure_for(YKP_CONFIG *cfg, int confnum, YK_STATUS *st)
 /* Return number of bytes of key data for this configuration.
  * 20 bytes is 160 bits, 16 bytes is 128.
  */
-int _get_supported_key_length(const YKP_CONFIG *cfg)
+static int _get_supported_key_length(const YKP_CONFIG *cfg)
 {
 	/* OATH-HOTP and HMAC-SHA1 challenge response support 20 byte (160 bits)
 	 * keys, holding the last four bytes in the uid field.
