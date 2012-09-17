@@ -375,6 +375,7 @@ int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 int ykp_construct_ndef_uri(YKNDEF *ndef, const char *uri)
 {
 	int num_identifiers = sizeof(ndef_identifiers) / sizeof(char*);
+	size_t data_length;
 	int indx = 0;
 	for(; indx < num_identifiers; indx++) {
 		size_t len = strlen(ndef_identifiers[indx]);
@@ -383,7 +384,7 @@ int ykp_construct_ndef_uri(YKNDEF *ndef, const char *uri)
 			break;
 		}
 	}
-	size_t data_length = strlen(uri);
+	data_length = strlen(uri);
 	if(data_length + 1 > NDEF_DATA_SIZE) {
 		ykp_errno = YKP_EINVAL;
 		return 1;
