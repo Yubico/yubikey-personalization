@@ -223,8 +223,6 @@ int ykp_configure_for(YKP_CONFIG *cfg, int confnum, YK_STATUS *st)
  */
 int _get_supported_key_length(const YKP_CONFIG *cfg)
 {
-	bool key_bits_in_uid = false;
-
 	/* OATH-HOTP and HMAC-SHA1 challenge response support 20 byte (160 bits)
 	 * keys, holding the last four bytes in the uid field.
 	 */
