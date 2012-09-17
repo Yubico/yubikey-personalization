@@ -33,6 +33,7 @@ SUBDIRS= ykcore . tests
 ACLOCAL_AMFLAGS = -I m4
 
 AM_CPPFLAGS = -I$(srcdir)/ykcore -I$(srcdir)/rfc4634
+AM_CFLAGS = $(WARN_CFLAGS)
 
 # The library.
 
