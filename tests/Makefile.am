@@ -28,7 +28,7 @@
 # Self tests.
 
 AM_LDFLAGS = -no-install
-AM_CFLAGS=-I$(srcdir)/.. -I$(srcdir)/../ykcore
+AM_CFLAGS=-I$(srcdir)/.. -I$(srcdir)/../ykcore $(WARN_CFLAGS)
 LDADD = ../libykpers-1.la $(LTLIBYUBIKEY)
 
 ctests = selftest test_args_to_config test_key_generation \
