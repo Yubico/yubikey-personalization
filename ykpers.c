@@ -60,7 +60,7 @@ static const YK_CONFIG default_config1 = {
 	0,			/* extFlags */
 	TKTFLAG_APPEND_CR,	/* tktFlags */
 	0,			/* cfgFlags */
-	0,			/* ctrOffs */
+	{0},			/* ctrOffs */
 	0			/* crc */
 };
 
@@ -74,12 +74,12 @@ static const YK_CONFIG default_config2 = {
 	TKTFLAG_APPEND_CR,	/* tktFlags */
 	/* cfgFlags */
 	CFGFLAG_STATIC_TICKET | CFGFLAG_STRONG_PW1 | CFGFLAG_STRONG_PW2 | CFGFLAG_MAN_UPDATE,
-	0,			/* ctrOffs */
+	{0},			/* ctrOffs */
 	0			/* crc */
 };
 
 /* From nfcforum-ts-rtd-uri-1.0.pdf */
-static char *ndef_identifiers[] = {
+static const char *ndef_identifiers[] = {
 	"http://www.",
 	"https://www.",
 	"http://",
