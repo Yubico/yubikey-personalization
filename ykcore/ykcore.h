@@ -130,7 +130,7 @@ const char *yk_strerror(int errnum);
 /* The following function is only useful if yk_errno == YK_EUSBERR and
    no other USB-related operations have been performed since the time of
    error.  */
-const char *yk_usb_strerror();
+const char *yk_usb_strerror(void);
 
 #define YK_EUSBERR	0x01	/* USB error reporting should be used */
 #define YK_EWRONGSIZ	0x02
