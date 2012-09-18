@@ -155,8 +155,8 @@ void *_ykusb_open_device(int vendor_id, int product_id)
 	for (bus = usb_get_busses(); bus; bus = bus->next) {
 		rc = YK_ENOKEY;
 		for (dev = bus->devices; dev; dev = dev->next)
-			if (dev->descriptor.idVendor == YUBICO_VID
-			    && dev->descriptor.idProduct == YUBIKEY_PID) {
+			if (dev->descriptor.idVendor == vendor_id
+			    && dev->descriptor.idProduct == product_id) {
 				rc = YK_EUSBERR;
 				h = usb_open(dev);
 #ifdef LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP

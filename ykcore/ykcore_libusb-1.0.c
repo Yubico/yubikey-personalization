@@ -171,7 +171,7 @@ void *_ykusb_open_device(int vendor_id, int product_id)
 		if (ykl_errno != 0)
 			goto done;
 
-		if (desc.idVendor == YUBICO_VID && desc.idProduct == YUBIKEY_PID) {
+		if (desc.idVendor == vendor_id && desc.idProduct == product_id) {
 			rc = YK_EUSBERR;
 			ykl_errno = libusb_open(dev, &h);
 			if (ykl_errno != 0)
