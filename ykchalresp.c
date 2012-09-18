@@ -249,7 +249,7 @@ int main(int argc, char **argv)
 			 &challenge, &challenge_len,
 			 &hmac, &may_block,
 			 &exit_code))
-		goto err;
+		exit(exit_code);
 
 	if (!yk_init()) {
 		exit_code = 1;
