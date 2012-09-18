@@ -47,15 +47,6 @@
  */
 #define WAIT_FOR_WRITE_FLAG	600
 
-int yk_wait_for_key_status(YK_KEY *yk, uint8_t slot, unsigned int flags,
-			   unsigned int max_time_ms,
-			   bool logic_and, unsigned char mask,
-			   unsigned char *last_data);
-
-int yk_read_response_from_key(YK_KEY *yk, uint8_t slot, unsigned int flags,
-			      void *buf, unsigned int bufsize, unsigned int expect_bytes,
-			      unsigned int *bytes_read);
-
 int yk_init(void)
 {
 	return _ykusb_start();
