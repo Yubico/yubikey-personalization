@@ -293,13 +293,13 @@ int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 				const char *salt)
 {
 	if (cfg) {
-		char *random_places[] = {
+		const char *random_places[] = {
 			"/dev/srandom",
 			"/dev/urandom",
 			"/dev/random",
 			0
 		};
-		char **random_place;
+		const char **random_place;
 		uint8_t _salt[8];
 		size_t _salt_len = 0;
 		unsigned char buf[sizeof(cfg->ykcore_config.key) + 4];
