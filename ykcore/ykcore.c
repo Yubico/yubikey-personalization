@@ -375,10 +375,9 @@ int yk_wait_for_key_status(YK_KEY *yk, uint8_t slot, unsigned int flags,
 			   unsigned char *last_data)
 {
 	unsigned char data[FEATURE_RPT_SIZE];
-	unsigned int bytes_read;
 
-	int sleepval = 10;
-	int slept_time = 0;
+	unsigned int sleepval = 10;
+	unsigned int slept_time = 0;
 	int blocking = 0;
 
 	/* Non-zero slot breaks on Windows (libusb-1.0.8-win32), while working fine
