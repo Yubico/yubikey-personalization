@@ -327,7 +327,7 @@ const char *yk_strerror(int errnum)
 		return errtext[errnum];
 	return NULL;
 }
-const char *yk_usb_strerror()
+const char *yk_usb_strerror(void)
 {
 	return _ykusb_strerror();
 }
