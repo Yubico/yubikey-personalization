@@ -122,7 +122,6 @@ static int parse_args(int argc, char **argv,
 
 	if (hex_encoded) {
 		static unsigned char decoded[SHA1_MAX_BLOCK_SIZE];
-		int decoded_len;
 
 		int strl = strlen(argv[optind]);
 
@@ -254,7 +253,6 @@ int main(int argc, char **argv)
 
 	/* Options */
 	bool verbose = false;
-	bool hex_encoded = false;
 	bool hmac = true;
 	bool may_block = true;
 	unsigned char *challenge;
