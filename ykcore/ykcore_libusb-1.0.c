@@ -200,7 +200,7 @@ int _ykusb_close_device(void *yk)
 
 const char *_ykusb_strerror()
 {
-	static char *buf;
+	static const char *buf;
 	switch (ykl_errno) {
 	case LIBUSB_SUCCESS:
 		buf = "Success (no error)";
