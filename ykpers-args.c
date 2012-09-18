@@ -41,6 +41,7 @@
 #include <ykpers.h>
 #include <yubikey.h> /* To get yubikey_modhex_encode and yubikey_hex_encode */
 #include <ykdef.h>
+#include "ykpers-args.h"
 
 #define YUBICO_OATH_VENDOR_ID_HEX	0xe1	/* UB as hex */
 #define YUBICO_HOTP_EVENT_TOKEN_TYPE	0x63	/* HE as hex */

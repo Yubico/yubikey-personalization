@@ -41,6 +41,6 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		   bool *aesviahash, char *ndef_type, char *ndef,
 		   int *exit_code);
 
-void report_yk_error();
+void report_yk_error(void);
 
 #endif
