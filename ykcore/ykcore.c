@@ -145,7 +145,6 @@ int yk_get_status(YK_KEY *k, YK_STATUS *status)
 int yk_get_serial(YK_KEY *yk, uint8_t slot, unsigned int flags, unsigned int *serial)
 {
 	unsigned char buf[FEATURE_RPT_SIZE * 2];
-	int yk_cmd;
 	unsigned int response_len = 0;
 	unsigned int expect_bytes = 0;
 
