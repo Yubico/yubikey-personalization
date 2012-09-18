@@ -198,7 +198,7 @@ int _ykusb_close_device(void *yk)
 	return 1;
 }
 
-const char *_ykusb_strerror()
+const char *_ykusb_strerror(void)
 {
 	static const char *buf;
 	switch (ykl_errno) {

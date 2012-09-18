@@ -185,7 +185,7 @@ int _ykusb_close_device(void *yk)
 	return 0;
 }
 
-const char *_ykusb_strerror()
+const char *_ykusb_strerror(void)
 {
 	return usb_strerror();
 }

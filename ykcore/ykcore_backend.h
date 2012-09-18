@@ -47,6 +47,6 @@ int _ykusb_read(void *dev, int report_type, int report_number,
 int _ykusb_write(void *dev, int report_type, int report_number,
 		 char *buffer, int buffer_size);
 
-const char *_ykusb_strerror();
+const char *_ykusb_strerror(void);
 
 #endif	/* __YKCORE_BACKEND_H_INCLUDED__ */
