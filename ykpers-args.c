@@ -186,6 +186,11 @@ static const YK_CONFIG default_update = {
         0                       /* crc */
 };
 
+static int _set_fixed(char *opt, YKP_CONFIG *cfg);
+static int _format_decimal_as_hex(uint8_t *dst, size_t dst_len, uint8_t *src);
+static int _format_oath_id(uint8_t *dst, size_t dst_len, uint8_t vendor, uint8_t type, uint32_t mui);
+static int _set_oath_id(char *opt, YKP_CONFIG *cfg, struct config_st *ycfg, YK_KEY *yk, YK_STATUS *st);
+
 static int hex_modhex_decode(unsigned char *result, size_t *resultlen,
 			     const char *str, size_t strl,
 			     size_t minsize, size_t maxsize,
@@ -675,7 +680,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 	return 1;
 }
 
-int _set_fixed(char *opt, YKP_CONFIG *cfg) {
+static int _set_fixed(char *opt, YKP_CONFIG *cfg) {
 	const char *fixed = opt;
 	size_t fixedlen = strlen (fixed);
 	unsigned char fixedbin[256];
@@ -692,7 +697,7 @@ int _set_fixed(char *opt, YKP_CONFIG *cfg) {
 
 
 /* re-format decimal 12345678 into 'hex' 0x12 0x34 0x56 0x78 */
-int _format_decimal_as_hex(uint8_t *dst, size_t dst_len, uint8_t *src)
+static int _format_decimal_as_hex(uint8_t *dst, size_t dst_len, uint8_t *src)
 {
 	uint8_t *end;
 
@@ -709,7 +714,7 @@ int _format_decimal_as_hex(uint8_t *dst, size_t dst_len, uint8_t *src)
 }
 
 /* For details, see YubiKey Manual 2010-09-16 section 5.3.4 - OATH-HOTP Token Identifier */
-int _format_oath_id(uint8_t *dst, size_t dst_len, uint8_t vendor, uint8_t type, uint32_t mui)
+static int _format_oath_id(uint8_t *dst, size_t dst_len, uint8_t vendor, uint8_t type, uint32_t mui)
 {
 	uint8_t buf[8 + 1];
 
@@ -732,7 +737,7 @@ int _format_oath_id(uint8_t *dst, size_t dst_len, uint8_t vendor, uint8_t type, 
 	return 1;
 }
 
-int _set_oath_id(char *opt, YKP_CONFIG *cfg, struct config_st *ycfg, YK_KEY *yk, YK_STATUS *st) {
+static int _set_oath_id(char *opt, YKP_CONFIG *cfg, struct config_st *ycfg, YK_KEY *yk, YK_STATUS *st) {
 	/* For details, see YubiKey Manual 2010-09-16 section 5.3.4 - OATH-HOTP Token Identifier */
 	if (!(ycfg->tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP) {
 		fprintf(stderr,
