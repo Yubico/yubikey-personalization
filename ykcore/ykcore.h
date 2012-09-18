@@ -116,6 +116,10 @@ extern int yk_write_config(YK_KEY *k, YK_CONFIG *cfg, int confnum,
 			   unsigned char *acc_code);
 /* Write something to the YubiKey (a command that is). */
 extern int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount);
+/* Do a challenge-response round with the key. */
+extern int yk_challenge_response(YK_KEY *yk, uint8_t yk_cmd, int may_block,
+				 unsigned int challenge_len, unsigned char *challenge,
+				 unsigned int response_len, unsigned char *response);
 
 extern int yk_force_key_update(YK_KEY *yk);
 
@@ -143,6 +147,7 @@ const char *yk_usb_strerror(void);
 #define YK_ENOTYETIMPL	0x09
 #define YK_ECHECKSUM	0x0a	/* checksum validation failed */
 #define YK_EWOULDBLOCK	0x0b	/* operation would block */
+#define YK_EINVALIDCMD	0x0c	/* supplied command is invalid for this operation */
 
 /* Flags for response reading. Use high numbers to not exclude the possibility
  * to combine these with for example SLOT commands from ykdef.h in the future.

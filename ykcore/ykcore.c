@@ -277,6 +277,46 @@ int yk_write_ndef(YK_KEY *yk, YKNDEF *ndef)
 	return stat.pgmSeq != seq;
 }
 
+/*
+ * This function is for doing HMAC-SHA1 or Yubico challenge-response with a key.
+ */
+int yk_challenge_response(YK_KEY *yk, uint8_t yk_cmd, int may_block,
+		unsigned int challenge_len, unsigned char *challenge,
+		unsigned int response_len, unsigned char *response)
+{
+	unsigned int flags = 0;
+	unsigned int bytes_read = 0;
+	unsigned int expect_bytes = 0;
+
+	switch(yk_cmd) {
+	case SLOT_CHAL_HMAC1:
+	case SLOT_CHAL_HMAC2:
+		expect_bytes = 20;
+		break;
+	case SLOT_CHAL_OTP1:
+	case SLOT_CHAL_OTP2:
+		expect_bytes = 16;
+		break;
+	default:
+		yk_errno = YK_EINVALIDCMD;
+		return 0;
+	}
+
+	if (may_block)
+		flags |= YK_FLAG_MAYBLOCK;
+
+	if (! yk_write_to_key(yk, yk_cmd, challenge, challenge_len)) {
+		return 0;
+	}
+
+	if (! yk_read_response_from_key(yk, yk_cmd, flags,
+				response, response_len,
+				expect_bytes,
+				&bytes_read)) {
+		return 0;
+	}
+	return 1;
+}
 
 int * const _yk_errno_location(void)
 {
@@ -319,7 +359,8 @@ static const char *errtext[] = {
 	"no status structure given",
 	"not yet implemented",
 	"checksum mismatch",
-	"operation would block"
+	"operation would block",
+	"invalid command for operation"
 };
 const char *yk_strerror(int errnum)
 {

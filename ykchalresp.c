@@ -190,18 +190,12 @@ static int challenge_response(YK_KEY *yk, int slot,
 	unsigned char response[64];
 	unsigned char output_buf[(SHA1_MAX_BLOCK_SIZE * 2) + 1];
 	int yk_cmd;
-	unsigned int flags = 0;
-	unsigned int response_len = 0;
 	unsigned int expect_bytes = 0;
-
 	memset(response, 0, sizeof(response));
-
-	if (may_block)
-		flags |= YK_FLAG_MAYBLOCK;
+	memset(output_buf, 0, sizeof(output_buf));
 
 	if (verbose) {
 		fprintf(stderr, "Sending %i bytes %s challenge to slot %i\n", len, (hmac == true)?"HMAC":"Yubico", slot);
-		//_yk_hexdump(challenge, len);
 	}
 
 	switch(slot) {
@@ -211,34 +205,22 @@ static int challenge_response(YK_KEY *yk, int slot,
 	case 2:
 		yk_cmd = (hmac == true) ? SLOT_CHAL_HMAC2 : SLOT_CHAL_OTP2;
 		break;
+	default:
+		return 0;
 	}
 
-	if (!yk_write_to_key(yk, yk_cmd, challenge, len))
+	if(! yk_challenge_response(yk, yk_cmd, may_block, len,
+				challenge, sizeof(response), response)) {
 		return 0;
-
-	if (verbose) {
-		fprintf(stderr, "Reading response...\n");
 	}
 
 	/* HMAC responses are 160 bits, Yubico 128 */
 	expect_bytes = (hmac == true) ? 20 : 16;
 
-	if (! yk_read_response_from_key(yk, slot, flags,
-					&response, sizeof(response),
-					expect_bytes,
-					&response_len))
-		return 0;
-
-	if (hmac && response_len > 20)
-		response_len = 20;
-	if (! hmac && response_len > 16)
-		response_len = 16;
-
-	memset(output_buf, 0, sizeof(output_buf));
 	if (hmac) {
-		yubikey_hex_encode((char *)output_buf, (char *)response, response_len);
+		yubikey_hex_encode((char *)output_buf, (char *)response, expect_bytes);
 	} else {
-		yubikey_modhex_encode((char *)output_buf, (char *)response, response_len);
+		yubikey_modhex_encode((char *)output_buf, (char *)response, expect_bytes);
 	}
 	printf("%s\n", output_buf);
 

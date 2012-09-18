@@ -144,3 +144,10 @@ LIBYKPERS_1.7 {
   ykp_construct_ndef_text;
 # Variables:
 } LIBYKPERS_1.6;
+
+LIBYKPERS_1.8 {
+  global:
+# Functions:
+  yk_challenge_response;
+# Variables:
+} LIBYKPERS_1.7;
