@@ -246,6 +246,7 @@ int yk_write_config(YK_KEY *yk, YK_CONFIG *cfg, int confnum,
 	if(!yk_write_command(yk, cfg, command, acc_code)) {
 		return 0;
 	}
+	return 1;
 }
 
 int yk_write_ndef(YK_KEY *yk, YKNDEF *ndef)
