@@ -270,10 +270,11 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 	bool swap_seen = false;
 	bool update_seen = false;
 	bool ndef_seen = false;
+	struct config_st *ycfg;
 
 	ykp_configure_version(cfg, st);
 
-	struct config_st *ycfg = (struct config_st *) ykp_core_config(cfg);
+	ycfg = (struct config_st *) ykp_core_config(cfg);
 
 	while((c = getopt(argc, argv, optstring)) != -1) {
 		if (c == 'o') {
@@ -329,6 +330,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 			break;
 		case '1':
 		case '2': {
+				int command;
 				if (slot_chosen) {
 					fprintf(stderr, "You may only choose slot (-1 / -2) once.\n");
 					*exit_code = 1;
@@ -349,7 +351,6 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 					*exit_code = 1;
 					return 0;
 				}
-				int command;
 				if (update_seen) {
 					memcpy(ycfg, &default_update, sizeof(default_update));
 					if(c == '1') {
