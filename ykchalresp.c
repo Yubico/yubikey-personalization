@@ -58,7 +58,7 @@ const char *usage =
 	;
 const char *optstring = "12xvhHYN";
 
-static void report_yk_error()
+static void report_yk_error(void)
 {
 	if (ykp_errno)
 		fprintf(stderr, "Yubikey personalization error: %s\n",
