@@ -155,7 +155,7 @@ int parse_args(int argc, char **argv,
 	return 1;
 }
 
-int check_firmware(YK_KEY *yk, bool verbose)
+static int check_firmware(YK_KEY *yk, bool verbose)
 {
 	YK_STATUS *st = ykds_alloc();
 
@@ -184,7 +184,7 @@ int check_firmware(YK_KEY *yk, bool verbose)
 	return 1;
 }
 
-int challenge_response(YK_KEY *yk, int slot,
+static int challenge_response(YK_KEY *yk, int slot,
 		       unsigned char *challenge, unsigned int len,
 		       bool hmac, bool may_block, bool verbose)
 {
