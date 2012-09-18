@@ -123,7 +123,7 @@ static int parse_args(int argc, char **argv,
 	if (hex_encoded) {
 		static unsigned char decoded[SHA1_MAX_BLOCK_SIZE];
 
-		int strl = strlen(argv[optind]);
+		size_t strl = strlen(argv[optind]);
 
 		if (strl > sizeof(decoded) * 2) {
 			fprintf(stderr, "Hex-encoded challenge too long (max %lu chars)\n",
