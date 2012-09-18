@@ -161,8 +161,8 @@ void *_ykusb_open_device(int vendor_id, int product_id)
 	libusb_device_handle *h = NULL;
 	struct libusb_device_descriptor desc;
 	libusb_device **list;
-	size_t cnt = libusb_get_device_list(usb_ctx, &list);
-	size_t i = 0;
+	ssize_t cnt = libusb_get_device_list(usb_ctx, &list);
+	ssize_t i = 0;
 	int rc = YK_ENOKEY;
 
 	for (i = 0; i < cnt; i++) {
