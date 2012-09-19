@@ -387,7 +387,7 @@ int ykp_construct_ndef_uri(YKNDEF *ndef, const char *uri)
 	data_length = strlen(uri);
 	if(data_length + 1 > NDEF_DATA_SIZE) {
 		ykp_errno = YKP_EINVAL;
-		return 1;
+		return 0;
 	}
 	if(indx > num_identifiers) {
 		ndef->data[0] = 0;
@@ -397,7 +397,7 @@ int ykp_construct_ndef_uri(YKNDEF *ndef, const char *uri)
 	memcpy(ndef->data + 1, uri, data_length);
 	ndef->len = data_length + 1;
 	ndef->type = 'U';
-	return 0;
+	return 1;
 }
 
 /* Fill in the data and len parts of the YKNDEF struct based on supplied text. */
@@ -411,14 +411,14 @@ int ykp_construct_ndef_text(YKNDEF *ndef, const char *text, const char *lang, bo
 	}
 	if((data_length + lang_length + 1) > NDEF_DATA_SIZE) {
 		ykp_errno = YKP_EINVAL;
-		return 1;
+		return 0;
 	}
 	ndef->data[0] = status;
 	memcpy(ndef->data + 1, lang, lang_length);
 	memcpy(ndef->data + lang_length + 1, text, data_length);
 	ndef->len = data_length + lang_length + 1;
 	ndef->type = 'T';
-	return 0;
+	return 1;
 }
 
 static bool vcheck_all(const YKP_CONFIG *cfg)
