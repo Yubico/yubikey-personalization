@@ -405,7 +405,7 @@ int ykp_construct_ndef_text(YKNDEF *ndef, const char *text, const char *lang, bo
 {
 	size_t data_length = strlen(text);
 	size_t lang_length = strlen(lang);
-	char status = lang_length;
+	unsigned char status = lang_length;
 	if(isutf16) {
 		status &= 0x80;
 	}
