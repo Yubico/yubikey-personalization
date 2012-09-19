@@ -371,8 +371,28 @@ int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 	return 0;
 }
 
-/* Fill in the data and len parts of the YKNDEF struct based on supplied uri. */
-int ykp_construct_ndef_uri(YKNDEF *ndef, const char *uri)
+YK_NDEF *ykp_alloc_ndef(void)
+{
+	YK_NDEF *ndef = malloc(sizeof(YK_NDEF));
+	if(ndef) {
+		memset(ndef, 0, sizeof(YK_NDEF));
+		return ndef;
+	}
+	return 0;
+}
+
+void ykp_free_ndef(YK_NDEF *ndef)
+{
+	if(ndef)
+	{
+		free(ndef);
+		return 1;
+	}
+	return 0;
+}
+
+/* Fill in the data and len parts of the YK_NDEF struct based on supplied uri. */
+int ykp_construct_ndef_uri(YK_NDEF *ndef, const char *uri)
 {
 	int num_identifiers = sizeof(ndef_identifiers) / sizeof(char*);
 	size_t data_length;
@@ -400,8 +420,8 @@ int ykp_construct_ndef_uri(YKNDEF *ndef, const char *uri)
 	return 1;
 }
 
-/* Fill in the data and len parts of the YKNDEF struct based on supplied text. */
-int ykp_construct_ndef_text(YKNDEF *ndef, const char *text, const char *lang, bool isutf16)
+/* Fill in the data and len parts of the YK_NDEF struct based on supplied text. */
+int ykp_construct_ndef_text(YK_NDEF *ndef, const char *text, const char *lang, bool isutf16)
 {
 	size_t data_length = strlen(text);
 	size_t lang_length = strlen(lang);
@@ -419,6 +439,16 @@ int ykp_construct_ndef_text(YKNDEF *ndef, const char *text, const char *lang, bo
 	ndef->len = data_length + lang_length + 1;
 	ndef->type = 'T';
 	return 1;
+}
+
+int ykp_set_ndef_access_code(YK_NDEF *ndef, unsigned char *access_code)
+{
+  if(ndef)
+  {
+    memcpy(ndef->curAccCode, access_code, ACC_CODE_SIZE);
+    return 0;
+  }
+  return 1;
 }
 
 static bool vcheck_all(const YKP_CONFIG *cfg)

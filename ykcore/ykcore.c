@@ -239,9 +239,9 @@ int yk_write_config(YK_KEY *yk, YK_CONFIG *cfg, int confnum,
 	return 1;
 }
 
-int yk_write_ndef(YK_KEY *yk, YKNDEF *ndef)
+int yk_write_ndef(YK_KEY *yk, YK_NDEF *ndef)
 {
-	unsigned char buf[sizeof(YKNDEF)];
+	unsigned char buf[sizeof(YK_NDEF)];
 	YK_STATUS stat;
 	int seq;
 
@@ -255,7 +255,7 @@ int yk_write_ndef(YK_KEY *yk, YKNDEF *ndef)
 	/* Insert config block in buffer */
 
 	memset(buf, 0, sizeof(buf));
-	memcpy(buf, ndef, sizeof(YKNDEF));
+	memcpy(buf, ndef, sizeof(YK_NDEF));
 
 	/* Write to Yubikey */
 	if (!yk_write_to_key(yk, SLOT_NDEF, buf, sizeof(buf)))

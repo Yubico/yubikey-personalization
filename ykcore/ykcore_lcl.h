@@ -39,6 +39,7 @@
 #define yk_config_st config_st
 #define yk_nav_st nav_st
 #define yk_frame_st frame_st
+#define yk_ndef_st ndef_st
 
 #include "ykcore.h"
 #include "ykdef.h"

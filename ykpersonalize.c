@@ -228,21 +228,21 @@ int main(int argc, char **argv)
 			if (verbose)
 				printf("Attempting to write configuration to the yubikey...");
 			if(ykp_command(cfg) == SLOT_NDEF) {
-				YKNDEF ndef;
-				memset(&ndef, 0, sizeof(YKNDEF));
+				YK_NDEF *ndef = ykp_alloc_ndef();
 				if(ndef_type == 'U') {
-					ykp_construct_ndef_uri(&ndef, ndef_string);
+					ykp_construct_ndef_uri(ndef, ndef_string);
 				} else if(ndef_type == 'T') {
-					ykp_construct_ndef_text(&ndef, ndef_string, "en", false);
+					ykp_construct_ndef_text(ndef, ndef_string, "en", false);
 				}
 				if(use_access_code) {
-					memcpy(ndef.curAccCode, access_code, ACC_CODE_SIZE);
+					ykp_set_ndef_access_code(ndef, access_code);
 				}
-				if (!yk_write_ndef(yk, &ndef)) {
+				if (!yk_write_ndef(yk, ndef)) {
 					if (verbose)
 						printf(" failure\n");
 					goto err;
 				}
+				ykp_free_ndef(ndef);
 			} else {
 				if (!yk_write_command(yk,
 							ykp_core_config(cfg), ykp_command(cfg),

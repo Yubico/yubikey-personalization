@@ -149,5 +149,8 @@ LIBYKPERS_1.8 {
   global:
 # Functions:
   yk_challenge_response;
+  ykp_set_ndef_access_code;
+  ykp_alloc_ndef;
+  ykp_free_ndef;
 # Variables:
 } LIBYKPERS_1.7;

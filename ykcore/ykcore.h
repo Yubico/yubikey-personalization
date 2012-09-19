@@ -62,6 +62,7 @@ typedef struct yk_config_st YK_CONFIG;	/* Configuration structure.
 typedef struct yk_nav_st YK_NAV;	/* Navigation structure.
 					   Other libraries provide access. */
 typedef struct yk_frame_st YK_FRAME;	/* Data frame for write operation */
+typedef struct yk_ndef_st YK_NDEF;
 
 /*************************************************************************
  *
@@ -114,6 +115,8 @@ extern int yk_write_command(YK_KEY *k, YK_CONFIG *cfg, uint8_t command,
 /* wrapper function of yk_write_command */
 extern int yk_write_config(YK_KEY *k, YK_CONFIG *cfg, int confnum,
 			   unsigned char *acc_code);
+/* writes the given ndef to the key. */
+int yk_write_ndef(YK_KEY *yk, YK_NDEF *ndef);
 /* Write something to the YubiKey (a command that is). */
 extern int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount);
 /* Do a challenge-response round with the key. */

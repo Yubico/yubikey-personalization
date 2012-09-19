@@ -177,12 +177,12 @@ struct config_st {
 /* NDEF structure */
 #define	NDEF_DATA_SIZE			54
 
-typedef struct {
+struct ndef_st {
 	unsigned char len;				/* Payload length */
 	unsigned char type;				/* NDEF type specifier */
 	unsigned char data[NDEF_DATA_SIZE];		/* Payload size */
 	unsigned char curAccCode[ACC_CODE_SIZE];	/* Access code */
-} YKNDEF;
+};
 
 
 /* Navigation */
