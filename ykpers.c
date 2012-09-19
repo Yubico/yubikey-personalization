@@ -263,7 +263,7 @@ int ykp_AES_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
 */
 int ykp_HMAC_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
 	char aesbin[256];
-	int i;
+	size_t i;
 
 	/* Make sure that the hexkey is exactly 40 characters */
 	if (strlen(hexkey) != 40) {
