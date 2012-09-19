@@ -64,8 +64,6 @@
 extern int yk_read_from_key(YK_KEY *k, uint8_t slot,
 			    void *buf, unsigned int bufsize,
 			    unsigned int *bufcount);
-extern int yk_write_to_key(YK_KEY *k, uint8_t slot,
-			   const void *buf, int bufcount);
 
 /*************************************************************************
  *
