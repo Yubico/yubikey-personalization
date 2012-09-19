@@ -128,7 +128,7 @@ extern int yk_force_key_update(YK_KEY *yk);
  * Error handling fuctions
  *
  ****/
-extern int * const _yk_errno_location(void);
+extern int * _yk_errno_location(void);
 #define yk_errno (*_yk_errno_location())
 const char *yk_strerror(int errnum);
 /* The following function is only useful if yk_errno == YK_EUSBERR and

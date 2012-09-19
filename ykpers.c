@@ -1006,7 +1006,7 @@ int ykp_config_num(YKP_CONFIG *cfg)
 	return 0;
 }
 
-int * const _ykp_errno_location(void)
+int * _ykp_errno_location(void)
 {
 	static int tsd_init = 0;
 	static int nothread_errno = 0;

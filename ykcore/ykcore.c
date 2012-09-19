@@ -318,7 +318,7 @@ int yk_challenge_response(YK_KEY *yk, uint8_t yk_cmd, int may_block,
 	return 1;
 }
 
-int * const _yk_errno_location(void)
+int * _yk_errno_location(void)
 {
 	static int tsd_init = 0;
 	static int nothread_errno = 0;
