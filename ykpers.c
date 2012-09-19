@@ -806,22 +806,22 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 			if ((cfg->ykcore_config.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX1) == CFGFLAG_OATH_FIXED_MODHEX1 ||
 			    (cfg->ykcore_config.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX2) == CFGFLAG_OATH_FIXED_MODHEX2 ||
 			    (cfg->ykcore_config.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX) == CFGFLAG_OATH_FIXED_MODHEX) {
-				yubikey_modhex_encode(buffer, (char *)cfg->ykcore_config.fixed, 1);
+				yubikey_modhex_encode(buffer, (const char *)cfg->ykcore_config.fixed, 1);
 			} else {
-				yubikey_hex_encode(buffer, (char *)cfg->ykcore_config.fixed, 1);
+				yubikey_hex_encode(buffer, (const char *)cfg->ykcore_config.fixed, 1);
 			}
 			/* Second byte (token type) */
 			if ((cfg->ykcore_config.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX2) == CFGFLAG_OATH_FIXED_MODHEX2 ||
 			    (cfg->ykcore_config.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX) == CFGFLAG_OATH_FIXED_MODHEX) {
-				yubikey_modhex_encode(buffer + 2, (char *)cfg->ykcore_config.fixed + 1, 1);
+				yubikey_modhex_encode(buffer + 2, (const char *)cfg->ykcore_config.fixed + 1, 1);
 			} else {
-				yubikey_hex_encode(buffer + 2, (char *)cfg->ykcore_config.fixed + 1, 1);
+				yubikey_hex_encode(buffer + 2, (const char *)cfg->ykcore_config.fixed + 1, 1);
 			}
 			/* bytes 3-12 - MUI */
 			if ((cfg->ykcore_config.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX) == CFGFLAG_OATH_FIXED_MODHEX) {
-				yubikey_modhex_encode(buffer + 4, (char *)cfg->ykcore_config.fixed + 2, 8);
+				yubikey_modhex_encode(buffer + 4, (const char *)cfg->ykcore_config.fixed + 2, 8);
 			} else {
-				yubikey_hex_encode(buffer + 4, (char *)cfg->ykcore_config.fixed + 2, 8);
+				yubikey_hex_encode(buffer + 4, (const char *)cfg->ykcore_config.fixed + 2, 8);
 			}
 			buffer[12] = 0;
 			writer(buffer, strlen(buffer), userdata);
@@ -834,7 +834,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 			writer(str_modhex_prefix,
 			       strlen(str_modhex_prefix),
 			       userdata);
-			yubikey_modhex_encode(buffer, (char *)cfg->ykcore_config.fixed, cfg->ykcore_config.fixedSize);
+			yubikey_modhex_encode(buffer, (const char *)cfg->ykcore_config.fixed, cfg->ykcore_config.fixedSize);
 			writer(buffer, strlen(buffer), userdata);
 			writer("\n", 1, userdata);
 		}
@@ -850,7 +850,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 			writer(str_hex_prefix,
 			       strlen(str_hex_prefix),
 			       userdata);
-			yubikey_hex_encode(buffer, (char *)cfg->ykcore_config.uid, UID_SIZE);
+			yubikey_hex_encode(buffer, (const char *)cfg->ykcore_config.uid, UID_SIZE);
 			writer(buffer, strlen(buffer), userdata);
 		}
 		writer("\n", 1, userdata);
@@ -863,9 +863,9 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		writer(str_hex_prefix,
 		       strlen(str_hex_prefix),
 		       userdata);
-		yubikey_hex_encode(buffer, (char *)cfg->ykcore_config.key, KEY_SIZE);
+		yubikey_hex_encode(buffer, (const char *)cfg->ykcore_config.key, KEY_SIZE);
 		if (key_bits_in_uid) {
-			yubikey_hex_encode(buffer + KEY_SIZE * 2, (char *)cfg->ykcore_config.uid, 4);
+			yubikey_hex_encode(buffer + KEY_SIZE * 2, (const char *)cfg->ykcore_config.uid, 4);
 		}
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
@@ -878,7 +878,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		writer(str_hex_prefix,
 		       strlen(str_hex_prefix),
 		       userdata);
-		yubikey_hex_encode(buffer, (char *)cfg->ykcore_config.accCode, ACC_CODE_SIZE);
+		yubikey_hex_encode(buffer, (const char*)cfg->ykcore_config.accCode, ACC_CODE_SIZE);
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
