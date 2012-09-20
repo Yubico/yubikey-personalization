@@ -11,5 +11,5 @@ before_install:
   - sudo apt-get install -qq libyubikey-dev $EXTRA
 matrix:
   include:
-    - compiler: i586-mingw32msvc
+    - compiler: i586-mingw32msvc-gcc
       env: LIBUSB=windows EXTRA=wine
