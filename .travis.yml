@@ -5,15 +5,15 @@ compiler:
 env:
   - LIBUSB=libusb EXTRA=libusb-dev
   - LIBUSB=libusb-1.0 EXTRA=libusb-1.0-0-dev
-  - LIBUSB=win32 EXTRA=wine mingw-w64
-  - LIBUSB=win64 EXTRA=wine mingw-w64
-script: ./build-and-test
+  - LIBUSB=win32 EXTRA=mingw-w64
+  - LIBUSB=win64 EXTRA=mingw-w64
+script: ./build-and-test.sh
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq libyubikey-dev $EXTRA
 matrix:
   exclude:
     - compiler: clang
-      env: LIBUSB=win32
+      env: LIBUSB=win32 EXTRA=mingw-w64
     - compiler: clang
-      env: LIBUSB=win64
+      env: LIBUSB=win64 EXTRA=mingw-w64
