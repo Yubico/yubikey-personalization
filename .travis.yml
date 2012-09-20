@@ -5,15 +5,14 @@ compiler:
 env:
   - LIBUSB=libusb EXTRA=libusb-dev
   - LIBUSB=libusb-1.0 EXTRA=libusb-1.0-0-dev
-  - LIBUSB=win32 EXTRA=wine
-  - LIBUSB=win64 EXTRA=wine
-script: ./build-and-test.sh
+script:
+  - autoreconf -i
+  - ./configure --with-backend=$LIBUSB
+  - make check
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq libyubikey-dev $EXTRA
 matrix:
-  exclude:
-    - compiler: clang
-      env: LIBUSB=win32 EXTRA=wine
-    - compiler: clang
-      env: LIBUSB=win64 EXTRA=wine
+  include:
+    - compiler: i586-mingw32msvc-gcc
+      env: LIBUSB=windows EXTRA=wine
