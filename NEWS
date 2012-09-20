@@ -4,6 +4,24 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
 ** Added ./configure --enable-gcc-warnings to enable a lot of warnings.
 
+** Added Continuous integration at travis-ci
+(http://travis-ci.org/#!/Yubico/yubikey-personalization)
+
+** Fixed functions for NDEF writing, adding:
+ykp_ndef_alloc(), ykp_ndef_free() and ykp_set_ndef_access_code()
+also providing compatible name YK_NDEF in ykcore.h and exporting
+yk_write_ndef() there.
+fix return values from ndef_construct functions
+
+** Fixed a crash bug when the library was called from different threads.
+
+** Check return code from libusb_init() so we avoid crashing there.
+Also use a usb context instead of relying on default.
+
+** Fix numerous warnings.
+
+** Fix compilation in MSVC2010.
+
 * Version 1.7.0 (released 2012-06-07)
 
 ** Add support for new features in YubiKey 2.3:
