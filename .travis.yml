@@ -6,12 +6,10 @@ env:
   - LIBUSB=libusb EXTRA=libusb-dev
   - LIBUSB=libusb-1.0 EXTRA=libusb-1.0-0-dev
 script:
-  - autoreconf -i
-  - ./configure --with-backend=$LIBUSB
-  - make check
+  - ./build-and-test.sh
 before_install:
   - sudo apt-get install -qq libyubikey-dev $EXTRA
 matrix:
   include:
-    - compiler: i586-mingw32msvc-gcc
+    - compiler: gcc
       env: LIBUSB=windows EXTRA=wine
