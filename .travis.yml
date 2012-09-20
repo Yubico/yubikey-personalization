@@ -3,14 +3,14 @@ compiler:
   - gcc
   - clang
 env:
-  - LIBUSB=libusb
-  - LIBUSB=libusb-1.0
-  - LIBUSB=win32
-  - LIBUSB=win64
+  - LIBUSB=libusb EXTRA=libusb-dev
+  - LIBUSB=libusb-1.0 EXTRA=libusb-1.0-0-dev
+  - LIBUSB=win32 EXTRA=wine mingw-w64
+  - LIBUSB=win64 EXTRA=wine mingw-w64
 script: ./build-and-test
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -qq libyubikey-dev libusb-1.0-0-dev libusb-dev wine mingw-w64
+  - sudo apt-get install -qq libyubikey-dev $EXTRA
 matrix:
   exclude:
     - compiler: clang
