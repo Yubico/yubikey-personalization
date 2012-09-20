@@ -5,8 +5,8 @@ compiler:
 env:
   - LIBUSB=libusb EXTRA=libusb-dev
   - LIBUSB=libusb-1.0 EXTRA=libusb-1.0-0-dev
-  - LIBUSB=win32 EXTRA=libusb-1.0-0-dev
-  - LIBUSB=win64 EXTRA=libusb-1.0-0-dev
+  - LIBUSB=win32 EXTRA=wine
+  - LIBUSB=win64 EXTRA=wine
 script: ./build-and-test.sh
 before_install:
   - sudo apt-get update -qq
@@ -14,6 +14,6 @@ before_install:
 matrix:
   exclude:
     - compiler: clang
-      env: LIBUSB=win32 EXTRA=libusb-1.0-0-dev
+      env: LIBUSB=win32 EXTRA=wine
     - compiler: clang
-      env: LIBUSB=win64 EXTRA=libusb-1.0-0-dev
+      env: LIBUSB=win64 EXTRA=wine
