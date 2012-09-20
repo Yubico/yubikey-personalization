@@ -440,7 +440,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 			if (!ykp_configure_command(cfg, SLOT_NDEF)) {
 				return 0;
 			}
-			memcpy(ndef, optarg, strnlen(optarg, 128));
+			memcpy(ndef, optarg, strlen(optarg));
 			ndef_seen = true;
 			break;
 		case 'o':
