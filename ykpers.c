@@ -381,7 +381,7 @@ YK_NDEF *ykp_alloc_ndef(void)
 	return 0;
 }
 
-void ykp_free_ndef(YK_NDEF *ndef)
+int ykp_free_ndef(YK_NDEF *ndef)
 {
 	if(ndef)
 	{

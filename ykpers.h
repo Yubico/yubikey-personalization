@@ -68,7 +68,7 @@ int ykp_HMAC_key_from_hex(YKP_CONFIG *cfg, const char *hexkey);
 
 /* Functions for constructing the YK_NDEF struct before writing it to a neo */
 YK_NDEF *ykp_alloc_ndef(void);
-void ykp_free_ndef(YK_NDEF *ndef);
+int ykp_free_ndef(YK_NDEF *ndef);
 int ykp_construct_ndef_uri(YK_NDEF *ndef, const char *uri);
 int ykp_construct_ndef_text(YK_NDEF *ndef, const char *text, const char *lang, bool isutf16);
 int ykp_set_ndef_access_code(YK_NDEF *ndef, unsigned char *access_code);
