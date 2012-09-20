@@ -69,7 +69,7 @@ ykpers4win64:
 	$(MAKE) -f ykpers4win.mk ykpers4win ARCH=64 HOST=x86_64-w64-mingw32 CHECK=check
 
 ykpers4win32mingw32:
-	CFLAGS=-I/usr/i586-mingw32msvc/include/ddk/ $(MAKE) -f ykpers4win.mk ykpers4win ARCH=32 HOST=i586-mingw32msvc CHECK=check
+	$(MAKE) -f ykpers4win.mk ykpers4win ARCH=32 HOST=i586-mingw32msvc CHECK=check CC=i586-mingw32msvc-gcc CFLAGS=-I/usr/i586-mingw32msvc/include/ddk/
 
 upload-ykpers4win:
 	gpg --detach-sign --default-key $(PGPKEYID) \
