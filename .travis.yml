@@ -12,4 +12,4 @@ before_install:
 matrix:
   include:
     - compiler: gcc
-      env: LIBUSB=windows EXTRA=wine
+      env: LIBUSB=windows EXTRA="wine mingw32-runtime"
