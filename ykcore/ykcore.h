@@ -62,7 +62,7 @@ typedef struct yk_config_st YK_CONFIG;	/* Configuration structure.
 typedef struct yk_nav_st YK_NAV;	/* Navigation structure.
 					   Other libraries provide access. */
 typedef struct yk_frame_st YK_FRAME;	/* Data frame for write operation */
-typedef struct yk_ndef_st YK_NDEF;
+typedef struct ndef_st YK_NDEF;
 
 /*************************************************************************
  *

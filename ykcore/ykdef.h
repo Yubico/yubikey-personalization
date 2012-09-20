@@ -177,6 +177,9 @@ struct config_st {
 /* NDEF structure */
 #define	NDEF_DATA_SIZE			54
 
+/* backwards compatibility with version 1.7.0  */
+typedef struct ndef_st YKNDEF;
+
 struct ndef_st {
 	unsigned char len;				/* Payload length */
 	unsigned char type;				/* NDEF type specifier */
