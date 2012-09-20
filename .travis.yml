@@ -9,7 +9,7 @@ env:
   - LIBUSB=win64
 script: ./build-and-test
 before_install:
-  - sudo apt-get install -qq libyubikey-dev libusb-1.0-0-dev libusb-dev wine mingw-w64
+  - sudo apt-get install -qq libyubikey-dev libusb-1.0-0-dev libusb-dev wine mingw-w32
 matrix:
   exclude:
     - compiler: clang
