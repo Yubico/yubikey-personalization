@@ -7,6 +7,9 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 ** Added Continuous integration at travis-ci
 (http://travis-ci.org/#!/Yubico/yubikey-personalization)
 
+** Added yk_challenge_response() function for doing challenge response
+with a key.
+
 ** Fixed functions for NDEF writing, adding:
 ykp_ndef_alloc(), ykp_ndef_free() and ykp_set_ndef_access_code()
 also providing compatible name YK_NDEF in ykcore.h and exporting
