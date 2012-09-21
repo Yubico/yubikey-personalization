@@ -121,7 +121,7 @@ extern int yk_write_ndef(YK_KEY *yk, YK_NDEF *ndef);
 extern int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount);
 /* Do a challenge-response round with the key. */
 extern int yk_challenge_response(YK_KEY *yk, uint8_t yk_cmd, int may_block,
-				 unsigned int challenge_len, unsigned char *challenge,
+				 unsigned int challenge_len, const unsigned char *challenge,
 				 unsigned int response_len, unsigned char *response);
 
 extern int yk_force_key_update(YK_KEY *yk);
