@@ -149,6 +149,8 @@ extern int _ykusb_stop(void)
 {
 	if (libusb_inited == 1) {
 		libusb_exit(usb_ctx);
+		usb_ctx = NULL;
+		libusb_inited = 0;
 		return 1;
 	}
 	yk_errno = YK_EUSBERR;
