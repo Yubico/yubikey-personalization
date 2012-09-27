@@ -14,7 +14,8 @@ with a key.
 ykp_ndef_alloc(), ykp_ndef_free() and ykp_set_ndef_access_code()
 also providing compatible name YK_NDEF in ykcore.h and exporting
 yk_write_ndef() there.
-fix return values from ndef_construct functions
+Change return values from ndef_construct_*() functions to make them
+consistent with the rest of the library.
 
 ** Fixed a crash bug when the library was called from different threads.
 
