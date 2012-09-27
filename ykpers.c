@@ -443,12 +443,12 @@ int ykp_construct_ndef_text(YK_NDEF *ndef, const char *text, const char *lang, b
 
 int ykp_set_ndef_access_code(YK_NDEF *ndef, unsigned char *access_code)
 {
-  if(ndef)
-  {
-    memcpy(ndef->curAccCode, access_code, ACC_CODE_SIZE);
-    return 0;
-  }
-  return 1;
+	if(ndef)
+	{
+		memcpy(ndef->curAccCode, access_code, ACC_CODE_SIZE);
+		return 0;
+	}
+	return 1;
 }
 
 static bool vcheck_all(const YKP_CONFIG *cfg)
