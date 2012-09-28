@@ -1,5 +1,7 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.8.1 (unreleased)
+
 * Version 1.8.0 (released 2012-09-28)
 
 ** Added ./configure --enable-gcc-warnings to enable a lot of warnings.
