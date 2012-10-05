@@ -55,6 +55,7 @@ int _ykusb_stop(void)
 {
 	if (ykosxManager != NULL) {
 		_ykusb_IOReturn = IOHIDManagerClose( ykosxManager, 0L );
+		CFRelease(ykosxManager);
 	
 		if (_ykusb_IOReturn == kIOReturnSuccess) {
 			ykosxManager = NULL;
