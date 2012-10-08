@@ -47,7 +47,7 @@ static IOReturn _ykusb_IOReturn = 0;
 int _ykusb_start(void)
 {
 	ykosxManager = IOHIDManagerCreate( kCFAllocatorDefault, 0L );
-	
+
 	return 1;
 }
 
@@ -56,13 +56,13 @@ int _ykusb_stop(void)
 	if (ykosxManager != NULL) {
 		_ykusb_IOReturn = IOHIDManagerClose( ykosxManager, 0L );
 		CFRelease(ykosxManager);
-	
+
 		if (_ykusb_IOReturn == kIOReturnSuccess) {
 			ykosxManager = NULL;
 			return 1;
 		}
 	}
-	
+
 	yk_errno = YK_EUSBERR;
 	return 0;
 }
@@ -78,46 +78,46 @@ void *_ykusb_open_device(int vendor_id, int product_id)
 	CFDictionaryRef dict;
 	CFStringRef keys[2];
 	CFStringRef values[2];
-	
+
 	yk_errno = YK_EUSBERR;
-	
+
 	CFNumberRef vendorID = CFNumberCreate( kCFAllocatorDefault, kCFNumberIntType, &vendor_id );
 	CFNumberRef productID = CFNumberCreate( kCFAllocatorDefault, kCFNumberIntType, &product_id );
-	
+
 	keys[0] = CFSTR( kIOHIDVendorIDKey );  values[0] = (void *) vendorID;
 	keys[1] = CFSTR( kIOHIDProductIDKey ); values[1] = (void *) productID;
 
 	dict = CFDictionaryCreate( kCFAllocatorDefault, (const void **) &keys, (const void **) &values, 1, NULL, NULL);
 
 	IOHIDManagerSetDeviceMatching( ykosxManager, dict );
-	
+
 	CFSetRef devSet = IOHIDManagerCopyDevices( ykosxManager );
-	
+
 	if ( devSet ) {
-		
+
 		CFMutableArrayRef array = CFArrayCreateMutable( kCFAllocatorDefault, 0, NULL );
-		
+
 		CFSetApplyFunction( devSet, _ykosx_CopyToCFArray, array );
 
 		CFIndex cnt = CFArrayGetCount( array );
-		
+
 		if (cnt > 0) {
 			yk = (void *) CFArrayGetValueAtIndex( array, 0 );
 		}
 		else
 			yk_errno = YK_ENOKEY;
-		
+
 		CFRelease( array );
 		CFRelease( devSet );
 	}
-	
+
 	CFRelease( dict );
 	CFRelease( vendorID );
 	CFRelease( productID );
-	
+
 	if (yk) {
 		_ykusb_IOReturn = IOHIDDeviceOpen( yk, 0L );
-		
+
 		if ( _ykusb_IOReturn != kIOReturnSuccess ) {
 			yk_release();
 			return 0;
@@ -126,17 +126,17 @@ void *_ykusb_open_device(int vendor_id, int product_id)
 		yk_errno = 0;
 		return yk;
 	}
-	
+
 	return 0;
 }
 
 int _ykusb_close_device(void *dev)
 {
 	_ykusb_IOReturn = IOHIDDeviceClose( dev, 0L );
-	
+
 	if ( _ykusb_IOReturn == kIOReturnSuccess )
 		return 1;
-	
+
 	yk_errno = YK_EUSBERR;
 	return 0;
 }
@@ -151,9 +151,9 @@ int _ykusb_read(void *dev, int report_type, int report_number,
 		yk_errno = YK_ENOTYETIMPL;
 		return 0;
 	}
-	
+
 	_ykusb_IOReturn = IOHIDDeviceGetReport( dev, kIOHIDReportTypeFeature, report_number, (uint8_t *)buffer, (CFIndex *) &sizecf );
-	
+
 	if ( _ykusb_IOReturn != kIOReturnSuccess )
 	{
 		yk_errno = YK_EUSBERR;
@@ -171,15 +171,15 @@ int _ykusb_write(void *dev, int report_type, int report_number,
 		yk_errno = YK_ENOTYETIMPL;
 		return 0;
 	}
-	
+
 	_ykusb_IOReturn = IOHIDDeviceSetReport( dev, kIOHIDReportTypeFeature, report_number, (unsigned char *)buffer, size);
-	
+
 	if ( _ykusb_IOReturn != kIOReturnSuccess )
 	{
 		yk_errno = YK_EUSBERR;
 		return 0;
 	}
-	
+
 	return 1;
 }
 
