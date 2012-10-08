@@ -79,7 +79,7 @@ void *_ykusb_open_device(int vendor_id, int product_id)
 	CFStringRef keys[2];
 	CFStringRef values[2];
 
-	yk_errno = YK_EUSBERR;
+	int rc = YK_ENOKEY;
 
 	CFNumberRef vendorID = CFNumberCreate( kCFAllocatorDefault, kCFNumberIntType, &vendor_id );
 	CFNumberRef productID = CFNumberCreate( kCFAllocatorDefault, kCFNumberIntType, &product_id );
@@ -94,6 +94,7 @@ void *_ykusb_open_device(int vendor_id, int product_id)
 	CFSetRef devSet = IOHIDManagerCopyDevices( ykosxManager );
 
 	if ( devSet ) {
+		rc = YK_EUSBERR;
 
 		CFMutableArrayRef array = CFArrayCreateMutable( kCFAllocatorDefault, 0, NULL );
 
@@ -104,8 +105,9 @@ void *_ykusb_open_device(int vendor_id, int product_id)
 		if (cnt > 0) {
 			yk = (void *) CFArrayGetValueAtIndex( array, 0 );
 		}
-		else
-			yk_errno = YK_ENOKEY;
+		else {
+			rc = YK_ENOKEY;
+		}
 
 		CFRelease( array );
 		CFRelease( devSet );
@@ -120,13 +122,14 @@ void *_ykusb_open_device(int vendor_id, int product_id)
 
 		if ( _ykusb_IOReturn != kIOReturnSuccess ) {
 			yk_release();
-			return 0;
+			goto error;
 		}
 
-		yk_errno = 0;
 		return yk;
 	}
 
+error:
+	yk_errno = rc;
 	return 0;
 }
 
