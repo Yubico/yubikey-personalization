@@ -57,6 +57,12 @@ ykcore/ykcore_libusb-1.0.lo
 ykcore/ykcore_libusb-1.0.o
 ykcore/ykcore_libusb.lo
 ykcore/ykcore_libusb.o
+ykcore/ykcore_osx.lo
+ykcore/ykcore_osx.o
+ykcore/ykcore_windows.lo
+ykcore/ykcore_windows.o
+ykcore/ykcore_stub.lo
+ykcore/ykcore_stub.o
 ykcore/ykstatus.lo
 ykcore/ykstatus.o
 ykpbkdf2.lo
