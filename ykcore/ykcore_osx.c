@@ -190,6 +190,28 @@ int _ykusb_write(void *dev, int report_type, int report_number,
 
 const char *_ykusb_strerror()
 {
-	return "USB error\n";
-//	fprintf(out, "USB error: %x\n", _ykusb_IOReturn);
+	switch (_ykusb_IOReturn) {
+		case kIOReturnSuccess:
+			return "kIOReturnSuccess";
+		case kIOReturnNotOpen:
+			return "kIOReturnNotOpen";
+		case kIOReturnNoDevice:
+			return "kIOReturnNoDevice";
+		case kIOReturnExclusiveAccess:
+			return "kIOReturnExclusiveAccess";
+		case kIOReturnError:
+			return "kIOReturnError";
+		case kIOReturnBadArgument:
+			return "kIOReturnBadArgument";
+		case kIOReturnAborted:
+			return "kIOReturnAborted";
+		case kIOReturnNotResponding:
+			return "kIOReturnNotResponding";
+		case kIOReturnOverrun:
+			return "kIOReturnOverrun";
+		case kIOReturnCannotWire:
+			return "kIOReturnCannotWire";
+		default:
+			return "unknown error";
+	}
 }
