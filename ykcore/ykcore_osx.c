@@ -106,6 +106,10 @@ void *_ykusb_open_device(int vendor_id, int product_id)
 			rc = YK_ENOKEY;
 		}
 
+		/* this is a workaround for a memory leak in IOHIDManagerCopyDevices() in 10.8 */
+		IOHIDManagerScheduleWithRunLoop( ykosxManager, CFRunLoopGetCurrent( ), kCFRunLoopDefaultMode );
+		IOHIDManagerUnscheduleFromRunLoop( ykosxManager, CFRunLoopGetCurrent( ), kCFRunLoopDefaultMode );
+
 		CFRelease( array );
 		CFRelease( devSet );
 	}
