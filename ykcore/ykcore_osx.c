@@ -118,7 +118,7 @@ void *_ykusb_open_device(int vendor_id, int product_id)
 		_ykusb_IOReturn = IOHIDDeviceOpen( yk, 0L );
 
 		if ( _ykusb_IOReturn != kIOReturnSuccess ) {
-			yk_release();
+			CFRelease(yk);
 			goto error;
 		}
 
