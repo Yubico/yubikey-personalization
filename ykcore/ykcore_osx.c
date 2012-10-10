@@ -100,6 +100,7 @@ void *_ykusb_open_device(int vendor_id, int product_id)
 
 		if (cnt > 0) {
 			yk = (void *) CFArrayGetValueAtIndex( array, 0 );
+			CFRetain(yk);
 		}
 		else {
 			rc = YK_ENOKEY;
@@ -132,6 +133,7 @@ error:
 int _ykusb_close_device(void *dev)
 {
 	_ykusb_IOReturn = IOHIDDeviceClose( dev, 0L );
+	CFRelease(dev);
 
 	if ( _ykusb_IOReturn == kIOReturnSuccess )
 		return 1;
