@@ -54,13 +54,9 @@ int _ykusb_start(void)
 int _ykusb_stop(void)
 {
 	if (ykosxManager != NULL) {
-		_ykusb_IOReturn = IOHIDManagerClose( ykosxManager, 0L );
 		CFRelease(ykosxManager);
-
-		if (_ykusb_IOReturn == kIOReturnSuccess) {
-			ykosxManager = NULL;
-			return 1;
-		}
+		ykosxManager = NULL;
+		return 1;
 	}
 
 	yk_errno = YK_EUSBERR;
