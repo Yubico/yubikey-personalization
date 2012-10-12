@@ -2,6 +2,11 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
 * Version 1.8.1 (unreleased)
 
+** Memory leak fixes and potential crash fixes in osx backend.
+
+** Error reporting fixes in osx backend, reporting correct errors and
+better errors.
+
 * Version 1.8.0 (released 2012-09-28)
 
 ** Added ./configure --enable-gcc-warnings to enable a lot of warnings.
