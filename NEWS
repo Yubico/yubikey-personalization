@@ -7,6 +7,10 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 ** Error reporting fixes in osx backend, reporting correct errors and
 better errors.
 
+** Provide new another udev permissions file that works on udev version
+greater than 188. Autodetects from configure which to use. Thanks to
+Maxim Burgerhout <maxim@wzzrd.com>.
+
 * Version 1.8.0 (released 2012-09-28)
 
 ** Added ./configure --enable-gcc-warnings to enable a lot of warnings.
