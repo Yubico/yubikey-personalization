@@ -13,6 +13,7 @@ build-aux/depcomp
 build-aux/install-sh
 build-aux/ltmain.sh
 build-aux/missing
+build-aux/ar-lib
 config.log
 config.status
 configure
