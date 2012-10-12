@@ -126,9 +126,22 @@ AM_CONDITIONAL([BACKEND_OSX], test x$with_backend = xosx)
 AM_CONDITIONAL([BACKEND_WINDOWS], test x$with_backend = xwindows)
 
 AC_ARG_WITH([udevrulesdir],
-  AS_HELP_STRING([--with-udevrulesdir=DIR], [Directory for udev rules]),
+  AS_HELP_STRING([--with-udevrulesdir=DIR], [Install udev rules into this directory]),
   [], [])
 AC_SUBST([udevrulesdir], [$with_udevrulesdir])
+
+# It would be more clear to wrap this in AC_MSG_CHECKING and AC_MSG_RESULT, but
+# this works too. If udevrulesdir is set, check for udev >= 188, which should
+# have the ID_SECURITY_TOKEN tag in 70-uaccess.rules / 70-udev-acl-rules. If
+# a recent enough udev is not found, fall back to using the old
+# 70-yubikey.rules file.
+if test -n "$udevrulesdir"; then
+    PKG_CHECK_MODULES([UDEV], [udev >= 188],
+        udevrulesfile=69-yubikey.rules,
+        udevrulesfile=70-yubikey.rules,
+    )
+    AC_SUBST([udevrulesfile], [$udevrulesfile])
+fi
 
 gl_LD_VERSION_SCRIPT
 gl_VALGRIND_TESTS
@@ -178,5 +191,6 @@ AC_MSG_NOTICE([summary of build options:
   Compiler:         ${CC}
   Library types:    Shared=${enable_shared}, Static=${enable_static}
   USB backend:      ${with_backend}
-  udev rules:       ${with_udevrulesdir:-N/A}
+  udev rules dir:   ${with_udevrulesdir:-N/A}
+  udev rules file:  ${udevrulesfile:-N/A}
 ])
