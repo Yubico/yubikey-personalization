@@ -157,7 +157,7 @@ static int check_firmware(YK_KEY *yk, bool verbose)
 	YK_STATUS *st = ykds_alloc();
 
 	if (!yk_get_status(yk, st)) {
-		free(st);
+		ykds_free(st);
 		return 0;
 	}
 
@@ -173,7 +173,7 @@ static int check_firmware(YK_KEY *yk, bool verbose)
 	    (ykds_version_major(st) == 2
 	     && ykds_version_minor(st) < 2)) {
 		fprintf(stderr, "Challenge-response not supported before YubiKey 2.2.\n");
-		free(st);
+		ykds_free(st);
 		return 0;
 	}
 
