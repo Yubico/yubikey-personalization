@@ -35,9 +35,10 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include <ykpers.h>
 #include <yubikey.h>
 #include <ykdef.h>
+#include <ykcore.h>
+#include <ykstatus.h>
 
 const char *usage =
 	"Usage: ykchalresp [options] challenge\n"
@@ -60,9 +61,6 @@ const char *optstring = "12xvhHYN";
 
 static void report_yk_error(void)
 {
-	if (ykp_errno)
-		fprintf(stderr, "Yubikey personalization error: %s\n",
-			ykp_strerror(ykp_errno));
 	if (yk_errno) {
 		if (yk_errno == YK_EUSBERR) {
 			fprintf(stderr, "USB error: %s\n",
@@ -241,7 +239,6 @@ int main(int argc, char **argv)
 	unsigned int challenge_len;
 	int slot = 1;
 
-	ykp_errno = 0;
 	yk_errno = 0;
 
 	if (! parse_args(argc, argv,
