@@ -80,3 +80,5 @@ ykpers.lo
 ykpers.o
 ykpersonalize
 ykpersonalize.o
+ykinfo
+ykinfo.o
