@@ -35,7 +35,7 @@
 ykinfo - Get basic information from a YubiKey
 .SH SYNOPSIS
 .B ykinfo
-[\fI-s\fR] [\fI-m\fR] [\fI-H\fR] [\fI-v\fR] [\fI-t\fR] [\fI-q\fR] [\fI-h\fR]
+[\fI-s\fR] [\fI-m\fR] [\fI-H\fR] [\fI-v\fR] [\fI-t\fR] [\fI-p\fR] [\fI-q\fR] [\fI-h\fR]
 .SH DESCRIPTION
 .PP
 Get basic information from a YubiKey. Can get serial number, version and current
@@ -58,6 +58,9 @@ get the version and output it.
 \fB\-t\fR
 get the touch level and output it.
 .TP
+\fB\-p\fR
+get the programming sequence and output it.
+.TP
 \fB\-q\fR
 modifier, only show the relevant data from the YubiKey, no extra information.
 .TP
@@ -66,12 +69,13 @@ modifier, only show the relevant data from the YubiKey, no extra information.
 Output of all information from a YubiKey
 
 .nf
-$ \fBykinfo \-s \-m \-H \-v \-t\fR
+$ \fBykinfo \-s \-m \-H \-v \-t \-p\fR
 serial: 1077254
 serial_hex: 107006
 serial_modhex: bcicch
 version: 2.2.3
 touch_level: 1793
+programming_sequence: 1
 $
 .fi
 

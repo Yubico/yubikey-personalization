@@ -48,6 +48,7 @@ const char *usage =
 	"\t-H        Get serial in hex from YubiKey\n"
 	"\t-v        Get version from YubiKey\n"
 	"\t-t        Get touchlevel from YubiKey\n"
+	"\t-p        Get programming sequence from YubiKey\n"
 	"\n"
 	"\t-q        Only output information from YubiKey\n"
 	"\n"
@@ -55,7 +56,7 @@ const char *usage =
 	"\n"
 	"\n"
 	;
-const char *optstring = "smHvtqh";
+const char *optstring = "smHvtpqh";
 
 static void report_yk_error(void)
 {
@@ -72,7 +73,7 @@ static void report_yk_error(void)
 
 static int parse_args(int argc, char **argv,
 		bool *serial_dec, bool *serial_modhex, bool *serial_hex,
-		bool *version, bool *touch_level, bool *quiet,
+		bool *version, bool *touch_level, bool *pgm_seq, bool *quiet,
 		int *exit_code)
 {
 	int c;
@@ -94,6 +95,9 @@ static int parse_args(int argc, char **argv,
 		case 't':
 			*touch_level = true;
 			break;
+		case 'p':
+			*pgm_seq = true;
+			break;
 		case 'q':
 			*quiet = true;
 			break;
@@ -106,7 +110,7 @@ static int parse_args(int argc, char **argv,
 	}
 
 	if (!*serial_dec && !*serial_modhex && !*serial_hex &&
-			!*version && !*touch_level) {
+			!*version && !*touch_level && !*pgm_seq) {
 		/* no options at all */
 		fputs("You must give at least one option.\n", stderr);
 		fputs(usage, stderr);
@@ -129,6 +133,7 @@ int main(int argc, char **argv)
 	bool serial_hex = false;
 	bool version = false;
 	bool touch_level = false;
+	bool pgm_seq = false;
 
 	bool quiet = false;
 
@@ -136,7 +141,7 @@ int main(int argc, char **argv)
 
 	if (! parse_args(argc, argv,
 				&serial_dec, &serial_modhex, &serial_hex,
-				&version, &touch_level, &quiet,
+				&version, &touch_level, &pgm_seq, &quiet,
 				&exit_code))
 		exit(exit_code);
 
@@ -180,7 +185,7 @@ int main(int argc, char **argv)
 			printf("%s\n", modhex_serial);
 		}
 	}
-	if(version || touch_level) {
+	if(version || touch_level || pgm_seq) {
 		YK_STATUS *st = ykds_alloc();
 		if(!yk_get_status(yk, st)) {
 			ykds_free(st);
@@ -197,6 +202,11 @@ int main(int argc, char **argv)
 			if(!quiet)
 				printf("touch_level: ");
 			printf("%d\n", ykds_touch_level(st));
+		}
+		if(pgm_seq) {
+			if(!quiet)
+				printf("programming_sequence: ");
+			printf("%d\n", ykds_pgm_seq(st));
 		}
 		ykds_free(st);
 	}
