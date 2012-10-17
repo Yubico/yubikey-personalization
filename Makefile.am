@@ -84,6 +84,8 @@ EXTRA_DIST += contrib/README contrib/programming.sh
 # Windows rules.
 EXTRA_DIST += ykpers4win.mk
 
+# udev rule files
+EXTRA_DIST += 69-yubikey.rules 70-yubikey.rules
 udevrulesdir=@udevrulesdir@
 dist_udevrules_DATA = \
         @udevrulesfile@
