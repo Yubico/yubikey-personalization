@@ -1,6 +1,6 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.8.1 (unreleased)
+* Version 1.8.1 (released 2012-10-17)
 
 ** Memory leak fixes and potential crash fixes in osx backend.
 
@@ -10,6 +10,9 @@ better errors.
 ** Provide new another udev permissions file that works on udev version
 greater than 188. Autodetects from configure which to use. Thanks to
 Maxim Burgerhout <maxim@wzzrd.com>.
+
+** Add new binary ykinfo, can be used to get serial number, version and
+touch level from a YubiKey.
 
 * Version 1.8.0 (released 2012-09-28)
 
