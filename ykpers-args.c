@@ -37,7 +37,6 @@
 #include <unistd.h>
 #include <errno.h>
 
-#include <ykcore_lcl.h>
 #include <ykpers.h>
 #include <yubikey.h> /* To get yubikey_modhex_encode and yubikey_hex_encode */
 #include <ykdef.h>
@@ -146,46 +145,6 @@ const char *usage =
 "-h        help (this text)\n"
 ;
 const char *optstring = "u12xa:c:n:t:hi:o:s:vy";
-
-static const YK_CONFIG default_config1 = {
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* fixed */
-        { 0, 0, 0, 0, 0, 0 },   /* uid */
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* key */
-        { 0, 0, 0, 0, 0, 0 },   /* accCode */
-        0,                      /* fixedSize */
-        0,                      /* extFlags */
-        TKTFLAG_APPEND_CR,      /* tktFlags */
-        0,                      /* cfgFlags */
-	{0},                    /* ctrOffs */
-        0                       /* crc */
-};
-
-static const YK_CONFIG default_config2 = {
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* fixed */
-        { 0, 0, 0, 0, 0, 0 },   /* uid */
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* key */
-        { 0, 0, 0, 0, 0, 0 },   /* accCode */
-        0,                      /* fixedSize */
-        0,                      /* extFlags */
-        TKTFLAG_APPEND_CR,      /* tktFlags */
-        /* cfgFlags */
-        CFGFLAG_STATIC_TICKET | CFGFLAG_STRONG_PW1 | CFGFLAG_STRONG_PW2 | CFGFLAG_MAN_UPDATE,
-	{0},                    /* ctrOffs */
-        0                       /* crc */
-};
-
-static const YK_CONFIG default_update = {
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* fixed */
-        { 0, 0, 0, 0, 0, 0 },   /* uid */
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* key */
-        { 0, 0, 0, 0, 0, 0 },   /* accCode */
-        0,                      /* fixedSize */
-        EXTFLAG_ALLOW_UPDATE,   /* extFlags */
-        TKTFLAG_APPEND_CR,      /* tktFlags */
-        0,                      /* cfgFlags */
-	{0},                    /* ctrOffs */
-        0                       /* crc */
-};
 
 static int _set_fixed(char *opt, YKP_CONFIG *cfg);
 static int _format_decimal_as_hex(uint8_t *dst, size_t dst_len, uint8_t *src);
@@ -352,8 +311,9 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 					*exit_code = 1;
 					return 0;
 				}
+				ykp_set_tktflag_APPEND_CR(cfg, true);
 				if (update_seen) {
-					memcpy(ycfg, &default_update, sizeof(default_update));
+					ykp_set_extflag_ALLOW_UPDATE(cfg, true);
 					if(c == '1') {
 						command = SLOT_UPDATE1;
 					} else if(c == '2') {
@@ -361,10 +321,13 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 					}
 				} else if (c == '1') {
 					command = SLOT_CONFIG;
-					memcpy(ycfg, &default_config1, sizeof(default_config1));
 				} else if (c == '2') {
 					command = SLOT_CONFIG2;
-					memcpy(ycfg, &default_config2, sizeof(default_config2));
+					ykp_set_cfgflag_STATIC_TICKET(cfg, true);
+					ykp_set_cfgflag_STRONG_PW1(cfg, true);
+					ykp_set_cfgflag_STRONG_PW2(cfg, true);
+					ykp_set_cfgflag_MAN_UPDATE(cfg, true);
+
 				}
 				if (!ykp_configure_command(cfg, command))
 					return 0;
