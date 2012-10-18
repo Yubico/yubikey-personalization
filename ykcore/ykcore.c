@@ -212,11 +212,14 @@ int yk_write_command(YK_KEY *yk, YK_CONFIG *cfg, uint8_t command,
 		return 0;
 
 	yk_errno = YK_EWRITEERR;
-	if (cfg) {
-		return stat.pgmSeq != seq;
-	}
 
-	return stat.pgmSeq == 0;
+	/* when both configurations from a YubiKey is erased it will return
+	 * pgmSeq 0, if one is still configured after an erase pgmSeq is
+	 * counted up as usual. */
+	if(!cfg && stat.pgmSeq == 0) {
+		return 1;
+	}
+	return stat.pgmSeq != seq;
 }
 
 int yk_write_config(YK_KEY *yk, YK_CONFIG *cfg, int confnum,
