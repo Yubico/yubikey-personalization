@@ -67,6 +67,7 @@ int main(int argc, char **argv)
 	char *salt = NULL;
 	char ndef_string[128] = {0};
 	char ndef_type;
+	bool zap = false;
 
 	bool error = false;
 	int exit_code = 0;
@@ -126,7 +127,7 @@ int main(int argc, char **argv)
 			     &autocommit, salt,
 			     st, &verbose,
 			     access_code, &use_access_code,
-			     &aesviahash, &ndef_type, ndef_string,
+			     &aesviahash, &ndef_type, ndef_string, &zap,
 			     &exit_code)) {
 		goto err;
 	}
@@ -180,7 +181,7 @@ int main(int argc, char **argv)
 	if (inf) {
 		if (!ykp_read_config(cfg, reader, inf))
 			goto err;
-	} else if (! aesviahash && (ykp_command(cfg) == SLOT_CONFIG || ykp_command(cfg) == SLOT_CONFIG2)) {
+	} else if (! aesviahash && ! zap && (ykp_command(cfg) == SLOT_CONFIG || ykp_command(cfg) == SLOT_CONFIG2)) {
 		char passphrasebuf[256]; size_t passphraselen;
 		fprintf(stderr, "Passphrase to create AES key: ");
 		fflush(stderr);
@@ -203,6 +204,8 @@ int main(int argc, char **argv)
 			fprintf(stderr, "Configuration in slot 1 and 2 will be swapped\n");
 		} else if(ykp_command(cfg) == SLOT_NDEF) {
 			fprintf(stderr, "New NDEF URI will be written\n");
+		} else if(zap) {
+			fprintf(stderr, "Configuration in slot %d will be deleted\n", ykp_config_num(cfg));
 		} else {
 			if (ykp_command(cfg) == SLOT_CONFIG || ykp_command(cfg) == SLOT_CONFIG2) {
 				fprintf(stderr, "Configuration data to be written to key configuration %d:\n\n", ykp_config_num(cfg));
@@ -244,8 +247,13 @@ int main(int argc, char **argv)
 				}
 				ykp_free_ndef(ndef);
 			} else {
+				YK_CONFIG *ycfg = NULL;
+				/* if we're deleting a slot we send the configuration as NULL */
+				if (!zap) {
+					ycfg = ykp_core_config(cfg);
+				}
 				if (!yk_write_command(yk,
-							ykp_core_config(cfg), ykp_command(cfg),
+							ycfg, ykp_command(cfg),
 							use_access_code ? access_code : NULL)) {
 					if (verbose)
 						printf(" failure\n");

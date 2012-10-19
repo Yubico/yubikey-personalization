@@ -60,6 +60,7 @@ const char *usage =
 "          are set by default.\n"
 "-x        swap the configuration in slot 1 and 2.  This is for YubiKey 2.3\n"
 "          and newer only\n"
+"-z        delete the configuration in slot 1 or 2.\n"
 "-sFILE    save configuration to FILE instead of key.\n"
 "          (if FILE is -, send to stdout)\n"
 "-iFILE    read configuration from FILE.\n"
@@ -144,7 +145,7 @@ const char *usage =
 "-v        verbose\n"
 "-h        help (this text)\n"
 ;
-const char *optstring = "u12xa:c:n:t:hi:o:s:vy";
+const char *optstring = "u12xza:c:n:t:hi:o:s:vy";
 
 static int _set_fixed(char *opt, YKP_CONFIG *cfg);
 static int _format_decimal_as_hex(uint8_t *dst, size_t dst_len, uint8_t *src);
@@ -218,7 +219,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		   bool *autocommit, char *salt,
 		   YK_STATUS *st, bool *verbose,
 		   unsigned char *access_code, bool *use_access_code,
-		   bool *aesviahash, char *ndef_type, char *ndef,
+		   bool *aesviahash, char *ndef_type, char *ndef, bool *zap,
 		   int *exit_code)
 {
 	int c;
@@ -360,6 +361,24 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 			}
 			swap_seen = true;
 			break;
+		case 'z':
+			if (swap_seen) {
+				fprintf(stderr, "Swap (-x) and zap (-z) can't be combined.\n");
+				*exit_code = 1;
+				return 0;
+			}
+			if (update_seen) {
+				fprintf(stderr, "Update (-u) and zap (-z) can't be combined.\n");
+				*exit_code = 1;
+				return 0;
+			}
+			if (!slot_chosen) {
+				fprintf(stderr, "A slot must be chosen (-1 / -2) before adding zap (-z)\n");
+				*exit_code = 1;
+				return 0;
+			}
+			*zap = true;
+			break;
 		case 'i':
 			*infname = optarg;
 			break;
@@ -395,7 +414,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 			if(!*ndef_type) {
 				*ndef_type = 'U';
 			}
-			if (slot_chosen || swap_seen || update_seen || option_seen) {
+			if (slot_chosen || swap_seen || update_seen || option_seen || *zap) {
 				fprintf(stderr, "Ndef (-n/-t) must be used on it's own.\n");
 				*exit_code = 1;
 				return 0;
@@ -407,6 +426,11 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 			ndef_seen = true;
 			break;
 		case 'o':
+			if (*zap) {
+				fprintf(stderr, "No options can be given with zap (-z).\n");
+				*exit_code = 1;
+				return 0;
+			}
 			if (strncmp(optarg, "salt=", 5) == 0)
 				salt = strdup(optarg+5);
 			else if (strncmp(optarg, "fixed=", 6) == 0) {
