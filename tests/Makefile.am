@@ -32,7 +32,7 @@ AM_CFLAGS=-I$(srcdir)/.. -I$(srcdir)/../ykcore $(WARN_CFLAGS)
 LDADD = ../libykpers-1.la $(LTLIBYUBIKEY)
 
 ctests = selftest test_args_to_config test_key_generation \
-	test_ndef_construction test_threaded_calls
+	test_ndef_construction test_threaded_calls test_ykpbkdf2
 check_PROGRAMS = $(ctests)
 TESTS = $(ctests)
 
