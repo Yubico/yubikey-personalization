@@ -339,8 +339,6 @@ int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 		if (_salt_len == 0) {
 			/* There was no randomness files, so create a cheap
 			   salt from time */
-#                       include <ykpbkdf2.h>
-
 			time_t t = time(NULL);
 			uint8_t output[256]; /* 2048 bits is a lot! */
 
