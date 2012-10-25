@@ -33,7 +33,7 @@
 
 #include "rfc4634/sha.h"
 
-static int hmac_sha1(const char *key, size_t key_len,
+int yk_hmac_sha1(const char *key, size_t key_len,
 		     const char *text, size_t text_len,
 		     uint8_t *output, size_t output_size)
 {
@@ -47,7 +47,6 @@ static int hmac_sha1(const char *key, size_t key_len,
 		return 0;
 	return 1;
 }
-YK_PRF_METHOD yk_hmac_sha1 = { SHA1HashSize, hmac_sha1 };
 
 int yk_pbkdf2(const char *passphrase,
 	      const unsigned char *salt, size_t salt_len,

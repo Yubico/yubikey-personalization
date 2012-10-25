@@ -305,6 +305,7 @@ int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 		unsigned char buf[sizeof(cfg->ykcore_config.key) + 4];
 		int rc;
 		int key_bytes = _get_supported_key_length(cfg);
+		YK_PRF_METHOD prf_method = {20, yk_hmac_sha1};
 
 		assert (key_bytes <= sizeof(buf));
 
@@ -342,7 +343,7 @@ int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 			time_t t = time(NULL);
 			uint8_t output[256]; /* 2048 bits is a lot! */
 
-			yk_hmac_sha1.prf_fn(passphrase, strlen(passphrase),
+			prf_method.prf_fn(passphrase, strlen(passphrase),
 					    (char *)&t, sizeof(t),
 					    output, sizeof(output));
 			memcpy(_salt, output, sizeof(_salt));
@@ -353,7 +354,7 @@ int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 			       _salt, _salt_len,
 			       1024,
 			       buf, key_bytes,
-			       &yk_hmac_sha1);
+			       &prf_method);
 
 		if (rc) {
 			memcpy(cfg->ykcore_config.key, buf, sizeof(cfg->ykcore_config.key));

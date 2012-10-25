@@ -38,10 +38,10 @@ AM_CFLAGS = $(WARN_CFLAGS)
 # The library.
 
 ykpers_includedir=$(includedir)/ykpers-1
-ykpers_include_HEADERS = ykpers.h ykcore/ykstatus.h ykcore/ykcore.h ykcore/ykdef.h
+ykpers_include_HEADERS = ykpers.h ykcore/ykstatus.h ykcore/ykcore.h ykcore/ykdef.h ykpbkdf2.h
 
 lib_LTLIBRARIES = libykpers-1.la
-libykpers_1_la_SOURCES = ykpers.c ykpbkdf2.h ykpbkdf2.c
+libykpers_1_la_SOURCES = ykpers.c ykpbkdf2.c
 libykpers_1_la_SOURCES += rfc4634/hmac.c rfc4634/usha.c rfc4634/sha.h	\
 	rfc4634/sha1.c rfc4634/sha224-256.c rfc4634/sha384-512.c	\
 	rfc4634/sha-private.h

@@ -41,7 +41,10 @@ struct yk_prf_method {
 		      const char *text, size_t text_len,
 		      uint8_t *output, size_t output_size);
 };
-extern YK_PRF_METHOD yk_hmac_sha1;
+
+int yk_hmac_sha1(const char *key, size_t key_len,
+		const char *text, size_t text_len,
+		uint8_t *output, size_t output_size);
 
 int yk_pbkdf2(const char *passphrase,
 	      const unsigned char *salt, size_t salt_len,
