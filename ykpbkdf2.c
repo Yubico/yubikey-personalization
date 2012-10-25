@@ -41,8 +41,8 @@ int yk_hmac_sha1(const char *key, size_t key_len,
 		return 0;
 
 	if (hmac(SHA1,
-		 (unsigned char *)text, (int)text_len,
-		 (unsigned char *)key, (int)key_len,
+		 (const unsigned char *)text, (int)text_len,
+		 (const unsigned char *)key, (int)key_len,
 		 output))
 		return 0;
 	return 1;
