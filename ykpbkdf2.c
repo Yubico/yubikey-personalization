@@ -62,10 +62,13 @@ int yk_pbkdf2(const char *passphrase,
 
 	unsigned int block_count;
 
+	memset(dk, 0, dklen);
+
 	for (block_count = 1; block_count <= l; block_count++) {
 		unsigned char block[256]; /* A big chunk, that's 2048 bits */
 		size_t block_len;
 		unsigned int iteration;
+		int i;
 
 		memcpy(block, salt, salt_len);
 		block[salt_len + 0] = (block_count & 0xff000000) >> 24;
@@ -80,11 +83,13 @@ int yk_pbkdf2(const char *passphrase,
 						block, sizeof(block)))
 				return 0;
 			block_len = prf_method->output_size;
+			for(i = 0; i < dklen; i++) {
+				dk[i] ^= block[i];
+			}
 		}
 
 		if (block_len > dklen)
 			block_len = dklen; /* This happens in the last block */
-		memcpy(dk, block, block_len);
 		dk += block_len;
 		dklen -= block_len;
 	}
