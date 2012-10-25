@@ -68,7 +68,7 @@ int yk_pbkdf2(const char *passphrase,
 		unsigned char block[256]; /* A big chunk, that's 2048 bits */
 		size_t block_len;
 		unsigned int iteration;
-		int i;
+		size_t i;
 
 		memcpy(block, salt, salt_len);
 		block[salt_len + 0] = (block_count & 0xff000000) >> 24;
