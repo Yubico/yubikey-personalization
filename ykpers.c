@@ -759,7 +759,7 @@ struct map_st ticket_flags_map[] = {
 	{ TKTFLAG_PROTECT_CFG2,		"PROTECT_CFG2",		capability_has_slot_two,	0 },
 	{ TKTFLAG_OATH_HOTP,		"OATH_HOTP",		capability_has_oath,		0 },
 	{ TKTFLAG_CHAL_RESP,		"CHAL_RESP",		capability_has_chal_resp,	0 },
-	{ 0, "", 0 }
+	{ 0, "", 0, 0 }
 };
 
 const char str_config_flags[] = "config_flags";
@@ -793,7 +793,7 @@ struct map_st config_flags_map[] = {
 	{ CFGFLAG_STRONG_PW1,		"STRONG_PW1",		capability_has_static_extras,	0 },
 	{ CFGFLAG_STRONG_PW2,		"STRONG_PW2",		capability_has_static_extras,	0 },
 	{ CFGFLAG_MAN_UPDATE,		"MAN_UPDATE",		capability_has_static_extras,	0 },
-	{ 0, "" }
+	{ 0, "", 0, 0 }
 };
 
 const char str_extended_flags[] = "extended_flags";
@@ -805,7 +805,7 @@ struct map_st extended_flags_map[] = {
 	{ EXTFLAG_FAST_TRIG,		"FAST_TRIG",		capability_has_fast,		0 },
 	{ EXTFLAG_ALLOW_UPDATE,		"ALLOW_UPDATE",		capability_has_update,		0 },
 	{ EXTFLAG_DORMANT,		"DORMANT",		capability_has_dormant,		0 },
-	{ 0, "", 0 }
+	{ 0, "", 0, 0 }
 };
 
 int ykp_write_config(const YKP_CONFIG *cfg,
