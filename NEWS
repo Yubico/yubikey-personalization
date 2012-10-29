@@ -2,6 +2,12 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
 * Version 1.8.3 (unreleased)
 
+** ykinfo: New tool to print information about YubiKey.
+
+** ykpersonalize: Add -z flag to zap configuration on YubiKey.
+
+** Fix PBKDF2 implementation.
+
 * Version 1.8.2 (released 2012-10-17)
 
 ** Add udev rules files to packed distribution.

@@ -49,6 +49,7 @@ const char *usage =
 	"\t-v        Get version from YubiKey\n"
 	"\t-t        Get touchlevel from YubiKey\n"
 	"\t-p        Get programming sequence from YubiKey\n"
+	"\t-a        Get all information above\n"
 	"\n"
 	"\t-q        Only output information from YubiKey\n"
 	"\n"
@@ -56,7 +57,7 @@ const char *usage =
 	"\n"
 	"\n"
 	;
-const char *optstring = "smHvtpqh";
+const char *optstring = "asmHvtpqh";
 
 static void report_yk_error(void)
 {
@@ -80,6 +81,14 @@ static int parse_args(int argc, char **argv,
 
 	while((c = getopt(argc, argv, optstring)) != -1) {
 		switch (c) {
+		case 'a':
+			*serial_dec = true;
+			*serial_modhex = true;
+			*serial_hex = true;
+			*version = true;
+			*touch_level = true;
+			*pgm_seq = true;
+			break;
 		case 's':
 			*serial_dec = true;
 			break;
