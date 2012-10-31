@@ -27,13 +27,17 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-OLDCSV=$1
+OLDCSVFILE="$1"
+NEWCSVFILE="$2"
 
-if test -z "$OLDCSV"; then
-    echo "Usage: $0 OLDCSVFILE"
+if test -z "$OLDCSVFILE" || test -z "$NEWCSVFILE"; then
+    echo "Usage: $0 OLDCSVFILE NEWCSVFILE"
     echo ""
     echo "This tool re-program YubiKeys in 6-digit OATH mode, unlocking an"
-    echo "earlier configuration."
+    echo "earlier configuration.  The old configuration (serial number and"
+    echo "unlock code) is read from OLDCSVFILE and new data is appended to"
+    echo "the NEWCSVFILE.  The NEWCSVFILE is also used to double check that"
+    echo "the same YubiKey is not reprogrammed twice."
     echo ""
     echo "The input file is a comma-separated value (CSV) file following"
     echo "this format:"
@@ -45,8 +49,6 @@ if test -z "$OLDCSV"; then
     echo "1458800,,11344,dee628e652b08415c7f36d91b74a9d2a0b1251cf,08caa18ad869,2012-07-31T09:19:07,"
     echo "1458801,,106976,f7df4ddc61b585613975d0efac4505664730f0f9,7ddb2662e32c,2012-07-31T09:19:07,"
     echo "1458802,,627328,4d668d01c7e2fa336384e6d8b8839bbb00be10bf,b440a34cd994,2012-07-31T09:19:07,"
-    echo ""
-    echo "The tool appends to a file \"log\" on the same format with new data."
     echo ""
     echo "This tool is intended as a basis for your own modifications, thus"
     echo "you probably want to read the source code before using it."
@@ -64,18 +66,18 @@ while sleep 1; do
 	continue
     fi
 
-    hits=`grep "^$serialno," $OLDCSV | wc -l`
+    hits=`grep "^$serialno," $OLDCSVFILE | wc -l`
     if test "$hits" != "1"; then
 	echo "No unique entry for serial $serialno in file (found $hits matches)..."
 	continue
     fi
 
-    if test -f log && grep -q "^$serialno," log; then
-	echo "YubiKey $serialno already re-programmed?!  Clear log file if certain..."
+    if test -f $NEWCSVFILE && grep -q "^$serialno," $NEWCSVFILE; then
+	echo "YubiKey $serialno already re-programmed?!  Empty NEWCSVFILE if certain..."
 	continue
     fi
 
-    old_unlock=`grep "^$serialno," $OLDCSV | cut -d, -f5`
+    old_unlock=`grep "^$serialno," $OLDCSVFILE | cut -d, -f5`
 
     echo "notice: Found YubiKey serial $serialno with old unlock code $oldunlock..."
 
@@ -88,7 +90,7 @@ while sleep 1; do
 
     ykpersonalize -1 -a$secret -c$old_unlock -ooath-hotp -oappend-cr -oaccess=$new_unlock -ooath-imf=$seed -oprotect-cfg2 -oserial-api-visible -y
 
-    echo "$serialno,,$seed,$secret,$new_unlock,$when," >> log
+    echo "$serialno,,$seed,$secret,$new_unlock,$when," >> $NEWCSVFILE
 
     echo "Finished!  Remove YubiKey..."
 done
