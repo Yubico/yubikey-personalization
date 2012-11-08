@@ -1,6 +1,6 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.8.3 (unreleased)
+* Version 1.9.0 (released 2012-11-08)
 
 ** ykinfo: New tool to print information about YubiKey.
 
