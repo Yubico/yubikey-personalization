@@ -114,7 +114,7 @@ int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 	/* Options */
 	char *salt = NULL;
 	char ndef[128];
-	char ndef_type = NULL;
+	char ndef_type = 0;
 	bool zap = false;
 
 	int rc;
