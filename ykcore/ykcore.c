@@ -234,6 +234,7 @@ int yk_write_config(YK_KEY *yk, YK_CONFIG *cfg, int confnum,
 		command = SLOT_CONFIG2;
 		break;
 	default:
+		yk_errno = YK_EINVALIDCMD;
 		return 0;
 	}
 	if(!yk_write_command(yk, cfg, command, acc_code)) {
