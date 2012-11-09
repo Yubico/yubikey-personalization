@@ -44,6 +44,8 @@ tests/test_ndef_construction
 tests/test_ndef_construction.o
 tests/test_threaded_calls
 tests/test_threaded_calls.o
+tests/test_ykpbkdf2
+tests/test_ykpbkdf2.o
 tmp/
 usha.lo
 usha.o
