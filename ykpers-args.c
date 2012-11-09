@@ -410,11 +410,6 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 				  if(!*ndef_type) {
 					  *ndef_type = 'U';
 				  }
-				  if (!slot_chosen) {
-					  fprintf(stderr, "A slot (-1/-2) must be chosen before ndef (-n/-t) argument.\n");
-					  *exit_code = 1;
-					  return 0;
-				  }
 				  if (swap_seen || update_seen || option_seen || *zap) {
 					  fprintf(stderr, "Ndef (-n/-t) can only be used with a slot (-1/-2).\n");
 					  *exit_code = 1;
@@ -425,7 +420,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 				  } else if(ykp_command(cfg) == SLOT_CONFIG2) {
 					  command = SLOT_NDEF2;
 				  } else {
-					  return 0;
+					  command = SLOT_NDEF;
 				  }
 				  if (!ykp_configure_command(cfg, command)) {
 					  return 0;
