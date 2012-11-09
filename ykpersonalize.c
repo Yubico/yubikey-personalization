@@ -203,7 +203,7 @@ int main(int argc, char **argv)
 		if (ykp_command(cfg) == SLOT_SWAP) {
 			fprintf(stderr, "Configuration in slot 1 and 2 will be swapped\n");
 		} else if(ykp_command(cfg) == SLOT_NDEF || ykp_command(cfg) == SLOT_NDEF2) {
-			fprintf(stderr, "New NDEF URI will be written\n");
+			fprintf(stderr, "New NDEF will be written as:\n%s\n", ndef_string);
 		} else if(zap) {
 			fprintf(stderr, "Configuration in slot %d will be deleted\n", ykp_config_num(cfg));
 		} else {
