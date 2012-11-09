@@ -202,7 +202,7 @@ int main(int argc, char **argv)
 
 		if (ykp_command(cfg) == SLOT_SWAP) {
 			fprintf(stderr, "Configuration in slot 1 and 2 will be swapped\n");
-		} else if(ykp_command(cfg) == SLOT_NDEF) {
+		} else if(ykp_command(cfg) == SLOT_NDEF || ykp_command(cfg) == SLOT_NDEF2) {
 			fprintf(stderr, "New NDEF URI will be written\n");
 		} else if(zap) {
 			fprintf(stderr, "Configuration in slot %d will be deleted\n", ykp_config_num(cfg));
@@ -230,8 +230,9 @@ int main(int argc, char **argv)
 
 			if (verbose)
 				printf("Attempting to write configuration to the yubikey...");
-			if(ykp_command(cfg) == SLOT_NDEF) {
+			if(ykp_command(cfg) == SLOT_NDEF || ykp_command(cfg) == SLOT_NDEF2) {
 				YK_NDEF *ndef = ykp_alloc_ndef();
+				int confnum = 1;
 				if(ndef_type == 'U') {
 					ykp_construct_ndef_uri(ndef, ndef_string);
 				} else if(ndef_type == 'T') {
@@ -240,7 +241,10 @@ int main(int argc, char **argv)
 				if(use_access_code) {
 					ykp_set_ndef_access_code(ndef, access_code);
 				}
-				if (!yk_write_ndef(yk, ndef)) {
+				if(ykp_command(cfg) == SLOT_NDEF2) {
+					confnum = 2;
+				}
+				if (!yk_write_ndef2(yk, ndef, confnum)) {
 					if (verbose)
 						printf(" failure\n");
 					goto err;

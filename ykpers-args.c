@@ -69,8 +69,8 @@ const char *usage =
 "          char hex value (not modhex)\n"
 "-cXXX..   A 12 char hex value (not modhex) to use as access code for programming\n"
 "          (this does NOT SET the access code, that's done with -oaccess=)\n"
-"-nXXX..   Write NDEF type 2 URI to YubiKey NEO, must be used on it's own\n"
-"-tXXX..   Write NDEF type 2 text to YubiKey NEO, must be used on it's own\n"
+"-nXXX..   Write NDEF type 2 URI to YubiKey NEO, must be used with -1 or -2\n"
+"-tXXX..   Write NDEF type 2 text to YubiKey NEO, must be used with -1 or -2\n"
 "-oOPTION  change configuration option.  Possible OPTION arguments are:\n"
 "          salt=ssssssss       Salt to be used when deriving key from a\n"
 "                              password.  If none is given, a unique random\n"
@@ -307,11 +307,6 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 					*exit_code = 1;
 					return 0;
 				}
-				if (ndef_seen) {
-					fprintf(stderr, "Slot (-1 / -2) can not be combined with ndef (-n)\n");
-					*exit_code = 1;
-					return 0;
-				}
 				ykp_set_tktflag_APPEND_CR(cfg, true);
 				if (update_seen) {
 					ykp_set_extflag_ALLOW_UPDATE(cfg, true);
@@ -410,21 +405,35 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		}
 		case 't':
 			*ndef_type = 'T';
-		case 'n':
-			if(!*ndef_type) {
-				*ndef_type = 'U';
-			}
-			if (slot_chosen || swap_seen || update_seen || option_seen || *zap) {
-				fprintf(stderr, "Ndef (-n/-t) must be used on it's own.\n");
-				*exit_code = 1;
-				return 0;
-			}
-			if (!ykp_configure_command(cfg, SLOT_NDEF)) {
-				return 0;
-			}
-			memcpy(ndef, optarg, strlen(optarg));
-			ndef_seen = true;
-			break;
+		case 'n': {
+				  int command;
+				  if(!*ndef_type) {
+					  *ndef_type = 'U';
+				  }
+				  if (!slot_chosen) {
+					  fprintf(stderr, "A slot (-1/-2) must be chosen before ndef (-n/-t) argument.\n");
+					  *exit_code = 1;
+					  return 0;
+				  }
+				  if (swap_seen || update_seen || option_seen || *zap) {
+					  fprintf(stderr, "Ndef (-n/-t) can only be used with a slot (-1/-2).\n");
+					  *exit_code = 1;
+					  return 0;
+				  }
+				  if(ykp_command(cfg) == SLOT_CONFIG) {
+					  command = SLOT_NDEF;
+				  } else if(ykp_command(cfg) == SLOT_CONFIG2) {
+					  command = SLOT_NDEF2;
+				  } else {
+					  return 0;
+				  }
+				  if (!ykp_configure_command(cfg, command)) {
+					  return 0;
+				  }
+				  memcpy(ndef, optarg, strlen(optarg));
+				  ndef_seen = true;
+				  break;
+			  }
 		case 'o':
 			if (*zap) {
 				fprintf(stderr, "No options can be given with zap (-z).\n");
