@@ -62,6 +62,11 @@ YK_KEY *yk_open_first_key(void)
 	YK_KEY *yk = _ykusb_open_device(YUBICO_VID, YUBIKEY_PID);
 	int rc = yk_errno;
 
+	if(!yk) {
+		yk = _ykusb_open_device(YUBICO_VID, YUBIKEY_NEO_PID);
+		rc = yk_errno;
+	}
+
 	if (yk) {
 		YK_STATUS st;
 
@@ -98,7 +103,9 @@ int yk_check_firmware_version(YK_KEY *k)
 	       (st.versionMinor == 0 ||
 		st.versionMinor == 1 ||
 		st.versionMinor == 2 ||
-		st.versionMinor == 3)))) {
+		st.versionMinor == 3)) ||
+	      (st.versionMajor == 3 &&
+	       (st.versionMinor == 0)))) {
 		yk_errno = YK_EFIRMWARE;
 		return 0;
 	}

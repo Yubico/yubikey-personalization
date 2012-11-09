@@ -27,6 +27,7 @@
 
 #define	YUBICO_VID				0x1050
 #define	YUBIKEY_PID				0x0010
+#define	YUBIKEY_NEO_PID				0x0110
 
 /* Slot entries */
 
