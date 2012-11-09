@@ -515,7 +515,7 @@ int _test_swap_with_update(void)
 	assert(rc == 0);
 }
 
-int _test_ndef_for_neo(void)
+int _test_ndef_for_neo_beta(void)
 {
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 1, 7);
@@ -553,7 +553,7 @@ int _test_ndef_with_non_neo(void)
 	free(st);
 }
 
-int _test_slot_two_with_neo(void)
+int _test_slot_two_with_neo_beta(void)
 {
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 1, 7);
@@ -565,6 +565,42 @@ int _test_slot_two_with_neo(void)
 
 	int rc = _test_config(cfg, st, argc, argv);
 	assert(rc == 0);
+	ykp_free_config(cfg);
+	free(st);
+}
+
+int _test_ndef2_with_neo_beta(void)
+{
+	YKP_CONFIG *cfg = ykp_alloc();
+	YK_STATUS *st = _test_init_st(2, 1, 7);
+
+	char *argv[] = {
+		"unittest", "-2", "-nhttps://my.yubico.com/neo/",
+	};
+	int argc = 2;
+
+	int rc = _test_config(cfg, st, argc, argv);
+	assert(rc == 0);
+	ykp_free_config(cfg);
+	free(st);
+}
+
+int _test_ndef2_with_neo(void)
+{
+	YKP_CONFIG *cfg = ykp_alloc();
+	YK_STATUS *st = _test_init_st(3, 0, 0);
+
+	char *argv[] = {
+		"unittest", "-2", "-nhttps://my.yubico.com/neo/",
+		NULL
+	};
+	int argc = 3;
+
+	int rc = _test_config(cfg, st, argc, argv);
+	assert(rc == 1);
+	struct config_st *ycfg = (struct config_st *) ykp_core_config(cfg);
+	assert(((struct ykp_config_t*)cfg)->command == SLOT_NDEF2);
+
 	ykp_free_config(cfg);
 	free(st);
 }
@@ -589,9 +625,11 @@ int main (int argc, char **argv)
 	_test_swap_with_slot();
 	_test_slot_with_update();
 	_test_swap_with_update();
-	_test_ndef_for_neo();
+	_test_ndef_for_neo_beta();
 	_test_ndef_with_non_neo();
-	_test_slot_two_with_neo();
+	_test_slot_two_with_neo_beta();
+	_test_ndef2_with_neo();
+	_test_ndef2_with_neo_beta();
 
 	return 0;
 }
