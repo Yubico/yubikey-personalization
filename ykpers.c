@@ -445,6 +445,43 @@ int ykp_construct_ndef_text(YK_NDEF *ndef, const char *text, const char *lang, b
 	return 1;
 }
 
+int ykp_ndef_as_text(YK_NDEF *ndef, char *text, size_t len)
+{
+	if(ndef->type == 'U') {
+		const char *part = NULL;
+		size_t offset = 0;
+		if(ndef->data[0] > 0) {
+			part = ndef_identifiers[ndef->data[0] - 1];
+			offset = strlen(part);
+		}
+		if(offset + ndef->len - 1 > len) {
+			ykp_errno = YKP_EINVAL;
+			return 0;
+		}
+		if(part) {
+			memcpy(text, part, offset);
+		}
+		memcpy(text + offset, ndef->data + 1, ndef->len - 1);
+		text[ndef->len + offset] = 0;
+		return 1;
+	}
+	else if(ndef->type == 'T') {
+		unsigned char status = ndef->data[0];
+		if(status & 0x80)
+			status ^= 0x80;
+		if(ndef->len - status - 1 > len) {
+			ykp_errno = YKP_EINVAL;
+			return 0;
+		}
+		memcpy(text, ndef->data + status + 1, ndef->len - status - 1);
+		text[ndef->len - status] = 0;
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
 int ykp_set_ndef_access_code(YK_NDEF *ndef, unsigned char *access_code)
 {
 	if(ndef)

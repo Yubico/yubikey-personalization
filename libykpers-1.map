@@ -166,5 +166,6 @@ LIBYKPERS_1.10 {
   global:
 # Functions:
   yk_write_ndef2;
+  ykp_ndef_as_text;
 # Variables:
 } LIBYKPERS_1.9;

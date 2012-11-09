@@ -72,6 +72,7 @@ int ykp_free_ndef(YK_NDEF *ndef);
 int ykp_construct_ndef_uri(YK_NDEF *ndef, const char *uri);
 int ykp_construct_ndef_text(YK_NDEF *ndef, const char *text, const char *lang, bool isutf16);
 int ykp_set_ndef_access_code(YK_NDEF *ndef, unsigned char *access_code);
+int ykp_ndef_as_text(YK_NDEF *ndef, char *text, size_t len);
 
 int ykp_set_access_code(YKP_CONFIG *cfg, unsigned char *access_code, size_t len);
 int ykp_set_fixed(YKP_CONFIG *cfg, unsigned char *fixed, size_t len);
