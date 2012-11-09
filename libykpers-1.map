@@ -161,3 +161,10 @@ LIBYKPERS_1.9 {
   yk_hmac_sha1;
 # Variables:
 } LIBYKPERS_1.8;
+
+LIBYKPERS_1.10 {
+  global:
+# Functions:
+  yk_write_ndef2;
+# Variables:
+} LIBYKPERS_1.9;

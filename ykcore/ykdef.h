@@ -38,6 +38,7 @@
 #define	SLOT_UPDATE2		5   /* Update slot 2 */
 #define	SLOT_SWAP		6   /* Swap slot 1 and 2 */
 #define	SLOT_NDEF		8   /* Write NDEF record */
+#define	SLOT_NDEF2		9   /* Write NDEF record for slot 2 */
 
 #define SLOT_DEVICE_SERIAL	0x10	/* Device serial number */
 

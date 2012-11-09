@@ -252,9 +252,16 @@ int yk_write_config(YK_KEY *yk, YK_CONFIG *cfg, int confnum,
 
 int yk_write_ndef(YK_KEY *yk, YK_NDEF *ndef)
 {
+	/* just wrap yk_write_ndef2() with confnum 1 */
+	return yk_write_ndef2(yk, ndef, 1);
+}
+
+int yk_write_ndef2(YK_KEY *yk, YK_NDEF *ndef, int confnum)
+{
 	unsigned char buf[sizeof(YK_NDEF)];
 	YK_STATUS stat;
 	int seq;
+	uint8_t command;
 
 	/* Get current sequence # from status block */
 
@@ -263,13 +270,25 @@ int yk_write_ndef(YK_KEY *yk, YK_NDEF *ndef)
 
 	seq = stat.pgmSeq;
 
+	switch(confnum) {
+		case 1:
+			command = SLOT_NDEF;
+			break;
+		case 2:
+			command = SLOT_NDEF2;
+			break;
+		default:
+			yk_errno = YK_EINVALIDCMD;
+			return 0;
+	}
+
 	/* Insert config block in buffer */
 
 	memset(buf, 0, sizeof(buf));
 	memcpy(buf, ndef, sizeof(YK_NDEF));
 
 	/* Write to Yubikey */
-	if (!yk_write_to_key(yk, SLOT_NDEF, buf, sizeof(buf)))
+	if (!yk_write_to_key(yk, command, buf, sizeof(buf)))
 		return 0;
 
 	/* When the Yubikey clears the SLOT_WRITE_FLAG, it has processed the last write.

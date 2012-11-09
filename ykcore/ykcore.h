@@ -115,8 +115,10 @@ extern int yk_write_command(YK_KEY *k, YK_CONFIG *cfg, uint8_t command,
 /* wrapper function of yk_write_command */
 extern int yk_write_config(YK_KEY *k, YK_CONFIG *cfg, int confnum,
 			   unsigned char *acc_code);
-/* writes the given ndef to the key. */
+/* writes the given ndef to the key as SLOT_NDEF */
 extern int yk_write_ndef(YK_KEY *yk, YK_NDEF *ndef);
+/* writes the given ndef to the key. */
+extern int yk_write_ndef2(YK_KEY *yk, YK_NDEF *ndef, int confnum);
 /* Write something to the YubiKey (a command that is). */
 extern int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount);
 /* Do a challenge-response round with the key. */
