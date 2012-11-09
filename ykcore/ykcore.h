@@ -89,6 +89,7 @@ extern int yk_close_key(YK_KEY *k);		/* closes a previously opened key */
 extern int yk_get_status(YK_KEY *k, YK_STATUS *status /*, int forceUpdate */);
 /* checks that the firmware revision of the key is supported */
 extern int yk_check_firmware_version(YK_KEY *k);
+extern int yk_check_firmware_version2(YK_STATUS *status);
 /* Read the factory set serial number from a YubiKey 2.0 or higher. */
 extern int yk_get_serial(YK_KEY *yk, uint8_t slot, unsigned int flags, unsigned int *serial);
 /* Wait for the key to either set or clear bits in it's status byte */

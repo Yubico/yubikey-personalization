@@ -92,21 +92,28 @@ int yk_check_firmware_version(YK_KEY *k)
 
 	if (!yk_get_status(k, &st))
 		return 0;
-	if (!((st.versionMajor == 0 &&
-	       (st.versionMinor == 9 ||
-		st.versionBuild == 9)) ||
-	      (st.versionMajor == 1 &&
-	       (st.versionMinor == 0 ||
-		st.versionMinor == 1 ||
-		st.versionMinor == 2 ||
-		st.versionMinor == 3)) ||
-	      (st.versionMajor == 2 &&
-	       (st.versionMinor == 0 ||
-		st.versionMinor == 1 ||
-		st.versionMinor == 2 ||
-		st.versionMinor == 3)) ||
-	      (st.versionMajor == 3 &&
-	       (st.versionMinor == 0)))) {
+
+	return yk_check_firmware_version2(&st);
+}
+
+
+int yk_check_firmware_version2(YK_STATUS *st)
+{
+	if (!((st->versionMajor == 0 &&
+	       (st->versionMinor == 9 ||
+		st->versionBuild == 9)) ||
+	      (st->versionMajor == 1 &&
+	       (st->versionMinor == 0 ||
+		st->versionMinor == 1 ||
+		st->versionMinor == 2 ||
+		st->versionMinor == 3)) ||
+	      (st->versionMajor == 2 &&
+	       (st->versionMinor == 0 ||
+		st->versionMinor == 1 ||
+		st->versionMinor == 2 ||
+		st->versionMinor == 3)) ||
+	      (st->versionMajor == 3 &&
+	       (st->versionMinor == 0)))) {
 		yk_errno = YK_EFIRMWARE;
 		return 0;
 	}
