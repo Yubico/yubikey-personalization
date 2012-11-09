@@ -46,6 +46,8 @@ tests/test_threaded_calls
 tests/test_threaded_calls.o
 tests/test_ykpbkdf2
 tests/test_ykpbkdf2.o
+tests/test_yk_utilities
+tests/test_yk_utilities.o
 tmp/
 usha.lo
 usha.o
