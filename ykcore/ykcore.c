@@ -315,6 +315,47 @@ int yk_write_ndef2(YK_KEY *yk, YK_NDEF *ndef, int confnum)
 	return stat.pgmSeq != seq;
 }
 
+int yk_set_usb_mode(YK_KEY *yk, int usb_mode)
+{
+	if(!(usb_mode >= 0 && usb_mode < 4)) {
+		yk_errno = YK_EINVALIDCMD;
+		return 1;
+	}
+
+	unsigned char buf[sizeof(YK_NDEF)];
+	YK_STATUS stat;
+	int seq;
+
+	/* Get current sequence # from status block */
+	if (!yk_get_status(yk, &stat))
+		return 0;
+
+	seq = stat.pgmSeq;
+
+	fprintf(stderr, "Pretending to set the USB mode to: %d\n", usb_mode);
+
+	/* Write to Yubikey */
+	if(/*TODO: !yk_write_to_key(yk, SLOT_USB_MODE, buf, sizeof(buf)) */ 1 == 2)
+		return 0;
+
+	/* When the Yubikey clears the SLOT_WRITE_FLAG, it has processed the last write.
+	 * This wait can't be done in yk_write_to_key since some users of that function
+	 * want to get the bytes in the status message, but when writing configuration
+	 * we don't expect any data back.
+	 */
+	yk_wait_for_key_status(yk, SLOT_USB_MODE, 0, WAIT_FOR_WRITE_FLAG, false, SLOT_WRITE_FLAG, NULL);
+
+	/* Verify update */
+
+	if (!yk_get_status(yk, &stat /*, 0*/))
+		return 0;
+
+	yk_errno = YK_EWRITEERR;
+	return stat.pgmSeq != seq;
+
+	return 1;
+}
+
 /*
  * This function is for doing HMAC-SHA1 or Yubico challenge-response with a key.
  */

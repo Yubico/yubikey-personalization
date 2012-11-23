@@ -115,6 +115,7 @@ int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 	char *salt = NULL;
 	char ndef[128];
 	char ndef_type = 0;
+	int usb_mode = -1;
 	bool zap = false;
 
 	int rc;
@@ -131,7 +132,7 @@ int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 			    &autocommit, salt,
 			    st, &verbose,
 			    access_code, &use_access_code,
-			    &aesviahash, &ndef_type, ndef, &zap,
+			    &aesviahash, &ndef_type, ndef, &usb_mode, &zap,
 			    &exit_code);
 
 	return rc;
@@ -293,6 +294,7 @@ int _test_non_config_args(void)
 	char *salt = NULL;
 	char ndef[128];
 	char ndef_type = NULL;
+	int usb_mode = -1;
 	bool zap = false;
 
 	char *argv[] = {
@@ -314,7 +316,7 @@ int _test_non_config_args(void)
 			    &autocommit, salt,
 			    st, &verbose,
 			    access_code, &use_access_code,
-			    &aesviahash, &ndef_type, ndef, &zap,
+			    &aesviahash, &ndef_type, ndef, &usb_mode, &zap,
 			    &exit_code);
 	assert(rc == 1);
 	i = strcmp(infname, "in"); assert(i == 0);
