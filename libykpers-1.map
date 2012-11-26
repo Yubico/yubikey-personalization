@@ -168,5 +168,6 @@ LIBYKPERS_1.10 {
   yk_write_ndef2;
   ykp_ndef_as_text;
   yk_check_firmware_version2;
+  yk_set_usb_mode;
 # Variables:
 } LIBYKPERS_1.9;
