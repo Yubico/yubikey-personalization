@@ -215,7 +215,7 @@ struct nav_st {
 
 /* Device configuration block (version 3.0) */
 
-struct device_st {
+struct device_config_st {
 	unsigned char mode;		/* Device mode */
 	unsigned char crTimeout;	/* Challenge-response timeout in seconds */
 	unsigned short autoEject;	/* Auto eject time in x10 seconds */
