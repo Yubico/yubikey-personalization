@@ -158,7 +158,7 @@ void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 			if (dev->descriptor.idVendor == vendor_id) {
 				size_t j;
 				for (j = 0; j < pids_len; j++) {
-					if (dev->descriptor.idProduct == prduct_ids[j]) {
+					if (dev->descriptor.idProduct == product_ids[j]) {
 						break;
 					}
 				}
