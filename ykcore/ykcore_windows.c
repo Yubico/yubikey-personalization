@@ -49,7 +49,7 @@ int _ykusb_stop(void)
 	return 1;
 }
 
-void * _ykusb_open_device(int vendor_id, int product_id)
+void * _ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 {
 	HDEVINFO hi;
 	SP_DEVICE_INTERFACE_DATA di;
@@ -92,7 +92,17 @@ void * _ykusb_open_device(int vendor_id, int product_id)
 				HIDD_ATTRIBUTES devInfo;
 
 				if (HidD_GetAttributes(m_handle, &devInfo)) {
-					if (devInfo.VendorID == vendor_id && devInfo.ProductID == product_id) {
+					if (devInfo.VendorID == vendor_id) {
+						size_t j;
+						for (j = 0; j < pids_len; j++) {
+							if (devInfo.ProductID == product_ids[j]) {
+								break;
+							}
+						}
+						if (j == pids_len) {
+							goto done;
+						}
+
 						ret_handle = m_handle;
 						free (pi);
 						goto done;

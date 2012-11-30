@@ -46,7 +46,7 @@ int _ykusb_stop(void)
 	return 0;
 }
 
-void * _ykusb_open_device(int vendor_id, int product_id)
+void * _ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 {
 	yk_errno = YK_ENOTYETIMPL;
 	return NULL;
