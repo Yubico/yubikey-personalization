@@ -68,24 +68,35 @@ static void _ykosx_CopyToCFArray(const void *value, void *context)
 	CFArrayAppendValue( ( CFMutableArrayRef ) context, value );
 }
 
-void *_ykusb_open_device(int vendor_id, int product_id)
+void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 {
 	void *yk = NULL;
-	CFDictionaryRef dict;
-	CFStringRef keys[2];
-	CFStringRef values[2];
 
 	int rc = YK_ENOKEY;
 
+	size_t i;
+
+	CFMutableArrayRef matches = CFArrayCreateMutable( kCFAllocatorDefault, pids_len, kCFTypeArrayCallBacks );
+
 	CFNumberRef vendorID = CFNumberCreate( kCFAllocatorDefault, kCFNumberIntType, &vendor_id );
-	CFNumberRef productID = CFNumberCreate( kCFAllocatorDefault, kCFNumberIntType, &product_id );
+	for(i = 0; i < pids_len; i++) {
+		CFDictionaryRef dict;
+		CFStringRef keys[2];
+		CFStringRef values[2];
 
-	keys[0] = CFSTR( kIOHIDVendorIDKey );  values[0] = (void *) vendorID;
-	keys[1] = CFSTR( kIOHIDProductIDKey ); values[1] = (void *) productID;
+		CFNumberRef productID = CFNumberCreate( kCFAllocatorDefault, kCFNumberIntType, &product_ids[i] );
 
-	dict = CFDictionaryCreate( kCFAllocatorDefault, (const void **) &keys, (const void **) &values, 1, NULL, NULL);
+		keys[0] = CFSTR( kIOHIDVendorIDKey );  values[0] = (void *) vendorID;
+		keys[1] = CFSTR( kIOHIDProductIDKey ); values[1] = (void *) productID;
 
-	IOHIDManagerSetDeviceMatching( ykosxManager, dict );
+		dict = CFDictionaryCreate( kCFAllocatorDefault, (const void **) &keys, (const void **) &values, 1, NULL, NULL);
+		CFArrayAppendValue( matches, dict );
+
+		CFRelease( productID );
+		CFRelease( dict );
+	}
+
+	IOHIDManagerSetDeviceMatchingMultiple( ykosxManager, matches );
 
 	CFSetRef devSet = IOHIDManagerCopyDevices( ykosxManager );
 
@@ -110,13 +121,12 @@ void *_ykusb_open_device(int vendor_id, int product_id)
 		IOHIDManagerScheduleWithRunLoop( ykosxManager, CFRunLoopGetCurrent( ), kCFRunLoopDefaultMode );
 		IOHIDManagerUnscheduleFromRunLoop( ykosxManager, CFRunLoopGetCurrent( ), kCFRunLoopDefaultMode );
 
+		CFRelease( vendorID );
 		CFRelease( array );
 		CFRelease( devSet );
 	}
 
-	CFRelease( dict );
-	CFRelease( vendorID );
-	CFRelease( productID );
+	CFRelease( matches );
 
 	if (yk) {
 		_ykusb_IOReturn = IOHIDDeviceOpen( yk, 0L );

@@ -145,7 +145,7 @@ extern int _ykusb_stop(void)
 	return 1;
 }
 
-void *_ykusb_open_device(int vendor_id, int product_id)
+void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 {
 	struct usb_bus *bus;
 	struct usb_device *dev;
@@ -155,8 +155,17 @@ void *_ykusb_open_device(int vendor_id, int product_id)
 	for (bus = usb_get_busses(); bus; bus = bus->next) {
 		rc = YK_ENOKEY;
 		for (dev = bus->devices; dev; dev = dev->next)
-			if (dev->descriptor.idVendor == vendor_id
-			    && dev->descriptor.idProduct == product_id) {
+			if (dev->descriptor.idVendor == vendor_id) {
+				size_t j;
+				for (j = 0; j < pids_len; j++) {
+					if (dev->descriptor.idProduct == product_ids[j]) {
+						break;
+					}
+				}
+				if(j == pids_len) {
+					goto done;
+				}
+
 				rc = YK_EUSBERR;
 				h = usb_open(dev);
 #ifdef LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP

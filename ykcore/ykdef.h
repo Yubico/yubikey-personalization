@@ -12,6 +12,7 @@
 **	10-05-01	/ 2.2.0		/ J E	/ Added support for 2.2 ext. + frame	**
 **	11-04-15	/ 2.3.0		/ J E	/ Added support for 2.3 extensions	**
 **	11-12-05	/ 2.4.0		/ J E	/ Added support for NFC and NDEF	**
+**	12-10-28    / 3.0.0     / J E   / NEO changes                                   **
 **											**
 *****************************************************************************************/
 
@@ -22,12 +23,6 @@
 #if defined(_WIN32) || defined(__GNUC__)
 #pragma pack(push, 1)
 #endif
-
-/* USB Identity */
-
-#define	YUBICO_VID				0x1050
-#define	YUBIKEY_PID				0x0010
-#define	YUBIKEY_NEO_PID				0x0110
 
 /* Slot entries */
 
@@ -43,6 +38,8 @@
 #define SLOT_USB_MODE		0x0b    /* USB mode of operation (NEO) */
 
 #define SLOT_DEVICE_SERIAL	0x10	/* Device serial number */
+#define SLOT_DEVICE_CONFIG	0x11	/* Write device configuration record */
+#define SLOT_SCAN_MAP		0x12	/* Write scancode map */
 
 #define SLOT_CHAL_OTP1		0x20	/* Write 6 byte challenge to slot 1, get Yubico OTP response */
 #define SLOT_CHAL_OTP2		0x28	/* Write 6 byte challenge to slot 2, get Yubico OTP response */
@@ -216,6 +213,28 @@ struct nav_st {
 #define NAVFLAG_APPEND_TKT	0x02	/* Append ticket to URL */
 #define	NAVFLAG_DUAL_KEY_USAGE	0x04	/* Dual usage of key: Short = ticket  Long = Navigate */
 
+/* Device configuration block (version 3.0) */
+
+struct device_st {
+	unsigned char mode;		/* Device mode */
+	unsigned char crTimeout;	/* Challenge-response timeout in seconds */
+	unsigned short autoEject;	/* Auto eject time in x10 seconds */
+};
+
+#define MODE_OTP		0x00	/* OTP only */
+#define MODE_CCID		0x01	/* CCID only, no eject */
+#define MODE_OTP_CCID		0x02	/* OTP + CCID composite */
+#define MODE_MASK		0x0f	/* Mask for mode bits */
+
+#define MODE_FLAG_EJECT		0x10	/* CCID device supports eject (mode 1 only) */
+
+#define DEFAULT_CHAL_TIMEOUT	15	/* Default challenge timeout in seconds */
+
+/* Scancode mapping (version 3.0) */
+
+#define SCAN_MAP		"cbdefghijklnrtuvCBDEFGHIJKLNRTUV0123456789\t\r"
+#define SHIFT_FLAG		0x80	/* Flag for shifted scan codes */
+
 /* Status block */
 
 struct status_st {
@@ -232,6 +251,20 @@ struct status_st {
 /* Modified hex string mapping */
 
 #define	MODHEX_MAP		"cbdefghijklnrtuv"
+
+/* USB vendor ID (VID) and product ID (PID) mapping */
+
+#define	YUBICO_VID		0x1050		/* Global vendor ID */
+#define	YUBIKEY_PID		0x0010		/* Yubikey (version 1 and 2) */
+#define	NEO_OTP_PID		0x0110		/* Yubikey NEO - OTP only */
+#define	NEO_OTP_CCID_PID            0x0111      // Yubikey NEO - OTP and CCID
+/* USB Identity */
+
+#define	YUBICO_VID				0x1050
+#define	YUBIKEY_PID				0x0010
+#define	YUBIKEY_NEO_PID				0x0110
+
+#define	NEO_CCID_PID                0x0112      // Yubikey NEO - CCID only
 
 #if defined(_WIN32) || defined(__GNUC__)
 #pragma pack(pop)

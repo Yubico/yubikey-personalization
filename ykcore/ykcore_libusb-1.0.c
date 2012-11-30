@@ -157,7 +157,7 @@ extern int _ykusb_stop(void)
 	return 0;
 }
 
-void *_ykusb_open_device(int vendor_id, int product_id)
+void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 {
 	libusb_device *dev;
 	libusb_device_handle *h = NULL;
@@ -173,7 +173,17 @@ void *_ykusb_open_device(int vendor_id, int product_id)
 		if (ykl_errno != 0)
 			goto done;
 
-		if (desc.idVendor == vendor_id && desc.idProduct == product_id) {
+		if (desc.idVendor == vendor_id) {
+			size_t j;
+			for(j = 0; j < pids_len; j++) {
+				if (desc.idProduct == product_ids[j]) {
+					break;
+				}
+			}
+			if (j == pids_len) {
+				goto done;
+			}
+
 			rc = YK_EUSBERR;
 			ykl_errno = libusb_open(dev, &h);
 			if (ykl_errno != 0)
