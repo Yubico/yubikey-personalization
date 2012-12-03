@@ -39,6 +39,7 @@
 #define yk_config_st config_st
 #define yk_nav_st nav_st
 #define yk_frame_st frame_st
+#define yk_device_config_st device_config_st
 
 #include "ykcore.h"
 #include "ykdef.h"

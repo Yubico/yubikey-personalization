@@ -213,18 +213,18 @@ struct nav_st {
 
 /* Device configuration block (version 3.0) */
 
-struct device_st {
+struct device_config_st {
 	unsigned char mode;		/* Device mode */
 	unsigned char crTimeout;	/* Challenge-response timeout in seconds */
-	unsigned short autoEject;	/* Auto eject time in x10 seconds */
+	unsigned short autoEjectTime;	/* Auto eject time in x10 seconds */
 };
 
 #define MODE_OTP		0x00	/* OTP only */
 #define MODE_CCID		0x01	/* CCID only, no eject */
 #define MODE_OTP_CCID		0x02	/* OTP + CCID composite */
-#define MODE_MASK		0x0f	/* Mask for mode bits */
+#define MODE_MASK		0x03	/* Mask for mode bits */
 
-#define MODE_FLAG_EJECT		0x10	/* CCID device supports eject (mode 1 only) */
+#define MODE_FLAG_EJECT		0x80	/* CCID device supports eject (mode 1 only) */
 
 #define DEFAULT_CHAL_TIMEOUT	15	/* Default challenge timeout in seconds */
 

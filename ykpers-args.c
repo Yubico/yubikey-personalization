@@ -71,6 +71,12 @@ const char *usage =
 "          (this does NOT SET the access code, that's done with -oaccess=)\n"
 "-nXXX..   Write NDEF type 2 URI to YubiKey NEO, must be used with -1 or -2\n"
 "-tXXX..   Write NDEF type 2 text to YubiKey NEO, must be used with -1 or -2\n"
+"-mMODE    Set the USB operation mode of the YubiKey NEO.\n"
+"          Possible MODE arguments are:\n"
+"          0                   HID device only.\n"
+"          1                   CCID device only.\n"
+"          2                   HID/CCID composite device.\n"
+"          Add 80 to set MODE_FLAG_EJECT, for example: 81\n"
 "-oOPTION  change configuration option.  Possible OPTION arguments are:\n"
 "          salt=ssssssss       Salt to be used when deriving key from a\n"
 "                              password.  If none is given, a unique random\n"
@@ -145,7 +151,7 @@ const char *usage =
 "-v        verbose\n"
 "-h        help (this text)\n"
 ;
-const char *optstring = "u12xza:c:n:t:hi:o:s:vy";
+const char *optstring = "u12xza:c:n:t:hi:o:s:vym:";
 
 static int _set_fixed(char *opt, YKP_CONFIG *cfg);
 static int _format_decimal_as_hex(uint8_t *dst, size_t dst_len, uint8_t *src);
@@ -219,7 +225,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		   bool *autocommit, char *salt,
 		   YK_STATUS *st, bool *verbose,
 		   unsigned char *access_code, bool *use_access_code,
-		   bool *aesviahash, char *ndef_type, char *ndef, bool *zap,
+		   bool *aesviahash, char *ndef_type, char *ndef, unsigned char *usb_mode, bool *zap,
 		   int *exit_code)
 {
 	int c;
@@ -231,6 +237,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 	bool swap_seen = false;
 	bool update_seen = false;
 	bool ndef_seen = false;
+	bool usb_mode_seen = false;
 	struct config_st *ycfg;
 
 	ykp_configure_version(cfg, st);
@@ -429,6 +436,33 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 				  ndef_seen = true;
 				  break;
 			  }
+		case 'm':
+			if(slot_chosen || swap_seen || update_seen || option_seen || *zap) {
+				fprintf(stderr, "USB mode (-m) can not be combined with other options.\n");
+				*exit_code = 1;
+				return 0;
+			}
+			if(optarg[0] == '8') {
+				*usb_mode |= 0x80;
+				optarg++;
+			}
+			if(optarg[1] == '\0') {
+				int mode = optarg[0] - '0';
+				if(mode >= 0 && mode < MODE_MASK) {
+					*usb_mode |= mode;
+					usb_mode_seen = true;
+				}
+			}
+			/* Only true if we've parsed a valid USB mode number */
+			if(!usb_mode_seen) {
+				fprintf(stderr, "Invalid USB operation mode.\n");
+				*exit_code = 1;
+				return 0;
+			}
+			if (!ykp_configure_command(cfg, SLOT_DEVICE_CONFIG))
+				return 0;
+
+			break;
 		case 'o':
 			if (*zap) {
 				fprintf(stderr, "No options can be given with zap (-z).\n");
@@ -618,7 +652,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		}
 	}
 
-	if (!slot_chosen && !ndef_seen) {
+	if (!slot_chosen && !ndef_seen && !usb_mode_seen) {
 		fprintf(stderr, "A slot must be chosen with -1 or -2.\n");
 		*exit_code = 1;
 		return 0;

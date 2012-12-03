@@ -311,6 +311,43 @@ int yk_write_ndef2(YK_KEY *yk, YK_NDEF *ndef, int confnum)
 	return stat.pgmSeq != seq;
 }
 
+int yk_write_device_config(YK_KEY *yk, YK_DEVICE_CONFIG *device_config)
+{
+	unsigned char buf[sizeof(YK_DEVICE_CONFIG)];
+	YK_STATUS stat;
+	int seq;
+
+	memset(buf, 0, sizeof(buf));
+	memcpy(buf, device_config, sizeof(YK_DEVICE_CONFIG));
+
+	/* Get current sequence # from status block */
+	if (!yk_get_status(yk, &stat))
+		return 0;
+
+	seq = stat.pgmSeq;
+
+	/* Write to Yubikey */
+	if(!yk_write_to_key(yk, SLOT_DEVICE_CONFIG, buf, sizeof(buf)))
+		return 0;
+
+	/* When the Yubikey clears the SLOT_WRITE_FLAG, it has processed the last write.
+	 * This wait can't be done in yk_write_to_key since some users of that function
+	 * want to get the bytes in the status message, but when writing configuration
+	 * we don't expect any data back.
+	 */
+	yk_wait_for_key_status(yk, SLOT_DEVICE_CONFIG, 0, WAIT_FOR_WRITE_FLAG, false, SLOT_WRITE_FLAG, NULL);
+
+	/* Verify update */
+
+	if (!yk_get_status(yk, &stat /*, 0*/))
+		return 0;
+
+	yk_errno = YK_EWRITEERR;
+	return stat.pgmSeq != seq;
+
+	return 1;
+}
+
 /*
  * This function is for doing HMAC-SHA1 or Yubico challenge-response with a key.
  */

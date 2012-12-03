@@ -184,6 +184,14 @@ int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command)
 			return 0;
 		}
 		break;
+	/* TODO: Make sure this is correct */
+	case SLOT_DEVICE_CONFIG:
+		/* For testing only */
+		if(!(cfg->yk_major_version >= 3)) {
+			ykp_errno = YKP_EYUBIKEYVER;
+			return 0;
+		}
+		break;
 	case SLOT_NDEF2:
 		if (!(cfg->yk_major_version == 3)) {
 			ykp_errno = YKP_EYUBIKEYVER;
@@ -490,6 +498,55 @@ int ykp_set_ndef_access_code(YK_NDEF *ndef, unsigned char *access_code)
 		return 0;
 	}
 	return 1;
+}
+
+YK_DEVICE_CONFIG *ykp_alloc_device_config(void)
+{
+	YK_DEVICE_CONFIG *cfg = malloc(sizeof(YK_DEVICE_CONFIG));
+	if(cfg) {
+		memset(cfg, 0, sizeof(YK_DEVICE_CONFIG));
+		return cfg;
+	}
+	return 0;
+}
+
+int ykp_free_device_config(YK_DEVICE_CONFIG *device_config)
+{
+	if(device_config) {
+		free(device_config);
+		return 1;
+	}
+	return 0;
+}
+
+int ykp_set_device_mode(YK_DEVICE_CONFIG *device_config, unsigned char mode)
+{
+	if(device_config) {
+		device_config->mode = mode;
+		return 1;
+	}
+	ykp_errno = YKP_EINVAL;
+	return 0;
+}
+
+int ykp_set_device_chalresp_timeout(YK_DEVICE_CONFIG *device_config, unsigned char timeout)
+{
+	if(device_config) {
+		device_config->crTimeout = timeout;
+		return 1;
+	}
+	ykp_errno = YKP_EINVAL;
+	return 0;
+}
+
+int ykp_set_device_autoeject_time(YK_DEVICE_CONFIG *device_config, unsigned short eject_time)
+{
+	if(device_config) {
+		device_config->autoEjectTime = eject_time;
+		return 1;
+	}
+	ykp_errno = YKP_EINVAL;
+	return 0;
 }
 
 static bool vcheck_all(const YKP_CONFIG *cfg)
