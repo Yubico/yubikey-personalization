@@ -65,7 +65,6 @@ YK_KEY *yk_open_first_key(void)
 	int rc = yk_errno;
 
 	if (yk) {
-		rc = 0;
 		YK_STATUS st;
 
 		if (!yk_get_status(yk, &st)) {
