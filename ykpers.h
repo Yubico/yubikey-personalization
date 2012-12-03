@@ -74,6 +74,12 @@ int ykp_construct_ndef_text(YK_NDEF *ndef, const char *text, const char *lang, b
 int ykp_set_ndef_access_code(YK_NDEF *ndef, unsigned char *access_code);
 int ykp_ndef_as_text(YK_NDEF *ndef, char *text, size_t len);
 
+YK_DEVICE_CONFIG *ykp_alloc_device_config(void);
+int ykp_free_device_config(YK_DEVICE_CONFIG *device_config);
+int ykp_set_device_mode(YK_DEVICE_CONFIG *device_config, unsigned char mode);
+int ykp_set_device_chalresp_timeout(YK_DEVICE_CONFIG *device_config, unsigned char timeout);
+int ykp_set_device_autoeject_time(YK_DEVICE_CONFIG *device_config, unsigned short eject_time);
+
 int ykp_set_access_code(YKP_CONFIG *cfg, unsigned char *access_code, size_t len);
 int ykp_set_fixed(YKP_CONFIG *cfg, unsigned char *fixed, size_t len);
 int ykp_set_uid(YKP_CONFIG *cfg, unsigned char *uid, size_t len);

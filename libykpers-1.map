@@ -169,5 +169,10 @@ LIBYKPERS_1.10 {
   ykp_ndef_as_text;
   yk_check_firmware_version2;
   yk_set_usb_mode;
+  ykp_alloc_device_config;
+  ykp_free_device_config;
+  ykp_set_device_mode;
+  ykp_set_device_chalresp_timeout;
+  ykp_set_device_autoeject_time;
 # Variables:
 } LIBYKPERS_1.9;
