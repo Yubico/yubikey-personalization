@@ -168,7 +168,7 @@ LIBYKPERS_1.10 {
   yk_write_ndef2;
   ykp_ndef_as_text;
   yk_check_firmware_version2;
-  yk_set_device_config;
+  yk_write_device_config;
   ykp_alloc_device_config;
   ykp_free_device_config;
   ykp_set_device_mode;
