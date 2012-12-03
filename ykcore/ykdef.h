@@ -222,9 +222,9 @@ struct device_config_st {
 #define MODE_OTP		0x00	/* OTP only */
 #define MODE_CCID		0x01	/* CCID only, no eject */
 #define MODE_OTP_CCID		0x02	/* OTP + CCID composite */
-#define MODE_MASK		0x0f	/* Mask for mode bits */
+#define MODE_MASK		0x03	/* Mask for mode bits */
 
-#define MODE_FLAG_EJECT		0x10	/* CCID device supports eject (mode 1 only) */
+#define MODE_FLAG_EJECT		0x80	/* CCID device supports eject (mode 1 only) */
 
 #define DEFAULT_CHAL_TIMEOUT	15	/* Default challenge timeout in seconds */
 
