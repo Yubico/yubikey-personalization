@@ -176,10 +176,8 @@ int yk_get_serial(YK_KEY *yk, uint8_t slot, unsigned int flags, unsigned int *se
 	return 1;
 }
 
-int yk_write_command(YK_KEY *yk, YK_CONFIG *cfg, uint8_t command,
-		    unsigned char *acc_code)
+static int _yk_write(YK_KEY *yk, uint8_t yk_cmd, unsigned char *buf, size_t len)
 {
-	unsigned char buf[sizeof(YK_CONFIG) + ACC_CODE_SIZE];
 	YK_STATUS stat;
 	int seq;
 
@@ -189,6 +187,38 @@ int yk_write_command(YK_KEY *yk, YK_CONFIG *cfg, uint8_t command,
 		return 0;
 
 	seq = stat.pgmSeq;
+
+	/* Write to Yubikey */
+	if (!yk_write_to_key(yk, yk_cmd, buf, len))
+		return 0;
+
+	/* When the Yubikey clears the SLOT_WRITE_FLAG, it has processed the last write.
+	 * This wait can't be done in yk_write_to_key since some users of that function
+	 * want to get the bytes in the status message, but when writing configuration
+	 * we don't expect any data back.
+	 */
+	yk_wait_for_key_status(yk, yk_cmd, 0, WAIT_FOR_WRITE_FLAG, false, SLOT_WRITE_FLAG, NULL);
+
+	/* Verify update */
+
+	if (!yk_get_status(yk, &stat /*, 0*/))
+		return 0;
+
+	yk_errno = YK_EWRITEERR;
+
+	/* when both configurations from a YubiKey is erased it will return
+	 * pgmSeq 0, if one is still configured after an erase pgmSeq is
+	 * counted up as usual. */
+	if(stat.pgmSeq == 0) {
+		return 1;
+	}
+	return stat.pgmSeq != seq;
+}
+
+int yk_write_command(YK_KEY *yk, YK_CONFIG *cfg, uint8_t command,
+		    unsigned char *acc_code)
+{
+	unsigned char buf[sizeof(YK_CONFIG) + ACC_CODE_SIZE];
 
 	/* Update checksum and insert config block in buffer if present */
 
@@ -206,31 +236,8 @@ int yk_write_command(YK_KEY *yk, YK_CONFIG *cfg, uint8_t command,
 	if (acc_code)
 		memcpy(buf + sizeof(YK_CONFIG), acc_code, ACC_CODE_SIZE);
 
-	/* Write to Yubikey */
-	if (!yk_write_to_key(yk, command, buf, sizeof(buf)))
-		return 0;
+	return _yk_write(yk, command, buf, sizeof(buf));
 
-	/* When the Yubikey clears the SLOT_WRITE_FLAG, it has processed the last write.
-	 * This wait can't be done in yk_write_to_key since some users of that function
-	 * want to get the bytes in the status message, but when writing configuration
-	 * we don't expect any data back.
-	 */
-	yk_wait_for_key_status(yk, command, 0, WAIT_FOR_WRITE_FLAG, false, SLOT_WRITE_FLAG, NULL);
-
-	/* Verify update */
-
-	if (!yk_get_status(yk, &stat /*, 0*/))
-		return 0;
-
-	yk_errno = YK_EWRITEERR;
-
-	/* when both configurations from a YubiKey is erased it will return
-	 * pgmSeq 0, if one is still configured after an erase pgmSeq is
-	 * counted up as usual. */
-	if(!cfg && stat.pgmSeq == 0) {
-		return 1;
-	}
-	return stat.pgmSeq != seq;
 }
 
 int yk_write_config(YK_KEY *yk, YK_CONFIG *cfg, int confnum,
@@ -263,16 +270,7 @@ int yk_write_ndef(YK_KEY *yk, YK_NDEF *ndef)
 int yk_write_ndef2(YK_KEY *yk, YK_NDEF *ndef, int confnum)
 {
 	unsigned char buf[sizeof(YK_NDEF)];
-	YK_STATUS stat;
-	int seq;
 	uint8_t command;
-
-	/* Get current sequence # from status block */
-
-	if (!yk_get_status(yk, &stat))
-		return 0;
-
-	seq = stat.pgmSeq;
 
 	switch(confnum) {
 		case 1:
@@ -291,61 +289,17 @@ int yk_write_ndef2(YK_KEY *yk, YK_NDEF *ndef, int confnum)
 	memset(buf, 0, sizeof(buf));
 	memcpy(buf, ndef, sizeof(YK_NDEF));
 
-	/* Write to Yubikey */
-	if (!yk_write_to_key(yk, command, buf, sizeof(buf)))
-		return 0;
-
-	/* When the Yubikey clears the SLOT_WRITE_FLAG, it has processed the last write.
-	 * This wait can't be done in yk_write_to_key since some users of that function
-	 * want to get the bytes in the status message, but when writing configuration
-	 * we don't expect any data back.
-	 */
-	yk_wait_for_key_status(yk, SLOT_NDEF, 0, WAIT_FOR_WRITE_FLAG, false, SLOT_WRITE_FLAG, NULL);
-
-	/* Verify update */
-
-	if (!yk_get_status(yk, &stat /*, 0*/))
-		return 0;
-
-	yk_errno = YK_EWRITEERR;
-	return stat.pgmSeq != seq;
+	return _yk_write(yk, command, buf, sizeof(YK_NDEF));
 }
 
 int yk_write_device_config(YK_KEY *yk, YK_DEVICE_CONFIG *device_config)
 {
 	unsigned char buf[sizeof(YK_DEVICE_CONFIG)];
-	YK_STATUS stat;
-	int seq;
 
 	memset(buf, 0, sizeof(buf));
 	memcpy(buf, device_config, sizeof(YK_DEVICE_CONFIG));
 
-	/* Get current sequence # from status block */
-	if (!yk_get_status(yk, &stat))
-		return 0;
-
-	seq = stat.pgmSeq;
-
-	/* Write to Yubikey */
-	if(!yk_write_to_key(yk, SLOT_DEVICE_CONFIG, buf, sizeof(buf)))
-		return 0;
-
-	/* When the Yubikey clears the SLOT_WRITE_FLAG, it has processed the last write.
-	 * This wait can't be done in yk_write_to_key since some users of that function
-	 * want to get the bytes in the status message, but when writing configuration
-	 * we don't expect any data back.
-	 */
-	yk_wait_for_key_status(yk, SLOT_DEVICE_CONFIG, 0, WAIT_FOR_WRITE_FLAG, false, SLOT_WRITE_FLAG, NULL);
-
-	/* Verify update */
-
-	if (!yk_get_status(yk, &stat /*, 0*/))
-		return 0;
-
-	yk_errno = YK_EWRITEERR;
-	return stat.pgmSeq != seq;
-
-	return 1;
+	return _yk_write(yk, SLOT_DEVICE_CONFIG, buf, sizeof(YK_DEVICE_CONFIG));
 }
 
 /*
