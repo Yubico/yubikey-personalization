@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 	char *salt = NULL;
 	char ndef_string[128] = {0};
 	char ndef_type = 0;
-	int usb_mode = -1;
+	unsigned char usb_mode = 0;
 	bool zap = false;
 
 	bool error = false;
@@ -205,8 +205,8 @@ int main(int argc, char **argv)
 			fprintf(stderr, "Configuration in slot 1 and 2 will be swapped\n");
 		} else if(ykp_command(cfg) == SLOT_NDEF || ykp_command(cfg) == SLOT_NDEF2) {
 			fprintf(stderr, "New NDEF will be written as:\n%s\n", ndef_string);
-		} else if(ykp_command(cfg) == SLOT_USB_MODE) {
-			fprintf(stderr, "The USB mode will be set to: %d\n", usb_mode);
+		} else if(ykp_command(cfg) == SLOT_DEVICE_CONFIG) {
+			fprintf(stderr, "The USB mode will be set to: 0x%x\n", usb_mode);
 		} else if(zap) {
 			fprintf(stderr, "Configuration in slot %d will be deleted\n", ykp_config_num(cfg));
 		} else {
@@ -253,12 +253,15 @@ int main(int argc, char **argv)
 					goto err;
 				}
 				ykp_free_ndef(ndef);
-			} else if(ykp_command(cfg) == SLOT_USB_MODE) {
-				if(!yk_set_usb_mode(yk, usb_mode)) {
+			} else if(ykp_command(cfg) == SLOT_DEVICE_CONFIG) {
+				YK_DEVICE_CONFIG *device_config = ykp_alloc_device_config();
+				ykp_set_device_mode(device_config, usb_mode);
+				if(!yk_write_device_config(yk, device_config)) {
 					if(verbose)
 						printf(" failure\n");
 					goto err;
 				}
+				ykp_free_device_config(device_config);
 			} else {
 				YK_CONFIG *ycfg = NULL;
 				/* if we're deleting a slot we send the configuration as NULL */

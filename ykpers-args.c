@@ -74,9 +74,9 @@ const char *usage =
 "-mMODE    Set the USB operation mode of the YubiKey NEO.\n"
 "          Possible MODE arguments are:\n"
 "          0                   HID device only.\n"
-"          1                   CCID device only, permanently attached.\n"
-"          2                   CCID device only, with insert/removal.\n"
-"          3                   HID/CCID composite device.\n"
+"          1                   CCID device only.\n"
+"          2                   HID/CCID composite device.\n"
+"          Add 80 to set MODE_FLAG_EJECT, for example: 81\n"
 "-oOPTION  change configuration option.  Possible OPTION arguments are:\n"
 "          salt=ssssssss       Salt to be used when deriving key from a\n"
 "                              password.  If none is given, a unique random\n"
@@ -225,7 +225,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		   bool *autocommit, char *salt,
 		   YK_STATUS *st, bool *verbose,
 		   unsigned char *access_code, bool *use_access_code,
-		   bool *aesviahash, char *ndef_type, char *ndef, int *usb_mode, bool *zap,
+		   bool *aesviahash, char *ndef_type, char *ndef, unsigned char *usb_mode, bool *zap,
 		   int *exit_code)
 {
 	int c;
@@ -442,10 +442,14 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 				*exit_code = 1;
 				return 0;
 			}
+			if(optarg[0] == '8') {
+				*usb_mode |= 0x80;
+				optarg++;
+			}
 			if(optarg[1] == '\0') {
 				int mode = optarg[0] - '0';
-				if(mode >= 0 && mode < 4) {
-					*usb_mode = mode;
+				if(mode >= 0 && mode < MODE_MASK) {
+					*usb_mode |= mode;
 					usb_mode_seen = true;
 				}
 			}
@@ -455,7 +459,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 				*exit_code = 1;
 				return 0;
 			}
-			if (!ykp_configure_command(cfg, SLOT_USB_MODE))
+			if (!ykp_configure_command(cfg, SLOT_DEVICE_CONFIG))
 				return 0;
 
 			break;

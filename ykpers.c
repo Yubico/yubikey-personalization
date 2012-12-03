@@ -185,9 +185,9 @@ int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command)
 		}
 		break;
 	/* TODO: Make sure this is correct */
-	case SLOT_USB_MODE:
+	case SLOT_DEVICE_CONFIG:
 		/* For testing only */
-		if(!(cfg->yk_major_version == 2 && cfg->yk_minor_version == 3 && cfg->yk_build_version == 1)) {
+		if(!(cfg->yk_major_version >= 3)) {
 			ykp_errno = YKP_EYUBIKEYVER;
 			return 0;
 		}
