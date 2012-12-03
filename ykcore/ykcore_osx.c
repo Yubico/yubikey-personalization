@@ -76,7 +76,7 @@ void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 
 	size_t i;
 
-	CFMutableArrayRef matches = CFArrayCreateMutable( kCFAllocatorDefault, pids_len, kCFTypeArrayCallBacks );
+	CFMutableArrayRef matches = CFArrayCreateMutable( kCFAllocatorDefault, pids_len, &kCFTypeArrayCallBacks );
 
 	CFNumberRef vendorID = CFNumberCreate( kCFAllocatorDefault, kCFNumberIntType, &vendor_id );
 	for(i = 0; i < pids_len; i++) {
