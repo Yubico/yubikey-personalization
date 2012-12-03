@@ -216,7 +216,7 @@ struct nav_st {
 struct device_config_st {
 	unsigned char mode;		/* Device mode */
 	unsigned char crTimeout;	/* Challenge-response timeout in seconds */
-	unsigned short autoEject;	/* Auto eject time in x10 seconds */
+	unsigned short autoEjectTime;	/* Auto eject time in x10 seconds */
 };
 
 #define MODE_OTP		0x00	/* OTP only */
