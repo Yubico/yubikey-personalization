@@ -121,11 +121,11 @@ void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 		IOHIDManagerScheduleWithRunLoop( ykosxManager, CFRunLoopGetCurrent( ), kCFRunLoopDefaultMode );
 		IOHIDManagerUnscheduleFromRunLoop( ykosxManager, CFRunLoopGetCurrent( ), kCFRunLoopDefaultMode );
 
-		CFRelease( vendorID );
 		CFRelease( array );
 		CFRelease( devSet );
 	}
 
+	CFRelease( vendorID );
 	CFRelease( matches );
 
 	if (yk) {
