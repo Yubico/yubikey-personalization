@@ -2,6 +2,20 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
 * Version 1.10.0 (unreleased)
 
+** Support for the new productId of the production Neo.
+Has ProducId 0x110, 0x111 or 0x112 depending on mode.
+
+** Add support for SLOT_NDEF2.
+Use SLOT_NDEF to emit slot 1 as NDEF or SLOT_NDEF2 to emit slot 2.
+
+** Add -m flag for ykpersonalize, set usb mode of YubiKey NEO.
+0 means pure YubiKey mode, 1 means pure CCID mode and 2 means YubiKey/CCID
+composite mode. Add 80 to set EJECT_FLAG.
+
+** Add -S flag for ykpersonalize, set the scanmap of the YubiKey NEO.
+Take an 88 character string describing 44 scancodes. See man page for more
+info.
+
 * Version 1.9.0 (released 2012-11-08)
 
 ** ykinfo: New tool to print information about YubiKey.
