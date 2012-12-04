@@ -342,44 +342,20 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 				break;
 			}
 		case 'x':
-			if (slot_chosen) {
-				fprintf(stderr, "You can not use slot swap with a chosen slot (-1 / -2).\n");
+			if (slot_chosen || option_seen || update_seen || ndef_seen || *zap || usb_mode_seen || scan_map_seen) {
+				fprintf(stderr, "Slot swap (-x) can not be used with other options.\n");
 				*exit_code = 1;
 				return 0;
 			}
-			if (option_seen) {
-				fprintf(stderr, "You must set slot swap before any options (-o).\n");
-				*exit_code = 1;
-				return 0;
-			}
-			if (update_seen) {
-				fprintf(stderr, "Update (-u) and swap (-x) can't be combined.\n");
-				*exit_code = 1;
-				return 0;
-			}
-			if (ndef_seen) {
-				fprintf(stderr, "Swap (-x) can not be combined with ndef (-n).\n");
-				*exit_code = 1;
-				return 0;
-			}
+
 			if (!ykp_configure_command(cfg, SLOT_SWAP)) {
 				return 0;
 			}
 			swap_seen = true;
 			break;
 		case 'z':
-			if (swap_seen) {
-				fprintf(stderr, "Swap (-x) and zap (-z) can't be combined.\n");
-				*exit_code = 1;
-				return 0;
-			}
-			if (update_seen) {
-				fprintf(stderr, "Update (-u) and zap (-z) can't be combined.\n");
-				*exit_code = 1;
-				return 0;
-			}
-			if (!slot_chosen) {
-				fprintf(stderr, "A slot must be chosen (-1 / -2) before adding zap (-z)\n");
+			if (swap_seen || update_seen || ndef_seen || usb_mode_seen || scan_map_seen) {
+				fprintf(stderr, "Zap (-z) can only be used with a slot (-1 / -2).\n");
 				*exit_code = 1;
 				return 0;
 			}
@@ -421,7 +397,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 				  if(!*ndef_type) {
 					  *ndef_type = 'U';
 				  }
-				  if (swap_seen || update_seen || option_seen || *zap) {
+				  if (swap_seen || update_seen || option_seen || *zap || usb_mode_seen || scan_map_seen) {
 					  fprintf(stderr, "Ndef (-n/-t) can only be used with a slot (-1/-2).\n");
 					  *exit_code = 1;
 					  return 0;
@@ -441,7 +417,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 				  break;
 			  }
 		case 'm':
-			if(slot_chosen || swap_seen || update_seen || option_seen || *zap) {
+			if(slot_chosen || swap_seen || update_seen || option_seen || ndef_seen || *zap || scan_map_seen) {
 				fprintf(stderr, "USB mode (-m) can not be combined with other options.\n");
 				*exit_code = 1;
 				return 0;
@@ -470,6 +446,11 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		case 'S':
 			{
 				size_t scanlength = strlen(SCAN_MAP);
+				if(slot_chosen || swap_seen || update_seen || option_seen || ndef_seen || *zap || usb_mode_seen) {
+					fprintf(stderr, "Scanmap (-S) can not be combined with other options.\n");
+					*exit_code = 1;
+					return 0;
+				}
 				if(optarg) {
 					size_t scanbinlen;
 					size_t scanlen = strlen (optarg);
@@ -682,7 +663,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		}
 	}
 
-	if (!slot_chosen && !ndef_seen && !usb_mode_seen && !scan_map_seen) {
+	if (!slot_chosen && !ndef_seen && !usb_mode_seen && !scan_map_seen && !scan_map_seen) {
 		fprintf(stderr, "A slot must be chosen with -1 or -2.\n");
 		*exit_code = 1;
 		return 0;
