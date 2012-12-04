@@ -209,7 +209,7 @@ static int _yk_write(YK_KEY *yk, uint8_t yk_cmd, unsigned char *buf, size_t len)
 	/* when both configurations from a YubiKey is erased it will return
 	 * pgmSeq 0, if one is still configured after an erase pgmSeq is
 	 * counted up as usual. */
-	if(stat.pgmSeq == 0) {
+	if((stat.touchLevel & (CONFIG1_VALID | CONFIG2_VALID)) == 0 && stat.pgmSeq == 0) {
 		return 1;
 	}
 	return stat.pgmSeq != seq;
