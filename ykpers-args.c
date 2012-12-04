@@ -442,8 +442,8 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 				*exit_code = 1;
 				return 0;
 			}
-			if(optarg[0] == '8') {
-				*usb_mode |= 0x80;
+			if(optarg[1] != '\n') {
+				*usb_mode = (optarg[0] - '0') << 4;
 				optarg++;
 			}
 			if(optarg[1] == '\0') {
