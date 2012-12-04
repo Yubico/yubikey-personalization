@@ -115,7 +115,7 @@ int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 	char *salt = NULL;
 	char ndef[128];
 	char ndef_type = 0;
-	int usb_mode = -1;
+	unsigned char usb_mode = -1;
 	bool zap = false;
 
 	int rc;
@@ -294,7 +294,7 @@ int _test_non_config_args(void)
 	char *salt = NULL;
 	char ndef[128];
 	char ndef_type = NULL;
-	int usb_mode = -1;
+	unsigned char usb_mode = -1;
 	bool zap = false;
 
 	char *argv[] = {
