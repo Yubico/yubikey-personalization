@@ -58,6 +58,7 @@ int main(int argc, char **argv)
 	bool aesviahash = false;
 	bool use_access_code = false;
 	unsigned char access_code[256];
+	unsigned char scan_codes[strlen(SCAN_MAP)];
 	YK_KEY *yk = 0;
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = ykds_alloc();
@@ -128,8 +129,8 @@ int main(int argc, char **argv)
 			     &autocommit, salt,
 			     st, &verbose,
 			     access_code, &use_access_code,
-			     &aesviahash, &ndef_type, ndef_string, 
-				 &usb_mode, &zap, &exit_code)) {
+			     &aesviahash, &ndef_type, ndef_string,
+			     &usb_mode, &zap, scan_codes, &exit_code)) {
 		goto err;
 	}
 
@@ -207,6 +208,8 @@ int main(int argc, char **argv)
 			fprintf(stderr, "New NDEF will be written as:\n%s\n", ndef_string);
 		} else if(ykp_command(cfg) == SLOT_DEVICE_CONFIG) {
 			fprintf(stderr, "The USB mode will be set to: 0x%x\n", usb_mode);
+		} else if(ykp_command(cfg) == SLOT_SCAN_MAP) {
+			fprintf(stderr, "A new scanmap will be written.\n");
 		} else if(zap) {
 			fprintf(stderr, "Configuration in slot %d will be deleted\n", ykp_config_num(cfg));
 		} else {
@@ -262,6 +265,14 @@ int main(int argc, char **argv)
 					goto err;
 				}
 				ykp_free_device_config(device_config);
+
+
+			} else if(ykp_command(cfg) == SLOT_SCAN_MAP) {
+				if(!yk_write_scan_map(yk, scan_codes)) {
+					if(verbose)
+						printf(" failure\n");
+					goto err;
+				}
 			} else {
 				YK_CONFIG *ycfg = NULL;
 				/* if we're deleting a slot we send the configuration as NULL */

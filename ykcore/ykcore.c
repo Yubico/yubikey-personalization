@@ -302,6 +302,11 @@ int yk_write_device_config(YK_KEY *yk, YK_DEVICE_CONFIG *device_config)
 	return _yk_write(yk, SLOT_DEVICE_CONFIG, buf, sizeof(YK_DEVICE_CONFIG));
 }
 
+int yk_write_scan_map(YK_KEY *yk, unsigned char *scan_map)
+{
+	return _yk_write(yk, SLOT_SCAN_MAP, scan_map, strlen(SCAN_MAP));
+}
+
 /*
  * This function is for doing HMAC-SHA1 or Yubico challenge-response with a key.
  */

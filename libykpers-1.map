@@ -174,5 +174,6 @@ LIBYKPERS_1.10 {
   ykp_set_device_mode;
   ykp_set_device_chalresp_timeout;
   ykp_set_device_autoeject_time;
+  yk_write_scan_map;
 # Variables:
 } LIBYKPERS_1.9;

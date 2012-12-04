@@ -77,6 +77,8 @@ const char *usage =
 "          1                   CCID device only.\n"
 "          2                   HID/CCID composite device.\n"
 "          Add 80 to set MODE_FLAG_EJECT, for example: 81\n"
+"-S0605..  Set the scanmap to use with the YubiKey NEO. Must be 44 unique bytes,\n"
+"          in hex.  Use with no argument to reset to the default.\n"
 "-oOPTION  change configuration option.  Possible OPTION arguments are:\n"
 "          salt=ssssssss       Salt to be used when deriving key from a\n"
 "                              password.  If none is given, a unique random\n"
@@ -151,7 +153,7 @@ const char *usage =
 "-v        verbose\n"
 "-h        help (this text)\n"
 ;
-const char *optstring = "u12xza:c:n:t:hi:o:s:vym:";
+const char *optstring = "u12xza:c:n:t:hi:o:s:vym:S::";
 
 static int _set_fixed(char *opt, YKP_CONFIG *cfg);
 static int _format_decimal_as_hex(uint8_t *dst, size_t dst_len, uint8_t *src);
@@ -225,8 +227,9 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		   bool *autocommit, char *salt,
 		   YK_STATUS *st, bool *verbose,
 		   unsigned char *access_code, bool *use_access_code,
-		   bool *aesviahash, char *ndef_type, char *ndef, unsigned char *usb_mode, bool *zap,
-		   int *exit_code)
+		   bool *aesviahash, char *ndef_type, char *ndef,
+		   unsigned char *usb_mode, bool *zap,
+		   unsigned char *scan_bin, int *exit_code)
 {
 	int c;
 	const char *aeshash = NULL;
@@ -238,6 +241,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 	bool update_seen = false;
 	bool ndef_seen = false;
 	bool usb_mode_seen = false;
+	bool scan_map_seen = false;
 	struct config_st *ycfg;
 
 	ykp_configure_version(cfg, st);
@@ -463,6 +467,32 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 				return 0;
 
 			break;
+		case 'S':
+			{
+				size_t scanlength = strlen(SCAN_MAP);
+				if(optarg) {
+					size_t scanbinlen;
+					size_t scanlen = strlen (optarg);
+					int rc = hex_modhex_decode(scan_bin, &scanbinlen,
+							optarg, scanlen,
+							scanlength * 2, scanlength * 2,
+							false);
+
+					if (rc <= 0) {
+						fprintf(stderr,
+								"Invalid scanmap string %s\n",
+								optarg);
+						*exit_code = 1;
+						return 0;
+					}
+				} else {
+					memset(scan_bin, 0, scanlength);
+				}
+				scan_map_seen = true;
+			}
+			if (!ykp_configure_command(cfg, SLOT_SCAN_MAP))
+				return 0;
+			break;
 		case 'o':
 			if (*zap) {
 				fprintf(stderr, "No options can be given with zap (-z).\n");
@@ -652,7 +682,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		}
 	}
 
-	if (!slot_chosen && !ndef_seen && !usb_mode_seen) {
+	if (!slot_chosen && !ndef_seen && !usb_mode_seen && !scan_map_seen) {
 		fprintf(stderr, "A slot must be chosen with -1 or -2.\n");
 		*exit_code = 1;
 		return 0;

@@ -123,6 +123,8 @@ extern int yk_write_ndef(YK_KEY *yk, YK_NDEF *ndef);
 extern int yk_write_ndef2(YK_KEY *yk, YK_NDEF *ndef, int confnum);
 /* writes a device config block to the key. */
 extern int yk_write_device_config(YK_KEY *yk, YK_DEVICE_CONFIG *device_config);
+/* writes a scanmap to the key. */
+extern int yk_write_scan_map(YK_KEY *yk, unsigned char *scan_map);
 /* Write something to the YubiKey (a command that is). */
 extern int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount);
 /* Do a challenge-response round with the key. */

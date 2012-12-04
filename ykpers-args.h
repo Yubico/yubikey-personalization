@@ -39,7 +39,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		   YK_STATUS *st, bool *verbose,
 		   unsigned char *access_code, bool *use_access_code,
 		   bool *aesviahash, char *ndef_type, char *ndef, unsigned char *usb_mode, 
-		   bool *zap, int *exit_code);
+		   bool *zap, unsigned char *scan_bin, int *exit_code);
 
 void report_yk_error(void);
 

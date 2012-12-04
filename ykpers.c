@@ -184,19 +184,14 @@ int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command)
 			return 0;
 		}
 		break;
-	/* TODO: Make sure this is correct */
 	case SLOT_DEVICE_CONFIG:
-		/* For testing only */
+	case SLOT_SCAN_MAP:
+	case SLOT_NDEF2:
 		if(!(cfg->yk_major_version >= 3)) {
 			ykp_errno = YKP_EYUBIKEYVER;
 			return 0;
 		}
 		break;
-	case SLOT_NDEF2:
-		if (!(cfg->yk_major_version == 3)) {
-			ykp_errno = YKP_EYUBIKEYVER;
-			return 0;
-		}
 	case SLOT_NDEF:
 		/* NDEF is available for neo, thus within 2.1 from build 4 */
 		if (!((cfg->yk_major_version == 2 && cfg->yk_minor_version == 1 &&

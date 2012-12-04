@@ -118,6 +118,8 @@ int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 	unsigned char usb_mode = -1;
 	bool zap = false;
 
+	unsigned char scan_map[strlen(SCAN_MAP)];
+
 	int rc;
 
 	ykp_errno = 0;
@@ -133,7 +135,7 @@ int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 			    st, &verbose,
 			    access_code, &use_access_code,
 			    &aesviahash, &ndef_type, ndef, &usb_mode, &zap,
-			    &exit_code);
+			    scan_map, &exit_code);
 
 	return rc;
 }
@@ -297,6 +299,8 @@ int _test_non_config_args(void)
 	unsigned char usb_mode = -1;
 	bool zap = false;
 
+	unsigned char scan_map[strlen(SCAN_MAP)];
+
 	char *argv[] = {
 		"unittest", "-1", "-sout", "-iin", "-c313233343536", "-y", "-v",
 		NULL
@@ -317,7 +321,7 @@ int _test_non_config_args(void)
 			    st, &verbose,
 			    access_code, &use_access_code,
 			    &aesviahash, &ndef_type, ndef, &usb_mode, &zap,
-			    &exit_code);
+			    scan_map, &exit_code);
 	assert(rc == 1);
 	i = strcmp(infname, "in"); assert(i == 0);
 	i = strcmp(outfname, "out"); assert(i == 0);
