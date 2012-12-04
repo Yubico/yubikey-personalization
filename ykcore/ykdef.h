@@ -255,14 +255,8 @@ struct status_st {
 #define	YUBICO_VID		0x1050		/* Global vendor ID */
 #define	YUBIKEY_PID		0x0010		/* Yubikey (version 1 and 2) */
 #define	NEO_OTP_PID		0x0110		/* Yubikey NEO - OTP only */
-#define	NEO_OTP_CCID_PID            0x0111      // Yubikey NEO - OTP and CCID
-/* USB Identity */
-
-#define	YUBICO_VID				0x1050
-#define	YUBIKEY_PID				0x0010
-#define	YUBIKEY_NEO_PID				0x0110
-
-#define	NEO_CCID_PID                0x0112      // Yubikey NEO - CCID only
+#define	NEO_OTP_CCID_PID	0x0111      // Yubikey NEO - OTP and CCID
+#define	NEO_CCID_PID		0x0112      // Yubikey NEO - CCID only
 
 #if defined(_WIN32) || defined(__GNUC__)
 #pragma pack(pop)
