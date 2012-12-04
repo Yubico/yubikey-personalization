@@ -37,7 +37,8 @@ ykpersonalize - personalize YubiKey OTP tokens
 .SH SYNOPSIS
 .B ykpersonalize
 [\fI-1\fR | \fI-2\fR] [\fI-sfile\fR] [\fI-ifile\fR] [\fI-axxx\fR] [\fI-cxxx\fR] [\fI-ooption\fR]
-[\fI-y\fR] [\fI-v\fR] [\fI-h\fR] [\fI-n\fR] [\fI-t\fR] [\fI-u\fR] [\fI-x\fR] [\fI-z\fR]
+[\fI-y\fR] [\fI-v\fR] [\fI-h\fR] [\fI-n\fR] [\fI-t\fR] [\fI-u\fR] [\fI-x\fR] [\fI-z\fR] [\fI-m\fR]
+[\fI-S\fR]
 .\".SH DESCRIPTION
 .\" Add any additional description here
 .SH OPTIONS
@@ -126,6 +127,18 @@ Help
 .TP
 \fBYubiKey NEO only\fR
 .RS
+.TP
+\fB-m mode\fR
+set the mode of operation for the YubiKey NEO.  0 for HID device only,
+1 for CCID device only and 2 for HID/CCID composite device.  To set the
+autoeject flag add 80, for example: 82.
+.TP
+\fB-S\fI0605...\fR
+set the scanmap to be used with the YubiKey NEO.  It must be 44 unique
+bytes as 88 characters.  Leave argument empty to reset to the YubiKey's default.
+The scanmap must be sent in the order:
+\fIcbdefghijklnrtuvCBDEFGHIJKLNRTUV0123456789\\t\\r\fR.  The default scanmap in the YubiKey is:
+\fI06050708090a0b0c0d0e0f111517181986858788898a8b8c8d8e8f9195979899271e1f202122232425262b28\fR
 .TP
 \fB-n URI\fR
 Program NFC NDEF type 2 URI
