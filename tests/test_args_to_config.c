@@ -118,7 +118,7 @@ int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 	unsigned char usb_mode = -1;
 	bool zap = false;
 
-	unsigned char scan_map[strlen(SCAN_MAP)];
+	unsigned char scan_map[sizeof(SCAN_MAP)];
 
 	int rc;
 
@@ -299,7 +299,7 @@ int _test_non_config_args(void)
 	unsigned char usb_mode = -1;
 	bool zap = false;
 
-	unsigned char scan_map[strlen(SCAN_MAP)];
+	unsigned char scan_map[sizeof(SCAN_MAP)];
 
 	char *argv[] = {
 		"unittest", "-1", "-sout", "-iin", "-c313233343536", "-y", "-v",

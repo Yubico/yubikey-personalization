@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 	bool aesviahash = false;
 	bool use_access_code = false;
 	unsigned char access_code[256];
-	unsigned char scan_codes[strlen(SCAN_MAP)];
+	unsigned char scan_codes[sizeof(SCAN_MAP)];
 	YK_KEY *yk = 0;
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = ykds_alloc();
