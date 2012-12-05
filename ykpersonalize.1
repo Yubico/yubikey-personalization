@@ -134,11 +134,27 @@ set the mode of operation for the YubiKey NEO.  0 for HID device only,
 autoeject flag add 80, for example: 82.
 .TP
 \fB-S\fI0605...\fR
-set the scanmap to be used with the YubiKey NEO.  It must be 44 unique
-bytes as 88 characters.  Leave argument empty to reset to the YubiKey's default.
+set the scanmap to be used with the YubiKey NEO.  It must be 45 unique
+bytes as 90 characters.  Leave argument empty to reset to the YubiKey's default.
 The scanmap must be sent in the order:
-\fIcbdefghijklnrtuvCBDEFGHIJKLNRTUV0123456789\\t\\r\fR.  The default scanmap in the YubiKey is:
-\fI06050708090a0b0c0d0e0f111517181986858788898a8b8c8d8e8f9195979899271e1f202122232425262b28\fR
+.br
+\fIcbdefghijklnrtuvCBDEFGHIJKLNRTUV0123456789!\\t\\r\fR.
+.br
+the default scanmap in the YubiKey is:
+.br
+\fI06050708090a0b0c0d0e0f111517181986858788898a8b8c8d8e8f9195979899271e1f202122232425269e2b28\fR
+.br
+an example for simplified us dvorak would be:
+.br
+\fI0c110b071c180d0a0619130f120e09378c918b879c988d8a8699938f928e89b7271e1f202122232425269e2b28\fR
+.br
+or for a french azerty keyboard (digits are shifted):
+.br
+\fI06050708090a0b0c0d0e0f111517181986858788898a8b8c8d8e8f9195979899a79e9fa0a1a2a3a4a5a6382b28\fR
+.br
+and a turkish example (has a dotless i instead of usual i):
+.br
+\fI06050708090a0b340d0e0f111517181986858788898a8b8c8d8e8f9195979899271e1f202122232425269e2b28\fR
 .TP
 \fB-n URI\fR
 Program NFC NDEF type 2 URI
