@@ -77,7 +77,7 @@ const char *usage =
 "          1                   CCID device only.\n"
 "          2                   HID/CCID composite device.\n"
 "          Add 80 to set MODE_FLAG_EJECT, for example: 81\n"
-"-S0605..  Set the scanmap to use with the YubiKey NEO. Must be 44 unique bytes,\n"
+"-S0605..  Set the scanmap to use with the YubiKey NEO. Must be 45 unique bytes,\n"
 "          in hex.  Use with no argument to reset to the default.\n"
 "-oOPTION  change configuration option.  Possible OPTION arguments are:\n"
 "          salt=ssssssss       Salt to be used when deriving key from a\n"

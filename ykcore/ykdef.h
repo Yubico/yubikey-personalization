@@ -230,7 +230,7 @@ struct device_config_st {
 
 /* Scancode mapping (version 3.0) */
 
-#define SCAN_MAP		"cbdefghijklnrtuvCBDEFGHIJKLNRTUV0123456789\t\r"
+#define SCAN_MAP		"cbdefghijklnrtuvCBDEFGHIJKLNRTUV0123456789!\t\r"
 #define SHIFT_FLAG		0x80	/* Flag for shifted scan codes */
 
 /* Status block */
