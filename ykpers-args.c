@@ -663,7 +663,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		}
 	}
 
-	if (!slot_chosen && !ndef_seen && !usb_mode_seen && !scan_map_seen && !scan_map_seen) {
+	if (!slot_chosen && !ndef_seen && !swap_seen && !usb_mode_seen && !scan_map_seen) {
 		fprintf(stderr, "A slot must be chosen with -1 or -2.\n");
 		*exit_code = 1;
 		return 0;
