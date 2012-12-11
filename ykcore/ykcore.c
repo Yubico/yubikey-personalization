@@ -44,8 +44,12 @@
 /*
  * Yubikey low-level interface section 2.4 (Report arbitration polling) specifies
  * a 600 ms timeout for a Yubikey to process something written to it.
+ * Where can that document be found?
+ * It has been discovered that for swap 600 is not enough, swapping can worst
+ * case take 920 ms, which we then add 25% to for safety margin, arriving at
+ * 1150 ms.
  */
-#define WAIT_FOR_WRITE_FLAG	600
+#define WAIT_FOR_WRITE_FLAG	1150
 
 int yk_init(void)
 {

@@ -24,6 +24,9 @@ info. To use this with the api see yk_write_scan_map().
 
 ** In the api add ykp_ndef_as_text() to export the text from a YK_NDEF structure.
 
+** Higher timeout for configuration writes as in particular swap can take
+longer than 600 ms.
+
 * Version 1.9.0 (released 2012-11-08)
 
 ** ykinfo: New tool to print information about YubiKey.
