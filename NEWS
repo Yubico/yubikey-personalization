@@ -1,6 +1,6 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.10.0 (unreleased)
+* Version 1.10.0 (released 2012-12-11)
 
 ** Support for the new productId of the production Neo.
 Has ProducId 0x110, 0x111 or 0x112 depending on mode (see the notes about
