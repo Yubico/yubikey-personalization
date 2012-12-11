@@ -422,7 +422,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 				*exit_code = 1;
 				return 0;
 			}
-			if(optarg[1] != '\n') {
+			if(optarg[1] != '\0') {
 				*usb_mode = (optarg[0] - '0') << 4;
 				optarg++;
 			}
