@@ -29,7 +29,6 @@
 LIBYUBIKEYVERSION=1.9
 PROJECT=yubikey-personalization
 PACKAGE=ykpers
-VERSION=1.10.1
 
 all: usage ykpers4win32 ykpers4win64
 
