@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-AC_INIT([yubikey-personalization], [1.10.1],
+AC_INIT([yubikey-personalization], [1.11.0],
   [yubico-devel@googlegroups.com], [ykpers],
   [http://code.google.com/p/yubikey-personalization/])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -37,7 +37,7 @@ AC_CONFIG_MACRO_DIR([m4])
 # Interfaces added:                             AGE++
 # Interfaces removed:                           AGE=0
 AC_SUBST(LT_CURRENT, 11)
-AC_SUBST(LT_REVISION, 1)
+AC_SUBST(LT_REVISION, 2)
 AC_SUBST(LT_AGE, 10)
 
 AM_INIT_AUTOMAKE([-Wall -Werror])
@@ -175,9 +175,15 @@ if test "$gl_gcc_warnings" = yes; then
   gl_WARN_ADD([-fdiagnostics-show-option])
 fi
 
+AC_SUBST(YKPERS_VERSION_MAJOR, `echo $PACKAGE_VERSION | sed 's/\(.*\)\..*\..*/\1/g'`)
+AC_SUBST(YKPERS_VERSION_MINOR, `echo $PACKAGE_VERSION | sed 's/.*\.\(.*\)\..*/\1/g'`)
+AC_SUBST(YKPERS_VERSION_PATCH, `echo $PACKAGE_VERSION | sed 's/.*\..*\.\(.*\)/\1/g'`)
+AC_SUBST(YKPERS_VERSION_NUMBER, `printf "0x%02x%02x%02x" $YKPERS_VERSION_MAJOR $YKPERS_VERSION_MINOR $YKPERS_VERSION_PATCH`)
+
 AC_CONFIG_FILES([
   Makefile
   ykpers-1.pc
+  ykpers-version.h
   ykcore/Makefile
   tests/Makefile
 ])
@@ -185,7 +191,7 @@ AC_OUTPUT
 
 AC_MSG_NOTICE([summary of build options:
 
-  version:          ${VERSION} shared $LT_CURRENT:$LT_REVISION:$LT_AGE
+  version:          ${VERSION} shared $LT_CURRENT:$LT_REVISION:$LT_AGE major $YKPERS_VERSION_MAJOR minor $YKPERS_VERSION_MINOR patch $YKPERS_VERSION_PATCH number $YKPERS_VERSION_NUMBER
   Host type:        ${host}
   Install prefix:   ${prefix}
   Compiler:         ${CC}

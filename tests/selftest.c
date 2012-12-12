@@ -29,12 +29,32 @@
  */
 
 #include <ykpers.h>
+#include <ykpers-version.h>
 #include <stdio.h>
 
 int main (void)
 {
 	YKP_CONFIG *ykp;
 	int rc;
+
+	if (strcmp (YKPERS_VERSION_STRING, ykpers_check_version (NULL)) != 0)
+	{
+		printf ("version mismatch %s != %s\n",YKPERS_VERSION_STRING,
+			ykpers_check_version (NULL));
+		return 1;
+	}
+
+	if (ykpers_check_version (YKPERS_VERSION_STRING) == NULL)
+	{
+		printf ("version NULL?\n");
+		return 1;
+	}
+
+	if (ykpers_check_version ("99.99.99") != NULL)
+	{
+		printf ("version not NULL?\n");
+		return 1;
+	}
 
 	ykp = ykp_alloc ();
 	if (!ykp)

@@ -177,3 +177,9 @@ LIBYKPERS_1.10 {
   yk_write_scan_map;
 # Variables:
 } LIBYKPERS_1.9;
+
+LIBYKPERS_1.11 {
+  global:
+  ykpers_check_version;
+# Variables:
+} LIBYKPERS_1.10;
