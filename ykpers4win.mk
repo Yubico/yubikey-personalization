@@ -76,10 +76,12 @@ upload-ykpers4win:
 	gpg --verify $(PACKAGE)-$(VERSION)-win$(BITS).zip.sig
 	googlecode_upload.py \
 	 -s "OpenPGP signature for $(PACKAGE)-$(VERSION)-win$(BITS).zip." \
-	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION)-win$(BITS).zip.sig
+	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION)-win$(BITS).zip.sig \
+	 -l OpSys-Windows
 	googlecode_upload.py \
 	 -s "Windows $(BITS)-bit binaries of $(PACKAGE) $(VERSION)" \
-	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION)-win$(BITS).zip
+	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION)-win$(BITS).zip \
+	 -l OpSys-Windows,Type-Executable
 
 upload-ykpers4win32:
 	$(MAKE) -f ykpers4win.mk upload-ykpers4win BITS=32
