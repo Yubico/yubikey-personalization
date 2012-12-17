@@ -725,7 +725,7 @@ static int _set_fixed(char *opt, YKP_CONFIG *cfg) {
 	size_t fixedbinlen = 0;
 	int rc = hex_modhex_decode(fixedbin, &fixedbinlen,
 				   fixed, fixedlen,
-				   0, 16, true);
+				   0, 32, true);
 	if (rc <= 0)
 		return 0;
 
