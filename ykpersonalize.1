@@ -51,13 +51,13 @@ manual:
 \fB\-1\fR
 change the first configuration.  This is the default and is
 normally used for true OTP generation.  In this configuration,
-TKTFLAG_APPEND_CR is set by default.
+the option flag \fB-oappend-cr\fR is set by default.
 .TP
 \fB\-2\fR
 change the second configuration.  This is for YubiKey II only and is
 then normally used for static key generation.  In this configuration,
-TKTFLAG_APPEND_CR, CFGFLAG_STATIC_TICKET, CFGFLAG_STRONG_PW1,
-CFGFLAG_STRONG_PW2 and CFGFLAG_MAN_UPDATE are set by default.
+the option flags \fB-oappend-cr\fR, \fB-ostatic-ticket\fR, \fB-ostrong-pw1\fR,
+\fB-ostrong-pw2\fR and \fB-oman-update\fR are set by default.
 .TP
 \fB-z\fR
 delete configuration in selected slot
@@ -71,7 +71,7 @@ read configuration from file.
 (if file is -, read from stdin)
 .TP
 \fB\-a\fIxxx\fR
-A 32 char (40 for OATH-HOTP and HMAC challenge-response) hex value (not modhex) of a fixed AES key to use.
+the secret key, 32 char (40 for OATH-HOTP and HMAC challenge-response) hex value (not modhex).
 .TP
 \fB\-c\fIxxx\fR
 A 12 char hex value (not modhex) to use as access code for
@@ -94,7 +94,7 @@ button on the YubiKey is pressed. It can be used as an identifier for
 the user, for example.
 .TP
 \fBuid\fR=\fIuuuuuu\fR
-The uid part of the generated OTP, in hex.
+The uid part of the generated OTP, also called \fIprivate identity\fR, in hex.
 Must be 12 characters long. The uid is 6 bytes of static data that is included
 (encrypted) in every OTP, and is used to validate that an OTP was in fact encrypted
 with the AES key shared between the YubiKey and the validation service. It cannot
@@ -215,7 +215,7 @@ Set challenge-response mode.
 .SH Configuration flags
 [\-]\fBsend-ref\fR
 Send a reference string of all 16 modhex characters before the fixed
-part.  This can not be combined with the \fBstrong-pw2\fR flag.
+part.  This can not be combined with the \fB-ostrong-pw2\fR flag.
 .TP
 [\-]\fBpacing-10ms\fR
 Add a 10ms delay between key presses.
@@ -250,7 +250,7 @@ lowercase characters in a password and does not add any security.
 .TP
 [\-]\fBstrong-pw2\fR
 Replace the first eight characters of the modhex alphabet with the
-numbers 0 to 7.  Like \fBstrong-pw1\fR, this is intended to support
+numbers 0 to 7.  Like \fB-ostrong-pw1\fR, this is intended to support
 legacy systems.
 .TP
 [\-]\fBman-update\fR
