@@ -241,7 +241,13 @@ scroll-lock twice.  Not recommended for security reasons.
 .TP
 [\-]\fBshort-ticket\fR
 Limit the length of the static string to max 16 digits.  This flag
-only makes sense with the \fB-ostatic-ticket\fR option.
+only makes sense with the \fB-ostatic-ticket\fR option.  When
+\fB-oshort-ticket\fR is used without \fB-ostatic-ticket\fR it will
+program the YubiKey in "scan-code mode", in this mode the key sends
+the contents of fixed, uid and key as raw keyboard scancodes.  For
+example, by using the fixed string \fIh:8b080f0f122c9a12150f079e\fR in
+this mode it will send \fIHello World!\fR on a qwerty keyboard.  This
+mode sends raw scan codes, so output will differ between keyboard layouts.
 .TP
 [\-]\fBstrong-pw1\fR
 Upper-case the two first letters of the output string.  This is for
