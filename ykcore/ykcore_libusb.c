@@ -162,20 +162,18 @@ void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 						break;
 					}
 				}
-				if(j == pids_len) {
+				if(j != pids_len) {
+					rc = YK_EUSBERR;
+					h = usb_open(dev);
+#ifdef LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP
+					if (h != NULL)
+						usb_detach_kernel_driver_np(h, 0);
+#endif
+					/* This is needed for yubikey-personalization to work inside virtualbox virtualization. */
+					if (h != NULL)
+						usb_set_configuration(h, 1);
 					goto done;
 				}
-
-				rc = YK_EUSBERR;
-				h = usb_open(dev);
-#ifdef LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP
-				if (h != NULL)
-					usb_detach_kernel_driver_np(h, 0);
-#endif
-				/* This is needed for yubikey-personalization to work inside virtualbox virtualization. */
-				if (h != NULL)
-					usb_set_configuration(h, 1);
-				goto done;
 			}
 	}
  done:

@@ -99,13 +99,11 @@ void * _ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 								break;
 							}
 						}
-						if (j == pids_len) {
+						if (j != pids_len) {
+							ret_handle = m_handle;
+							free (pi);
 							goto done;
 						}
-
-						ret_handle = m_handle;
-						free (pi);
-						goto done;
 					}
 				}
 			}
