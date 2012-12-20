@@ -182,5 +182,8 @@ int _ykusb_write(void *dev, int report_type, int report_number,
 
 const char *_ykusb_strerror(void)
 {
-	return "USB error\n";
+	static char buf[1024];
+	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0,
+			buf, sizeof(buf), NULL);
+	return buf;
 }
