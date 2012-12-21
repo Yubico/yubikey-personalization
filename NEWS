@@ -1,6 +1,17 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.11.1 (unreleased)
+* Version 1.11.1 (released 2012-12-21)
+
+** Implement ykusb_strerror() on windows.
+
+** Fix a bug where a YubiKey would fail to be recognized if there was
+another device from Yubico (vendor id 1050) inserted and looked at
+before in the device chain.
+
+** Fix a bug where you could only set 8 bytes of the public id with
+the command line tool, now all 16 bytes can be set.
+
+** Documentation updates and fixes.
 
 * Version 1.11.0 (released 2012-12-12)
 
