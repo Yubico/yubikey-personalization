@@ -1,5 +1,7 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.11.2 (unreleased)
+
 * Version 1.11.1 (released 2012-12-21)
 
 ** Implement ykusb_strerror() on windows.
