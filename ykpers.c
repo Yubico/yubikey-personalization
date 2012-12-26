@@ -416,7 +416,7 @@ int ykp_construct_ndef_uri(YK_NDEF *ndef, const char *uri)
 		ykp_errno = YKP_EINVAL;
 		return 0;
 	}
-	if(indx > num_identifiers) {
+	if(indx == num_identifiers) {
 		ndef->data[0] = 0;
 	} else {
 		ndef->data[0] = indx + 1;

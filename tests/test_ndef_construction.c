@@ -118,6 +118,23 @@ void _test_other_lang_text()
 	ykp_free_ndef(ndef);
 }
 
+void _test_uri_without_identifier()
+{
+	YK_NDEF *ndef = ykp_alloc_ndef();
+	char uri[] = "example.com/foo";
+	int rc = ykp_construct_ndef_uri(ndef, uri);
+	char text[256];
+	assert(rc == 1);
+	assert(ndef->type == 'U');
+	assert(ndef->data[0] == 0);
+	assert(strncmp(ndef->data + 1, "example.com/foo", 15) == 0);
+	assert(ndef->len == 16);
+	rc = ykp_ndef_as_text(ndef, text, 256);
+	assert(rc == 1);
+	assert(strncmp(uri, text, strlen(uri)) == 0);
+	ykp_free_ndef(ndef);
+}
+
 int main (void)
 {
 	_test_https_uri();
@@ -125,6 +142,7 @@ int main (void)
 	_test_exact_uri();
 	_test_exact_text();
 	_test_other_lang_text();
+	_test_uri_without_identifier();
 
 	return 0;
 }
