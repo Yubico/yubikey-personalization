@@ -2,6 +2,9 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
 * Version 1.11.2 (unreleased)
 
+** Fix a bug where writing a NDEF with unknown prefix ended up writing invalid
+data to the YubiKey NEO. Wrote prefix as 0x24 instead of 0x00.
+
 * Version 1.11.1 (released 2012-12-21)
 
 ** Implement ykusb_strerror() on windows.
