@@ -159,6 +159,7 @@ const char *yk_usb_strerror(void);
 #define YK_ECHECKSUM	0x0a	/* checksum validation failed */
 #define YK_EWOULDBLOCK	0x0b	/* operation would block */
 #define YK_EINVALIDCMD	0x0c	/* supplied command is invalid for this operation */
+#define YK_EMORETHANONE	0x0d    /* expected to find only one key but found more */
 
 /* Flags for response reading. Use high numbers to not exclude the possibility
  * to combine these with for example SLOT commands from ykdef.h in the future.

@@ -96,24 +96,24 @@ void * _ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 						size_t j;
 						for (j = 0; j < pids_len; j++) {
 							if (devInfo.ProductID == product_ids[j]) {
-								break;
+								if(ret_handle == NULL) {
+									ret_handle = m_handle;
+									break;
+								} else {
+									rc = YK_EMORETHANONE;
+									goto done;
+								}
 							}
-						}
-						if (j != pids_len) {
-							ret_handle = m_handle;
-							free (pi);
-							goto done;
 						}
 					}
 				}
 			}
-			CloseHandle (m_handle);
+			if(ret_handle == NULL) {
+				CloseHandle (m_handle);
+			}
 		}
 
 		free (pi);
-
-		if (!rc)
-			break;
 	}
 
 	yk_errno = YK_ENOKEY;

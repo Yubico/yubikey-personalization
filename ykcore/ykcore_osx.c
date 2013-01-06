@@ -109,9 +109,11 @@ void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 
 		CFIndex cnt = CFArrayGetCount( array );
 
-		if (cnt > 0) {
+		if (cnt == 1) {
 			yk = (void *) CFArrayGetValueAtIndex( array, 0 );
 			CFRetain(yk);
+		} else if(cnt > 1) {
+			rc = YK_EMORETHANONE;
 		}
 		else {
 			rc = YK_ENOKEY;

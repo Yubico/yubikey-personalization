@@ -151,30 +151,38 @@ void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 	struct usb_device *dev;
 	struct usb_dev_handle *h = NULL;
 	int rc = YK_EUSBERR;
+	int found = 0;
 
 	for (bus = usb_get_busses(); bus; bus = bus->next) {
 		rc = YK_ENOKEY;
-		for (dev = bus->devices; dev; dev = dev->next)
+		for (dev = bus->devices; dev; dev = dev->next) {
 			if (dev->descriptor.idVendor == vendor_id) {
 				size_t j;
 				for (j = 0; j < pids_len; j++) {
 					if (dev->descriptor.idProduct == product_ids[j]) {
-						break;
+						if(found == 0) {
+							found = 1;
+							break;
+						} else {
+							rc = YK_EMORETHANONE;
+							goto done;
+						}
 					}
 				}
-				if(j != pids_len) {
-					rc = YK_EUSBERR;
-					h = usb_open(dev);
-#ifdef LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP
-					if (h != NULL)
-						usb_detach_kernel_driver_np(h, 0);
-#endif
-					/* This is needed for yubikey-personalization to work inside virtualbox virtualization. */
-					if (h != NULL)
-						usb_set_configuration(h, 1);
-					goto done;
-				}
 			}
+		}
+	}
+	if(found == 1) {
+		rc = YK_EUSBERR;
+		h = usb_open(dev);
+#ifdef LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP
+		if (h != NULL)
+			usb_detach_kernel_driver_np(h, 0);
+#endif
+		/* This is needed for yubikey-personalization to work inside virtualbox virtualization. */
+		if (h != NULL)
+			usb_set_configuration(h, 1);
+		goto done;
 	}
  done:
 	if (h == NULL)
