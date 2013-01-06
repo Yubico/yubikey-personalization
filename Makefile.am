@@ -1,5 +1,5 @@
 # Written by Richard Levitte <richard@levitte.org>.
-# Copyright (c) 2008-2012 Yubico AB
+# Copyright (c) 2008-2013 Yubico AB
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -67,13 +67,13 @@ endif
 bin_PROGRAMS = ykpersonalize ykchalresp ykinfo
 
 ykpersonalize_SOURCES = ykpersonalize.c ykpers-args.h ykpers-args.c
-ykpersonalize_LDADD = ./libykpers-1.la ./ykcore/libykcore.la
+ykpersonalize_LDADD = ./libykpers-1.la $(LTLIBYUBIKEY)
 
 ykchalresp_SOURCES = ykchalresp.c
-ykchalresp_LDADD = ./ykcore/libykcore.la
+ykchalresp_LDADD = ./libykpers-1.la $(LTLIBYUBIKEY)
 
 ykinfo_SOURCES = ykinfo.c
-ykinfo_LDADD = ./ykcore/libykcore.la
+ykinfo_LDADD = ./libykpers-1.la $(LTLIBYUBIKEY)
 
 dist_man1_MANS = ykpersonalize.1 ykchalresp.1 ykinfo.1
 
