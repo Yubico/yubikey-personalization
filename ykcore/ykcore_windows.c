@@ -100,7 +100,9 @@ void * _ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 									ret_handle = m_handle;
 									break;
 								} else {
-									rc = YK_EMORETHANONE;
+									yk_errno = YK_EMORETHANONE;
+									ret_handle = NULL;
+									CloseHandle (m_handle);
 									goto done;
 								}
 							}
@@ -114,6 +116,9 @@ void * _ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 		}
 
 		free (pi);
+	}
+	if(ret_handle != NULL) {
+		goto done;
 	}
 
 	yk_errno = YK_ENOKEY;
