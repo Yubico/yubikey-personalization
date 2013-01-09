@@ -72,9 +72,7 @@ static int _ykosx_getIntProperty( IOHIDDeviceRef dev, CFStringRef key ) {
 	int result = 0;
 	CFTypeRef tCFTypeRef = IOHIDDeviceGetProperty( dev, key );
 	if ( tCFTypeRef ) {
-		// if this is a number
 		if ( CFNumberGetTypeID( ) == CFGetTypeID( tCFTypeRef ) ) {
-			// get its value
 			CFNumberGetValue( ( CFNumberRef ) tCFTypeRef, kCFNumberSInt32Type, &result );
 		}
 	}
