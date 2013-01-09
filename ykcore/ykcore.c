@@ -394,7 +394,8 @@ static const char *errtext[] = {
 	"not yet implemented",
 	"checksum mismatch",
 	"operation would block",
-	"invalid command for operation"
+	"invalid command for operation",
+	"expected only one YubiKey but several present",
 };
 const char *yk_strerror(int errnum)
 {

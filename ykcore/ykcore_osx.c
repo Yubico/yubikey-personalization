@@ -68,6 +68,17 @@ static void _ykosx_CopyToCFArray(const void *value, void *context)
 	CFArrayAppendValue( ( CFMutableArrayRef ) context, value );
 }
 
+static int _ykosx_getIntProperty( IOHIDDeviceRef dev, CFStringRef key ) {
+	int result = 0;
+	CFTypeRef tCFTypeRef = IOHIDDeviceGetProperty( dev, key );
+	if ( tCFTypeRef ) {
+		if ( CFNumberGetTypeID( ) == CFGetTypeID( tCFTypeRef ) ) {
+			CFNumberGetValue( ( CFNumberRef ) tCFTypeRef, kCFNumberSInt32Type, &result );
+		}
+	}
+	return result;
+}
+
 void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 {
 	void *yk = NULL;
@@ -76,44 +87,44 @@ void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 
 	size_t i;
 
-	CFMutableArrayRef matches = CFArrayCreateMutable( kCFAllocatorDefault, pids_len, &kCFTypeArrayCallBacks );
-
-	CFNumberRef vendorID = CFNumberCreate( kCFAllocatorDefault, kCFNumberIntType, &vendor_id );
-	for(i = 0; i < pids_len; i++) {
-		CFDictionaryRef dict;
-		CFStringRef keys[2];
-		CFStringRef values[2];
-
-		CFNumberRef productID = CFNumberCreate( kCFAllocatorDefault, kCFNumberIntType, &product_ids[i] );
-
-		keys[0] = CFSTR( kIOHIDVendorIDKey );  values[0] = (void *) vendorID;
-		keys[1] = CFSTR( kIOHIDProductIDKey ); values[1] = (void *) productID;
-
-		dict = CFDictionaryCreate( kCFAllocatorDefault, (const void **) &keys, (const void **) &values, 1, NULL, NULL);
-		CFArrayAppendValue( matches, dict );
-
-		CFRelease( productID );
-		CFRelease( dict );
-	}
-
-	IOHIDManagerSetDeviceMatchingMultiple( ykosxManager, matches );
+	IOHIDManagerSetDeviceMatchingMultiple( ykosxManager, NULL );
 
 	CFSetRef devSet = IOHIDManagerCopyDevices( ykosxManager );
 
 	if ( devSet ) {
-		rc = YK_EUSBERR;
-
 		CFMutableArrayRef array = CFArrayCreateMutable( kCFAllocatorDefault, 0, NULL );
 
 		CFSetApplyFunction( devSet, _ykosx_CopyToCFArray, array );
 
 		CFIndex cnt = CFArrayGetCount( array );
 
-		if (cnt > 0) {
-			yk = (void *) CFArrayGetValueAtIndex( array, 0 );
-			CFRetain(yk);
+		CFIndex i;
+
+		for(i = 0; i < cnt; i++) {
+			IOHIDDeviceRef dev = (IOHIDDeviceRef)CFArrayGetValueAtIndex( array, i );
+			long devVendorId = _ykosx_getIntProperty( dev, CFSTR( kIOHIDVendorIDKey ));
+			if(devVendorId == vendor_id) {
+				long devProductId = _ykosx_getIntProperty( dev, CFSTR( kIOHIDProductIDKey ));
+				size_t j;
+				for(j = 0; j < pids_len; j++) {
+					if(product_ids[j] == devProductId) {
+						if(yk == NULL) {
+							yk = dev;
+							break;
+						} else {
+							rc = YK_EMORETHANONE;
+							break;
+						}
+					}
+				}
+			}
+			if(rc == YK_EMORETHANONE) {
+				yk = NULL;
+				break;
+			}
 		}
-		else {
+
+		if(rc != YK_EMORETHANONE) {
 			rc = YK_ENOKEY;
 		}
 
@@ -125,14 +136,13 @@ void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 		CFRelease( devSet );
 	}
 
-	CFRelease( vendorID );
-	CFRelease( matches );
-
 	if (yk) {
+		CFRetain(yk);
 		_ykusb_IOReturn = IOHIDDeviceOpen( yk, 0L );
 
 		if ( _ykusb_IOReturn != kIOReturnSuccess ) {
 			CFRelease(yk);
+			rc = YK_EUSBERR;
 			goto error;
 		}
 

@@ -159,7 +159,7 @@ extern int _ykusb_stop(void)
 
 void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 {
-	libusb_device *dev;
+	libusb_device *dev = NULL;
 	libusb_device_handle *h = NULL;
 	struct libusb_device_descriptor desc;
 	libusb_device **list;
@@ -168,8 +168,7 @@ void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 	int rc = YK_ENOKEY;
 
 	for (i = 0; i < cnt; i++) {
-		dev = list[i];
-		ykl_errno = libusb_get_device_descriptor(dev, &desc);
+		ykl_errno = libusb_get_device_descriptor(list[i], &desc);
 		if (ykl_errno != 0)
 			goto done;
 
@@ -177,22 +176,29 @@ void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 			size_t j;
 			for(j = 0; j < pids_len; j++) {
 				if (desc.idProduct == product_ids[j]) {
-					break;
+					if(dev == NULL) {
+						dev = list[i];
+						break;
+					} else {
+						rc = YK_EMORETHANONE;
+						goto done;
+					}
 				}
 			}
-			if (j != pids_len) {
-				rc = YK_EUSBERR;
-				ykl_errno = libusb_open(dev, &h);
-				if (ykl_errno != 0)
-					goto done;
-				ykl_errno = libusb_detach_kernel_driver(h, 0);
-				if (ykl_errno != 0)
-					goto done;
-				/* This is needed for yubikey-personalization to work inside virtualbox virtualization. */
-				ykl_errno = libusb_set_configuration(h, 1);
-				goto done;
-			}
 		}
+	}
+
+	if (dev) {
+		rc = YK_EUSBERR;
+		ykl_errno = libusb_open(dev, &h);
+		if (ykl_errno != 0)
+			goto done;
+		ykl_errno = libusb_detach_kernel_driver(h, 0);
+		if (ykl_errno != 0)
+			goto done;
+		/* This is needed for yubikey-personalization to work inside virtualbox virtualization. */
+		ykl_errno = libusb_set_configuration(h, 1);
+		goto done;
 	}
  done:
 	libusb_free_device_list(list, 1);
