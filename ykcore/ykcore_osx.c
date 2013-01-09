@@ -101,7 +101,7 @@ void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 		CFIndex i;
 
 		for(i = 0; i < cnt; i++) {
-			IOHIDDeviceRef dev = CFArrayGetValueAtIndex( array, i );
+			IOHIDDeviceRef dev = (IOHIDDeviceRef)CFArrayGetValueAtIndex( array, i );
 			long devVendorId = _ykosx_getIntProperty( dev, CFSTR( kIOHIDVendorIDKey ));
 			if(devVendorId == vendor_id) {
 				long devProductId = _ykosx_getIntProperty( dev, CFSTR( kIOHIDProductIDKey ));
