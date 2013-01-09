@@ -1,6 +1,8 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.11.3 (unreleased)
+* Version 1.11.3 (released 2013-01-09)
+
+** Fixup of broken release.
 
 * Version 1.11.2 (released 2013-01-09)
 
