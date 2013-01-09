@@ -1,5 +1,7 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.11.3 (unreleased)
+
 * Version 1.11.2 (released 2013-01-09)
 
 ** Fix a bug where writing a NDEF with unknown prefix ended up writing invalid
