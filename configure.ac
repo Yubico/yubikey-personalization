@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-AC_INIT([yubikey-personalization], [1.11.3],
+AC_INIT([yubikey-personalization], [1.11.4],
   [yubico-devel@googlegroups.com], [ykpers],
   [http://code.google.com/p/yubikey-personalization/])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -36,7 +36,7 @@ AC_CONFIG_MACRO_DIR([m4])
 # Interfaces changed/added/removed:   CURRENT++       REVISION=0
 # Interfaces added:                             AGE++
 # Interfaces removed:                           AGE=0
-AC_SUBST(LT_CURRENT, 12)
+AC_SUBST(LT_CURRENT, 13)
 AC_SUBST(LT_REVISION, 3)
 AC_SUBST(LT_AGE, 11)
 
