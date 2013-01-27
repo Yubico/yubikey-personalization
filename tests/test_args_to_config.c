@@ -123,7 +123,13 @@ int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 	int rc;
 
 	ykp_errno = 0;
-	optind = 0; /* getopt reinit */
+
+/* Handle both GNU and BSD getopt reinit */
+#ifdef __GLIBC__
+	optind = 0;
+#else
+	optind = optreset = 1;
+#endif
 
 	/* copy version number from st into cfg */
 	assert(ykp_configure_for(cfg, 1, st) == 1);
@@ -308,7 +314,13 @@ int _test_non_config_args(void)
 	int argc = 7;
 
 	ykp_errno = 0;
-	optind = 0; /* getopt reinit */
+
+/* Handle both GNU and BSD getopt reinit */
+#ifdef __GLIBC__
+	optind = 0;
+#else
+	optind = optreset = 1;
+#endif
 
 	/* copy version number from st into cfg */
   ykp_configure_version(cfg, st);
