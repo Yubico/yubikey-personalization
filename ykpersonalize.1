@@ -1,4 +1,4 @@
-.\" Copyright (c) 2009-2012 Yubico AB
+.\" Copyright (c) 2009-2013 Yubico AB
 .\" Copyright (C) 2009, 2010 Tollef Fog Heen <tfheen@err.no>
 .\" All rights reserved.
 .\"
@@ -87,7 +87,8 @@ Salt to be used when deriving key from a password.
 If none is given, a unique random one will be generated.
 .TP
 \fBfixed\fR=\fIfffffffffff\fR
-The modhex \fIpublic identity\fR of the YubiKey, 0-16 characters long.
+The modhex \fIpublic identity\fR of the YubiKey, 0-32 characters long (encoding
+up to 16 bytes).
 It's possible to give the identity in hex as well, just prepend the
 value with `h:'. The fixed part is emitted before the OTP when the
 button on the YubiKey is pressed. It can be used as an identifier for
