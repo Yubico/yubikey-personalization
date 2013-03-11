@@ -167,11 +167,15 @@ struct config_st {
 #define EXTFLAG_ALLOW_UPDATE		0x20	/* Allow update of existing configuration (selected flags + access code) */
 #define EXTFLAG_DORMANT			0x40	/* Dormant configuration (can be woken up and flag removed = requires update flag) */
 
+/* V2.4/3.1 flags only */
+
+#define EXTFLAG_LED_INV             0x80        /* LED idle state is off rather than on */
+
 /* Flags valid for update */
 
 #define TKTFLAG_UPDATE_MASK         (TKTFLAG_TAB_FIRST | TKTFLAG_APPEND_TAB1 | TKTFLAG_APPEND_TAB2 | TKTFLAG_APPEND_DELAY1 | TKTFLAG_APPEND_DELAY2 | TKTFLAG_APPEND_CR)
 #define CFGFLAG_UPDATE_MASK         (CFGFLAG_PACING_10MS | CFGFLAG_PACING_20MS)
-#define EXTFLAG_UPDATE_MASK         (EXTFLAG_SERIAL_BTN_VISIBLE | EXTFLAG_SERIAL_USB_VISIBLE |  EXTFLAG_SERIAL_API_VISIBLE | EXTFLAG_USE_NUMERIC_KEYPAD | EXTFLAG_FAST_TRIG | EXTFLAG_ALLOW_UPDATE | EXTFLAG_DORMANT)
+#define EXTFLAG_UPDATE_MASK         (EXTFLAG_SERIAL_BTN_VISIBLE | EXTFLAG_SERIAL_USB_VISIBLE |  EXTFLAG_SERIAL_API_VISIBLE | EXTFLAG_USE_NUMERIC_KEYPAD | EXTFLAG_FAST_TRIG | EXTFLAG_ALLOW_UPDATE | EXTFLAG_DORMANT | EXTFLAG_LED_INV)
 
 /* NDEF structure */
 #define	NDEF_DATA_SIZE			54
@@ -245,6 +249,10 @@ struct status_st {
 
 #define CONFIG1_VALID               0x01        /* Bit in touchLevel indicating that configuration 1 is valid (from firmware 2.1) */
 #define CONFIG2_VALID               0x02        /* Bit in touchLevel indicating that configuration 2 is valid (from firmware 2.1) */
+#define CONFIG1_TOUCH               0x04        /* Bit in touchLevel indicating that configuration 1 requires touch (from firmware 3.0) */
+#define CONFIG2_TOUCH               0x08        /* Bit in touchLevel indicating that configuration 2 requires touch (from firmware 3.0) */
+#define CONFIG_LED_INV              0x10        /* Bit in touchLevel indicating that LED behavior is inverted (EXTFLAG_LED_INV mirror) */
+#define CONFIG_STATUS_MASK          0x1f        /* Mask for status bits */
 
 /* Modified hex string mapping */
 
