@@ -579,6 +579,19 @@ static bool vcheck_v23_or_greater(const YKP_CONFIG *cfg)
 		cfg->yk_major_version > 2;
 }
 
+static bool vcheck_v24_or_greater(const YKP_CONFIG *cfg)
+{
+	return (cfg->yk_major_version == 2 &&
+		cfg->yk_minor_version >= 4) ||
+		cfg->yk_major_version > 2;
+}
+
+static bool vcheck_v30(const YKP_CONFIG *cfg)
+{
+	return (cfg->yk_major_version == 3 &&
+		cfg->yk_minor_version == 0);
+}
+
 static bool vcheck_neo(const YKP_CONFIG *cfg)
 {
 	return (cfg->yk_major_version == 2 &&
@@ -670,6 +683,11 @@ static bool capability_has_numeric(const YKP_CONFIG *cfg)
 static bool capability_has_dormant(const YKP_CONFIG *cfg)
 {
 	return vcheck_v23_or_greater(cfg);
+}
+
+static bool capability_has_led_inv(const YKP_CONFIG *cfg)
+{
+	return (vcheck_v24_or_greater(cfg) && !vcheck_v30(cfg));
 }
 
 int ykp_set_oath_imf(YKP_CONFIG *cfg, unsigned long imf)
@@ -822,6 +840,7 @@ def_set_extflag(USE_NUMERIC_KEYPAD,capability_has_numeric)
 def_set_extflag(FAST_TRIG,capability_has_fast)
 def_set_extflag(ALLOW_UPDATE,capability_has_update)
 def_set_extflag(DORMANT,capability_has_dormant)
+def_set_extflag(LED_INV,capability_has_led_inv)
 
 const char str_key_value_separator[] = ": ";
 const char str_hex_prefix[] = "h:";
@@ -899,6 +918,7 @@ struct map_st extended_flags_map[] = {
 	{ EXTFLAG_FAST_TRIG,		"FAST_TRIG",		capability_has_fast,		0 },
 	{ EXTFLAG_ALLOW_UPDATE,		"ALLOW_UPDATE",		capability_has_update,		0 },
 	{ EXTFLAG_DORMANT,		"DORMANT",		capability_has_dormant,		0 },
+	{ EXTFLAG_LED_INV,		"LED_INV",		capability_has_led_inv,		0 },
 	{ 0, "", 0, 0 }
 };
 

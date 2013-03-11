@@ -183,3 +183,10 @@ LIBYKPERS_1.11 {
   ykpers_check_version;
 # Variables:
 } LIBYKPERS_1.10;
+
+LIBYKPERS_1.12 {
+  global:
+# Functions:
+  ykp_set_extflag_LED_INV;
+# Variables:
+} LIBYKPERS_1.11;
