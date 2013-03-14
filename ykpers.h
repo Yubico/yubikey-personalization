@@ -122,6 +122,7 @@ int ykp_set_extflag_USE_NUMERIC_KEYPAD (YKP_CONFIG *cfg, bool state);
 int ykp_set_extflag_FAST_TRIG (YKP_CONFIG *cfg, bool state);
 int ykp_set_extflag_ALLOW_UPDATE (YKP_CONFIG *cfg, bool state);
 int ykp_set_extflag_DORMANT (YKP_CONFIG *cfg, bool state);
+int ykp_set_extflag_LED_INV (YKP_CONFIG *cfg, bool state);
 
 int ykp_write_config(const YKP_CONFIG *cfg,
 		     int (*writer)(const char *buf, size_t count,
