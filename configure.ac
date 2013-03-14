@@ -36,7 +36,7 @@ AC_CONFIG_MACRO_DIR([m4])
 # Interfaces changed/added/removed:   CURRENT++       REVISION=0
 # Interfaces added:                             AGE++
 # Interfaces removed:                           AGE=0
-AC_SUBST(LT_CURRENT, 14)
+AC_SUBST(LT_CURRENT, 13)
 AC_SUBST(LT_REVISION, 0)
 AC_SUBST(LT_AGE, 12)
 
