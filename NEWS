@@ -1,5 +1,7 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.12.1 (unreleased)
+
 * Version 1.12.0 (released 2013-03-14)
 
 ** Recognize firmwares 2.4 and 3.1.
