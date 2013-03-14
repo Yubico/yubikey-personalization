@@ -2,6 +2,11 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
 * Version 1.12.0 (unreleased)
 
+** Recognize firmwares 2.4 and 3.1.
+
+** Add support for setting the new extflag LED_INV
+When set the behaviour of the led on the YubiKey is inversed.
+
 * Version 1.11.3 (released 2013-01-09)
 
 ** Fixup of broken release.
