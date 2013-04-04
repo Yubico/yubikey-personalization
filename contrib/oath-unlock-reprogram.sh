@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (c) 2012 Yubico AB.  All rights reserved.
+# Copyright (c) 2012-2013 Yubico AB.  All rights reserved.
 # Author: Simon Josefsson <simon@josefsson.org>.
 #
 # Redistribution and use in source and binary forms, with or without

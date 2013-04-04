@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2012 Yubico AB.
+ * Copyright (c) 2012-2013 Yubico AB.
  * All rights reserved.
  *
  * Some basic code copied from ykchalresp.c.
