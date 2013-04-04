@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2008-2012 Yubico AB
+ * Copyright (c) 2008-2013 Yubico AB
  * Copyright (c) 2010 Tollef Fog Heen <tfheen@err.no>
  * All rights reserved.
  *
@@ -187,7 +187,12 @@ int main(int argc, char **argv)
 		char passphrasebuf[256]; size_t passphraselen;
 		fprintf(stderr, "Passphrase to create AES key: ");
 		fflush(stderr);
-		fgets(passphrasebuf, sizeof(passphrasebuf), stdin);
+		if (!fgets(passphrasebuf, sizeof(passphrasebuf), stdin))
+		{
+			perror ("fgets");
+			exit_code = 1;
+			goto err;
+		}
 		passphraselen = strlen(passphrasebuf);
 		if (passphrasebuf[passphraselen - 1] == '\n')
 			passphrasebuf[passphraselen - 1] = '\0';
@@ -225,7 +230,12 @@ int main(int argc, char **argv)
 			strcpy(commitbuf, "yes");
 			puts(commitbuf);
 		} else {
-			fgets(commitbuf, sizeof(commitbuf), stdin);
+			if (!fgets(commitbuf, sizeof(commitbuf), stdin))
+			{
+				perror ("fgets");
+				exit_code;
+				goto err;
+			}
 		}
 		commitlen = strlen(commitbuf);
 		if (commitbuf[commitlen - 1] == '\n')
