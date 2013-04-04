@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2011-2012 Yubico AB
+ * Copyright (c) 2011-2013 Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -301,7 +301,7 @@ int _test_non_config_args(void)
 	/* Options */
 	char *salt = NULL;
 	char ndef[128];
-	char ndef_type = NULL;
+	char ndef_type = 0;
 	unsigned char usb_mode = -1;
 	bool zap = false;
 
