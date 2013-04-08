@@ -105,7 +105,7 @@ check-doc-dist:
 	diff -ur $(srcdir)/Makefile.am check-doc-dist.tmp || \
 		(rm -f check-doc-dist.tmp; echo 'error: please update $(srcdir)/Makefile.am to include all docs'; exit 1)
 	rm -f check-doc-dist.tmp
-	man --warnings ./*.1 2>&1|grep ': warning'
+	! man --warnings ./*.1 2>&1 | grep ': warning'
 
 release:
 	@if test -z "$(USER)" || test -z "$(KEYID)"; then \
