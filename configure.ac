@@ -125,6 +125,8 @@ AM_CONDITIONAL([BACKEND_LIBUSB_1_0], test x$with_backend = xlibusb-1.0)
 AM_CONDITIONAL([BACKEND_OSX], test x$with_backend = xosx)
 AM_CONDITIONAL([BACKEND_WINDOWS], test x$with_backend = xwindows)
 
+PKG_CHECK_MODULES([libjson], [json])
+
 AC_ARG_WITH([udevrulesdir],
   AS_HELP_STRING([--with-udevrulesdir=DIR], [Install udev rules into this directory]),
   [], [])

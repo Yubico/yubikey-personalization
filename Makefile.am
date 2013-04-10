@@ -35,6 +35,8 @@ ACLOCAL_AMFLAGS = -I m4
 AM_CPPFLAGS = -I$(srcdir)/ykcore -I$(srcdir)/rfc4634
 AM_CFLAGS = $(WARN_CFLAGS)
 
+AM_CFLAGS += $(libjson_CFLAGS)
+
 # The library.
 
 ykpers_includedir=$(includedir)/ykpers-1
@@ -48,7 +50,7 @@ libykpers_1_la_SOURCES += rfc4634/hmac.c rfc4634/usha.c rfc4634/sha.h	\
 	rfc4634/sha1.c rfc4634/sha224-256.c rfc4634/sha384-512.c	\
 	rfc4634/sha-private.h
 libykpers_1_la_SOURCES += ykpers-1.pc.in libykpers-1.map
-libykpers_1_la_LIBADD = $(LTLIBYUBIKEY) ./ykcore/libykcore.la
+libykpers_1_la_LIBADD = $(LTLIBYUBIKEY) ./ykcore/libykcore.la $(libjson_LIBS)
 libykpers_1_la_LDFLAGS = -no-undefined \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 EXTRA_libykpers_1_la_DEPENDENCIES = libykpers-1.map
