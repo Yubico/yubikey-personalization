@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ykcore_lcl.h"
+#include "ykpers_lcl.h"
 #include "ykpbkdf2.h"
 #include "yktsd.h"
 
@@ -41,15 +41,6 @@
 #include <assert.h>
 
 #include <yubikey.h>
-
-struct ykp_config_t {
-	unsigned int yk_major_version;
-	unsigned int yk_minor_version;
-	unsigned int yk_build_version;
-	unsigned int command;
-
-	YK_CONFIG ykcore_config;
-};
 
 static const YK_CONFIG default_config1 = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* fixed */
