@@ -842,17 +842,17 @@ def_set_extflag(ALLOW_UPDATE,capability_has_update)
 def_set_extflag(DORMANT,capability_has_dormant)
 def_set_extflag(LED_INV,capability_has_led_inv)
 
-const char str_key_value_separator[] = ": ";
-const char str_hex_prefix[] = "h:";
-const char str_modhex_prefix[] = "m:";
-const char str_fixed[] = "fixed";
-const char str_oath_id[] = "OATH id";
-const char str_uid[] = "uid";
-const char str_key[] = "key";
-const char str_acc_code[] = "acc_code";
-const char str_oath_imf[] = "OATH IMF";
+static const char str_key_value_separator[] = ": ";
+static const char str_hex_prefix[] = "h:";
+static const char str_modhex_prefix[] = "m:";
+static const char str_fixed[] = "fixed";
+static const char str_oath_id[] = "OATH id";
+static const char str_uid[] = "uid";
+static const char str_key[] = "key";
+static const char str_acc_code[] = "acc_code";
+static const char str_oath_imf[] = "OATH IMF";
 
-const char str_flags_separator[] = "|";
+static const char str_flags_separator[] = "|";
 
 struct map_st {
 	uint8_t flag;
@@ -861,8 +861,8 @@ struct map_st {
 	unsigned char tkt_context;
 };
 
-const char str_ticket_flags[] = "ticket_flags";
-struct map_st ticket_flags_map[] = {
+static const char str_ticket_flags[] = "ticket_flags";
+static struct map_st ticket_flags_map[] = {
 	{ TKTFLAG_TAB_FIRST,		"TAB_FIRST",		capability_has_ticket_mods,	0 },
 	{ TKTFLAG_APPEND_TAB1,		"APPEND_TAB1",		capability_has_ticket_mods,	0 },
 	{ TKTFLAG_APPEND_TAB2,		"APPEND_TAB2",		capability_has_ticket_mods,	0 },
@@ -875,8 +875,8 @@ struct map_st ticket_flags_map[] = {
 	{ 0, "", 0, 0 }
 };
 
-const char str_config_flags[] = "config_flags";
-struct map_st config_flags_map[] = {
+static const char str_config_flags[] = "config_flags";
+static struct map_st config_flags_map[] = {
 	/*
 	  Values used to pretty-print a YKP_CONFIG in ykp_write_config().
 
@@ -909,8 +909,8 @@ struct map_st config_flags_map[] = {
 	{ 0, "", 0, 0 }
 };
 
-const char str_extended_flags[] = "extended_flags";
-struct map_st extended_flags_map[] = {
+static const char str_extended_flags[] = "extended_flags";
+static struct map_st extended_flags_map[] = {
 	{ EXTFLAG_SERIAL_BTN_VISIBLE,	"SERIAL_BTN_VISIBLE",	capability_has_serial,		0 },
 	{ EXTFLAG_SERIAL_USB_VISIBLE,	"SERIAL_USB_VISIBLE",	capability_has_serial ,		0 },
 	{ EXTFLAG_SERIAL_API_VISIBLE,	"SERIAL_API_VISIBLE",	capability_has_serial_api,	0 },
