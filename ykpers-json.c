@@ -141,14 +141,24 @@ int ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 	json_object_object_add(jobj, "yubiProdConfig", yprod_json);
 	json_object_object_add(yprod_json, "options", options_json);
 
-	if(mode == MODE_OATH_HOTP) { /* TODO: handle seed */
+	if(mode == MODE_OATH_HOTP) {
 		json_object *oathDigits;
+		json_object *randomSeed;
 		if((ycfg.cfgFlags & CFGFLAG_OATH_HOTP8) == CFGFLAG_OATH_HOTP8) {
 			oathDigits = json_object_new_int(8);
 		} else {
 			oathDigits = json_object_new_int(6);
 		}
 		json_object_object_add(options_json, "oathDigits", oathDigits);
+
+		if((ycfg.uid[5] == 0x01 || ycfg.uid[5] == 0x00) && ycfg.uid[4] == 0x00) {
+			json_object *fixedSeedvalue = json_object_new_int(ycfg.uid[5] << 4);
+			json_object_object_add(options_json, "fixedSeedvalue", fixedSeedvalue);
+			randomSeed = json_object_new_boolean(0);
+		} else {
+			randomSeed = json_object_new_boolean(1);
+		}
+		json_object_object_add(options_json, "randomSeed", randomSeed);
 	}
 
 	for(p = ticket_flags_map; p->flag; p++) {
@@ -172,7 +182,6 @@ int ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 		json_object *jsetting = json_object_new_boolean(set);
 		json_object_object_add(options_json, p->flag_text, jsetting);
 	}
-
 
 	strncpy(json, json_object_to_json_string(jobj), len);
 
