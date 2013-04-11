@@ -190,3 +190,11 @@ LIBYKPERS_1.12 {
   ykp_set_extflag_LED_INV;
 # Variables:
 } LIBYKPERS_1.11;
+
+LIBYKPERS_1.13 {
+  global:
+# Functions:
+  ykp_export_config;
+  ykp_import_config;
+# Variables:
+} LIBYKPERS_1.12;

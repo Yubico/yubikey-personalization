@@ -31,6 +31,7 @@
 #include "ykpers_lcl.h"
 #include "ykpbkdf2.h"
 #include "yktsd.h"
+#include "ykpers-json.h"
 
 #include <ykpers.h>
 
@@ -912,6 +913,23 @@ static struct map_st extended_flags_map[] = {
 	{ EXTFLAG_LED_INV,		"LED_INV",		capability_has_led_inv,		0 },
 	{ 0, "", 0, 0 }
 };
+
+int ykp_export_config(const YKP_CONFIG *cfg, char *buf, size_t len,
+		int format) {
+	if(format == YKP_FORMAT_JSON) {
+		return ykp_json_export_cfg(cfg, buf, len);
+	}
+	return 1;
+}
+
+
+int ykp_import_config(const char *buf, size_t len, YKP_CONFIG *cfg,
+		int format) {
+	if(format == YKP_FORMAT_JSON) {
+		return ykp_json_import_cfg(buf, len, cfg);
+	}
+	return 1;
+}
 
 int ykp_write_config(const YKP_CONFIG *cfg,
 		     int (*writer)(const char *buf, size_t count,

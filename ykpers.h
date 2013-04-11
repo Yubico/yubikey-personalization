@@ -137,6 +137,12 @@ YK_CONFIG *ykp_core_config(YKP_CONFIG *cfg);
 int ykp_command(YKP_CONFIG *cfg);
 int ykp_config_num(YKP_CONFIG *cfg);
 
+int ykp_export_config(const YKP_CONFIG *cfg, char *buf, size_t len, int format);
+int ykp_import_config(const char *buf, size_t len, YKP_CONFIG *cfg, int format);
+
+#define YKP_FORMAT_LEGACY	0x01
+#define YKP_FORMAT_JSON		0x02
+
 extern int * _ykp_errno_location(void);
 #define ykp_errno (*_ykp_errno_location())
 const char *ykp_strerror(int errnum);
