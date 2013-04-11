@@ -31,6 +31,8 @@
 #include "ykpers_lcl.h"
 #include "ykpers-json.h"
 
+#include <yubikey.h>
+
 #include <json/json.h>
 #include <string.h>
 
@@ -63,9 +65,6 @@ static struct map_st ticket_flags_map[] = {
 static struct map_st config_flags_map[] = {
 	{ CFGFLAG_HMAC_LT64,		"hmacLT64",	MODE_CHAL_HMAC }, /* XXX: name? */
 	{ CFGFLAG_CHAL_BTN_TRIG,	"buttonReqd",	MODE_CHAL_RESP },
-	{ CFGFLAG_OATH_FIXED_MODHEX1,	"oathFixedModhex1",	MODE_OATH_HOTP }, /* XXX: name? */
-	{ CFGFLAG_OATH_FIXED_MODHEX2,	"oathFixedModhex2",	MODE_OATH_HOTP }, /* XXX: name? */
-	{ CFGFLAG_OATH_FIXED_MODHEX,	"oathFixedModhex",	MODE_OATH_HOTP }, /* XXX: name? */
 	{ CFGFLAG_SEND_REF,		"sendRef",	MODE_OUTPUT }, /* XXX: name? */
 	{ CFGFLAG_TICKET_FIRST,		"ticketFirst",	MODE_OUTPUT }, /* XXX: name? */
 	{ CFGFLAG_PACING_10MS,		"pacing10MS",	MODE_OUTPUT }, /* XXX: name? */
@@ -130,6 +129,31 @@ int ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 
 	json_object_object_add(jobj, "yubiProdConfig", yprod_json);
 	json_object_object_add(yprod_json, "options", options_json);
+
+
+	if(ycfg.fixedSize != 0 && mode != MODE_STATIC_TICKET) {
+		json_object *jPrefix;
+		char prefix[5] = {0};
+
+		yubikey_modhex_encode(prefix, (const char*)ycfg.fixed, 2);
+		if(mode == MODE_OATH_HOTP) {
+			int flag = ycfg.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX;
+			json_object *fixed_modhex = json_object_new_boolean(
+					flag == CFGFLAG_OATH_FIXED_MODHEX ? 1 : 0);
+			json_object_object_add(options_json, "fixedModhex", fixed_modhex);
+
+			if(flag == 0) {
+				yubikey_hex_encode(prefix, (const char*)ycfg.fixed, 2);
+			} else if(flag == CFGFLAG_OATH_FIXED_MODHEX1) {
+				yubikey_hex_encode(prefix + 2, (const char*)ycfg.fixed + 1, 1);
+			}
+		}
+		jPrefix = json_object_new_string(prefix);
+		json_object_object_add(yprod_json, "prefix", jPrefix);
+	} else if(mode != MODE_STATIC_TICKET) {
+		json_object *scope = json_object_new_string("noPublicId");
+		json_object_object_add(yprod_json, "scope", scope);
+	}
 
 	if(mode == MODE_OATH_HOTP) {
 		json_object *oathDigits;
