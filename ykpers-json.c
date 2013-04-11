@@ -47,7 +47,7 @@ struct map_st {
 #define MODE_STATIC_TICKET	0x10
 
 #define MODE_CHAL_RESP		MODE_CHAL_YUBICO | MODE_CHAL_HMAC
-#define MODE_OUTPUT 		MODE_STATIC_TICKET | MODE_OTP_YUBICO
+#define MODE_OUTPUT 		MODE_STATIC_TICKET | MODE_OTP_YUBICO | MODE_OATH_HOTP
 
 static struct map_st ticket_flags_map[] = {
 	{ TKTFLAG_TAB_FIRST,		"tabFirst",	MODE_OUTPUT },
