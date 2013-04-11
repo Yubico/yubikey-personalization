@@ -8,7 +8,7 @@ env:
 script:
   - ./build-and-test.sh
 before_install:
-  - sudo apt-get update; sudo apt-get install -qq libyubikey-dev $EXTRA
+  - sudo apt-get update; sudo apt-get install -qq libyubikey-dev libjson0-dev $EXTRA
 matrix:
   include:
     - compiler: gcc
