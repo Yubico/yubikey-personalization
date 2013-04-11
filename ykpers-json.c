@@ -58,19 +58,11 @@ static struct map_st ticket_flags_map[] = {
 	{ TKTFLAG_APPEND_CR,		"appendCR",	MODE_OUTPUT },
 	{ TKTFLAG_PROTECT_CFG2,		"protectSecond",0 },
 	{ 0, "", 0 }
-	/* XXX: deal with modes..
-	 * { TKTFLAG_OATH_HOTP,		"OATH_HOTP",		capability_has_oath,		0 },
-	{ TKTFLAG_CHAL_RESP,		"CHAL_RESP",		capability_has_chal_resp,	0 },
-	{ 0, "", 0, 0 }*/
 };
 
 static struct map_st config_flags_map[] = {
-	//{ CFGFLAG_CHAL_YUBICO,		"CHAL_YUBICO",		capability_has_chal_resp,	TKTFLAG_CHAL_RESP },
-	//{ CFGFLAG_CHAL_HMAC,		"CHAL_HMAC",		capability_has_chal_resp,	TKTFLAG_CHAL_RESP },
 	{ CFGFLAG_HMAC_LT64,		"hmacLT64",	MODE_CHAL_HMAC }, /* XXX: name? */
-	{ CFGFLAG_CHAL_BTN_TRIG,	"chalBtnTrig",	MODE_CHAL_RESP }, /* XXX: name? */
-	/* TODO: oathDigits
-	{ CFGFLAG_OATH_HOTP8,		"oathHotp8"	TKTFLAG_OATH_HOTP },*/
+	{ CFGFLAG_CHAL_BTN_TRIG,	"buttonReqd",	MODE_CHAL_RESP },
 	{ CFGFLAG_OATH_FIXED_MODHEX1,	"oathFixedModhex1",	MODE_OATH_HOTP }, /* XXX: name? */
 	{ CFGFLAG_OATH_FIXED_MODHEX2,	"oathFixedModhex2",	MODE_OATH_HOTP }, /* XXX: name? */
 	{ CFGFLAG_OATH_FIXED_MODHEX,	"oathFixedModhex",	MODE_OATH_HOTP }, /* XXX: name? */
@@ -79,8 +71,6 @@ static struct map_st config_flags_map[] = {
 	{ CFGFLAG_PACING_10MS,		"pacing10MS",	MODE_OUTPUT }, /* XXX: name? */
 	{ CFGFLAG_PACING_20MS,		"pacing20MS",	MODE_OUTPUT }, /* XXX: name? */
 	{ CFGFLAG_ALLOW_HIDTRIG,	"allowHidtrig",	MODE_OUTPUT }, /* XXX: name? */
-	/* TODO: mode.. */
-	/*{ CFGFLAG_STATIC_TICKET,	"STATIC_TICKET",	capability_has_static,		0 },*/
 	{ CFGFLAG_SHORT_TICKET,		"shortTicket",	MODE_STATIC_TICKET }, /* XXX: name? */
 	{ CFGFLAG_STRONG_PW1,		"strongPw1",	MODE_STATIC_TICKET }, /* XXX: name? */
 	{ CFGFLAG_STRONG_PW2,		"strongPw2",	MODE_STATIC_TICKET }, /* XXX: name? */
