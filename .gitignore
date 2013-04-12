@@ -89,5 +89,7 @@ ykpers.lo
 ykpers.o
 ykpers-json.lo
 ykpers-json.o
+ykpers_lcl.lo
+ykpers_lcl.o
 ykpersonalize
 ykpersonalize.o

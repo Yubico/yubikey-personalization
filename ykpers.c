@@ -938,7 +938,7 @@ static int ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t len
 
 		/* ticket_flags: */
 		buffer[0] = '\0';
-		for (p = ticket_flags_map; p->flag; p++) {
+		for (p = _ticket_flags_map; p->flag; p++) {
 			if ((ycfg.tktFlags & p->flag) == p->flag
 			    && p->capability(cfg)
 			    && (!p->mode || (mode & p->mode) == mode)) {
@@ -955,7 +955,7 @@ static int ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t len
 		/* config_flags: */
 		buffer[0] = '\0';
 		t_flags = ycfg.cfgFlags;
-		for (p = config_flags_map; p->flag; p++) {
+		for (p = _config_flags_map; p->flag; p++) {
 			if ((t_flags & p->flag) == p->flag
 			    && p->capability(cfg)
 			    && (!p->mode || (mode & p->mode) == mode)) {
@@ -975,7 +975,7 @@ static int ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t len
 
 		/* extended_flags: */
 		buffer[0] = '\0';
-		for (p = extended_flags_map; p->flag; p++) {
+		for (p = _extended_flags_map; p->flag; p++) {
 			if ((ycfg.extFlags & p->flag) == p->flag
 			    && p->capability(cfg)
 			    && (!p->mode || (mode & p->mode) == mode)) {
