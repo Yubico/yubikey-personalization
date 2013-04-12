@@ -65,6 +65,8 @@ const char *usage =
 "          (if FILE is -, send to stdout)\n"
 "-iFILE    read configuration from FILE.\n"
 "          (if FILE is -, read from stdin)\n"
+"-fformat  set the data format for -s and -i (and for standard write to console\n"
+"          valid values are json or legacy.\n"
 "-aXXX..   The AES secret key as a 32 (or 40 for OATH-HOTP/HMAC CHAL-RESP)\n"
 "          char hex value (not modhex)\n"
 "-cXXX..   A 12 char hex value (not modhex) to use as access code for programming\n"
@@ -156,7 +158,7 @@ const char *usage =
 "-v        verbose\n"
 "-h        help (this text)\n"
 ;
-const char *optstring = "u12xza:c:n:t:hi:o:s:vym:S::";
+const char *optstring = "u12xza:c:n:t:hi:o:s:f:vym:S::";
 
 static int _set_fixed(char *opt, YKP_CONFIG *cfg);
 static int _format_decimal_as_hex(uint8_t *dst, size_t dst_len, uint8_t *src);
@@ -227,6 +229,7 @@ void report_yk_error(void)
  */
 int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		   const char **infname, const char **outfname,
+		   int *data_format,
 		   bool *autocommit, char *salt,
 		   YK_STATUS *st, bool *verbose,
 		   unsigned char *access_code, bool *use_access_code,
@@ -369,6 +372,17 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 			break;
 		case 's':
 			*outfname = optarg;
+			break;
+		case 'f':
+			if(strcmp(optarg, "json") == 0) {
+				*data_format = YKP_FORMAT_JSON;
+			} else if(strcmp(optarg, "legacy") == 0) {
+				*data_format = YKP_FORMAT_LEGACY;
+			} else {
+				fprintf(stderr, "The only valid formats to -f is json and legacy.\n");
+				*exit_code = 1;
+				return 0;
+			}
 			break;
 		case 'a':
 			*aesviahash = true;

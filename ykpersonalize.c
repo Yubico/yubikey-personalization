@@ -45,15 +45,12 @@ static int reader(char *buf, size_t count, void *stream)
 {
 	return (int)fread(buf, 1, count, (FILE *)stream);
 }
-static int writer(const char *buf, size_t count, void *stream)
-{
-	return (int)fwrite(buf, 1, count, (FILE *)stream);
-}
 
 int main(int argc, char **argv)
 {
 	FILE *inf = NULL; const char *infname = NULL;
 	FILE *outf = NULL; const char *outfname = NULL;
+	int data_format = YKP_FORMAT_LEGACY;
 	bool verbose = false;
 	bool aesviahash = false;
 	bool use_access_code = false;
@@ -63,6 +60,7 @@ int main(int argc, char **argv)
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = ykds_alloc();
 	bool autocommit = false;
+	char exported_data[1024];
 
 	/* Options */
 	char *salt = NULL;
@@ -126,6 +124,7 @@ int main(int argc, char **argv)
 	/* Parse all arguments in a testable way */
 	if (! args_to_config(argc, argv, cfg, yk,
 			     &infname, &outfname,
+			     &data_format,
 			     &autocommit, salt,
 			     st, &verbose,
 			     access_code, &use_access_code,
@@ -201,9 +200,11 @@ int main(int argc, char **argv)
 			goto err;
 	}
 
+	ykp_export_config(cfg, exported_data, 1024, data_format);
 	if (outf) {
-		if (!ykp_write_config(cfg, writer, outf))
+		if(!(fwrite(exported_data, 1, strlen(exported_data), outf))) {
 			goto err;
+		}
 	} else {
 		char commitbuf[256]; size_t commitlen;
 
@@ -223,7 +224,7 @@ int main(int argc, char **argv)
 			} else {
 				fprintf(stderr, "Configuration data to be updated in key configuration %d:\n\n", ykp_command(cfg) == SLOT_UPDATE1 ? 1 : 2);
 			}
-			ykp_write_config(cfg, writer, stderr);
+			fwrite(exported_data, 1, strlen(exported_data), stderr);
 		}
 		fprintf(stderr, "\nCommit? (y/n) [n]: ");
 		if (autocommit) {
