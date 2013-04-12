@@ -850,28 +850,8 @@ static const char str_ticket_flags[] = "ticket_flags";
 static const char str_config_flags[] = "config_flags";
 static const char str_extended_flags[] = "extended_flags";
 
-int ykp_export_config(const YKP_CONFIG *cfg, char *buf, size_t len,
-		int format) {
-	if(format == YKP_FORMAT_JSON) {
-		return ykp_json_export_cfg(cfg, buf, len);
-	}
-	return 1;
-}
 
-
-int ykp_import_config(const char *buf, size_t len, YKP_CONFIG *cfg,
-		int format) {
-	if(format == YKP_FORMAT_JSON) {
-		return ykp_json_import_cfg(buf, len, cfg);
-	}
-	return 1;
-}
-
-int ykp_write_config(const YKP_CONFIG *cfg,
-		     int (*writer)(const char *buf, size_t count,
-				   void *userdata),
-		     void *userdata)
-{
+static int ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t len) {
 	if (cfg) {
 		char buffer[256];
 		struct map_st *p;
@@ -879,6 +859,8 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		bool key_bits_in_uid = false;
 		YK_CONFIG ycfg = cfg->ykcore_config;
 		int mode = MODE_OTP_YUBICO;
+
+		int pos = 0;
 
 		if((ycfg.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP){
 			if((ycfg.cfgFlags & CFGFLAG_CHAL_YUBICO) == CFGFLAG_CHAL_YUBICO) {
@@ -901,10 +883,6 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		/* fixed: or OATH id: */
 		if ((ycfg.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP &&
 		    ycfg.fixedSize) {
-			writer(str_oath_id, strlen(str_oath_id), userdata);
-			writer(str_key_value_separator,
-			       strlen(str_key_value_separator),
-			       userdata);
 			/* First byte (vendor id) */
 			if ((ycfg.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX1) == CFGFLAG_OATH_FIXED_MODHEX1 ||
 			    (ycfg.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX2) == CFGFLAG_OATH_FIXED_MODHEX2 ||
@@ -927,77 +905,35 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 				yubikey_hex_encode(buffer + 4, (const char *)ycfg.fixed + 2, 8);
 			}
 			buffer[12] = 0;
-			writer(buffer, strlen(buffer), userdata);
-			writer("\n", 1, userdata);
+			pos += snprintf(buf, len - (size_t)pos, "%s%s%s\n", str_oath_id, str_key_value_separator, buffer);
 		} else {
-			writer(str_fixed, strlen(str_fixed), userdata);
-			writer(str_key_value_separator,
-			       strlen(str_key_value_separator),
-			       userdata);
-			writer(str_modhex_prefix,
-			       strlen(str_modhex_prefix),
-			       userdata);
 			yubikey_modhex_encode(buffer, (const char *)ycfg.fixed, ycfg.fixedSize);
-			writer(buffer, strlen(buffer), userdata);
-			writer("\n", 1, userdata);
+			pos += snprintf(buf, len - (size_t)pos, "%s%s%s%s\n", str_fixed, str_key_value_separator, str_modhex_prefix, buffer);
 		}
 
 		/* uid: */
-		writer(str_uid, strlen(str_uid), userdata);
-		writer(str_key_value_separator,
-		       strlen(str_key_value_separator),
-		       userdata);
 		if (key_bits_in_uid) {
-			writer("n/a", 3, userdata);
+			strncpy(buffer, "n/a", 3);
 		} else {
-			writer(str_hex_prefix,
-			       strlen(str_hex_prefix),
-			       userdata);
 			yubikey_hex_encode(buffer, (const char *)ycfg.uid, UID_SIZE);
-			writer(buffer, strlen(buffer), userdata);
 		}
-		writer("\n", 1, userdata);
+		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s\n", str_uid, str_key_value_separator, buffer);
 
 		/* key: */
-		writer(str_key, strlen(str_key), userdata);
-		writer(str_key_value_separator,
-		       strlen(str_key_value_separator),
-		       userdata);
-		writer(str_hex_prefix,
-		       strlen(str_hex_prefix),
-		       userdata);
 		yubikey_hex_encode(buffer, (const char *)ycfg.key, KEY_SIZE);
 		if (key_bits_in_uid) {
 			yubikey_hex_encode(buffer + KEY_SIZE * 2, (const char *)ycfg.uid, 4);
 		}
-		writer(buffer, strlen(buffer), userdata);
-		writer("\n", 1, userdata);
+		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s%s\n", str_key, str_key_value_separator, str_hex_prefix, buffer);
 
 		/* acc_code: */
-		writer(str_acc_code, strlen(str_acc_code), userdata);
-		writer(str_key_value_separator,
-		       strlen(str_key_value_separator),
-		       userdata);
-		writer(str_hex_prefix,
-		       strlen(str_hex_prefix),
-		       userdata);
 		yubikey_hex_encode(buffer, (const char*)ycfg.accCode, ACC_CODE_SIZE);
-		writer(buffer, strlen(buffer), userdata);
-		writer("\n", 1, userdata);
+		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s%s\n", str_acc_code, str_key_value_separator, str_hex_prefix, buffer);
 
 		/* OATH IMF: */
 		if ((ycfg.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP &&
 		    capability_has_oath_imf(cfg)) {
-			writer(str_oath_imf, strlen(str_oath_imf), userdata);
-			writer(str_key_value_separator,
-				strlen(str_key_value_separator),
-				userdata);
-			writer(str_hex_prefix,
-				strlen(str_hex_prefix),
-				userdata);
-			sprintf(buffer, "%lx", ykp_get_oath_imf(cfg));
-			writer(buffer, strlen(buffer), userdata);
-			writer("\n", 1, userdata);
+			pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s%lx\n", str_oath_imf, str_key_value_separator, str_hex_prefix, ykp_get_oath_imf(cfg));
 		}
 
 		/* ticket_flags: */
@@ -1014,12 +950,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 				}
 			}
 		}
-		writer(str_ticket_flags, strlen(str_ticket_flags), userdata);
-		writer(str_key_value_separator,
-		       strlen(str_key_value_separator),
-		       userdata);
-		writer(buffer, strlen(buffer), userdata);
-		writer("\n", 1, userdata);
+		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s\n", str_ticket_flags, str_key_value_separator, buffer);
 
 		/* config_flags: */
 		buffer[0] = '\0';
@@ -1040,12 +971,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 				t_flags -= p->flag;
 			}
 		}
-		writer(str_config_flags, strlen(str_config_flags), userdata);
-		writer(str_key_value_separator,
-		       strlen(str_key_value_separator),
-		       userdata);
-		writer(buffer, strlen(buffer), userdata);
-		writer("\n", 1, userdata);
+		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s\n", str_config_flags, str_key_value_separator, buffer);
 
 		/* extended_flags: */
 		buffer[0] = '\0';
@@ -1061,15 +987,46 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 				}
 			}
 		}
-		writer(str_extended_flags, strlen(str_extended_flags), userdata);
-		writer(str_key_value_separator,
-		       strlen(str_key_value_separator),
-		       userdata);
-		writer(buffer, strlen(buffer), userdata);
-		writer("\n", 1, userdata);
+		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s\n", str_extended_flags, str_key_value_separator, buffer);
 
 		return 1;
 	}
+	return 0;
+}
+
+int ykp_export_config(const YKP_CONFIG *cfg, char *buf, size_t len,
+		int format) {
+	if(format == YKP_FORMAT_JSON) {
+		return ykp_json_export_cfg(cfg, buf, len);
+	} else if(format == YKP_FORMAT_LEGACY) {
+		return ykp_legacy_export_config(cfg, buf, len);
+	}
+	ykp_errno = YKP_EINVAL;
+	return 0;
+}
+
+
+int ykp_import_config(const char *buf, size_t len, YKP_CONFIG *cfg,
+		int format) {
+	if(format == YKP_FORMAT_JSON) {
+		return ykp_json_import_cfg(buf, len, cfg);
+	}
+	return 1;
+}
+int ykp_write_config(const YKP_CONFIG *cfg,
+		     int (*writer)(const char *buf, size_t count,
+				   void *userdata),
+		     void *userdata) {
+	if(cfg) {
+		char buffer[1024];
+		int ret = ykp_legacy_export_config(cfg, buffer, 1024);
+		if(ret) {
+			writer(buffer, strlen(buffer), userdata);
+			return 1;
+		}
+		return 0;
+	}
+	ykp_errno = YKP_ENOCFG;
 	return 0;
 }
 
