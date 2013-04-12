@@ -165,7 +165,38 @@ int ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 }
 
 int ykp_json_import_cfg(const char *json, size_t len, YKP_CONFIG *cfg) {
-	ykp_errno = YKP_ENOTYETIMPL;
+	if(cfg) {
+		json_object *jobj = json_tokener_parse(json);
+		json_object *yprod_json = json_object_object_get(jobj, "yubiProdConfig");
+		json_object *jmode = json_object_object_get(yprod_json, "mode");
+		const char *raw_mode = json_object_get_string(jmode);
+		int mode = MODE_OTP_YUBICO;
+
+		struct map_st *p;
+
+		for(p = _modes_map; p->flag; p++) {
+			if(strcmp(raw_mode, p->json_text) == 0) {
+				mode = p->flag;
+				break;
+			}
+		}
+
+		if(mode == MODE_OATH_HOTP) {
+			ykp_set_tktflag_OATH_HOTP(cfg, true);
+		} else if(mode == MODE_CHAL_HMAC) {
+			ykp_set_tktflag_CHAL_RESP(cfg, true);
+			ykp_set_cfgflag_CHAL_HMAC(cfg, true);
+		} else if(mode == MODE_CHAL_YUBICO) {
+			ykp_set_tktflag_CHAL_RESP(cfg, true);
+			ykp_set_cfgflag_CHAL_YUBICO(cfg, true);
+		} else if(mode == MODE_STATIC_TICKET) {
+			ykp_set_cfgflag_STATIC_TICKET(cfg, true);
+		}
+
+		json_object_put(jobj);
+		return 1;
+	}
+	ykp_errno = YKP_EINVAL;
 	return 0;
 }
 

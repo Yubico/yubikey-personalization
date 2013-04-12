@@ -41,11 +41,6 @@
 
 #include "ykpers-args.h"
 
-static int reader(char *buf, size_t count, void *stream)
-{
-	return (int)fread(buf, 1, count, (FILE *)stream);
-}
-
 int main(int argc, char **argv)
 {
 	FILE *inf = NULL; const char *infname = NULL;
@@ -60,7 +55,7 @@ int main(int argc, char **argv)
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = ykds_alloc();
 	bool autocommit = false;
-	char exported_data[1024];
+	char data[1024];
 
 	/* Options */
 	char *salt = NULL;
@@ -180,7 +175,9 @@ int main(int argc, char **argv)
 	}
 
 	if (inf) {
-		if (!ykp_read_config(cfg, reader, inf))
+		if(!fread(data, 1, 1024, inf))
+			goto err;
+		if (!ykp_import_config(data, strlen(data), cfg, data_format))
 			goto err;
 	} else if (! aesviahash && ! zap && (ykp_command(cfg) == SLOT_CONFIG || ykp_command(cfg) == SLOT_CONFIG2)) {
 		char passphrasebuf[256]; size_t passphraselen;
@@ -200,9 +197,9 @@ int main(int argc, char **argv)
 			goto err;
 	}
 
-	ykp_export_config(cfg, exported_data, 1024, data_format);
+	ykp_export_config(cfg, data, 1024, data_format);
 	if (outf) {
-		if(!(fwrite(exported_data, 1, strlen(exported_data), outf))) {
+		if(!(fwrite(data, 1, strlen(data), outf))) {
 			goto err;
 		}
 	} else {
@@ -224,7 +221,7 @@ int main(int argc, char **argv)
 			} else {
 				fprintf(stderr, "Configuration data to be updated in key configuration %d:\n\n", ykp_command(cfg) == SLOT_UPDATE1 ? 1 : 2);
 			}
-			fwrite(exported_data, 1, strlen(exported_data), stderr);
+			fwrite(data, 1, strlen(data), stderr);
 		}
 		fprintf(stderr, "\nCommit? (y/n) [n]: ");
 		if (autocommit) {
@@ -234,7 +231,6 @@ int main(int argc, char **argv)
 			if (!fgets(commitbuf, sizeof(commitbuf), stdin))
 			{
 				perror ("fgets");
-				exit_code;
 				goto err;
 			}
 		}
