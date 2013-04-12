@@ -128,15 +128,6 @@ static struct map_st extended_flags_map[] = {
 	{ 0, 0, 0, 0, 0 }
 };
 
-static struct map_st modes_map[] = {
-	{ MODE_OATH_HOTP,	0,	"oathHOTP",	0, 0 },
-	{ MODE_CHAL_HMAC,	0,	"hmacCR",	0, 0 },
-	{ MODE_STATIC_TICKET,	0,	"staticTicket",	0, 0 }, /* XXX: name? */
-	{ MODE_CHAL_YUBICO,	0,	"yubicoCR",	0, 0 },
-	{ MODE_OTP_YUBICO,	0,	"yubicoOTP",	0, 0 },
-	{ 0, 0, 0, 0, 0 }
-};
-
 # ifdef __cplusplus
 }
 # endif

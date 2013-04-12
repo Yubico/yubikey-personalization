@@ -36,6 +36,14 @@
 #include <json/json.h>
 #include <string.h>
 
+static struct map_st modes_map[] = {
+	{ MODE_OATH_HOTP,	0,	"oathHOTP",	0, 0 },
+	{ MODE_CHAL_HMAC,	0,	"hmacCR",	0, 0 },
+	{ MODE_STATIC_TICKET,	0,	"staticTicket",	0, 0 }, /* XXX: name? */
+	{ MODE_CHAL_YUBICO,	0,	"yubicoCR",	0, 0 },
+	{ MODE_OTP_YUBICO,	0,	"yubicoOTP",	0, 0 },
+	{ 0, 0, 0, 0, 0 }
+};
 
 int ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 	json_object *jobj = json_object_new_object();
