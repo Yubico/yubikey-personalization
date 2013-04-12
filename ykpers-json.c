@@ -205,6 +205,7 @@ int ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 }
 
 int ykp_json_import_cfg(const char *json, size_t len, YKP_CONFIG *cfg) {
+	ykp_errno = YKP_ENOTYETIMPL;
 	return 0;
 }
 
