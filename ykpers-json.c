@@ -38,116 +38,123 @@
 
 
 int ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
-	YK_CONFIG ycfg = cfg->ykcore_config;
 	json_object *jobj = json_object_new_object();
 	json_object *yprod_json = json_object_new_object();
 	json_object *options_json = json_object_new_object();
+	if(cfg) {
+		YK_CONFIG ycfg = cfg->ykcore_config;
 
-	int mode = MODE_OTP_YUBICO;
-	struct map_st *p;
+		int mode = MODE_OTP_YUBICO;
+		struct map_st *p;
 
-	if((ycfg.cfgFlags & CFGFLAG_STATIC_TICKET) == CFGFLAG_STATIC_TICKET) {
-		mode = MODE_STATIC_TICKET;
-	}
-	else if((ycfg.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP){
-		if((ycfg.cfgFlags & CFGFLAG_CHAL_YUBICO) == CFGFLAG_CHAL_YUBICO) {
-			mode = MODE_CHAL_YUBICO;
-		} else if((ycfg.cfgFlags & CFGFLAG_CHAL_HMAC) == CFGFLAG_CHAL_HMAC) {
-			mode = MODE_CHAL_HMAC;
-		} else {
-			mode = MODE_OATH_HOTP;
+		if((ycfg.cfgFlags & CFGFLAG_STATIC_TICKET) == CFGFLAG_STATIC_TICKET) {
+			mode = MODE_STATIC_TICKET;
 		}
-	}
-
-	for(p = modes_map; p->flag; p++) {
-		if(p->flag == mode) {
-			json_object *jmode = json_object_new_string(p->json_text);
-			json_object_object_add(yprod_json, "mode", jmode);
-			break;
-		}
-	}
-
-	json_object_object_add(jobj, "yubiProdConfig", yprod_json);
-	json_object_object_add(yprod_json, "options", options_json);
-
-
-	if(ycfg.fixedSize != 0 && mode != MODE_STATIC_TICKET) {
-		json_object *jPrefix;
-		char prefix[5] = {0};
-
-		json_object *scope = json_object_new_string("privatePrefix");
-		json_object_object_add(yprod_json, "scope", scope);
-
-		yubikey_modhex_encode(prefix, (const char*)ycfg.fixed, 2);
-		if(mode == MODE_OATH_HOTP) {
-			int flag = ycfg.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX;
-			json_object *fixed_modhex = json_object_new_boolean(
-					flag == CFGFLAG_OATH_FIXED_MODHEX ? 1 : 0);
-			json_object_object_add(options_json, "fixedModhex", fixed_modhex);
-
-			if(flag == 0) {
-				yubikey_hex_encode(prefix, (const char*)ycfg.fixed, 2);
-			} else if(flag == CFGFLAG_OATH_FIXED_MODHEX1) {
-				yubikey_hex_encode(prefix + 2, (const char*)ycfg.fixed + 1, 1);
+		else if((ycfg.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP){
+			if((ycfg.cfgFlags & CFGFLAG_CHAL_YUBICO) == CFGFLAG_CHAL_YUBICO) {
+				mode = MODE_CHAL_YUBICO;
+			} else if((ycfg.cfgFlags & CFGFLAG_CHAL_HMAC) == CFGFLAG_CHAL_HMAC) {
+				mode = MODE_CHAL_HMAC;
+			} else {
+				mode = MODE_OATH_HOTP;
 			}
 		}
-		jPrefix = json_object_new_string(prefix);
-		json_object_object_add(yprod_json, "prefix", jPrefix);
-	} else if(mode != MODE_STATIC_TICKET) {
-		json_object *scope = json_object_new_string("noPublicId");
-		json_object_object_add(yprod_json, "scope", scope);
-	}
 
-	if(mode == MODE_OATH_HOTP) {
-		json_object *oathDigits;
-		json_object *randomSeed;
-		if((ycfg.cfgFlags & CFGFLAG_OATH_HOTP8) == CFGFLAG_OATH_HOTP8) {
-			oathDigits = json_object_new_int(8);
-		} else {
-			oathDigits = json_object_new_int(6);
+		for(p = modes_map; p->flag; p++) {
+			if(p->flag == mode) {
+				json_object *jmode = json_object_new_string(p->json_text);
+				json_object_object_add(yprod_json, "mode", jmode);
+				break;
+			}
 		}
-		json_object_object_add(options_json, "oathDigits", oathDigits);
 
-		if((ycfg.uid[5] == 0x01 || ycfg.uid[5] == 0x00) && ycfg.uid[4] == 0x00) {
-			json_object *fixedSeedvalue = json_object_new_int(ycfg.uid[5] << 4);
-			json_object_object_add(options_json, "fixedSeedvalue", fixedSeedvalue);
-			randomSeed = json_object_new_boolean(0);
-		} else {
-			randomSeed = json_object_new_boolean(1);
-		}
-		json_object_object_add(options_json, "randomSeed", randomSeed);
-	}
+		json_object_object_add(jobj, "yubiProdConfig", yprod_json);
+		json_object_object_add(yprod_json, "options", options_json);
 
-	for(p = ticket_flags_map; p->flag; p++) {
-		if(!p->json_text) {
-			continue;
-		}
-		if(!p->mode || (p->mode && (mode & p->mode) == mode)) {
-			int set = (ycfg.tktFlags & p->flag) == p->flag;
-			json_object *jsetting = json_object_new_boolean(set);
-			json_object_object_add(options_json, p->json_text, jsetting);
-		}
-	}
 
-	for(p = config_flags_map; p->flag; p++) {
-		if(!p->json_text) {
-			continue;
-		}
-		if(!p->mode || (p->mode && (mode & p->mode) == mode)) {
-			int set = (ycfg.cfgFlags & p->flag) == p->flag;
-			json_object *jsetting = json_object_new_boolean(set);
-			json_object_object_add(options_json, p->json_text, jsetting);
-		}
-	}
+		if(ycfg.fixedSize != 0 && mode != MODE_STATIC_TICKET) {
+			json_object *jPrefix;
+			char prefix[5] = {0};
 
-	for(p = extended_flags_map; p->flag; p++) {
-		if(!p->json_text) {
-			continue;
+			json_object *scope;
+			if(ycfg.fixed[0] == 0x00 && ycfg.fixed[1] == 0x00) {
+				scope = json_object_new_string("yubiCloud");
+			} else {
+				scope = json_object_new_string("privatePrefix");
+			}
+			json_object_object_add(yprod_json, "scope", scope);
+
+			yubikey_modhex_encode(prefix, (const char*)ycfg.fixed, 2);
+			if(mode == MODE_OATH_HOTP) {
+				int flag = ycfg.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX;
+				json_object *fixed_modhex = json_object_new_boolean(
+						flag == CFGFLAG_OATH_FIXED_MODHEX ? 1 : 0);
+				json_object_object_add(options_json, "fixedModhex", fixed_modhex);
+
+				if(flag == 0) {
+					yubikey_hex_encode(prefix, (const char*)ycfg.fixed, 2);
+				} else if(flag == CFGFLAG_OATH_FIXED_MODHEX1) {
+					yubikey_hex_encode(prefix + 2, (const char*)ycfg.fixed + 1, 1);
+				}
+			}
+			jPrefix = json_object_new_string(prefix);
+			json_object_object_add(yprod_json, "prefix", jPrefix);
+		} else if(mode != MODE_STATIC_TICKET) {
+			json_object *scope = json_object_new_string("noPublicId");
+			json_object_object_add(yprod_json, "scope", scope);
 		}
-		if(!p->mode || (p->mode && (mode & p->mode) == mode)) {
-			int set = (ycfg.extFlags & p->flag) == p->flag;
-			json_object *jsetting = json_object_new_boolean(set);
-			json_object_object_add(options_json, p->json_text, jsetting);
+
+		if(mode == MODE_OATH_HOTP) {
+			json_object *oathDigits;
+			json_object *randomSeed;
+			if((ycfg.cfgFlags & CFGFLAG_OATH_HOTP8) == CFGFLAG_OATH_HOTP8) {
+				oathDigits = json_object_new_int(8);
+			} else {
+				oathDigits = json_object_new_int(6);
+			}
+			json_object_object_add(options_json, "oathDigits", oathDigits);
+
+			if((ycfg.uid[5] == 0x01 || ycfg.uid[5] == 0x00) && ycfg.uid[4] == 0x00) {
+				json_object *fixedSeedvalue = json_object_new_int(ycfg.uid[5] << 4);
+				json_object_object_add(options_json, "fixedSeedvalue", fixedSeedvalue);
+				randomSeed = json_object_new_boolean(0);
+			} else {
+				randomSeed = json_object_new_boolean(1);
+			}
+			json_object_object_add(options_json, "randomSeed", randomSeed);
+		}
+
+		for(p = ticket_flags_map; p->flag; p++) {
+			if(!p->json_text) {
+				continue;
+			}
+			if(!p->mode || (p->mode && (mode & p->mode) == mode)) {
+				int set = (ycfg.tktFlags & p->flag) == p->flag;
+				json_object *jsetting = json_object_new_boolean(set);
+				json_object_object_add(options_json, p->json_text, jsetting);
+			}
+		}
+
+		for(p = config_flags_map; p->flag; p++) {
+			if(!p->json_text) {
+				continue;
+			}
+			if(!p->mode || (p->mode && (mode & p->mode) == mode)) {
+				int set = (ycfg.cfgFlags & p->flag) == p->flag;
+				json_object *jsetting = json_object_new_boolean(set);
+				json_object_object_add(options_json, p->json_text, jsetting);
+			}
+		}
+
+		for(p = extended_flags_map; p->flag; p++) {
+			if(!p->json_text) {
+				continue;
+			}
+			if(!p->mode || (p->mode && (mode & p->mode) == mode)) {
+				int set = (ycfg.extFlags & p->flag) == p->flag;
+				json_object *jsetting = json_object_new_boolean(set);
+				json_object_object_add(options_json, p->json_text, jsetting);
+			}
 		}
 	}
 
