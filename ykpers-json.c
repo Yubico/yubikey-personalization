@@ -75,6 +75,9 @@ int ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 		json_object *jPrefix;
 		char prefix[5] = {0};
 
+		json_object *scope = json_object_new_string("privatePrefix");
+		json_object_object_add(yprod_json, "scope", scope);
+
 		yubikey_modhex_encode(prefix, (const char*)ycfg.fixed, 2);
 		if(mode == MODE_OATH_HOTP) {
 			int flag = ycfg.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX;
