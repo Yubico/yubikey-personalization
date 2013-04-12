@@ -602,82 +602,82 @@ static bool vcheck_neo_after_6(const YKP_CONFIG *cfg)
 	return vcheck_neo(cfg) && cfg->yk_build_version > 6;
 }
 
-static bool capability_has_hidtrig(const YKP_CONFIG *cfg)
+bool capability_has_hidtrig(const YKP_CONFIG *cfg)
 {
 	return vcheck_v1(cfg);
 }
 
-static bool capability_has_ticket_first(const YKP_CONFIG *cfg)
+bool capability_has_ticket_first(const YKP_CONFIG *cfg)
 {
 	return vcheck_v1(cfg);
 }
 
-static bool capability_has_static(const YKP_CONFIG *cfg)
+bool capability_has_static(const YKP_CONFIG *cfg)
 {
 	return vcheck_all(cfg) && !vcheck_neo_before_5(cfg);
 }
 
-static bool capability_has_static_extras(const YKP_CONFIG *cfg)
+bool capability_has_static_extras(const YKP_CONFIG *cfg)
 {
 	return vcheck_no_v1(cfg) && !vcheck_neo_before_5(cfg);
 }
 
-static bool capability_has_slot_two(const YKP_CONFIG *cfg)
+bool capability_has_slot_two(const YKP_CONFIG *cfg)
 {
 	return vcheck_no_v1(cfg) && !vcheck_neo(cfg);
 }
 
-static bool capability_has_chal_resp(const YKP_CONFIG *cfg)
+bool capability_has_chal_resp(const YKP_CONFIG *cfg)
 {
 	return vcheck_v22_or_greater(cfg);
 }
 
-static bool capability_has_oath_imf(const YKP_CONFIG *cfg)
+bool capability_has_oath_imf(const YKP_CONFIG *cfg)
 {
 	return vcheck_v22_or_greater(cfg) || vcheck_neo_after_6(cfg);
 }
 
-static bool capability_has_serial_api(const YKP_CONFIG *cfg)
+bool capability_has_serial_api(const YKP_CONFIG *cfg)
 {
 	return vcheck_v22_or_greater(cfg) || vcheck_neo(cfg);
 }
 
-static bool capability_has_serial(const YKP_CONFIG *cfg)
+bool capability_has_serial(const YKP_CONFIG *cfg)
 {
 	return vcheck_v22_or_greater(cfg);
 }
 
-static bool capability_has_oath(const YKP_CONFIG *cfg)
+bool capability_has_oath(const YKP_CONFIG *cfg)
 {
 	return vcheck_v21_or_greater(cfg) || vcheck_neo(cfg);
 }
 
-static bool capability_has_ticket_mods(const YKP_CONFIG *cfg)
+bool capability_has_ticket_mods(const YKP_CONFIG *cfg)
 {
 	return vcheck_all(cfg);
 }
 
-static bool capability_has_update(const YKP_CONFIG *cfg)
+bool capability_has_update(const YKP_CONFIG *cfg)
 {
 	return vcheck_v23_or_greater(cfg);
 }
 
-static bool capability_has_fast(const YKP_CONFIG *cfg)
+bool capability_has_fast(const YKP_CONFIG *cfg)
 {
 	return vcheck_v23_or_greater(cfg);
 }
 
-static bool capability_has_numeric(const YKP_CONFIG *cfg)
+bool capability_has_numeric(const YKP_CONFIG *cfg)
 {
 	return vcheck_v23_or_greater(cfg);
 }
 
-static bool capability_has_dormant(const YKP_CONFIG *cfg)
+bool capability_has_dormant(const YKP_CONFIG *cfg)
 {
 	return vcheck_v23_or_greater(cfg);
 }
 
-static bool capability_has_led_inv(const YKP_CONFIG *cfg)
+bool capability_has_led_inv(const YKP_CONFIG *cfg)
 {
 	return (vcheck_v24_or_greater(cfg) && !vcheck_v30(cfg));
 }
@@ -846,73 +846,9 @@ static const char str_oath_imf[] = "OATH IMF";
 
 static const char str_flags_separator[] = "|";
 
-struct map_st {
-	uint8_t flag;
-	const char *flag_text;
-	bool (*capability)(const YKP_CONFIG *cfg);
-	unsigned char tkt_context;
-};
-
 static const char str_ticket_flags[] = "ticket_flags";
-static struct map_st ticket_flags_map[] = {
-	{ TKTFLAG_TAB_FIRST,		"TAB_FIRST",		capability_has_ticket_mods,	0 },
-	{ TKTFLAG_APPEND_TAB1,		"APPEND_TAB1",		capability_has_ticket_mods,	0 },
-	{ TKTFLAG_APPEND_TAB2,		"APPEND_TAB2",		capability_has_ticket_mods,	0 },
-	{ TKTFLAG_APPEND_DELAY1,	"APPEND_DELAY1",	capability_has_ticket_mods,	0 },
-	{ TKTFLAG_APPEND_DELAY2,	"APPEND_DELAY2",	capability_has_ticket_mods,	0 },
-	{ TKTFLAG_APPEND_CR,		"APPEND_CR",		capability_has_ticket_mods,	0 },
-	{ TKTFLAG_PROTECT_CFG2,		"PROTECT_CFG2",		capability_has_slot_two,	0 },
-	{ TKTFLAG_OATH_HOTP,		"OATH_HOTP",		capability_has_oath,		0 },
-	{ TKTFLAG_CHAL_RESP,		"CHAL_RESP",		capability_has_chal_resp,	0 },
-	{ 0, "", 0, 0 }
-};
-
 static const char str_config_flags[] = "config_flags";
-static struct map_st config_flags_map[] = {
-	/*
-	  Values used to pretty-print a YKP_CONFIG in ykp_write_config().
-
-	  The fourth field is a (tkt)context in which this (cfg)flag is valid.
-	  Some cfgFlags share the same value (e.g. CFGFLAG_STRONG_PW2 and
-	  CFGFLAG_OATH_FIXED_MODHEX2, both 0x40). Obvioulsy, STRONG_PW2 is not
-	  in effect when we do OATH, so by setting tkt_context to TKTFLAG_OATH_HOTP
-	  and having the OATH flags before STRONG_PW2 in this struct we will show
-	  cfgFlag 0x40 as OATH_FIXED_MODHEX2 and not STRONG_PW2 if TKTFLAG_OATH_HOTP
-	  is set.
-	*/
-	{ CFGFLAG_CHAL_YUBICO,		"CHAL_YUBICO",		capability_has_chal_resp,	TKTFLAG_CHAL_RESP },
-	{ CFGFLAG_CHAL_HMAC,		"CHAL_HMAC",		capability_has_chal_resp,	TKTFLAG_CHAL_RESP },
-	{ CFGFLAG_HMAC_LT64,		"HMAC_LT64",		capability_has_chal_resp,	TKTFLAG_CHAL_RESP },
-	{ CFGFLAG_CHAL_BTN_TRIG,	"CHAL_BTN_TRIG",	capability_has_chal_resp,	TKTFLAG_CHAL_RESP },
-	{ CFGFLAG_OATH_HOTP8,		"OATH_HOTP8",		capability_has_oath,		TKTFLAG_OATH_HOTP },
-	{ CFGFLAG_OATH_FIXED_MODHEX1,	"OATH_FIXED_MODHEX1",	capability_has_oath,		TKTFLAG_OATH_HOTP },
-	{ CFGFLAG_OATH_FIXED_MODHEX2,	"OATH_FIXED_MODHEX2",	capability_has_oath,		TKTFLAG_OATH_HOTP },
-	{ CFGFLAG_OATH_FIXED_MODHEX,	"OATH_FIXED_MODHEX",	capability_has_oath,		TKTFLAG_OATH_HOTP },
-	{ CFGFLAG_SEND_REF,		"SEND_REF",		capability_has_ticket_mods,	0 },
-	{ CFGFLAG_TICKET_FIRST,		"TICKET_FIRST",		capability_has_ticket_first,	0 },
-	{ CFGFLAG_PACING_10MS,		"PACING_10MS",		capability_has_ticket_mods,	0 },
-	{ CFGFLAG_PACING_20MS,		"PACING_20MS",		capability_has_ticket_mods,	0 },
-	{ CFGFLAG_ALLOW_HIDTRIG,	"ALLOW_HIDTRIG",	capability_has_hidtrig,		0 },
-	{ CFGFLAG_STATIC_TICKET,	"STATIC_TICKET",	capability_has_static,		0 },
-	{ CFGFLAG_SHORT_TICKET,		"SHORT_TICKET",		capability_has_static_extras,	0 },
-	{ CFGFLAG_STRONG_PW1,		"STRONG_PW1",		capability_has_static_extras,	0 },
-	{ CFGFLAG_STRONG_PW2,		"STRONG_PW2",		capability_has_static_extras,	0 },
-	{ CFGFLAG_MAN_UPDATE,		"MAN_UPDATE",		capability_has_static_extras,	0 },
-	{ 0, "", 0, 0 }
-};
-
 static const char str_extended_flags[] = "extended_flags";
-static struct map_st extended_flags_map[] = {
-	{ EXTFLAG_SERIAL_BTN_VISIBLE,	"SERIAL_BTN_VISIBLE",	capability_has_serial,		0 },
-	{ EXTFLAG_SERIAL_USB_VISIBLE,	"SERIAL_USB_VISIBLE",	capability_has_serial ,		0 },
-	{ EXTFLAG_SERIAL_API_VISIBLE,	"SERIAL_API_VISIBLE",	capability_has_serial_api,	0 },
-	{ EXTFLAG_USE_NUMERIC_KEYPAD,	"USE_NUMERIC_KEYPAD",	capability_has_numeric,		0 },
-	{ EXTFLAG_FAST_TRIG,		"FAST_TRIG",		capability_has_fast,		0 },
-	{ EXTFLAG_ALLOW_UPDATE,		"ALLOW_UPDATE",		capability_has_update,		0 },
-	{ EXTFLAG_DORMANT,		"DORMANT",		capability_has_dormant,		0 },
-	{ EXTFLAG_LED_INV,		"LED_INV",		capability_has_led_inv,		0 },
-	{ 0, "", 0, 0 }
-};
 
 int ykp_export_config(const YKP_CONFIG *cfg, char *buf, size_t len,
 		int format) {
@@ -941,6 +877,21 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		struct map_st *p;
 		unsigned char t_flags;
 		bool key_bits_in_uid = false;
+		YK_CONFIG ycfg = cfg->ykcore_config;
+		int mode = MODE_OTP_YUBICO;
+
+		if((ycfg.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP){
+			if((ycfg.cfgFlags & CFGFLAG_CHAL_YUBICO) == CFGFLAG_CHAL_YUBICO) {
+				mode = MODE_CHAL_YUBICO;
+			} else if((ycfg.cfgFlags & CFGFLAG_CHAL_HMAC) == CFGFLAG_CHAL_HMAC) {
+				mode = MODE_CHAL_HMAC;
+			} else {
+				mode = MODE_OATH_HOTP;
+			}
+		}
+		else if((ycfg.cfgFlags & CFGFLAG_STATIC_TICKET) == CFGFLAG_STATIC_TICKET) {
+			mode = MODE_STATIC_TICKET;
+		}
 
 		/* for OATH-HOTP and HMAC-SHA1 challenge response, there is four bytes
 		 *  additional key data in the uid field
@@ -948,32 +899,32 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		key_bits_in_uid = (_get_supported_key_length(cfg) == 20);
 
 		/* fixed: or OATH id: */
-		if ((cfg->ykcore_config.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP &&
-		    cfg->ykcore_config.fixedSize) {
+		if ((ycfg.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP &&
+		    ycfg.fixedSize) {
 			writer(str_oath_id, strlen(str_oath_id), userdata);
 			writer(str_key_value_separator,
 			       strlen(str_key_value_separator),
 			       userdata);
 			/* First byte (vendor id) */
-			if ((cfg->ykcore_config.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX1) == CFGFLAG_OATH_FIXED_MODHEX1 ||
-			    (cfg->ykcore_config.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX2) == CFGFLAG_OATH_FIXED_MODHEX2 ||
-			    (cfg->ykcore_config.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX) == CFGFLAG_OATH_FIXED_MODHEX) {
-				yubikey_modhex_encode(buffer, (const char *)cfg->ykcore_config.fixed, 1);
+			if ((ycfg.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX1) == CFGFLAG_OATH_FIXED_MODHEX1 ||
+			    (ycfg.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX2) == CFGFLAG_OATH_FIXED_MODHEX2 ||
+			    (ycfg.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX) == CFGFLAG_OATH_FIXED_MODHEX) {
+				yubikey_modhex_encode(buffer, (const char *)ycfg.fixed, 1);
 			} else {
-				yubikey_hex_encode(buffer, (const char *)cfg->ykcore_config.fixed, 1);
+				yubikey_hex_encode(buffer, (const char *)ycfg.fixed, 1);
 			}
 			/* Second byte (token type) */
-			if ((cfg->ykcore_config.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX2) == CFGFLAG_OATH_FIXED_MODHEX2 ||
-			    (cfg->ykcore_config.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX) == CFGFLAG_OATH_FIXED_MODHEX) {
-				yubikey_modhex_encode(buffer + 2, (const char *)cfg->ykcore_config.fixed + 1, 1);
+			if ((ycfg.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX2) == CFGFLAG_OATH_FIXED_MODHEX2 ||
+			    (ycfg.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX) == CFGFLAG_OATH_FIXED_MODHEX) {
+				yubikey_modhex_encode(buffer + 2, (const char *)ycfg.fixed + 1, 1);
 			} else {
-				yubikey_hex_encode(buffer + 2, (const char *)cfg->ykcore_config.fixed + 1, 1);
+				yubikey_hex_encode(buffer + 2, (const char *)ycfg.fixed + 1, 1);
 			}
 			/* bytes 3-12 - MUI */
-			if ((cfg->ykcore_config.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX) == CFGFLAG_OATH_FIXED_MODHEX) {
-				yubikey_modhex_encode(buffer + 4, (const char *)cfg->ykcore_config.fixed + 2, 8);
+			if ((ycfg.cfgFlags & CFGFLAG_OATH_FIXED_MODHEX) == CFGFLAG_OATH_FIXED_MODHEX) {
+				yubikey_modhex_encode(buffer + 4, (const char *)ycfg.fixed + 2, 8);
 			} else {
-				yubikey_hex_encode(buffer + 4, (const char *)cfg->ykcore_config.fixed + 2, 8);
+				yubikey_hex_encode(buffer + 4, (const char *)ycfg.fixed + 2, 8);
 			}
 			buffer[12] = 0;
 			writer(buffer, strlen(buffer), userdata);
@@ -986,7 +937,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 			writer(str_modhex_prefix,
 			       strlen(str_modhex_prefix),
 			       userdata);
-			yubikey_modhex_encode(buffer, (const char *)cfg->ykcore_config.fixed, cfg->ykcore_config.fixedSize);
+			yubikey_modhex_encode(buffer, (const char *)ycfg.fixed, ycfg.fixedSize);
 			writer(buffer, strlen(buffer), userdata);
 			writer("\n", 1, userdata);
 		}
@@ -1002,7 +953,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 			writer(str_hex_prefix,
 			       strlen(str_hex_prefix),
 			       userdata);
-			yubikey_hex_encode(buffer, (const char *)cfg->ykcore_config.uid, UID_SIZE);
+			yubikey_hex_encode(buffer, (const char *)ycfg.uid, UID_SIZE);
 			writer(buffer, strlen(buffer), userdata);
 		}
 		writer("\n", 1, userdata);
@@ -1015,9 +966,9 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		writer(str_hex_prefix,
 		       strlen(str_hex_prefix),
 		       userdata);
-		yubikey_hex_encode(buffer, (const char *)cfg->ykcore_config.key, KEY_SIZE);
+		yubikey_hex_encode(buffer, (const char *)ycfg.key, KEY_SIZE);
 		if (key_bits_in_uid) {
-			yubikey_hex_encode(buffer + KEY_SIZE * 2, (const char *)cfg->ykcore_config.uid, 4);
+			yubikey_hex_encode(buffer + KEY_SIZE * 2, (const char *)ycfg.uid, 4);
 		}
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
@@ -1030,12 +981,12 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		writer(str_hex_prefix,
 		       strlen(str_hex_prefix),
 		       userdata);
-		yubikey_hex_encode(buffer, (const char*)cfg->ykcore_config.accCode, ACC_CODE_SIZE);
+		yubikey_hex_encode(buffer, (const char*)ycfg.accCode, ACC_CODE_SIZE);
 		writer(buffer, strlen(buffer), userdata);
 		writer("\n", 1, userdata);
 
 		/* OATH IMF: */
-		if ((cfg->ykcore_config.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP &&
+		if ((ycfg.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP &&
 		    capability_has_oath_imf(cfg)) {
 			writer(str_oath_imf, strlen(str_oath_imf), userdata);
 			writer(str_key_value_separator,
@@ -1052,8 +1003,9 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		/* ticket_flags: */
 		buffer[0] = '\0';
 		for (p = ticket_flags_map; p->flag; p++) {
-			if ((cfg->ykcore_config.tktFlags & p->flag) == p->flag
-			    && p->capability(cfg)) {
+			if ((ycfg.tktFlags & p->flag) == p->flag
+			    && p->capability(cfg)
+			    && (mode & p->mode) == mode) {
 				if (*buffer) {
 					strcat(buffer, str_flags_separator);
 					strcat(buffer, p->flag_text);
@@ -1071,11 +1023,11 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 
 		/* config_flags: */
 		buffer[0] = '\0';
-		t_flags = cfg->ykcore_config.cfgFlags;
+		t_flags = ycfg.cfgFlags;
 		for (p = config_flags_map; p->flag; p++) {
 			if ((t_flags & p->flag) == p->flag
 			    && p->capability(cfg)
-			    && (cfg->ykcore_config.tktFlags & p->tkt_context) == p->tkt_context) {
+			    && (mode & p->mode) == mode) {
 				if (*buffer) {
 					strcat(buffer, str_flags_separator);
 					strcat(buffer, p->flag_text);
@@ -1098,8 +1050,9 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		/* extended_flags: */
 		buffer[0] = '\0';
 		for (p = extended_flags_map; p->flag; p++) {
-			if ((cfg->ykcore_config.extFlags & p->flag) == p->flag
-			    && p->capability(cfg)) {
+			if ((ycfg.extFlags & p->flag) == p->flag
+			    && p->capability(cfg)
+			    && (mode & p->mode) == mode) {
 				if (*buffer) {
 					strcat(buffer, str_flags_separator);
 					strcat(buffer, p->flag_text);

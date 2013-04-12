@@ -36,67 +36,6 @@
 #include <json/json.h>
 #include <string.h>
 
-struct map_st {
-	uint8_t flag;
-	const char *flag_text;
-	unsigned char mode;
-};
-
-#define MODE_CHAL_HMAC		0x01
-#define MODE_OATH_HOTP		0x02
-#define MODE_OTP_YUBICO		0x04
-#define MODE_CHAL_YUBICO	0x08
-#define MODE_STATIC_TICKET	0x10
-
-#define MODE_CHAL_RESP		MODE_CHAL_YUBICO | MODE_CHAL_HMAC
-#define MODE_OUTPUT 		MODE_STATIC_TICKET | MODE_OTP_YUBICO | MODE_OATH_HOTP
-
-static struct map_st ticket_flags_map[] = {
-	{ TKTFLAG_TAB_FIRST,		"tabFirst",	MODE_OUTPUT },
-	{ TKTFLAG_APPEND_TAB1,		"tabBetween",	MODE_OUTPUT },
-	{ TKTFLAG_APPEND_TAB2,		"tabLast",	MODE_OUTPUT },
-	{ TKTFLAG_APPEND_DELAY1,	"appendDelay1",	MODE_OUTPUT }, /* XXX: name? */
-	{ TKTFLAG_APPEND_DELAY2,	"appendDelay2",	MODE_OUTPUT }, /* XXX: name? */
-	{ TKTFLAG_APPEND_CR,		"appendCR",	MODE_OUTPUT },
-	{ TKTFLAG_PROTECT_CFG2,		"protectSecond",0 },
-	{ 0, "", 0 }
-};
-
-static struct map_st config_flags_map[] = {
-	{ CFGFLAG_HMAC_LT64,		"hmacLT64",	MODE_CHAL_HMAC }, /* XXX: name? */
-	{ CFGFLAG_CHAL_BTN_TRIG,	"buttonReqd",	MODE_CHAL_RESP },
-	{ CFGFLAG_SEND_REF,		"sendRef",	MODE_OUTPUT }, /* XXX: name? */
-	{ CFGFLAG_TICKET_FIRST,		"ticketFirst",	MODE_OUTPUT }, /* XXX: name? */
-	{ CFGFLAG_PACING_10MS,		"pacing10MS",	MODE_OUTPUT }, /* XXX: name? */
-	{ CFGFLAG_PACING_20MS,		"pacing20MS",	MODE_OUTPUT }, /* XXX: name? */
-	{ CFGFLAG_ALLOW_HIDTRIG,	"allowHidtrig",	MODE_OUTPUT }, /* XXX: name? */
-	{ CFGFLAG_SHORT_TICKET,		"shortTicket",	MODE_STATIC_TICKET }, /* XXX: name? */
-	{ CFGFLAG_STRONG_PW1,		"strongPw1",	MODE_STATIC_TICKET }, /* XXX: name? */
-	{ CFGFLAG_STRONG_PW2,		"strongPw2",	MODE_STATIC_TICKET }, /* XXX: name? */
-	{ CFGFLAG_MAN_UPDATE,		"manUpdate",	MODE_STATIC_TICKET }, /* XXX: name? */
-	{ 0, "", 0 }
-};
-
-static struct map_st extended_flags_map[] = {
-	{ EXTFLAG_SERIAL_BTN_VISIBLE,	"serialBtnVisible",	0 },
-	{ EXTFLAG_SERIAL_USB_VISIBLE,	"serialUsbVisible",	0 },
-	{ EXTFLAG_SERIAL_API_VISIBLE,	"serialApiVisible",	0 },
-	{ EXTFLAG_USE_NUMERIC_KEYPAD,	"useNumericKeypad",	0 },
-	{ EXTFLAG_FAST_TRIG,		"fastTrig",		0 },
-	{ EXTFLAG_ALLOW_UPDATE,		"allowUpdate",		0 },
-	{ EXTFLAG_DORMANT,		"dormant",		0 },
-	{ EXTFLAG_LED_INV,		"invertLed",		0 }, /* XXX: name? */
-	{ 0, "", 0 }
-};
-
-static struct map_st modes_map[] = {
-	{ MODE_OATH_HOTP,	"oathHOTP",	0 },
-	{ MODE_CHAL_HMAC,	"hmacCR",	0 },
-	{ MODE_STATIC_TICKET,	"staticTicket",	0 }, /* XXX: name? */
-	{ MODE_CHAL_YUBICO,	"yubicoCR",	0 }, /* XXX: name? */
-	{ MODE_OTP_YUBICO,	"yubicoOTP",	0 },
-	{ 0, "", 0 }
-};
 
 int ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 	YK_CONFIG ycfg = cfg->ykcore_config;
@@ -122,8 +61,9 @@ int ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 
 	for(p = modes_map; p->flag; p++) {
 		if(p->flag == mode) {
-			json_object *jmode = json_object_new_string(p->flag_text);
+			json_object *jmode = json_object_new_string(p->json_text);
 			json_object_object_add(yprod_json, "mode", jmode);
+			break;
 		}
 	}
 
@@ -176,25 +116,36 @@ int ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 	}
 
 	for(p = ticket_flags_map; p->flag; p++) {
+		if(!p->json_text) {
+			continue;
+		}
 		if(!p->mode || (p->mode && (mode & p->mode) == mode)) {
 			int set = (ycfg.tktFlags & p->flag) == p->flag;
 			json_object *jsetting = json_object_new_boolean(set);
-			json_object_object_add(options_json, p->flag_text, jsetting);
+			json_object_object_add(options_json, p->json_text, jsetting);
 		}
 	}
 
 	for(p = config_flags_map; p->flag; p++) {
+		if(!p->json_text) {
+			continue;
+		}
 		if(!p->mode || (p->mode && (mode & p->mode) == mode)) {
 			int set = (ycfg.cfgFlags & p->flag) == p->flag;
 			json_object *jsetting = json_object_new_boolean(set);
-			json_object_object_add(options_json, p->flag_text, jsetting);
+			json_object_object_add(options_json, p->json_text, jsetting);
 		}
 	}
 
 	for(p = extended_flags_map; p->flag; p++) {
-		int set = (ycfg.extFlags & p->flag) == p->flag;
-		json_object *jsetting = json_object_new_boolean(set);
-		json_object_object_add(options_json, p->flag_text, jsetting);
+		if(!p->json_text) {
+			continue;
+		}
+		if(!p->mode || (p->mode && (mode & p->mode) == mode)) {
+			int set = (ycfg.extFlags & p->flag) == p->flag;
+			json_object *jsetting = json_object_new_boolean(set);
+			json_object_object_add(options_json, p->json_text, jsetting);
+		}
 	}
 
 	strncpy(json, json_object_to_json_string(jobj), len);
