@@ -1010,8 +1010,11 @@ int ykp_import_config(const char *buf, size_t len, YKP_CONFIG *cfg,
 		int format) {
 	if(format == YKP_FORMAT_JSON) {
 		return ykp_json_import_cfg(buf, len, cfg);
+	} else if(format == YKP_FORMAT_LEGACY) {
+		ykp_errno = YKP_ENOTYETIMPL;
 	}
-	return 1;
+	ykp_errno = YKP_EINVAL;
+	return 0;
 }
 int ykp_write_config(const YKP_CONFIG *cfg,
 		     int (*writer)(const char *buf, size_t count,
