@@ -169,10 +169,17 @@ int ykp_json_import_cfg(const char *json, size_t len, YKP_CONFIG *cfg) {
 		json_object *jobj = json_tokener_parse(json);
 		json_object *yprod_json = json_object_object_get(jobj, "yubiProdConfig");
 		json_object *jmode = json_object_object_get(yprod_json, "mode");
-		const char *raw_mode = json_object_get_string(jmode);
+		json_object *options = json_object_object_get(yprod_json, "options");
+		const char *raw_mode;
 		int mode = MODE_OTP_YUBICO;
-
 		struct map_st *p;
+
+		if(!jobj || !yprod_json || !jmode || !options) {
+			ykp_errno = YKP_EINVAL;
+			return 0;
+		}
+
+		raw_mode = json_object_get_string(jmode);
 
 		for(p = _modes_map; p->flag; p++) {
 			if(strcmp(raw_mode, p->json_text) == 0) {
@@ -182,7 +189,29 @@ int ykp_json_import_cfg(const char *json, size_t len, YKP_CONFIG *cfg) {
 		}
 
 		if(mode == MODE_OATH_HOTP) {
+			json_object *jdigits = json_object_object_get(options, "oathDigits");
+			json_object *jrandom = json_object_object_get(options, "randomSeed");
+
 			ykp_set_tktflag_OATH_HOTP(cfg, true);
+			if(jdigits) {
+				int digits = json_object_get_int(jdigits);
+				if(digits == 8) {
+					ykp_set_cfgflag_OATH_HOTP8(cfg, true);
+				}
+			}
+			if(jrandom) {
+				int random = json_object_get_boolean(jrandom);
+				int seed = 0;
+				if(random == 1) {
+					/* XXX: add random seed.. */
+				} else {
+					json_object *jseed = json_object_object_get(options, "fixedSeedvalue");
+					if(jseed) {
+						seed = json_object_get_int(jseed);
+					}
+				}
+				ykp_set_oath_imf(cfg, seed);
+			}
 		} else if(mode == MODE_CHAL_HMAC) {
 			ykp_set_tktflag_CHAL_RESP(cfg, true);
 			ykp_set_cfgflag_CHAL_HMAC(cfg, true);
