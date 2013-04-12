@@ -1,5 +1,5 @@
 # Written by Simon Josefsson <simon@josefsson.org>.
-# Copyright (c) 2010-2012 Yubico AB
+# Copyright (c) 2010-2013 Yubico AB
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 LIBYUBIKEYVERSION=1.10
+LIBJSONVERSION=0.11-20130402
 PROJECT=yubikey-personalization
 PACKAGE=ykpers
 
@@ -44,6 +45,13 @@ usage:
 
 ykpers4win:
 	rm -rf tmp && mkdir tmp && cd tmp && \
+	cp ../json-c-$(LIBJSONVERSION) . \
+		||	wget https://github.com/json-c/json-c/tarball/json-c-$(LIBJSONVERSION) && \
+	tar xfa json-c-$(LIBJSONVERSION) && \
+	cd json-c-json-c-* && \
+	ac_cv_func_realloc_0_nonnull=yes ac_cv_func_malloc_0_nonnull=yes ./configure --host=$(HOST) --build=x86_64-unknown-linux-gnu --prefix=$(PWD)/tmp/root && \
+	make install && \
+	cd .. && \
 	cp ../libyubikey-$(LIBYUBIKEYVERSION).tar.gz . \
 		|| 	wget http://yubico-c.googlecode.com/files/libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
 	tar xfa libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
@@ -55,7 +63,7 @@ ykpers4win:
 		|| wget http://yubikey-personalization.googlecode.com/files/ykpers-$(VERSION).tar.gz && \
 	tar xfa ykpers-$(VERSION).tar.gz && \
 	cd ykpers-$(VERSION)/ && \
-	lt_cv_deplibs_check_method=pass_all ./configure --host=$(HOST) --build=x86_64-unknown-linux-gnu --prefix=$(PWD)/tmp/root LDFLAGS=-L$(PWD)/tmp/root/lib CPPFLAGS=-I$(PWD)/tmp/root/include && \
+	PKG_CONFIG_PATH=$(PWD)/tmp/root/lib/pkgconfig lt_cv_deplibs_check_method=pass_all ./configure --disable-silent-rules --host=$(HOST) --build=x86_64-unknown-linux-gnu --prefix=$(PWD)/tmp/root LDFLAGS=-L$(PWD)/tmp/root/lib CPPFLAGS=-I$(PWD)/tmp/root/include && \
 	make install $(CHECK) && \
 	cd .. && \
 	cd root && \
