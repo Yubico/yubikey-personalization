@@ -45,12 +45,14 @@ usage:
 
 ykpers4win:
 	rm -rf tmp && mkdir tmp && cd tmp && \
+	mkdir -p root/licenses && \
 	cp ../json-c-$(LIBJSONVERSION) . \
 		||	wget https://github.com/json-c/json-c/tarball/json-c-$(LIBJSONVERSION) && \
 	tar xfa json-c-$(LIBJSONVERSION) && \
 	cd json-c-json-c-* && \
 	ac_cv_func_realloc_0_nonnull=yes ac_cv_func_malloc_0_nonnull=yes ./configure --host=$(HOST) --build=x86_64-unknown-linux-gnu --prefix=$(PWD)/tmp/root && \
 	make install && \
+	cp COPYING $(PWD)/tmp/root/licenses/json-c.txt && \
 	cd .. && \
 	cp ../libyubikey-$(LIBYUBIKEYVERSION).tar.gz . \
 		|| 	wget http://yubico-c.googlecode.com/files/libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
@@ -58,6 +60,7 @@ ykpers4win:
 	cd libyubikey-$(LIBYUBIKEYVERSION) && \
 	./configure --host=$(HOST) --build=x86_64-unknown-linux-gnu --prefix=$(PWD)/tmp/root && \
 	make install $(CHECK) && \
+	cp COPYING $(PWD)/tmp/root/licenses/libyubikey.txt && \
 	cd .. && \
 	cp ../ykpers-$(VERSION).tar.gz . \
 		|| wget http://yubikey-personalization.googlecode.com/files/ykpers-$(VERSION).tar.gz && \
@@ -65,6 +68,7 @@ ykpers4win:
 	cd ykpers-$(VERSION)/ && \
 	PKG_CONFIG_PATH=$(PWD)/tmp/root/lib/pkgconfig lt_cv_deplibs_check_method=pass_all ./configure --host=$(HOST) --build=x86_64-unknown-linux-gnu --prefix=$(PWD)/tmp/root LDFLAGS=-L$(PWD)/tmp/root/lib CPPFLAGS=-I$(PWD)/tmp/root/include && \
 	make install $(CHECK) && \
+	cp COPYING $(PWD)/tmp/root/licenses/yubikey-personalization.txt && \
 	cd .. && \
 	cd root && \
 	zip -r ../../ykpers-$(VERSION)-win$(ARCH).zip *
