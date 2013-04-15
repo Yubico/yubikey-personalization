@@ -197,8 +197,8 @@ int main(int argc, char **argv)
 			goto err;
 	}
 
-	ykp_export_config(cfg, data, 1024, data_format);
 	if (outf) {
+		ykp_export_config(cfg, data, 1024, data_format);
 		if(!(fwrite(data, 1, strlen(data), outf))) {
 			goto err;
 		}
@@ -221,6 +221,7 @@ int main(int argc, char **argv)
 			} else {
 				fprintf(stderr, "Configuration data to be updated in key configuration %d:\n\n", ykp_command(cfg) == SLOT_UPDATE1 ? 1 : 2);
 			}
+			ykp_export_config(cfg, data, 1024, YKP_FORMAT_LEGACY);
 			fwrite(data, 1, strlen(data), stderr);
 		}
 		fprintf(stderr, "\nCommit? (y/n) [n]: ");
