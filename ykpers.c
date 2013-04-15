@@ -989,7 +989,7 @@ static int ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t len
 		}
 		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s\n", str_extended_flags, str_key_value_separator, buffer);
 
-		return 1;
+		return pos;
 	}
 	return 0;
 }

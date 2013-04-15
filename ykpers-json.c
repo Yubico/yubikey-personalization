@@ -161,7 +161,7 @@ int ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 
 	/* free the root object, will free all children */
 	json_object_put(jobj);
-	return 0;
+	return strlen(json);
 }
 
 int ykp_json_import_cfg(const char *json, size_t len, YKP_CONFIG *cfg) {
