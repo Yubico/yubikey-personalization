@@ -37,7 +37,7 @@ struct map_st _ticket_flags_map[] = {
 	{ TKTFLAG_APPEND_DELAY1,"APPEND_DELAY1","appendDelay1",	capability_has_ticket_mods,	MODE_OUTPUT }, /* XXX: name? */
 	{ TKTFLAG_APPEND_DELAY2,"APPEND_DELAY2","appendDelay2",	capability_has_ticket_mods,	MODE_OUTPUT }, /* XXX: name? */
 	{ TKTFLAG_APPEND_CR,	"APPEND_CR",	"appendCR",	capability_has_ticket_mods,	MODE_OUTPUT },
-	{ TKTFLAG_PROTECT_CFG2,	"PROTEXT_CFG2",	"protectSecond",capability_has_slot_two,	0 },
+	{ TKTFLAG_PROTECT_CFG2,	"PROTEXT_CFG2",	"protectSecond",capability_has_slot_two,	MODE_ALL },
 	{ TKTFLAG_OATH_HOTP,	"OATH_HOTP",	0,		capability_has_oath,		MODE_OATH_HOTP },
 	{ TKTFLAG_CHAL_RESP,	"CHAL_RESP",	0,		capability_has_chal_resp,	MODE_CHAL_RESP },
 	{ 0, 0, 0, 0, 0 }
@@ -65,14 +65,14 @@ struct map_st _config_flags_map[] = {
 };
 
 struct map_st _extended_flags_map[] = {
-	{ EXTFLAG_SERIAL_BTN_VISIBLE,	"SERIAL_BTN_VISIBLE",	"serialBtnVisible",	capability_has_serial,		0 },
-	{ EXTFLAG_SERIAL_USB_VISIBLE,	"SERIAL_USB_VISIBLE",	"serialUsbVisible",	capability_has_serial,		0 },
-	{ EXTFLAG_SERIAL_API_VISIBLE,	"SERIAL_API_VISIBLE",	"serialApiVisible",	capability_has_serial_api,	0 },
-	{ EXTFLAG_USE_NUMERIC_KEYPAD,	"USE_NUMERIC_KEYPAD",	"useNumericKeypad",	capability_has_numeric,		0 },
-	{ EXTFLAG_FAST_TRIG,		"FAST_TRIG",		"fastTrig",		capability_has_fast,		0 },
-	{ EXTFLAG_ALLOW_UPDATE,		"ALLOW_UPDATE",		"allowUpdate",		capability_has_update,		0 },
-	{ EXTFLAG_DORMANT,		"DORMANT",		"dormant",		capability_has_dormant,		0 },
-	{ EXTFLAG_LED_INV,		"LED_INV",		"ledInverted",		capability_has_led_inv,		0 },
+	{ EXTFLAG_SERIAL_BTN_VISIBLE,	"SERIAL_BTN_VISIBLE",	"serialBtnVisible",	capability_has_serial,		MODE_ALL },
+	{ EXTFLAG_SERIAL_USB_VISIBLE,	"SERIAL_USB_VISIBLE",	"serialUsbVisible",	capability_has_serial,		MODE_ALL },
+	{ EXTFLAG_SERIAL_API_VISIBLE,	"SERIAL_API_VISIBLE",	"serialApiVisible",	capability_has_serial_api,	MODE_ALL },
+	{ EXTFLAG_USE_NUMERIC_KEYPAD,	"USE_NUMERIC_KEYPAD",	"useNumericKeypad",	capability_has_numeric,		MODE_ALL },
+	{ EXTFLAG_FAST_TRIG,		"FAST_TRIG",		"fastTrig",		capability_has_fast,		MODE_ALL },
+	{ EXTFLAG_ALLOW_UPDATE,		"ALLOW_UPDATE",		"allowUpdate",		capability_has_update,		MODE_ALL },
+	{ EXTFLAG_DORMANT,		"DORMANT",		"dormant",		capability_has_dormant,		MODE_ALL },
+	{ EXTFLAG_LED_INV,		"LED_INV",		"ledInverted",		capability_has_led_inv,		MODE_ALL },
 	{ 0, 0, 0, 0, 0 }
 };
 

@@ -127,7 +127,7 @@ int ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 			if(!p->json_text) {
 				continue;
 			}
-			if(!p->mode || (p->mode && (mode & p->mode) == mode)) {
+			if(p->mode && (mode & p->mode) == mode) {
 				int set = (ycfg.tktFlags & p->flag) == p->flag;
 				json_object *jsetting = json_object_new_boolean(set);
 				json_object_object_add(options_json, p->json_text, jsetting);
@@ -138,7 +138,7 @@ int ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 			if(!p->json_text) {
 				continue;
 			}
-			if(!p->mode || (p->mode && (mode & p->mode) == mode)) {
+			if(p->mode && (mode & p->mode) == mode) {
 				int set = (ycfg.cfgFlags & p->flag) == p->flag;
 				json_object *jsetting = json_object_new_boolean(set);
 				json_object_object_add(options_json, p->json_text, jsetting);
@@ -149,7 +149,7 @@ int ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 			if(!p->json_text) {
 				continue;
 			}
-			if(!p->mode || (p->mode && (mode & p->mode) == mode)) {
+			if(p->mode && (mode & p->mode) == mode) {
 				int set = (ycfg.extFlags & p->flag) == p->flag;
 				json_object *jsetting = json_object_new_boolean(set);
 				json_object_object_add(options_json, p->json_text, jsetting);

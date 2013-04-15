@@ -85,6 +85,7 @@ extern struct map_st _modes_map[];
 
 #define MODE_CHAL_RESP		MODE_CHAL_YUBICO | MODE_CHAL_HMAC
 #define MODE_OUTPUT 		MODE_STATIC_TICKET | MODE_OTP_YUBICO | MODE_OATH_HOTP
+#define MODE_ALL		0xff
 
 # ifdef __cplusplus
 }
