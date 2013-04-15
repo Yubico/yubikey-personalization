@@ -210,7 +210,7 @@ int ykp_json_import_cfg(const char *json, size_t len, YKP_CONFIG *cfg) {
 						seed = json_object_get_int(jseed);
 					}
 				}
-				ykp_set_oath_imf(cfg, seed);
+				ykp_set_oath_imf(cfg, (long unsigned int)seed);
 			}
 		} else if(mode == MODE_CHAL_HMAC) {
 			ykp_set_tktflag_CHAL_RESP(cfg, true);
