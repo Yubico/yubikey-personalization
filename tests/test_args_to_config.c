@@ -110,6 +110,7 @@ int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 	YK_KEY *yk = 0;
 	bool autocommit = false;
 	int exit_code = 0;
+	int data_format = YKP_FORMAT_LEGACY;
 
 	/* Options */
 	char *salt = NULL;
@@ -137,6 +138,7 @@ int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 	/* call args_to_config from ykpers-args.c with a fake set of program arguments */
 	rc = args_to_config(argc, argv, cfg, yk,
 			    &infname, &outfname,
+			    &data_format,
 			    &autocommit, salt,
 			    st, &verbose,
 			    access_code, &use_access_code,
@@ -297,6 +299,7 @@ int _test_non_config_args(void)
 	bool autocommit = false;
 	int exit_code = 0;
 	int i;
+	int data_format = YKP_FORMAT_LEGACY;
 
 	/* Options */
 	char *salt = NULL;
@@ -329,6 +332,7 @@ int _test_non_config_args(void)
 	/* call args_to_config from ykpers-args.c with a fake set of program arguments */
 	rc = args_to_config(argc, argv, cfg, yk,
 			    &infname, &outfname,
+			    &data_format,
 			    &autocommit, salt,
 			    st, &verbose,
 			    access_code, &use_access_code,
