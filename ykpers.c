@@ -851,7 +851,7 @@ static const char str_config_flags[] = "config_flags";
 static const char str_extended_flags[] = "extended_flags";
 
 
-static int ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t len) {
+static int _ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t len) {
 	if (cfg) {
 		char buffer[256];
 		struct map_st *p;
@@ -997,9 +997,9 @@ static int ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t len
 int ykp_export_config(const YKP_CONFIG *cfg, char *buf, size_t len,
 		int format) {
 	if(format == YKP_FORMAT_YCFG) {
-		return ykp_json_export_cfg(cfg, buf, len);
+		return _ykp_json_export_cfg(cfg, buf, len);
 	} else if(format == YKP_FORMAT_LEGACY) {
-		return ykp_legacy_export_config(cfg, buf, len);
+		return _ykp_legacy_export_config(cfg, buf, len);
 	}
 	ykp_errno = YKP_EINVAL;
 	return 0;
@@ -1009,7 +1009,7 @@ int ykp_export_config(const YKP_CONFIG *cfg, char *buf, size_t len,
 int ykp_import_config(const char *buf, size_t len, YKP_CONFIG *cfg,
 		int format) {
 	if(format == YKP_FORMAT_YCFG) {
-		return ykp_json_import_cfg(buf, len, cfg);
+		return _ykp_json_import_cfg(buf, len, cfg);
 	} else if(format == YKP_FORMAT_LEGACY) {
 		ykp_errno = YKP_ENOTYETIMPL;
 	}
@@ -1022,7 +1022,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 		     void *userdata) {
 	if(cfg) {
 		char buffer[1024];
-		int ret = ykp_legacy_export_config(cfg, buffer, 1024);
+		int ret = _ykp_legacy_export_config(cfg, buffer, 1024);
 		if(ret) {
 			writer(buffer, strlen(buffer), userdata);
 			return 1;

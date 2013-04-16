@@ -36,7 +36,7 @@
 #include <json/json.h>
 #include <string.h>
 
-int ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
+int _ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 	json_object *jobj = json_object_new_object();
 	json_object *yprod_json = json_object_new_object();
 	json_object *options_json = json_object_new_object();
@@ -164,7 +164,7 @@ int ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 	return strlen(json);
 }
 
-int ykp_json_import_cfg(const char *json, size_t len, YKP_CONFIG *cfg) {
+int _ykp_json_import_cfg(const char *json, size_t len, YKP_CONFIG *cfg) {
 	if(cfg) {
 		json_object *jobj = json_tokener_parse(json);
 		json_object *yprod_json = json_object_object_get(jobj, "yubiProdConfig");
