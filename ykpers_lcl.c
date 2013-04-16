@@ -53,10 +53,10 @@ struct map_st _config_flags_map[] = {
 	{ CFGFLAG_OATH_FIXED_MODHEX2,	"OATH_FIXED_MODHEX2",	0,		capability_has_oath,		MODE_OATH_HOTP },
 	{ CFGFLAG_OATH_FIXED_MODHEX,	"OATH_FIXED_MODHEX",	0,		capability_has_oath,		MODE_OATH_HOTP },
 	{ CFGFLAG_SEND_REF,		"SEND_REF",		"sendRef",	capability_has_ticket_mods,	MODE_OUTPUT }, /* XXX: name? */
-	{ CFGFLAG_TICKET_FIRST,		"TICKET_FIRST",		"ticketFirst",	capability_has_ticket_mods,	MODE_OUTPUT }, /* XXX: name? */
+	{ CFGFLAG_TICKET_FIRST,		"TICKET_FIRST",		0,		capability_has_ticket_mods,	MODE_OUTPUT },
 	{ CFGFLAG_PACING_10MS,		"PACKING_10MS",		"pacing10MS",	capability_has_ticket_mods,	MODE_OUTPUT }, /* XXX: name? */
 	{ CFGFLAG_PACING_20MS,		"PACING_20MS",		"pacing20MS",	capability_has_ticket_mods,	MODE_OUTPUT }, /* XXX: name? */
-	{ CFGFLAG_ALLOW_HIDTRIG,	"ALLOW_HIDTRIG",	"allowHidtrig",	capability_has_hidtrig,		MODE_OUTPUT }, /* XXX: name? */
+	{ CFGFLAG_ALLOW_HIDTRIG,	"ALLOW_HIDTRIG",	0,		capability_has_hidtrig,		MODE_OUTPUT },
 	{ CFGFLAG_SHORT_TICKET,		"SHORT_TICKET",		"shortTicket",	capability_has_static_extras,	MODE_STATIC_TICKET }, /* XXX: name? */
 	{ CFGFLAG_STRONG_PW1,		"STRONG_PW1",		"strongPw1",	capability_has_static_extras,	MODE_STATIC_TICKET }, /* XXX: name? */
 	{ CFGFLAG_STRONG_PW2,		"STRONG_PW2",		"strongPw2",	capability_has_static_extras,	MODE_STATIC_TICKET }, /* XXX: name? */
