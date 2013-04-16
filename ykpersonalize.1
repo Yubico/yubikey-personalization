@@ -36,9 +36,9 @@
 ykpersonalize - personalize YubiKey OTP tokens
 .SH SYNOPSIS
 .B ykpersonalize
-[\fI-1\fR | \fI-2\fR] [\fI-sfile\fR] [\fI-ifile\fR] [\fI-axxx\fR] [\fI-cxxx\fR] [\fI-ooption\fR]
-[\fI-y\fR] [\fI-v\fR] [\fI-h\fR] [\fI-n\fR] [\fI-t\fR] [\fI-u\fR] [\fI-x\fR] [\fI-z\fR] [\fI-m\fR]
-[\fI-S\fR]
+[\fI-1\fR | \fI-2\fR] [\fI-sfile\fR] [\fI-ifile\fR] [\fI-fformat\fR] [\fI-axxx\fR] [\fI-cxxx\fR]
+[\fI-ooption\fR] [\fI-y\fR] [\fI-v\fR] [\fI-h\fR] [\fI-n\fR] [\fI-t\fR] [\fI-u\fR] [\fI-x\fR]
+[\fI-z\fR] [\fI-m\fR] [\fI-S\fR]
 .\".SH DESCRIPTION
 .\" Add any additional description here
 .SH OPTIONS
@@ -69,6 +69,10 @@ save configuration to file instead of key.
 \fB\-i\fIfile\fR
 read configuration from file.
 (if file is -, read from stdin)
+.TP
+\fB\-f\fIformat\fR
+format to be used with \fB-s\fR and \fB-i\fR.
+Valid options are \fBycfg\fR and \fBlegacy\fR.
 .TP
 \fB\-a\fIxxx\fR
 the secret key, 32 char (40 for OATH-HOTP and HMAC challenge-response) hex value (not modhex).
