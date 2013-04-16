@@ -173,6 +173,11 @@ int ykp_json_import_cfg(const char *json, size_t len, YKP_CONFIG *cfg) {
 		const char *raw_mode;
 		int mode = MODE_OTP_YUBICO;
 		struct map_st *p;
+		YK_CONFIG ycfg;
+
+		ycfg.tktFlags = 0;
+		ycfg.extFlags = 0;
+		ycfg.cfgFlags = 0;
 
 		if(!jobj || !yprod_json || !jmode || !options) {
 			ykp_errno = YKP_EINVAL;
@@ -221,6 +226,57 @@ int ykp_json_import_cfg(const char *json, size_t len, YKP_CONFIG *cfg) {
 		} else if(mode == MODE_STATIC_TICKET) {
 			ykp_set_cfgflag_STATIC_TICKET(cfg, true);
 		}
+
+		/* copy the ykcore config to make setting it quick */
+		ycfg = cfg->ykcore_config;
+
+		for(p = _ticket_flags_map; p->flag; p++) {
+			if(!p->json_text) {
+				continue;
+			}
+			if(p->mode && (mode & p->mode) == mode) {
+				json_object *joption = json_object_object_get(options, p->json_text);
+				if(joption && json_object_get_type(joption) == json_type_boolean) {
+					int value = json_object_get_boolean(joption);
+					if(value == 1) {
+						ycfg.tktFlags |= p->flag;
+					}
+				}
+			}
+		}
+
+		for(p = _config_flags_map; p->flag; p++) {
+			if(!p->json_text) {
+				continue;
+			}
+			if(p->mode && (mode & p->mode) == mode) {
+				json_object *joption = json_object_object_get(options, p->json_text);
+				if(joption && json_object_get_type(joption) == json_type_boolean) {
+					int value = json_object_get_boolean(joption);
+					if(value == 1) {
+						ycfg.cfgFlags |= p->flag;
+					}
+				}
+			}
+		}
+
+		for(p = _extended_flags_map; p->flag; p++) {
+			if(!p->json_text) {
+				continue;
+			}
+			if(p->mode && (mode & p->mode) == mode) {
+				json_object *joption = json_object_object_get(options, p->json_text);
+				if(joption && json_object_get_type(joption) == json_type_boolean) {
+					int value = json_object_get_boolean(joption);
+					if(value == 1) {
+						ycfg.extFlags |= p->flag;
+					}
+				}
+			}
+		}
+
+		/* copy in the ykcore config again */
+		cfg->ykcore_config = ycfg;
 
 		json_object_put(jobj);
 		return 1;
