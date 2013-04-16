@@ -65,8 +65,7 @@ const char *usage =
 "          (if FILE is -, send to stdout)\n"
 "-iFILE    read configuration from FILE.\n"
 "          (if FILE is -, read from stdin)\n"
-"-fformat  set the data format for -s and -i (and for standard write to console\n"
-"          valid values are json or legacy.\n"
+"-fformat  set the data format for -s and -i valid values are ycfg or legacy.\n"
 "-aXXX..   The AES secret key as a 32 (or 40 for OATH-HOTP/HMAC CHAL-RESP)\n"
 "          char hex value (not modhex)\n"
 "-cXXX..   A 12 char hex value (not modhex) to use as access code for programming\n"
@@ -374,12 +373,12 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 			*outfname = optarg;
 			break;
 		case 'f':
-			if(strcmp(optarg, "json") == 0) {
-				*data_format = YKP_FORMAT_JSON;
+			if(strcmp(optarg, "ycfg") == 0) {
+				*data_format = YKP_FORMAT_YCFG;
 			} else if(strcmp(optarg, "legacy") == 0) {
 				*data_format = YKP_FORMAT_LEGACY;
 			} else {
-				fprintf(stderr, "The only valid formats to -f is json and legacy.\n");
+				fprintf(stderr, "The only valid formats to -f is ycfg and legacy.\n");
 				*exit_code = 1;
 				return 0;
 			}
