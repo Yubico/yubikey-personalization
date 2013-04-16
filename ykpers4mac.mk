@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 LIBYUBIKEYVERSION=1.10
-LIBJSONVERSION=0.11-20130402
+LIBJSONVERSION=0.11
 PROJECT=yubikey-personalization
 PACKAGE=ykpers
 
@@ -48,9 +48,9 @@ ykpers4mac:
 	rm -rf tmp && mkdir tmp && cd tmp && \
 	mkdir -p root/licenses && \
 	cp ../json-c-$(LIBJSONVERSION) . \
-		||	wget --no-check-certificate https://github.com/json-c/json-c/tarball/json-c-$(LIBJSONVERSION) && \
-	tar xfz json-c-$(LIBJSONVERSION) && \
-	cd json-c-json-c-* && \
+		||	wget --no-check-certificate https://s3.amazonaws.com/json-c_releases/releases/json-c-$(LIBJSONVERSION).tar.gz && \
+	tar xfz json-c-$(LIBJSONVERSION).tar.gz && \
+	cd json-c-$(LIBJSONVERSION) && \
 	./configure --prefix=$(PWD)/tmp/root && \
 	make install $(CHECK) && \
 	install_name_tool -id @executable_path/../lib/libjson-c.2.dylib $(PWD)/tmp/root/lib/libjson-c.2.dylib && \
