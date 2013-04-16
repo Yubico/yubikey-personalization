@@ -46,17 +46,17 @@ int ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 		int mode = MODE_OTP_YUBICO;
 		struct map_st *p;
 
-		if((ycfg.cfgFlags & CFGFLAG_STATIC_TICKET) == CFGFLAG_STATIC_TICKET) {
-			mode = MODE_STATIC_TICKET;
-		}
-		else if((ycfg.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP){
-			if((ycfg.cfgFlags & CFGFLAG_CHAL_YUBICO) == CFGFLAG_CHAL_YUBICO) {
-				mode = MODE_CHAL_YUBICO;
-			} else if((ycfg.cfgFlags & CFGFLAG_CHAL_HMAC) == CFGFLAG_CHAL_HMAC) {
+		if((ycfg.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP){
+			if((ycfg.cfgFlags & CFGFLAG_CHAL_HMAC) == CFGFLAG_CHAL_HMAC) {
 				mode = MODE_CHAL_HMAC;
+			} else if((ycfg.cfgFlags & CFGFLAG_CHAL_YUBICO) == CFGFLAG_CHAL_YUBICO) {
+				mode = MODE_CHAL_YUBICO;
 			} else {
 				mode = MODE_OATH_HOTP;
 			}
+		}
+		else if((ycfg.cfgFlags & CFGFLAG_STATIC_TICKET) == CFGFLAG_STATIC_TICKET) {
+			mode = MODE_STATIC_TICKET;
 		}
 
 		for(p = _modes_map; p->flag; p++) {
