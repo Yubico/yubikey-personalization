@@ -863,10 +863,10 @@ static int ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t len
 		int pos = 0;
 
 		if((ycfg.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP){
-			if((ycfg.cfgFlags & CFGFLAG_CHAL_YUBICO) == CFGFLAG_CHAL_YUBICO) {
-				mode = MODE_CHAL_YUBICO;
-			} else if((ycfg.cfgFlags & CFGFLAG_CHAL_HMAC) == CFGFLAG_CHAL_HMAC) {
+			if((ycfg.cfgFlags & CFGFLAG_CHAL_HMAC) == CFGFLAG_CHAL_HMAC) {
 				mode = MODE_CHAL_HMAC;
+			} else if((ycfg.cfgFlags & CFGFLAG_CHAL_YUBICO) == CFGFLAG_CHAL_YUBICO) {
+				mode = MODE_CHAL_YUBICO;
 			} else {
 				mode = MODE_OATH_HOTP;
 			}
