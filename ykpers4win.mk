@@ -35,11 +35,11 @@ all: usage ykpers4win32 ykpers4win64
 
 .PHONY: usage
 usage:
-	@if test -z "$(USER)" || test -z "$(VERSION)" || test -z "$(PGPKEYID)"; then \
+	@if test test -z "$(VERSION)" || test -z "$(PGPKEYID)"; then \
 		echo "Try this instead:"; \
-		echo "  make USER=[GOOGLEUSERNAME] PGPKEYID=[PGPKEYID] VERSION=[VERSION]"; \
+		echo "  make PGPKEYID=[PGPKEYID] VERSION=[VERSION]"; \
 		echo "For example:"; \
-		echo "  make USER=simonyubico@gmail.com PGPKEYID=2117364A VERSION=1.6.0"; \
+		echo "  make PGPKEYID=2117364A VERSION=1.6.0"; \
 		exit 1; \
 	fi
 
@@ -83,17 +83,15 @@ ykpers4win32mingw32:
 	$(MAKE) -f ykpers4win.mk ykpers4win ARCH=32 HOST=i586-mingw32msvc CHECK=check CC=i586-mingw32msvc-gcc CFLAGS=-I/usr/i586-mingw32msvc/include/ddk/
 
 upload-ykpers4win:
+	@if test ! -d $(YUBICO_GITHUB_REPO); then \
+		echo "yubico.github.com repo not found!"; \
+		echo "Make sure that YUBICO_GITHUB_REPO is set"; \
+		exit 1; \
+	fi
 	gpg --detach-sign --default-key $(PGPKEYID) \
 		$(PACKAGE)-$(VERSION)-win$(BITS).zip
 	gpg --verify $(PACKAGE)-$(VERSION)-win$(BITS).zip.sig
-	googlecode_upload.py \
-	 -s "OpenPGP signature for $(PACKAGE)-$(VERSION)-win$(BITS).zip." \
-	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION)-win$(BITS).zip.sig \
-	 -l OpSys-Windows
-	googlecode_upload.py \
-	 -s "Windows $(BITS)-bit binaries of $(PACKAGE) $(VERSION)" \
-	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION)-win$(BITS).zip \
-	 -l OpSys-Windows,Type-Executable
+	$(YUBICO_GITHUB_REPO)/publish $(PROJECT) $(VERSION) $(PACKAGE)-$(VERSION)-mac.zip*
 
 upload-ykpers4win32:
 	$(MAKE) -f ykpers4win.mk upload-ykpers4win BITS=32
