@@ -164,7 +164,7 @@ int _ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 	return strlen(json);
 }
 
-int _ykp_json_import_cfg(const char *json, size_t len, YKP_CONFIG *cfg) {
+int _ykp_json_import_cfg(YKP_CONFIG *cfg, const char *json, size_t len) {
 	if(cfg) {
 		json_object *jobj = json_tokener_parse(json);
 		json_object *yprod_json = json_object_object_get(jobj, "yubiProdConfig");

@@ -177,7 +177,7 @@ int main(int argc, char **argv)
 	if (inf) {
 		if(!fread(data, 1, 1024, inf))
 			goto err;
-		if (!ykp_import_config(data, strlen(data), cfg, data_format))
+		if (!ykp_import_config(cfg, data, strlen(data), data_format))
 			goto err;
 	} else if (! aesviahash && ! zap && (ykp_command(cfg) == SLOT_CONFIG || ykp_command(cfg) == SLOT_CONFIG2)) {
 		char passphrasebuf[256]; size_t passphraselen;

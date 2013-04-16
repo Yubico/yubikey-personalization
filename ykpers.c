@@ -1006,10 +1006,10 @@ int ykp_export_config(const YKP_CONFIG *cfg, char *buf, size_t len,
 }
 
 
-int ykp_import_config(const char *buf, size_t len, YKP_CONFIG *cfg,
+int ykp_import_config(YKP_CONFIG *cfg, const char *buf, size_t len,
 		int format) {
 	if(format == YKP_FORMAT_YCFG) {
-		return _ykp_json_import_cfg(buf, len, cfg);
+		return _ykp_json_import_cfg(cfg, buf, len);
 	} else if(format == YKP_FORMAT_LEGACY) {
 		ykp_errno = YKP_ENOTYETIMPL;
 	}

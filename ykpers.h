@@ -138,7 +138,7 @@ int ykp_command(YKP_CONFIG *cfg);
 int ykp_config_num(YKP_CONFIG *cfg);
 
 int ykp_export_config(const YKP_CONFIG *cfg, char *buf, size_t len, int format);
-int ykp_import_config(const char *buf, size_t len, YKP_CONFIG *cfg, int format);
+int ykp_import_config(YKP_CONFIG *cfg, const char *buf, size_t len, int format);
 
 #define YKP_FORMAT_LEGACY	0x01
 #define YKP_FORMAT_YCFG		0x02

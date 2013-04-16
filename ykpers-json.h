@@ -38,7 +38,7 @@ extern "C" {
 # endif
 
 int _ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len);
-int _ykp_json_import_cfg(const char *json, size_t len, YKP_CONFIG *cfg);
+int _ykp_json_import_cfg(YKP_CONFIG *cfg, const char *json, size_t len);
 
 # ifdef __cplusplus
 }
