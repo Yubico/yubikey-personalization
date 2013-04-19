@@ -111,15 +111,20 @@ check-doc-dist:
 	! man --warnings ./*.1 2>&1 | grep ': warning'
 
 release:
-	@if test -z "$(USER)" || test -z "$(KEYID)"; then \
+	@if test -z "$(KEYID)"; then \
 		echo "Try this instead:"; \
-		echo "  make release USER=[GOOGLEUSERNAME] KEYID=[PGPKEYID]"; \
+		echo "  make release KEYID=[PGPKEYID]"; \
 		echo "For example:"; \
-		echo "  make release USER=simonyubico@gmail.com KEYID=2117364A"; \
+		echo "  make release KEYID=2117364A"; \
 		exit 1; \
 	fi
 	@head -3 $(srcdir)/NEWS | grep -q "Version $(VERSION) .released `date -I`" || \
 		(echo 'error: You need to update date/version in $(srcdir)/NEWS, see doc/MakeRelease.wiki.'; exit 1)
+	@if test ! -d $(YUBICO_GITHUB_REPO); then \
+		echo "yubico.github.com repo not found!"; \
+		echo "Make sure that YUBICO_GITHUB_REPO is set"; \
+		exit 1; \
+	fi
 	rm -f $(srcdir)/ChangeLog
 	make check-doc-dist ChangeLog distcheck
 	gpg --detach-sign --default-key $(KEYID) $(PACKAGE)-$(VERSION).tar.gz
@@ -127,11 +132,4 @@ release:
 	cd $(srcdir) && git push
 	cd $(srcdir) && git tag -u $(KEYID)! -m $(VERSION) v$(VERSION)
 	cd $(srcdir) && git push --tags
-	mkdir -p ../releases/$(PACKAGE)/ && \
-		cp -v $(PACKAGE)-$(VERSION).tar.gz* ../releases/$(PACKAGE)/
-	googlecode_upload.py -s "OpenPGP signature for $(PACKAGE) $(VERSION)." \
-	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION).tar.gz.sig \
-	 -l OpSys-All
-	googlecode_upload.py -s "$(PACKAGE) $(VERSION)" \
-	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION).tar.gz \
-	 -l OpSys-All,Type-Source
+	$(YUBICO_GITHUB_REPO)/publish $(PROJECT) $(VERSION) $(PACKAGE)-$(VERSION).tar.gz*

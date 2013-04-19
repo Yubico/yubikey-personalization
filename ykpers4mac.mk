@@ -36,11 +36,11 @@ all: usage ykpers4mac
 
 .PHONY: usage
 usage:
-	@if test -z "$(USER)" || test -z "$(VERSION)" || test -z "$(PGPKEYID)"; then \
+	@if test test -z "$(VERSION)" || test -z "$(PGPKEYID)"; then \
 		echo "Try this instead:"; \
-		echo "  make USER=[GOOGLEUSERNAME] PGPKEYID=[PGPKEYID] VERSION=[VERSION]"; \
+		echo "  make PGPKEYID=[PGPKEYID] VERSION=[VERSION]"; \
 		echo "For example:"; \
-		echo "  make USER=simonyubico@gmail.com PGPKEYID=2117364A VERSION=1.6.0"; \
+		echo "  make PGPKEYID=2117364A VERSION=1.6.0"; \
 		exit 1; \
 	fi
 
@@ -89,14 +89,12 @@ ykpers4mac:
 	zip -r ../../ykpers-$(VERSION)-mac.zip *
 
 upload-ykpers4mac:
+	@if test ! -d $(YUBICO_GITHUB_REPO); then \
+		echo "yubico.github.com repo not found!"; \
+		echo "Make sure that YUBICO_GITHUB_REPO is set"; \
+		exit 1; \
+	fi
 	gpg --detach-sign --default-key $(PGPKEYID) \
 		$(PACKAGE)-$(VERSION)-mac.zip
 	gpg --verify $(PACKAGE)-$(VERSION)-mac.zip.sig
-	googlecode_upload.py \
-	 -s "OpenPGP signature for $(PACKAGE)-$(VERSION)-mac.zip." \
-	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION)-mac.zip.sig \
-	 -l OpSys-OSX
-	googlecode_upload.py \
-	 -s "OS-X binaries of $(PACKAGE) $(VERSION)" \
-	 -p $(PROJECT) -u $(USER) $(PACKAGE)-$(VERSION)-mac.zip \
-	 -l OpSys-OSX,Type-Executable
+	$(YUBICO_GITHUB_REPO)/publish $(PROJECT) $(VERSION) $(PACKAGE)-$(VERSION)-mac.zip*
