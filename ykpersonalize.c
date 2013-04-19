@@ -198,7 +198,9 @@ int main(int argc, char **argv)
 	}
 
 	if (outf) {
-		ykp_export_config(cfg, data, 1024, data_format);
+		if(!(ykp_export_config(cfg, data, 1024, data_format))) {
+			goto err;
+		}
 		if(!(fwrite(data, 1, strlen(data), outf))) {
 			goto err;
 		}
