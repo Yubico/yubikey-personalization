@@ -76,7 +76,8 @@ int _ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 			char prefix[5] = {0};
 
 			json_object *scope;
-			if(ycfg.fixed[0] == 0x00 && ycfg.fixed[1] == 0x00) {
+			if(mode == MODE_OTP_YUBICO &&
+					ycfg.fixed[0] == 0x00 && ycfg.fixed[1] == 0x00) {
 				scope = json_object_new_string("yubiCloud");
 			} else {
 				scope = json_object_new_string("privatePrefix");
