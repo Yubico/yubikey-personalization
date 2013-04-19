@@ -1,5 +1,5 @@
 # Written by Richard Levitte <richard@levitte.org>.
-# Copyright (c) 2008-2012 Yubico AB
+# Copyright (c) 2008-2013 Yubico AB
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -125,7 +125,17 @@ AM_CONDITIONAL([BACKEND_LIBUSB_1_0], test x$with_backend = xlibusb-1.0)
 AM_CONDITIONAL([BACKEND_OSX], test x$with_backend = xosx)
 AM_CONDITIONAL([BACKEND_WINDOWS], test x$with_backend = xwindows)
 
-PKG_CHECK_MODULES([libjson], [json-c], [], [PKG_CHECK_MODULES([libjson], [json])])
+PKG_CHECK_MODULES([libjson], [json-c], [], [
+  PKG_CHECK_MODULES([libjson], [json])])
+
+# Check for json_object_to_json_string_ext, needed for pretty printing.
+am_save_CFLAGS="$CFLAGS"
+am_save_LIBS="$LIBS"
+CFLAGS="$CFLAGS $libjson_CFLAGS"
+LIBS="$LIBS $libjson_LIBS"
+AC_CHECK_FUNCS([json_object_to_json_string_ext])
+CFLAGS=$am_save_CFLAGS
+LIBS=$am_save_LIBS
 
 AC_ARG_WITH([udevrulesdir],
   AS_HELP_STRING([--with-udevrulesdir=DIR], [Install udev rules into this directory]),
@@ -199,6 +209,8 @@ AC_MSG_NOTICE([summary of build options:
   Compiler:         ${CC}
   Library types:    Shared=${enable_shared}, Static=${enable_static}
   USB backend:      ${with_backend}
+  JSON library:     CFLAGS: $libjson_CFLAGS LIBS: $libjson_LIBS
+   pretty printing: $ac_cv_func_json_object_to_json_string_ext
   udev rules dir:   ${with_udevrulesdir:-N/A}
   udev rules file:  ${udevrulesfile:-N/A}
 ])

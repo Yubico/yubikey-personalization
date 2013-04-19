@@ -158,7 +158,11 @@ int _ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 		}
 	}
 
+#ifdef HAVE_JSON_OBJECT_TO_JSON_STRING_EXT
 	strncpy(json, json_object_to_json_string_ext(jobj, JSON_C_TO_STRING_PRETTY), len);
+#else
+	strncpy(json, json_object_to_json_string(jobj), len);
+#endif
 
 	/* free the root object, will free all children */
 	json_object_put(jobj);
