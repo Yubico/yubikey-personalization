@@ -48,6 +48,8 @@ tests/test_yk_utilities
 tests/test_yk_utilities.o
 tests/test_ykpbkdf2
 tests/test_ykpbkdf2.o
+tests/test_json
+tests/test_json.o
 tmp/
 usha.lo
 usha.o
