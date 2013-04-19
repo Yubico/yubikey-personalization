@@ -125,8 +125,16 @@ AM_CONDITIONAL([BACKEND_LIBUSB_1_0], test x$with_backend = xlibusb-1.0)
 AM_CONDITIONAL([BACKEND_OSX], test x$with_backend = xosx)
 AM_CONDITIONAL([BACKEND_WINDOWS], test x$with_backend = xwindows)
 
-PKG_CHECK_MODULES([libjson], [json-c], [], [
-  PKG_CHECK_MODULES([libjson], [json])])
+AC_ARG_WITH([json],
+            AC_HELP_STRING([--without-json], [without JSON YCFG support]),
+            [with_json=$withval], [with_json=yes])
+if test x$with_json = xyes; then
+  PKG_CHECK_MODULES([libjson], [json-c], [], [
+    PKG_CHECK_MODULES([libjson], [json], [], [with_json=no])])
+fi
+AC_MSG_CHECKING([whether to use json library])
+AC_MSG_RESULT([$with_json])
+AM_CONDITIONAL([JSON], [test "$with_json" = yes])
 
 # Check for json_object_to_json_string_ext, needed for pretty printing.
 am_save_CFLAGS="$CFLAGS"

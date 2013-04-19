@@ -82,13 +82,15 @@ ykpers-*.tar.gz
 ykpers-*.tar.gz.sig
 ykpers-1.pc
 ykpers-args.o
+ykpers-json.lo
+ykpers-json.o
+ykpers-nojson.lo
+ykpers-nojson.o
 ykpers-version.h
 ykpers-version.lo
 ykpers-version.o
 ykpers.lo
 ykpers.o
-ykpers-json.lo
-ykpers-json.o
 ykpers_lcl.lo
 ykpers_lcl.o
 ykpersonalize
