@@ -211,14 +211,16 @@ AC_OUTPUT
 
 AC_MSG_NOTICE([summary of build options:
 
-  version:          ${VERSION} shared $LT_CURRENT:$LT_REVISION:$LT_AGE major $YKPERS_VERSION_MAJOR minor $YKPERS_VERSION_MINOR patch $YKPERS_VERSION_PATCH number $YKPERS_VERSION_NUMBER
-  Host type:        ${host}
-  Install prefix:   ${prefix}
-  Compiler:         ${CC}
-  Library types:    Shared=${enable_shared}, Static=${enable_static}
-  USB backend:      ${with_backend}
-  JSON library:     CFLAGS: $libjson_CFLAGS LIBS: $libjson_LIBS
-   pretty printing: $ac_cv_func_json_object_to_json_string_ext
-  udev rules dir:   ${with_udevrulesdir:-N/A}
-  udev rules file:  ${udevrulesfile:-N/A}
+  version:           ${VERSION} shared $LT_CURRENT:$LT_REVISION:$LT_AGE major $YKPERS_VERSION_MAJOR minor $YKPERS_VERSION_MINOR patch $YKPERS_VERSION_PATCH number $YKPERS_VERSION_NUMBER
+  Host type:         ${host}
+  Install prefix:    ${prefix}
+  Compiler:          ${CC}
+  Library types:     Shared=${enable_shared}, Static=${enable_static}
+  USB backend:       ${with_backend}
+  JSON library:      $with_json
+    CFLAGS:          $libjson_CFLAGS
+    LIBS:            $libjson_LIBS
+    pretty printing: $ac_cv_func_json_object_to_json_string_ext
+  udev rules dir:    ${with_udevrulesdir:-N/A}
+  udev rules file:   ${udevrulesfile:-N/A}
 ])
