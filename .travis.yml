@@ -12,4 +12,6 @@ before_install:
 matrix:
   include:
     - compiler: gcc
-      env: LIBUSB=windows EXTRA="wine mingw-w64" REMOVE=mingw32
+      env: LIBUSB=windows EXTRA="wine mingw-w64" REMOVE=mingw32 ARCH=32
+    - compiler: gcc
+      env: LIBUSB=windows EXTRA="wine mingw-w64" REMOVE=mingw32 ARCH=64
