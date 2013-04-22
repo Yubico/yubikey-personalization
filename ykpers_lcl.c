@@ -34,8 +34,8 @@ struct map_st _ticket_flags_map[] = {
 	{ TKTFLAG_TAB_FIRST,	"TAB_FIRST",	"tabFirst",	capability_has_ticket_mods,	MODE_OUTPUT },
 	{ TKTFLAG_APPEND_TAB1,	"APPEND_TAB1",	"tabBetween",	capability_has_ticket_mods,	MODE_OUTPUT },
 	{ TKTFLAG_APPEND_TAB2,	"APPEND_TAB2",	"tabLast",	capability_has_ticket_mods,	MODE_OUTPUT },
-	{ TKTFLAG_APPEND_DELAY1,"APPEND_DELAY1","appendDelay1",	capability_has_ticket_mods,	MODE_OUTPUT }, /* XXX: name? */
-	{ TKTFLAG_APPEND_DELAY2,"APPEND_DELAY2","appendDelay2",	capability_has_ticket_mods,	MODE_OUTPUT }, /* XXX: name? */
+	{ TKTFLAG_APPEND_DELAY1,"APPEND_DELAY1","appendDelay1",	capability_has_ticket_mods,	MODE_OUTPUT },
+	{ TKTFLAG_APPEND_DELAY2,"APPEND_DELAY2","appendDelay2",	capability_has_ticket_mods,	MODE_OUTPUT },
 	{ TKTFLAG_APPEND_CR,	"APPEND_CR",	"appendCR",	capability_has_ticket_mods,	MODE_OUTPUT },
 	{ TKTFLAG_PROTECT_CFG2,	"PROTEXT_CFG2",	"protectSecond",capability_has_slot_two,	MODE_ALL },
 	{ TKTFLAG_OATH_HOTP,	"OATH_HOTP",	0,		capability_has_oath,		MODE_OATH_HOTP },
@@ -46,21 +46,21 @@ struct map_st _ticket_flags_map[] = {
 struct map_st _config_flags_map[] = {
 	{ CFGFLAG_CHAL_YUBICO,		"CHAL_YUBICO",		0,		capability_has_chal_resp,	MODE_CHAL_YUBICO },
 	{ CFGFLAG_CHAL_HMAC,		"CHAL_HMAC",		0,		capability_has_chal_resp,	MODE_CHAL_HMAC },
-	{ CFGFLAG_HMAC_LT64,		"HMAC_LT64",		"hmacLT64",	capability_has_chal_resp,	MODE_CHAL_HMAC }, /* XXX: name? */
+	{ CFGFLAG_HMAC_LT64,		"HMAC_LT64",		"hmacLt64",	capability_has_chal_resp,	MODE_CHAL_HMAC },
 	{ CFGFLAG_CHAL_BTN_TRIG,	"CHAL_BTN_TRIG",	"buttonReqd",	capability_has_chal_resp,	MODE_CHAL_RESP },
 	{ CFGFLAG_OATH_HOTP8,		"OATH_HOTP8",		0,		capability_has_oath,		MODE_OATH_HOTP },
 	{ CFGFLAG_OATH_FIXED_MODHEX1,	"OATH_FIXED_MODHEX1",	0,		capability_has_oath,		MODE_OATH_HOTP },
 	{ CFGFLAG_OATH_FIXED_MODHEX2,	"OATH_FIXED_MODHEX2",	0,		capability_has_oath,		MODE_OATH_HOTP },
 	{ CFGFLAG_OATH_FIXED_MODHEX,	"OATH_FIXED_MODHEX",	0,		capability_has_oath,		MODE_OATH_HOTP },
-	{ CFGFLAG_SEND_REF,		"SEND_REF",		"sendRef",	capability_has_ticket_mods,	MODE_OUTPUT }, /* XXX: name? */
+	{ CFGFLAG_SEND_REF,		"SEND_REF",		"sendRef",	capability_has_ticket_mods,	MODE_OUTPUT },
 	{ CFGFLAG_TICKET_FIRST,		"TICKET_FIRST",		0,		capability_has_ticket_mods,	MODE_OUTPUT },
-	{ CFGFLAG_PACING_10MS,		"PACKING_10MS",		"pacing10MS",	capability_has_ticket_mods,	MODE_OUTPUT }, /* XXX: name? */
-	{ CFGFLAG_PACING_20MS,		"PACING_20MS",		"pacing20MS",	capability_has_ticket_mods,	MODE_OUTPUT }, /* XXX: name? */
+	{ CFGFLAG_PACING_10MS,		"PACKING_10MS",		"pacing10ms",	capability_has_ticket_mods,	MODE_OUTPUT },
+	{ CFGFLAG_PACING_20MS,		"PACING_20MS",		"pacing20ms",	capability_has_ticket_mods,	MODE_OUTPUT },
 	{ CFGFLAG_ALLOW_HIDTRIG,	"ALLOW_HIDTRIG",	0,		capability_has_hidtrig,		MODE_OUTPUT },
-	{ CFGFLAG_SHORT_TICKET,		"SHORT_TICKET",		"shortTicket",	capability_has_static_extras,	MODE_STATIC_TICKET }, /* XXX: name? */
-	{ CFGFLAG_STRONG_PW1,		"STRONG_PW1",		"strongPw1",	capability_has_static_extras,	MODE_STATIC_TICKET }, /* XXX: name? */
-	{ CFGFLAG_STRONG_PW2,		"STRONG_PW2",		"strongPw2",	capability_has_static_extras,	MODE_STATIC_TICKET }, /* XXX: name? */
-	{ CFGFLAG_MAN_UPDATE,		"MAN_UPDATE",		"manUpdate",	capability_has_static_extras,	MODE_STATIC_TICKET }, /* XXX: name? */
+	{ CFGFLAG_SHORT_TICKET,		"SHORT_TICKET",		"shortTicket",	capability_has_static_extras,	MODE_STATIC_TICKET },
+	{ CFGFLAG_STRONG_PW1,		"STRONG_PW1",		"strongPw1",	capability_has_static_extras,	MODE_STATIC_TICKET },
+	{ CFGFLAG_STRONG_PW2,		"STRONG_PW2",		"strongPw2",	capability_has_static_extras,	MODE_STATIC_TICKET },
+	{ CFGFLAG_MAN_UPDATE,		"MAN_UPDATE",		"manUpdate",	capability_has_static_extras,	MODE_STATIC_TICKET },
 	{ 0, 0, 0, 0, 0 }
 };
 
@@ -80,7 +80,7 @@ struct map_st _extended_flags_map[] = {
 struct map_st _modes_map[] = {
 	{ MODE_OATH_HOTP,	0,	"oathHOTP",	0, 0 },
 	{ MODE_CHAL_HMAC,	0,	"hmacCR",	0, 0 },
-	{ MODE_STATIC_TICKET,	0,	"staticTicket",	0, 0 }, /* XXX: name? */
+	{ MODE_STATIC_TICKET,	0,	"staticTicket",	0, 0 },
 	{ MODE_CHAL_YUBICO,	0,	"yubicoCR",	0, 0 },
 	{ MODE_OTP_YUBICO,	0,	"yubicoOTP",	0, 0 },
 	{ 0, 0, 0, 0, 0 }

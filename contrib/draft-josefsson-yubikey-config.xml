@@ -1,0 +1,376 @@
+<?xml version="1.0"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+
+<!-- Copyright (C) 2013 Simon Josefsson -->
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!ENTITY rfc4226 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.4226.xml'>
+<!ENTITY rfc4627 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.4627.xml'>
+<!ENTITY rfc6030 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6030.xml'>
+<!ENTITY aes PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml2/reference.FIPS.197.2001.xml'>
+]>
+
+<?rfc compact="no"?>
+<?rfc toc="yes"?>
+<?rfc symrefs="yes"?>
+
+<rfc ipr="none"
+     docName="draft-josefsson-yubikey-config-00">
+
+  <front>
+
+    <title abbrev="YubiKey Configuration Format">
+      Yubico YubiKey Configuration Format (YCFG)
+    </title>
+
+    <author initials="S." surname="Josefsson" fullname="Simon Josefsson">
+      <organization abbrev="Yubico">
+	Yubico
+      </organization>
+      <address>
+	<email>simon@yubico.com</email>
+	<uri>http://www.yubico.com/</uri>
+      </address>
+    </author>
+    
+    <date month="April" year="2013"/>
+
+    <abstract>
+
+      <t>The YubiKey Configuration Format (YCFG) is a data format for
+      transportation of configuration parameters for a YubiKey slot.
+      The YubiKey is a small portable device manufactured by Yubico
+      that generate One-Time-Passwords and has room for two separate
+      configuration slots.</t>
+
+    </abstract>
+
+  </front>
+  
+  <middle>
+
+    <section title="Introduction and Background">
+
+      <t>The YubiKey is a small portable device manufactured by <xref
+      target="YUBICO">Yubico</xref> that generate One-Time-Passwords
+      and has room for two separate configuration slots.</t>
+
+      <t>The YubiKey Configuration Format (YCFG) is a <xref
+      target="RFC4627">JavaScript Object Notation (JSON)</xref> data
+      format for transportation of configuration parameters for a
+      YubiKey slot.</t>
+
+      <t>The <xref target="RFC6030">PSKC</xref> format may be used to
+      transport key material for YubiKey tokens.  However, for a
+      YubiKey to be personalized in any meaningful way, it also needs
+      a configuration.  The YubiKey Configuration Format (YCFG)
+      described in this document provides a convenient way to express
+      all possible configuration variants of a YubiKey.</t>
+
+      <t>The reference documentation for the YubiKey is available
+      <xref target="YUBIKEY-MANUAL"/> and describes all configuration
+      options.</t>
+
+      <t>Briefly, each slot can be configured in one of the following
+      modes:
+
+      <list style="numbers">
+
+	<t>"yubicoOTP": YubiKey One-Time-Password: consists of a
+	static identifier concatenated with a never-repeating <xref
+	target="FIPS.197.2001">Advanced Encryption Standard
+	(AES)</xref> encrypted part.  Personalization of the device
+	consumes several data fields, including a public identifier,
+	an internal identifier and an AES key.</t>
+
+	<t>"oathHOTP": <xref target="RFC4226">OATH HOTP</xref> mode,
+	using a HMAC-SHA1 secret.</t>
+
+	<t>"hmacCR": A challenge response mode, using a HMAC-SHA1 secret.</t>
+
+	<t>"yubicoCR": A challenge response mode which is YubiKey OTP
+	compatible.</t>
+
+	<t>"staticTicket": A mode that emits a static password.</t>
+      </list></t>
+
+      <t>There is a number of options that applies to all modes, and
+      some options that is only relevant for a particular mode.</t>
+
+    </section>
+
+    <section title="YubiKey Configuration Format Definition">
+
+      <t>Each YCFG instance is a JSON object with one member with name
+      "yubiProdConfig" having an object value.</t>
+
+      <t>The following illustrate a small YCFG example.</t>
+
+      <figure>
+	<artwork><![CDATA[
+{
+    "yubiProdConfig" : 
+    {
+        "mode" : "yubicoOTP",
+        "options" : 
+        {
+            "appendCR" : true,
+            "serialApiVisible" : true,
+        },
+        "prefix" : "eibn",
+        "protection" : "random"
+        "scope" : "privatePrefix"
+    }
+}
+]]></artwork>
+      </figure>
+
+      <t>The following members of the "yubiProdConfig" object are
+      always permitted to exist.</t>
+
+      <t><list style="symbols">
+	<t>"mode": A string, used to specify the basic operation mode
+	of the slot.  Permitted values include "unconfigured" to
+	denote bare keys, "yubicoOTP" to denote normal YubiKey OTP
+	mode, "oathHOTP" meaning OATH HOTP mode, "yubicoCR" means
+	Yubico OTP-based challenge response "hmacCR" means HMAC-based
+	challenge response mode, and "staticTicket" means static
+	password mode.</t>
+	<t>"options": An object with configuration parameters, see
+	below for definition.</t>
+	<t>"protection": A string having a value of "random", "none",
+	"batch", or "id", specifying how write access to the slot is
+	to be protected.</t>
+	<t>"scope": A string having a value of "noPublicId",
+	"yubiCloud", or "privatePrefix".</t>
+	<t>"ndefType": A string with the NFC NDEF type.</t>
+	<t>"ndefString": A string with the NFC NDEF content.</t>
+      </list></t>
+
+      <t>The following members of the "yubiProdConfig" object only
+      exists when "mode" is "yubicoOTP", "yubicoCR", and
+      "oathHOTP".</t>
+
+      <t><list style="symbols">
+	<t>"prefix": A string, identifying the YubiKey prefix.</t>
+      </list></t>
+
+      <t>The following members of the "options" object are always
+      permitted to exist.</t>
+
+      <t><list style="symbols">
+	<t>"allowUpdate": A literal (false or true).</t>
+	<t>"appendCR": A literal (false or true).</t>
+	<t>"appendDelay1": A literal (false or true).</t>
+	<t>"appendDelay2": A literal (false or true).</t>
+	<t>"sendRef": A literal (false or true).</t>
+	<t>"pacing10ms": A literal (false or true).</t>
+	<t>"pacing20ms": A literal (false or true).</t>
+	<t>"dormant": A literal (false or true).</t>
+	<t>"fastTrig": A literal (false or true).</t>
+	<t>"shortTicket": A literal (false or true).</t>
+	<t>"protectSecond": A literal (false or true).</t>
+	<t>"serialApiVisible": A literal (false or true).</t>
+	<t>"serialBtnVisible": A literal (false or true).</t>
+	<t>"serialUsbVisible": A literal (false or true).</t>
+	<t>"tabBetween": A literal (false or true).</t>
+	<t>"tabFirst": A literal (false or true).</t>
+	<t>"tabLast": A literal (false or true).</t>
+	<t>"useNumericKeypad": A literal (false or true).</t>
+	<t>"invertLed": A literal (false or true).</t>
+      </list></t>
+
+      <t>The following members of the "options" object only exists
+      when "mode" is "oathHOTP".</t>
+
+      <t><list style="symbols">
+	<t>"fixedSeedValue": A number indicating the OATH
+	HOTP initial moving factor (must be a multiple of 16).</t>
+	<t>"oathDigits": A number indicating the number of
+	digits in OATH HOTP to emit (6 or 8).</t>
+	<t>"randomSeed": A literal (false or true) denoting
+	whether the seed should be initialized to random.</t>
+      </list></t>
+
+      <t>The following members of the "options" object only exists
+      when "mode" is "hmacCR" or "yubicoCR".</t>
+
+      <t><list style="symbols">
+	<t>"buttonReqd": A literal (false or true) denoting
+	whether user presence is required.</t>
+      </list></t>
+
+      <t>The following members of the "options" object only exists
+      when "mode" is "hmacCR".</t>
+
+      <t><list style="symbols">
+	<t>"hmacLt64": A literal (false or true).</t>
+      </list></t>
+
+      <t>The following members of the "options" object only exists
+      when "mode" is "staticTicket".</t>
+
+      <t><list style="symbols">
+	<t>"strongPw1": A literal (false or true).</t>
+	<t>"strongPw2": A literal (false or true).</t>
+	<t>"manUpdate": A literal (false or true).</t>
+      </list></t>
+
+      <t>All literal options have a default of "false"; thus it is
+      only required to include a particular option if there is an
+      intent to indicate a "true" value.</t>
+
+    </section>
+
+    <section title="Examples">
+
+      <t>The following illustrate a slot configured in OATH HOTP
+      mode.</t>
+
+      <figure>
+	<artwork><![CDATA[
+{
+    "yubiProdConfig" : 
+    {
+        "mode" : "oathHOTP",
+        "options" : 
+        {
+            "allowUpdate" : false,
+            "appendCR" : false,
+            "dormant" : false,
+            "fastTrig" : false,
+            "fixedSeedValue" : 16,
+            "oathDigits" : 6,
+            "protectSecond" : true,
+            "randomSeed" : false,
+            "serialApiVisible" : true,
+            "serialBtnVisible" : true,
+            "serialUsbVisible" : false,
+            "tabBetween" : false,
+            "tabFirst" : false,
+            "tabLast" : false,
+            "useNumericKeypad" : false
+        },
+        "protection" : "random",
+        "scope" : "noPublicId"
+    }
+}
+]]></artwork>
+      </figure>
+
+      <t>The following illustrate a slot configured in YubiKey OTP
+      mode.</t>
+
+      <figure>
+	<artwork><![CDATA[
+{
+    "yubiProdConfig" : 
+    {
+        "mode" : "yubicoOTP",
+        "options" : 
+        {
+            "allowUpdate" : true,
+            "appendCR" : true,
+            "dormant" : false,
+            "protectSecond" : false,
+            "serialApiVisible" : true,
+            "serialBtnVisible" : true,
+            "serialUsbVisible" : false,
+            "tabBetween" : false,
+            "tabFirst" : false,
+            "tabLast" : false
+        },
+        "prefix" : "eice",
+        "protection" : "none",
+        "scope" : "privatePrefix"
+    }
+}
+]]></artwork>
+      </figure>
+
+      <t>The following illustrate a slot configured in challenge
+      response mode.</t>
+
+      <figure>
+	<artwork><![CDATA[
+{
+    "yubiProdConfig" : 
+    {
+        "mode" : "hmacCR",
+        "options" : 
+        {
+            "buttonReqd" : false,
+            "protectSecond" : false,
+            "serialApiVisible" : true,
+            "serialBtnVisible" : true,
+            "serialUsbVisible" : false
+        },
+        "protection" : "random"
+    }
+}
+]]></artwork>
+      </figure>
+
+    </section>
+
+    <section title="Acknowledgements">
+
+      <t>The following people contributed to the design of the YCFG
+      format: Jakob Ehrensvärd, Fredrik Thulin, Klas Lindfors, and
+      John Salter.</t>
+
+    </section>
+
+    <section title="Security Considerations">
+
+      <t>General security considerations for the YubiKey and of JSON
+      are relevant and critical to safe usage of the YCFG format.</t>
+
+      <t>YCFG data needs to be integrity protected during transport in
+      order to avoid attacks which causes YubiKeys to be personalized
+      with unintended behaviour.</t>
+
+      <t>Software that operates in this data format must be
+      implemented properly to not introduce security vulnerabilities
+      triggered by specially crafted input.</t>
+
+    </section>
+
+  </middle>
+
+  <back>
+
+    <references title="Normative References">
+
+      &rfc4627;
+
+      <reference anchor="YUBIKEY-MANUAL">
+	<front>
+	  <title>YubiKey Manual</title>
+	  <author initials="J." surname="Ehrensvard"
+		  fullname="Jakob Ehrensvard"/>
+	</front>
+	<seriesInfo name="WWW" value="http://static.yubico.com/var/uploads/pdfs/YubiKey_Manual_2010-09-16.pdf" />
+      </reference>
+
+    </references>
+
+    <references title="Informative References">
+
+      <reference anchor="YUBICO">
+	<front>
+	  <title>Yubico Company Web Page</title>
+	  <author initials="" surname="" fullname="A"/>
+	</front>
+	<seriesInfo name="WWW" value="http://www.yubico.com/" />
+      </reference>
+
+      &aes;
+      &rfc4226;
+      &rfc6030;
+
+    </references>
+
+  </back>
+
+</rfc>
