@@ -88,7 +88,7 @@ upload-ykpers4win:
 	gpg --detach-sign --default-key $(PGPKEYID) \
 		$(PACKAGE)-$(VERSION)-win$(BITS).zip
 	gpg --verify $(PACKAGE)-$(VERSION)-win$(BITS).zip.sig
-	$(YUBICO_GITHUB_REPO)/publish $(PROJECT) $(VERSION) $(PACKAGE)-$(VERSION)-mac.zip*
+	$(YUBICO_GITHUB_REPO)/publish $(PROJECT) $(VERSION) $(PACKAGE)-$(VERSION)-win${BITS}.zip*
 
 upload-ykpers4win32:
 	$(MAKE) -f ykpers4win.mk upload-ykpers4win BITS=32
