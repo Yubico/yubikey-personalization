@@ -55,7 +55,7 @@ ykpers4win:
 	cp COPYING $(PWD)/tmp/root/licenses/json-c.txt && \
 	cd .. && \
 	cp ../libyubikey-$(LIBYUBIKEYVERSION).tar.gz . \
-		|| 	wget http://yubico-c.googlecode.com/files/libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
+		||	wget http://yubico.github.io/yubico-c/releases/libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
 	tar xfa libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
 	cd libyubikey-$(LIBYUBIKEYVERSION) && \
 	./configure --host=$(HOST) --build=x86_64-unknown-linux-gnu --prefix=$(PWD)/tmp/root && \
