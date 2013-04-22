@@ -1,6 +1,14 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.12.1 (unreleased)
+* Version 1.13.0 (released 2013-04-22)
+
+** Added import/export of ycfg-json format.
+Invoke with -fjson to -s or -i
+Add exported functions ykp_export_config() and ykp_import_config()
+
+** Fixup output of flags when using ykp_write_config()
+
+** Add binary builds for mac.
 
 ** Minor cleanups noticed during debian packaging.
 
