@@ -10,6 +10,7 @@ script:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get remove -qq -y $REMOVE
+  - sudo apt-get autoremove -qq
   - sudo apt-get install -qq -y libyubikey-dev libjson0-dev $EXTRA
 matrix:
   include:
