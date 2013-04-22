@@ -63,7 +63,7 @@ ykpers4win:
 	cp COPYING $(PWD)/tmp/root/licenses/libyubikey.txt && \
 	cd .. && \
 	cp ../ykpers-$(VERSION).tar.gz . \
-		|| wget http://yubikey-personalization.googlecode.com/files/ykpers-$(VERSION).tar.gz && \
+		|| wget http://yubico.github.io/yubikey-personalization/releases/ykpers-$(VERSION).tar.gz && \
 	tar xfa ykpers-$(VERSION).tar.gz && \
 	cd ykpers-$(VERSION)/ && \
 	PKG_CONFIG_PATH=$(PWD)/tmp/root/lib/pkgconfig lt_cv_deplibs_check_method=pass_all ./configure --host=$(HOST) --build=x86_64-unknown-linux-gnu --prefix=$(PWD)/tmp/root LDFLAGS=-L$(PWD)/tmp/root/lib CPPFLAGS=-I$(PWD)/tmp/root/include && \

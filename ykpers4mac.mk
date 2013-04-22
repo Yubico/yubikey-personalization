@@ -62,7 +62,7 @@ ykpers4mac:
 	cp COPYING $(PWD)/tmp/root/licenses/json-c.txt && \
 	cd .. && \
 	cp ../libyubikey-$(LIBYUBIKEYVERSION).tar.gz . \
-		|| 	wget http://yubico-c.googlecode.com/files/libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
+		||	wget http://yubico.github.io/yubico-c/releases/libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
 	tar xfz libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
 	cd libyubikey-$(LIBYUBIKEYVERSION) && \
 	./configure --prefix=$(PWD)/tmp/root && \
@@ -72,7 +72,7 @@ ykpers4mac:
 	cp COPYING $(PWD)/tmp/root/licenses/libyubikey.txt && \
 	cd .. && \
 	cp ../ykpers-$(VERSION).tar.gz . \
-		|| wget http://yubikey-personalization.googlecode.com/files/ykpers-$(VERSION).tar.gz && \
+		|| wget http://yubico.github.io/yubikey-personalization/releases/ykpers-$(VERSION).tar.gz && \
 	tar xfz ykpers-$(VERSION).tar.gz && \
 	cd ykpers-$(VERSION)/ && \
 	PKG_CONFIG_PATH=$(PWD)/tmp/root/lib/pkgconfig ./configure --prefix=$(PWD)/tmp/root --with-libyubikey-prefix=$(PWD)/tmp/root && \
