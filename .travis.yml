@@ -18,8 +18,3 @@ matrix:
       env: LIBUSB=windows EXTRA="wine mingw-w64" REMOVE=mingw32 ARCH=32
     - compiler: gcc
       env: LIBUSB=windows EXTRA="wine mingw-w64" REMOVE=mingw32 ARCH=64
-  allow_failures:
-    - compiler: gcc
-      env: LIBUSB=windows EXTRA="wine mingw-w64" REMOVE=mingw32 ARCH=32
-    - compiler: gcc
-      env: LIBUSB=windows EXTRA="wine mingw-w64" REMOVE=mingw32 ARCH=64
