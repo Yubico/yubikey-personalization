@@ -33,7 +33,10 @@ LDADD = ../libykpers-1.la $(LTLIBYUBIKEY)
 
 ctests = selftest test_args_to_config test_key_generation \
 	test_ndef_construction test_threaded_calls test_ykpbkdf2 \
-	test_yk_utilities test_json
+	test_yk_utilities
+if JSON
+ctests += test_json
+endif
 check_PROGRAMS = $(ctests)
 TESTS = $(ctests)
 
