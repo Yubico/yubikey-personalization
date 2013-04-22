@@ -89,10 +89,13 @@ dist_man1_MANS = ykpersonalize.1 ykchalresp.1 ykinfo.1
 EXTRA_DIST = doc/Compatibility.asciidoc doc/Make-Release.asciidoc doc/Read-Me.asciidoc doc/USB-Hid-Issue.asciidoc doc/Windows-Build.asciidoc
 
 # Dist contrib stuff.
-EXTRA_DIST += contrib/README contrib/programming.sh contrib/oath-unlock-reprogram.sh
+EXTRA_DIST += contrib/README contrib/programming.sh contrib/oath-unlock-reprogram.sh contrib/draft-josefsson-yubikey-config.xml
 
 # Windows rules.
-EXTRA_DIST += ykpers4win.mk
+EXTRA_DIST += ykpers4win.mk ykpers4mac.mk
+
+# Dist dev tools as well, to have the tarball complete.
+EXTRA_DIST += build-and-test.sh .travis.yml .gitignore .gitmodules
 
 # udev rule files
 EXTRA_DIST += 69-yubikey.rules 70-yubikey.rules
