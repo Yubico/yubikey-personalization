@@ -10,15 +10,16 @@ script:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get remove -y $REMOVE
+  - sudo apt-get autoremove
   - sudo apt-get install -y libyubikey-dev libjson0-dev $EXTRA
 matrix:
   include:
     - compiler: gcc
-      env: LIBUSB=windows EXTRA="wine mingw-w64" REMOVE="mingw32 mingw32-runtime" ARCH=32
+      env: LIBUSB=windows EXTRA="wine mingw-w64" REMOVE=mingw32 ARCH=32
     - compiler: gcc
-      env: LIBUSB=windows EXTRA="wine mingw-w64" REMOVE="mingw32 mingw32-runtime" ARCH=64
+      env: LIBUSB=windows EXTRA="wine mingw-w64" REMOVE=mingw32 ARCH=64
   allow_failures:
     - compiler: gcc
-      env: LIBUSB=windows EXTRA="wine mingw-w64" REMOVE="mingw32 mingw32-runtime" ARCH=32
+      env: LIBUSB=windows EXTRA="wine mingw-w64" REMOVE=mingw32 ARCH=32
     - compiler: gcc
-      env: LIBUSB=windows EXTRA="wine mingw-w64" REMOVE="mingw32 mingw32-runtime" ARCH=64
+      env: LIBUSB=windows EXTRA="wine mingw-w64" REMOVE=mingw32 ARCH=64
