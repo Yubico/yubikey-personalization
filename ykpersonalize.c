@@ -56,6 +56,7 @@ int main(int argc, char **argv)
 	YK_STATUS *st = ykds_alloc();
 	bool autocommit = false;
 	char data[1024];
+	bool dry_run = false;
 
 	/* Options */
 	char *salt = NULL;
@@ -121,7 +122,7 @@ int main(int argc, char **argv)
 			     &infname, &outfname,
 			     &data_format,
 			     &autocommit, salt,
-			     st, &verbose,
+			     st, &verbose, &dry_run,
 			     access_code, &use_access_code,
 			     &aesviahash, &ndef_type, ndef_string,
 			     &usb_mode, &zap, scan_codes, &exit_code)) {
@@ -246,7 +247,10 @@ int main(int argc, char **argv)
 
 			if (verbose)
 				printf("Attempting to write configuration to the yubikey...");
-			if(ykp_command(cfg) == SLOT_NDEF || ykp_command(cfg) == SLOT_NDEF2) {
+			if (dry_run) {
+				printf("Not writing anything to key due to dry_run requested.\n");
+			}
+			else if(ykp_command(cfg) == SLOT_NDEF || ykp_command(cfg) == SLOT_NDEF2) {
 				YK_NDEF *ndef = ykp_alloc_ndef();
 				int confnum = 1;
 				if(ndef_type == 'U') {
@@ -298,7 +302,7 @@ int main(int argc, char **argv)
 				}
 			}
 
-			if (verbose)
+			if (verbose && !dry_run)
 				printf(" success\n");
 		}
 	}

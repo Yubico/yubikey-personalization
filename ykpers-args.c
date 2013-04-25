@@ -154,10 +154,12 @@ const char *usage =
 "\n"
 "-y        always commit (do not prompt)\n"
 "\n"
+"-d        dry-run (don't write anything to key)\n"
+"\n"
 "-v        verbose\n"
 "-h        help (this text)\n"
 ;
-const char *optstring = "u12xza:c:n:t:hi:o:s:f:vym:S::";
+const char *optstring = "u12xza:c:n:t:hi:o:s:f:dvym:S::";
 
 static int _set_fixed(char *opt, YKP_CONFIG *cfg);
 static int _format_decimal_as_hex(uint8_t *dst, size_t dst_len, uint8_t *src);
@@ -230,7 +232,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		   const char **infname, const char **outfname,
 		   int *data_format,
 		   bool *autocommit, char *salt,
-		   YK_STATUS *st, bool *verbose,
+		   YK_STATUS *st, bool *verbose, bool *dry_run,
 		   unsigned char *access_code, bool *use_access_code,
 		   bool *aesviahash, char *ndef_type, char *ndef,
 		   unsigned char *usb_mode, bool *zap,
@@ -665,6 +667,9 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 				*exit_code = 1;
 				return 0;
 			}
+			break;
+		case 'd':
+			*dry_run = true;
 			break;
 		case 'v':
 			*verbose = true;

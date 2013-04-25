@@ -37,7 +37,7 @@ ykpersonalize - personalize YubiKey OTP tokens
 .SH SYNOPSIS
 .B ykpersonalize
 [\fI-1\fR | \fI-2\fR] [\fI-sfile\fR] [\fI-ifile\fR] [\fI-fformat\fR] [\fI-axxx\fR] [\fI-cxxx\fR]
-[\fI-ooption\fR] [\fI-y\fR] [\fI-v\fR] [\fI-h\fR] [\fI-n\fR] [\fI-t\fR] [\fI-u\fR] [\fI-x\fR]
+[\fI-ooption\fR] [\fI-y\fR] [\fI-v\fR] [\fI-d\fR] [\fI-h\fR] [\fI-n\fR] [\fI-t\fR] [\fI-u\fR] [\fI-x\fR]
 [\fI-z\fR] [\fI-m\fR] [\fI-S\fR]
 .\".SH DESCRIPTION
 .\" Add any additional description here
@@ -123,6 +123,9 @@ Set/clear ticket flag, see the section `Configuration flags\&'
 .TP
 \fB-y\fR
 always commit without prompting
+.TP
+\fB-d\fR
+dry-run, run without writing a YubiKey
 .TP
 \fB-v\fR
 Be more verbose

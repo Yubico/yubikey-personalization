@@ -104,6 +104,7 @@ int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 	const char *infname = NULL;
 	const char *outfname = NULL;
 	bool verbose = false;
+	bool dry_run = false;
 	bool aesviahash = false;
 	bool use_access_code = false;
 	unsigned char access_code[256];
@@ -140,7 +141,7 @@ int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 			    &infname, &outfname,
 			    &data_format,
 			    &autocommit, salt,
-			    st, &verbose,
+			    st, &verbose, &dry_run,
 			    access_code, &use_access_code,
 			    &aesviahash, &ndef_type, ndef, &usb_mode, &zap,
 			    scan_map, &exit_code);
@@ -292,6 +293,7 @@ int _test_non_config_args(void)
 	const char *infname = NULL;
 	const char *outfname = NULL;
 	bool verbose = false;
+	bool dry_run = false;
 	bool aesviahash = false;
 	bool use_access_code = false;
 	unsigned char access_code[256];
@@ -334,7 +336,7 @@ int _test_non_config_args(void)
 			    &infname, &outfname,
 			    &data_format,
 			    &autocommit, salt,
-			    st, &verbose,
+			    st, &verbose, &dry_run,
 			    access_code, &use_access_code,
 			    &aesviahash, &ndef_type, ndef, &usb_mode, &zap,
 			    scan_map, &exit_code);
