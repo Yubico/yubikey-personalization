@@ -180,6 +180,7 @@ int _ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 }
 
 int _ykp_json_import_cfg(YKP_CONFIG *cfg, const char *json, size_t len) {
+	int ret_code = 0;
 	if(cfg) {
 		json_object *jobj = json_tokener_parse(json);
 		json_object *yprod_json = json_object_object_get(jobj, "yubiProdConfig");
@@ -197,7 +198,7 @@ int _ykp_json_import_cfg(YKP_CONFIG *cfg, const char *json, size_t len) {
 
 		if(!jobj || !yprod_json || !jmode || !options) {
 			ykp_errno = YKP_EINVAL;
-			return 0;
+			goto out;
 		}
 
 		jtarget = json_object_object_get(yprod_json, "targetConfig");
@@ -206,11 +207,11 @@ int _ykp_json_import_cfg(YKP_CONFIG *cfg, const char *json, size_t len) {
 			if(target_config == 1 &&
 					cfg->command != SLOT_CONFIG) {
 				ykp_errno = YKP_EINVAL;
-				return 0;
+				goto out;
 			} else if(target_config == 2 &&
 					cfg->command != SLOT_CONFIG2) {
 				ykp_errno = YKP_EINVAL;
-				return 0;
+				goto out;
 			}
 		}
 
@@ -307,11 +308,13 @@ int _ykp_json_import_cfg(YKP_CONFIG *cfg, const char *json, size_t len) {
 
 		/* copy in the ykcore config again */
 		cfg->ykcore_config = ycfg;
-
-		json_object_put(jobj);
-		return 1;
+		ret_code = 1;
+out:
+		if(jobj) {
+			json_object_put(jobj);
+		}
 	}
 	ykp_errno = YKP_EINVAL;
-	return 0;
+	return ret_code;
 }
 
