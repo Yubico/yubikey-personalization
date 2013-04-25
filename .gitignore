@@ -76,6 +76,8 @@ ykinfo
 ykinfo.o
 ykpbkdf2.lo
 ykpbkdf2.o
+ykpers-*-mac.zip
+ykpers-*-mac.zip.sig
 ykpers-*-win32.zip
 ykpers-*-win32.zip.sig
 ykpers-*-win64.zip
