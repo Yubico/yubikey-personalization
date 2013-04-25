@@ -185,6 +185,7 @@ int _ykp_json_import_cfg(YKP_CONFIG *cfg, const char *json, size_t len) {
 		json_object *yprod_json = json_object_object_get(jobj, "yubiProdConfig");
 		json_object *jmode = json_object_object_get(yprod_json, "mode");
 		json_object *options = json_object_object_get(yprod_json, "options");
+		json_object *jtarget;
 		const char *raw_mode;
 		int mode = MODE_OTP_YUBICO;
 		struct map_st *p;
@@ -197,6 +198,20 @@ int _ykp_json_import_cfg(YKP_CONFIG *cfg, const char *json, size_t len) {
 		if(!jobj || !yprod_json || !jmode || !options) {
 			ykp_errno = YKP_EINVAL;
 			return 0;
+		}
+
+		jtarget = json_object_object_get(yprod_json, "targetConfig");
+		if(jtarget) {
+			int target_config = json_object_get_int(jtarget);
+			if(target_config == 1 &&
+					cfg->command != SLOT_CONFIG) {
+				ykp_errno = YKP_EINVAL;
+				return 0;
+			} else if(target_config == 2 &&
+					cfg->command != SLOT_CONFIG2) {
+				ykp_errno = YKP_EINVAL;
+				return 0;
+			}
 		}
 
 		raw_mode = json_object_get_string(jmode);
