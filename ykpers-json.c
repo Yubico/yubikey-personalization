@@ -45,6 +45,7 @@ int _ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 
 		int mode = MODE_OTP_YUBICO;
 		struct map_st *p;
+		json_object *target_config = NULL;
 
 		if((ycfg.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP){
 			if((ycfg.cfgFlags & CFGFLAG_CHAL_HMAC) == CFGFLAG_CHAL_HMAC) {
@@ -65,6 +66,15 @@ int _ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 				json_object_object_add(yprod_json, "mode", jmode);
 				break;
 			}
+		}
+
+		if(cfg->command == SLOT_CONFIG) {
+			target_config = json_object_new_int(1);
+		} else if(cfg->command == SLOT_CONFIG2) {
+			target_config = json_object_new_int(2);
+		}
+		if(target_config) {
+			json_object_object_add(yprod_json, "targetConfig", target_config);
 		}
 
 		json_object_object_add(jobj, "yubiProdConfig", yprod_json);
