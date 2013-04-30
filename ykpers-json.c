@@ -190,11 +190,6 @@ int _ykp_json_import_cfg(YKP_CONFIG *cfg, const char *json, size_t len) {
 		const char *raw_mode;
 		int mode = MODE_OTP_YUBICO;
 		struct map_st *p;
-		YK_CONFIG ycfg;
-
-		ycfg.tktFlags = 0;
-		ycfg.extFlags = 0;
-		ycfg.cfgFlags = 0;
 
 		if(!jobj || !yprod_json || !jmode || !options) {
 			ykp_errno = YKP_EINVAL;

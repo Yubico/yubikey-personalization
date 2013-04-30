@@ -278,9 +278,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 				 * we reset them here and, as a consequence of that, require the
 				 * mode choosing options to be specified before any other.
 				 */
-				ycfg->tktFlags = 0;
-				ycfg->cfgFlags = 0;
-				ycfg->extFlags = 0;
+				ykp_clear_config(cfg);
 
 				mode_chosen = 1;
 			}

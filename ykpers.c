@@ -143,6 +143,17 @@ int ykp_free_config(YKP_CONFIG *cfg)
 	return 0;
 }
 
+int ykp_clear_config(YKP_CONFIG *cfg)
+{
+	if(cfg) {
+		cfg->ykcore_config.tktFlags = 0;
+		cfg->ykcore_config.cfgFlags = 0;
+		cfg->ykcore_config.extFlags = 0;
+		return 1;
+	}
+	return 0;
+}
+
 void ykp_configure_version(YKP_CONFIG *cfg, YK_STATUS *st)
 {
 	cfg->yk_major_version = st->versionMajor;

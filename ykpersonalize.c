@@ -176,6 +176,8 @@ int main(int argc, char **argv)
 	}
 
 	if (inf) {
+		if(!ykp_clear_config(cfg))
+			goto err;
 		if(!fread(data, 1, 1024, inf))
 			goto err;
 		if (!ykp_import_config(cfg, data, strlen(data), data_format))

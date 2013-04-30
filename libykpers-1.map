@@ -198,3 +198,10 @@ LIBYKPERS_1.13 {
   ykp_import_config;
 # Variables:
 } LIBYKPERS_1.12;
+
+LIBYKPERS_1.14 {
+  global:
+# Functions:
+  ykp_clear_config;
+# Variables:
+} LIBYKPERS_1.13;

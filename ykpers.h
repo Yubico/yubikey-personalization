@@ -124,6 +124,8 @@ int ykp_set_extflag_ALLOW_UPDATE (YKP_CONFIG *cfg, bool state);
 int ykp_set_extflag_DORMANT (YKP_CONFIG *cfg, bool state);
 int ykp_set_extflag_LED_INV (YKP_CONFIG *cfg, bool state);
 
+int ykp_clear_config(YKP_CONFIG *cfg);
+
 int ykp_write_config(const YKP_CONFIG *cfg,
 		     int (*writer)(const char *buf, size_t count,
 				   void *userdata),
