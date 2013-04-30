@@ -769,7 +769,19 @@ int ykp_set_tktflag_ ## type(YKP_CONFIG *cfg, bool state)	\
 	}							\
 	ykp_errno = YKP_ENOCFG;					\
 	return 0;						\
+} \
+bool ykp_get_tktflag_ ## type(YKP_CONFIG *cfg)			\
+{								\
+	if (cfg) {						\
+		if(cfg->ykcore_config.tktFlags & TKTFLAG_ ## type)	\
+			return true;				\
+		else						\
+			return false;				\
+	}							\
+	return false;						\
 }
+
+
 
 #define def_set_cfgflag(type,capability)			\
 int ykp_set_cfgflag_ ## type(YKP_CONFIG *cfg, bool state)	\
@@ -787,7 +799,18 @@ int ykp_set_cfgflag_ ## type(YKP_CONFIG *cfg, bool state)	\
 	}							\
 	ykp_errno = YKP_ENOCFG;					\
 	return 0;						\
+}								\
+bool ykp_get_cfgflag_ ## type(YKP_CONFIG *cfg)			\
+{								\
+	if (cfg) {						\
+		if(cfg->ykcore_config.cfgFlags & CFGFLAG_ ## type)	\
+			return true;				\
+		else						\
+			return false;				\
+	}							\
+	return false;						\
 }
+
 
 #define def_set_extflag(type,capability)			\
 int ykp_set_extflag_ ## type(YKP_CONFIG *cfg, bool state)	\
@@ -805,6 +828,16 @@ int ykp_set_extflag_ ## type(YKP_CONFIG *cfg, bool state)	\
 	}							\
 	ykp_errno = YKP_ENOCFG;					\
 	return 0;						\
+}								\
+bool ykp_get_extflag_ ## type(YKP_CONFIG *cfg)			\
+{								\
+	if (cfg) {						\
+		if(cfg->ykcore_config.extFlags & EXTFLAG_ ## type)	\
+			return true;				\
+		else						\
+			return false;				\
+	}							\
+	return false;						\
 }
 
 def_set_tktflag(TAB_FIRST,capability_has_ticket_mods)

@@ -124,6 +124,44 @@ int ykp_set_extflag_ALLOW_UPDATE (YKP_CONFIG *cfg, bool state);
 int ykp_set_extflag_DORMANT (YKP_CONFIG *cfg, bool state);
 int ykp_set_extflag_LED_INV (YKP_CONFIG *cfg, bool state);
 
+bool ykp_get_tktflag_TAB_FIRST(YKP_CONFIG *cfg);
+bool ykp_get_tktflag_APPEND_TAB1(YKP_CONFIG *cfg);
+bool ykp_get_tktflag_APPEND_TAB2(YKP_CONFIG *cfg);
+bool ykp_get_tktflag_APPEND_DELAY1(YKP_CONFIG *cfg);
+bool ykp_get_tktflag_APPEND_DELAY2(YKP_CONFIG *cfg);
+bool ykp_get_tktflag_APPEND_CR(YKP_CONFIG *cfg);
+bool ykp_get_tktflag_PROTECT_CFG2(YKP_CONFIG *cfg);
+bool ykp_get_tktflag_OATH_HOTP(YKP_CONFIG *cfg);
+bool ykp_get_tktflag_CHAL_RESP(YKP_CONFIG *cfg);
+
+bool ykp_get_cfgflag_SEND_REF(YKP_CONFIG *cfg);
+bool ykp_get_cfgflag_TICKET_FIRST(YKP_CONFIG *cfg);
+bool ykp_get_cfgflag_PACING_10MS(YKP_CONFIG *cfg);
+bool ykp_get_cfgflag_PACING_20MS(YKP_CONFIG *cfg);
+bool ykp_get_cfgflag_ALLOW_HIDTRIG(YKP_CONFIG *cfg);
+bool ykp_get_cfgflag_STATIC_TICKET(YKP_CONFIG *cfg);
+bool ykp_get_cfgflag_SHORT_TICKET(YKP_CONFIG *cfg);
+bool ykp_get_cfgflag_STRONG_PW1(YKP_CONFIG *cfg);
+bool ykp_get_cfgflag_STRONG_PW2(YKP_CONFIG *cfg);
+bool ykp_get_cfgflag_MAN_UPDATE(YKP_CONFIG *cfg);
+bool ykp_get_cfgflag_OATH_HOTP8(YKP_CONFIG *cfg);
+bool ykp_get_cfgflag_OATH_FIXED_MODHEX1(YKP_CONFIG *cfg);
+bool ykp_get_cfgflag_OATH_FIXED_MODHEX2(YKP_CONFIG *cfg);
+bool ykp_get_cfgflag_OATH_FIXED_MODHEX(YKP_CONFIG *cfg);
+bool ykp_get_cfgflag_CHAL_YUBICO(YKP_CONFIG *cfg);
+bool ykp_get_cfgflag_CHAL_HMAC(YKP_CONFIG *cfg);
+bool ykp_get_cfgflag_HMAC_LT64(YKP_CONFIG *cfg);
+bool ykp_get_cfgflag_CHAL_BTN_TRIG(YKP_CONFIG *cfg);
+
+bool ykp_get_extflag_SERIAL_BTN_VISIBLE(YKP_CONFIG *cfg);
+bool ykp_get_extflag_SERIAL_USB_VISIBLE(YKP_CONFIG *cfg);
+bool ykp_get_extflag_SERIAL_API_VISIBLE (YKP_CONFIG *cfg);
+bool ykp_get_extflag_USE_NUMERIC_KEYPAD (YKP_CONFIG *cfg);
+bool ykp_get_extflag_FAST_TRIG (YKP_CONFIG *cfg);
+bool ykp_get_extflag_ALLOW_UPDATE (YKP_CONFIG *cfg);
+bool ykp_get_extflag_DORMANT (YKP_CONFIG *cfg);
+bool ykp_get_extflag_LED_INV (YKP_CONFIG *cfg);
+
 int ykp_clear_config(YKP_CONFIG *cfg);
 
 int ykp_write_config(const YKP_CONFIG *cfg,
