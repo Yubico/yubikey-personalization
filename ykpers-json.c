@@ -219,6 +219,7 @@ int _ykp_json_import_cfg(YKP_CONFIG *cfg, const char *json, size_t len) {
 			}
 		}
 
+
 		if(mode == MODE_OATH_HOTP) {
 			json_object *jdigits = json_object_object_get(options, "oathDigits");
 			json_object *jrandom = json_object_object_get(options, "randomSeed");
@@ -253,9 +254,6 @@ int _ykp_json_import_cfg(YKP_CONFIG *cfg, const char *json, size_t len) {
 			ykp_set_cfgflag_STATIC_TICKET(cfg, true);
 		}
 
-		/* copy the ykcore config to make setting it quick */
-		ycfg = cfg->ykcore_config;
-
 		for(p = _ticket_flags_map; p->flag; p++) {
 			if(!p->json_text) {
 				continue;
@@ -265,7 +263,7 @@ int _ykp_json_import_cfg(YKP_CONFIG *cfg, const char *json, size_t len) {
 				if(joption && json_object_get_type(joption) == json_type_boolean) {
 					int value = json_object_get_boolean(joption);
 					if(value == 1) {
-						ycfg.tktFlags |= p->flag;
+						p->setter(cfg, true);
 					}
 				}
 			}
@@ -280,7 +278,7 @@ int _ykp_json_import_cfg(YKP_CONFIG *cfg, const char *json, size_t len) {
 				if(joption && json_object_get_type(joption) == json_type_boolean) {
 					int value = json_object_get_boolean(joption);
 					if(value == 1) {
-						ycfg.cfgFlags |= p->flag;
+						p->setter(cfg, true);
 					}
 				}
 			}
@@ -295,14 +293,12 @@ int _ykp_json_import_cfg(YKP_CONFIG *cfg, const char *json, size_t len) {
 				if(joption && json_object_get_type(joption) == json_type_boolean) {
 					int value = json_object_get_boolean(joption);
 					if(value == 1) {
-						ycfg.extFlags |= p->flag;
+						p->setter(cfg, true);
 					}
 				}
 			}
 		}
 
-		/* copy in the ykcore config again */
-		cfg->ykcore_config = ycfg;
 		ret_code = 1;
 out:
 		if(jobj) {
