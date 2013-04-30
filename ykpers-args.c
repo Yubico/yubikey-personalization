@@ -164,7 +164,7 @@ const char *optstring = "u12xza:c:n:t:hi:o:s:f:dvym:S::";
 static int _set_fixed(char *opt, YKP_CONFIG *cfg);
 static int _format_decimal_as_hex(uint8_t *dst, size_t dst_len, uint8_t *src);
 static int _format_oath_id(uint8_t *dst, size_t dst_len, uint8_t vendor, uint8_t type, uint32_t mui);
-static int _set_oath_id(char *opt, YKP_CONFIG *cfg, struct config_st *ycfg, YK_KEY *yk, YK_STATUS *st);
+static int _set_oath_id(char *opt, YKP_CONFIG *cfg, YK_KEY *yk, YK_STATUS *st);
 
 static int hex_modhex_decode(unsigned char *result, size_t *resultlen,
 			     const char *str, size_t strl,
@@ -249,11 +249,8 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 	bool ndef_seen = false;
 	bool usb_mode_seen = false;
 	bool scan_map_seen = false;
-	struct config_st *ycfg;
 
 	ykp_configure_version(cfg, st);
-
-	ycfg = (struct config_st *) ykp_core_config(cfg);
 
 	while((c = getopt(argc, argv, optstring)) != -1) {
 		if (c == 'o') {
@@ -523,8 +520,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 					return 0;
 				}
 				/* for OATH-HOTP and CHAL-RESP, uid is not applicable */
-				if ((ycfg->tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP ||
-				    (ycfg->tktFlags & TKTFLAG_CHAL_RESP) == TKTFLAG_CHAL_RESP) {
+				if (ykp_get_tktflag_OATH_HOTP(cfg) || ykp_get_tktflag_CHAL_RESP(cfg)) {
 					fprintf(stderr,
 						"Option uid= not valid with -ooath-hotp or -ochal-resp.\n"
 						);
@@ -608,7 +604,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 			else if (strncmp(optarg, "oath-imf=", 9) == 0) {
 				unsigned long imf;
 
-				if (!(ycfg->tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP) {
+				if (!ykp_get_tktflag_OATH_HOTP(cfg)) {
 					fprintf(stderr,
 						"Option oath-imf= only valid with -ooath-hotp or -ooath-hotp8.\n"
 						);
@@ -631,7 +627,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 				}
 			}
 			else if (strncmp(optarg, "oath-id=", 8) == 0 || strcmp(optarg, "oath-id") == 0) {
-				if (_set_oath_id(optarg, cfg, ycfg, yk, st) != 1) {
+				if (_set_oath_id(optarg, cfg, yk, st) != 1) {
 					*exit_code = 1;
 					return 0;
 				}
@@ -713,12 +709,11 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		int res = 0;
 
 		/* for OATH-HOTP, 160 bits key is also valid */
-		if ((ycfg->tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP)
+		if (ykp_get_tktflag_OATH_HOTP(cfg))
 			long_key_valid = true;
 
 		/* for HMAC (not Yubico) challenge-response, 160 bits key is also valid */
-		if ((ycfg->tktFlags & TKTFLAG_CHAL_RESP) == TKTFLAG_CHAL_RESP &&
-		    (ycfg->cfgFlags & CFGFLAG_CHAL_HMAC) == CFGFLAG_CHAL_HMAC) {
+		if(ykp_get_tktflag_CHAL_RESP(cfg) && ykp_get_cfgflag_CHAL_HMAC(cfg)) {
 			long_key_valid = true;
 		}
 
@@ -795,9 +790,9 @@ static int _format_oath_id(uint8_t *dst, size_t dst_len, uint8_t vendor, uint8_t
 	return 1;
 }
 
-static int _set_oath_id(char *opt, YKP_CONFIG *cfg, struct config_st *ycfg, YK_KEY *yk, YK_STATUS *st) {
+static int _set_oath_id(char *opt, YKP_CONFIG *cfg, YK_KEY *yk, YK_STATUS *st) {
 	/* For details, see YubiKey Manual 2010-09-16 section 5.3.4 - OATH-HOTP Token Identifier */
-	if (!(ycfg->tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP) {
+	if (!ykp_get_tktflag_OATH_HOTP(cfg)) {
 		fprintf(stderr,
 			"Option oath-id= only valid with -ooath-hotp or -ooath-hotp8.\n"
 			);
