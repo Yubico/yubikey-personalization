@@ -199,12 +199,18 @@ int _ykp_json_import_cfg(YKP_CONFIG *cfg, const char *json, size_t len) {
 		jtarget = json_object_object_get(yprod_json, "targetConfig");
 		if(jtarget) {
 			int target_config = json_object_get_int(jtarget);
-			if(target_config == 1 &&
-					cfg->command != SLOT_CONFIG) {
+			int command;
+			if(target_config == 1) {
+				command = SLOT_CONFIG;
+			} else if(target_config == 2) {
+				command = SLOT_CONFIG2;
+			} else {
 				ykp_errno = YKP_EINVAL;
 				goto out;
-			} else if(target_config == 2 &&
-					cfg->command != SLOT_CONFIG2) {
+			}
+			if(ykp_command(cfg) == 0) {
+				ykp_configure_command(cfg, command);
+			} else if(ykp_command(cfg) != command) {
 				ykp_errno = YKP_EINVAL;
 				goto out;
 			}
