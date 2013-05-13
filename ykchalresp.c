@@ -39,6 +39,7 @@
 #include <ykdef.h>
 #include <ykcore.h>
 #include <ykstatus.h>
+#include <ykpers-version.h>
 
 const char *usage =
 	"Usage: ykchalresp [options] challenge\n"
@@ -53,11 +54,12 @@ const char *usage =
 	"\t-x        Challenge is hex encoded.\n"
 	"\n"
 	"\t-v        verbose\n"
+	"\t-V        tool version\n"
 	"\t-h        help (this text)\n"
 	"\n"
 	"\n"
 	;
-const char *optstring = "12xvhHYN";
+const char *optstring = "12xvhHYNV";
 
 static void report_yk_error(void)
 {
@@ -104,6 +106,10 @@ static int parse_args(int argc, char **argv,
 		case 'v':
 			*verbose = true;
 			break;
+		case 'V':
+			fputs(YKPERS_VERSION_STRING "\n", stderr);
+			*exit_code = 0;
+			return 0;
 		case 'h':
 		default:
 			fputs(usage, stderr);

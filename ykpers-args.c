@@ -40,6 +40,7 @@
 #include <ykpers.h>
 #include <yubikey.h> /* To get yubikey_modhex_encode and yubikey_hex_encode */
 #include <ykdef.h>
+#include <ykpers-version.h>
 #include "ykpers-args.h"
 
 #define YUBICO_OATH_VENDOR_ID_HEX	0xe1	/* UB as hex */
@@ -157,9 +158,10 @@ const char *usage =
 "-d        dry-run (don't write anything to key)\n"
 "\n"
 "-v        verbose\n"
+"-V        tool version\n"
 "-h        help (this text)\n"
 ;
-const char *optstring = "u12xza:c:n:t:hi:o:s:f:dvym:S::";
+const char *optstring = "u12xza:c:n:t:hi:o:s:f:dvym:S::V";
 
 static int _set_fixed(char *opt, YKP_CONFIG *cfg);
 static int _format_decimal_as_hex(uint8_t *dst, size_t dst_len, uint8_t *src);
@@ -671,6 +673,10 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		case 'y':
 			*autocommit = true;
 			break;
+		case 'V':
+			fputs(YKPERS_VERSION_STRING "\n", stderr);
+			*exit_code = 0;
+			return 0;
 		case 'h':
 		default:
 			fputs(usage, stderr);

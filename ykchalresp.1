@@ -35,7 +35,7 @@
 ykchalresp - Perform challenge-response operation with YubiKey
 .SH SYNOPSIS
 .B ykchalresp
-[\fI-1\fR | \fI-2\fR] [\fI-H\fR] [\fI-Y\fR] [\fI-N\fR] [\fI-x\fR] [\fI-v\fR] [\fI-h\fR]
+[\fI-1\fR | \fI-2\fR] [\fI-H\fR] [\fI-Y\fR] [\fI-N\fR] [\fI-x\fR] [\fI-v\fR] [\fI-V\fR] [\fI-h\fR]
 .SH DESCRIPTION
 .PP
 Send a challenge to a YubiKey, and read the response.  The YubiKey can be configured
@@ -65,6 +65,9 @@ challenge is hex encoded.
 .TP
 \fB\-v\fR
 enable verbose mode.
+.TP
+\fB\-V\fR
+print tool version and exit.
 
 .SH EXAMPLE
 The YubiKey challenge-response operation can be demonstrated using the
