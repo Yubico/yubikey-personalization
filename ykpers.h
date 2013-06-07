@@ -186,9 +186,9 @@ int ykp_import_config(YKP_CONFIG *cfg, const char *buf, size_t len, int format);
 void ykp_set_acccode_type(YKP_CONFIG *cfg, unsigned int type);
 unsigned int ykp_get_acccode_type(const YKP_CONFIG *cfg);
 
-#define YKP_ACCCODE_NONE	0x00
-#define YKP_ACCCODE_RANDOM	0x01
-#define YKP_ACCCODE_SERIAL	0x02
+#define YKP_ACCCODE_NONE	0x01
+#define YKP_ACCCODE_RANDOM	0x02
+#define YKP_ACCCODE_SERIAL	0x03
 
 extern int * _ykp_errno_location(void);
 #define ykp_errno (*_ykp_errno_location())
