@@ -46,6 +46,8 @@ int _ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 		int mode = MODE_OTP_YUBICO;
 		struct map_st *p;
 		json_object *target_config = NULL;
+		json_object *prot_obj = NULL;
+		int protection = ykp_get_acccode_type(cfg);
 
 		if((ycfg.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP){
 			if((ycfg.cfgFlags & CFGFLAG_CHAL_HMAC) == CFGFLAG_CHAL_HMAC) {
@@ -75,6 +77,17 @@ int _ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 		}
 		if(target_config) {
 			json_object_object_add(yprod_json, "targetConfig", target_config);
+		}
+
+		if(protection == YKP_ACCCODE_NONE) {
+			prot_obj = json_object_new_string("none");
+		} else if(protection == YKP_ACCCODE_RANDOM) {
+			prot_obj = json_object_new_string("random");
+		} else if(protection == YKP_ACCCODE_SERIAL) {
+			prot_obj = json_object_new_string("id");
+		}
+		if(prot_obj) {
+			json_object_object_add(yprod_json, "protection", prot_obj);
 		}
 
 		json_object_object_add(jobj, "yubiProdConfig", yprod_json);
