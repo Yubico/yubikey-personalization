@@ -1115,6 +1115,16 @@ int ykp_config_num(YKP_CONFIG *cfg)
 	return 0;
 }
 
+void ykp_set_acccode_type(YKP_CONFIG *cfg, unsigned int type)
+{
+	cfg->ykp_acccode_type = type;
+}
+
+unsigned int ykp_get_acccode_type(const YKP_CONFIG *cfg)
+{
+	return cfg->ykp_acccode_type;
+}
+
 int * _ykp_errno_location(void)
 {
 	static int tsd_init = 0;

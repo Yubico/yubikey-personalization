@@ -45,6 +45,8 @@ struct ykp_config_t {
 	unsigned int command;
 
 	YK_CONFIG ykcore_config;
+
+	unsigned int ykp_acccode_type;
 };
 
 extern bool capability_has_hidtrig(const YKP_CONFIG *cfg);
