@@ -38,6 +38,7 @@
 #include <ykcore.h>
 #include <ykstatus.h>
 #include <ykpers-version.h>
+#include <ykdef.h>
 
 const char *usage =
 	"Usage: ykinfo [options]\n"
@@ -49,6 +50,8 @@ const char *usage =
 	"\t-H        Get serial in hex from YubiKey\n"
 	"\t-v        Get version from YubiKey\n"
 	"\t-t        Get touchlevel from YubiKey\n"
+	"\t-1        Check if slot 1 is programmed\n"
+	"\t-2        Check if slot 2 is programmed\n"
 	"\t-p        Get programming sequence from YubiKey\n"
 	"\t-a        Get all information above\n"
 	"\n"
@@ -59,7 +62,7 @@ const char *usage =
 	"\n"
 	"\n"
 	;
-const char *optstring = "asmHvtpqhV";
+const char *optstring = "asmHvtpqhV12";
 
 static void report_yk_error(void)
 {
@@ -77,6 +80,7 @@ static void report_yk_error(void)
 static int parse_args(int argc, char **argv,
 		bool *serial_dec, bool *serial_modhex, bool *serial_hex,
 		bool *version, bool *touch_level, bool *pgm_seq, bool *quiet,
+		bool *slot1, bool *slot2,
 		int *exit_code)
 {
 	int c;
@@ -90,6 +94,8 @@ static int parse_args(int argc, char **argv,
 			*version = true;
 			*touch_level = true;
 			*pgm_seq = true;
+			*slot1 = true;
+			*slot2 = true;
 			break;
 		case 's':
 			*serial_dec = true;
@@ -112,6 +118,12 @@ static int parse_args(int argc, char **argv,
 		case 'q':
 			*quiet = true;
 			break;
+		case '1':
+			*slot1 = true;
+			break;
+		case '2':
+			*slot2 = true;
+			break;
 		case 'V':
 			fputs(YKPERS_VERSION_STRING "\n", stderr);
 			*exit_code = 0;
@@ -125,7 +137,7 @@ static int parse_args(int argc, char **argv,
 	}
 
 	if (!*serial_dec && !*serial_modhex && !*serial_hex &&
-			!*version && !*touch_level && !*pgm_seq) {
+			!*version && !*touch_level && !*pgm_seq && !*slot1 && !*slot2) {
 		/* no options at all */
 		fputs("You must give at least one option.\n", stderr);
 		fputs(usage, stderr);
@@ -149,6 +161,8 @@ int main(int argc, char **argv)
 	bool version = false;
 	bool touch_level = false;
 	bool pgm_seq = false;
+	bool slot1 = false;
+	bool slot2 = false;
 
 	bool quiet = false;
 
@@ -157,6 +171,7 @@ int main(int argc, char **argv)
 	if (! parse_args(argc, argv,
 				&serial_dec, &serial_modhex, &serial_hex,
 				&version, &touch_level, &pgm_seq, &quiet,
+				&slot1, &slot2,
 				&exit_code))
 		exit(exit_code);
 
@@ -200,7 +215,7 @@ int main(int argc, char **argv)
 			printf("%s\n", modhex_serial);
 		}
 	}
-	if(version || touch_level || pgm_seq) {
+	if(version || touch_level || pgm_seq || slot1 || slot2) {
 		YK_STATUS *st = ykds_alloc();
 		if(!yk_get_status(yk, st)) {
 			ykds_free(st);
@@ -222,6 +237,16 @@ int main(int argc, char **argv)
 			if(!quiet)
 				printf("programming_sequence: ");
 			printf("%d\n", ykds_pgm_seq(st));
+		}
+		if(slot1) {
+			if(!quiet)
+				printf("slot1_status: ");
+			printf("%d\n", (ykds_touch_level(st) & CONFIG1_VALID) == CONFIG1_VALID);
+		}
+		if(slot2) {
+			if(!quiet)
+				printf("slot2_status: ");
+			printf("%d\n", (ykds_touch_level(st) & CONFIG2_VALID) == CONFIG2_VALID);
 		}
 		ykds_free(st);
 	}

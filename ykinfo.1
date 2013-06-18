@@ -35,7 +35,7 @@
 ykinfo - Get basic information from a YubiKey
 .SH SYNOPSIS
 .B ykinfo
-[\fI-s\fR] [\fI-m\fR] [\fI-H\fR] [\fI-v\fR] [\fI-t\fR] [\fI-p\fR] [\fI-q\fR] [\fI-V\fR] [\fI-h\fR]
+[\fI-s\fR] [\fI-m\fR] [\fI-H\fR] [\fI-v\fR] [\fI-t\fR] [\fI-p\fR] [\fI-1\fR] [\fI-2\fR] [\fI-q\fR] [\fI-V\fR] [\fI-h\fR]
 .SH DESCRIPTION
 .PP
 Get basic information from a YubiKey. Can get serial number, version
@@ -61,6 +61,12 @@ get the touch level and output it.
 .TP
 \fB\-p\fR
 get the programming sequence and output it.
+.TP
+\fB\-1\fR
+get the status of slot 1, 1 for programmed and 0 for empty
+.TP
+\fB\-2\fR
+get the status of slot 2, 1 for programmed and 0 for empty
 .TP
 \fB\-a\fR
 get all the information above.
