@@ -28,7 +28,7 @@
 
 AC_INIT([yubikey-personalization], [1.14.0],
   [yubico-devel@googlegroups.com], [ykpers],
-  [http://code.google.com/p/yubikey-personalization/])
+  [http://yubico.github.io/yubikey-personalization/])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
