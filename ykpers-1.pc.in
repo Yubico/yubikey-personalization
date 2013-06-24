@@ -7,5 +7,5 @@ Name: Libykpers
 Description: Personalization library for the YubiKey
 URL: http://www.yubico.com/
 Version: @VERSION@
-Libs: -L${libdir} -lykpers-1
-Cflags: -I${includedir}/ykpers-1
+Libs: -L${libdir} -lykpers-1 @PTHREAD_LIBS@
+Cflags: -I${includedir}/ykpers-1 @PTHREAD_CFLAGS@
