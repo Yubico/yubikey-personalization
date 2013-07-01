@@ -2,6 +2,24 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
 * Version 1.14.0 (unreleased)
 
+** Fixups of import/export.
+Add targetConfig to show in which slot a configuration is intended.
+Possible memory leaks on error conditions.
+
+** Add -d switch to ykpersonalize for dry-run.
+
+** Add ykp_clear_config() for clearing configuration flags.
+
+** Add getter functions for all configuration flags.
+
+** Add -V to all tools to output version.
+
+** Add ykp_get_acccode_type() and ykp_set_acccode_type()
+Only to do with export, showing where the access code came from
+in the ycfg.
+
+** Add -1 and -2 options to ykinfo to show programming state.
+
 * Version 1.13.0 (released 2013-04-22)
 
 ** Added import/export of ycfg-json format.
