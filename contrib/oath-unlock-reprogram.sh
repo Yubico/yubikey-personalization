@@ -59,7 +59,7 @@ when=`date +%Y-%m-%dT%H:%M:%S`
 
 while sleep 1; do
     # Read serial number.
-    serialno=`ykinfo -s -q`
+    serialno=`ykinfo -s -q 2> /dev/null`
     rc=$?
     if test "$rc" != "0"; then
 	# ykinfo already printed an error message
