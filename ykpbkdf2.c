@@ -31,7 +31,7 @@
 
 #include <ykpbkdf2.h>
 
-#include "rfc4634/sha.h"
+#include "sha.h"
 
 int yk_hmac_sha1(const char *key, size_t key_len,
 		     const char *text, size_t text_len,
