@@ -1,6 +1,6 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.14.1 (unreleased)
+* Version 1.14.1 (released 2013-09-16)
 
 ** Fix breakage with latest automake.
 
