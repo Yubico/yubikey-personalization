@@ -127,7 +127,7 @@ release:
 	fi
 	@head -3 $(srcdir)/NEWS | grep -q "Version $(VERSION) .released `date -I`" || \
 		(echo 'error: You need to update date/version in $(srcdir)/NEWS, see doc/MakeRelease.wiki.'; exit 1)
-	@if test ! -d $(YUBICO_GITHUB_REPO); then \
+	@if test ! -d "$(YUBICO_GITHUB_REPO)"; then \
 		echo "yubico.github.com repo not found!"; \
 		echo "Make sure that YUBICO_GITHUB_REPO is set"; \
 		exit 1; \
