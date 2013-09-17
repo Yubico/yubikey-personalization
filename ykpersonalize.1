@@ -140,9 +140,22 @@ Version
 .RS
 .TP
 \fB-m mode\fR
-set the mode of operation for the YubiKey NEO.  0 for HID device only,
-1 for CCID device only and 2 for HID/CCID composite device.  To set the
-autoeject flag add 80, for example: 82.
+set device configuration for the YubiKey NEO.  It is parsed in the form
+\fImode:cr_timeout:autoeject_timeout\fR
+.br
+where mode is:
+.br
+0    HID device only.
+.br
+1    CCID device only.
+.br
+2    HID/CCID composite device.
+.br
+Add 80 to set MODE_FLAG_EJECT, for example: 81
+.br
+cr_timeout is the timeout in seconds for the YubiKey to wait on button press for challenge response (default is 15)
+.br
+autoeject_timeout is the timeout in seconds before the card is automatically ejected in mode 81
 .TP
 \fB-S\fI0605...\fR
 set the scanmap to be used with the YubiKey NEO.  It must be 45 unique

@@ -117,7 +117,10 @@ int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 	char *salt = NULL;
 	char ndef[128];
 	char ndef_type = 0;
-	unsigned char usb_mode = -1;
+	unsigned char usb_mode = 0;
+	unsigned char cr_timeout = 0;
+	unsigned char autoeject_timeout = 0;
+	int num_modes_seen = 0;
 	bool zap = false;
 
 	unsigned char scan_map[sizeof(SCAN_MAP)];
@@ -144,7 +147,8 @@ int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 			    st, &verbose, &dry_run,
 			    access_code, &use_access_code,
 			    &aesviahash, &ndef_type, ndef, &usb_mode, &zap,
-			    scan_map, &exit_code);
+			    scan_map, &cr_timeout, &autoeject_timeout, &num_modes_seen,
+			    &exit_code);
 
 	return rc;
 }
@@ -307,7 +311,10 @@ int _test_non_config_args(void)
 	char *salt = NULL;
 	char ndef[128];
 	char ndef_type = 0;
-	unsigned char usb_mode = -1;
+	unsigned char usb_mode = 0;
+	unsigned char cr_timeout = 0;
+	unsigned char autoeject_timeout = 0;
+	int num_modes_seen = 0;
 	bool zap = false;
 
 	unsigned char scan_map[sizeof(SCAN_MAP)];
@@ -339,7 +346,8 @@ int _test_non_config_args(void)
 			    st, &verbose, &dry_run,
 			    access_code, &use_access_code,
 			    &aesviahash, &ndef_type, ndef, &usb_mode, &zap,
-			    scan_map, &exit_code);
+			    scan_map, &cr_timeout, &autoeject_timeout, &num_modes_seen,
+			    &exit_code);
 	assert(rc == 1);
 	i = strcmp(infname, "in"); assert(i == 0);
 	i = strcmp(outfname, "out"); assert(i == 0);

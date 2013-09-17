@@ -73,12 +73,8 @@ const char *usage =
 "          (this does NOT SET the access code, that's done with -oaccess=)\n"
 "-nXXX..   Write NDEF URI to YubiKey NEO, must be used with -1 or -2\n"
 "-tXXX..   Write NDEF text to YubiKey NEO, must be used with -1 or -2\n"
-"-mMODE    Set the USB operation mode of the YubiKey NEO.\n"
-"          Possible MODE arguments are:\n"
-"          0                   HID device only.\n"
-"          1                   CCID device only.\n"
-"          2                   HID/CCID composite device.\n"
-"          Add 80 to set MODE_FLAG_EJECT, for example: 81\n"
+"-mMODE    Set the USB device configuration of the YubiKey NEO.\n"
+"          See the manpage for details\n"
 "-S0605..  Set the scanmap to use with the YubiKey NEO. Must be 45 unique bytes,\n"
 "          in hex.  Use with no argument to reset to the default.\n"
 "-oOPTION  change configuration option.  Possible OPTION arguments are:\n"
@@ -238,7 +234,9 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		   unsigned char *access_code, bool *use_access_code,
 		   bool *aesviahash, char *ndef_type, char *ndef,
 		   unsigned char *usb_mode, bool *zap,
-		   unsigned char *scan_bin, int *exit_code)
+		   unsigned char *scan_bin, unsigned char *cr_timeout,
+		   unsigned char *autoeject_timeout, int *num_modes_seen,
+		   int *exit_code)
 {
 	int c;
 	const char *aeshash = NULL;
@@ -437,19 +435,19 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 				*exit_code = 1;
 				return 0;
 			}
-			if(optarg[1] != '\0') {
-				*usb_mode = (optarg[0] - '0') << 4;
-				optarg++;
-			}
-			if(optarg[1] == '\0') {
-				int mode = optarg[0] - '0';
-				if(mode >= 0 && mode < MODE_MASK) {
-					*usb_mode |= mode;
-					usb_mode_seen = true;
+			unsigned char mode, crtime, autotime;
+			int matched = sscanf(optarg, "%hhx:%hhd:%hhd", &mode, &crtime, &autotime);
+			if(matched > 0) {
+				*usb_mode = mode;
+				if(matched > 1) {
+					*cr_timeout = crtime;
+					if(matched > 2) {
+						*autoeject_timeout = autotime;
+					}
 				}
-			}
-			/* Only true if we've parsed a valid USB mode number */
-			if(!usb_mode_seen) {
+				usb_mode_seen = true;
+				*num_modes_seen = matched;
+			} else {
 				fprintf(stderr, "Invalid USB operation mode.\n");
 				*exit_code = 1;
 				return 0;

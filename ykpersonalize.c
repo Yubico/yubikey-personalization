@@ -63,6 +63,9 @@ int main(int argc, char **argv)
 	char ndef_string[128] = {0};
 	char ndef_type = 0;
 	unsigned char usb_mode = 0;
+	unsigned char cr_timeout = 0;
+	unsigned char autoeject_timeout = 0;
+	int num_modes_seen = 0;
 	bool zap = false;
 
 	bool error = false;
@@ -125,7 +128,8 @@ int main(int argc, char **argv)
 			     st, &verbose, &dry_run,
 			     access_code, &use_access_code,
 			     &aesviahash, &ndef_type, ndef_string,
-			     &usb_mode, &zap, scan_codes, &exit_code)) {
+			     &usb_mode, &zap, scan_codes, &cr_timeout,
+			     &autoeject_timeout, &num_modes_seen, &exit_code)) {
 		goto err;
 	}
 
@@ -216,6 +220,12 @@ int main(int argc, char **argv)
 			fprintf(stderr, "New NDEF will be written as:\n%s\n", ndef_string);
 		} else if(ykp_command(cfg) == SLOT_DEVICE_CONFIG) {
 			fprintf(stderr, "The USB mode will be set to: 0x%x\n", usb_mode);
+			if(num_modes_seen > 1) {
+				fprintf(stderr, "The challenge response timeout will be set to: %d\n", cr_timeout);
+				if(num_modes_seen > 2) {
+					fprintf(stderr, "The smartcard autoeject timeout will be set to: %d\n", autoeject_timeout);
+				}
+			}
 		} else if(ykp_command(cfg) == SLOT_SCAN_MAP) {
 			fprintf(stderr, "A new scanmap will be written.\n");
 		} else if(zap) {
@@ -275,6 +285,13 @@ int main(int argc, char **argv)
 			} else if(ykp_command(cfg) == SLOT_DEVICE_CONFIG) {
 				YK_DEVICE_CONFIG *device_config = ykp_alloc_device_config();
 				ykp_set_device_mode(device_config, usb_mode);
+				if(num_modes_seen > 1) {
+					ykp_set_device_chalresp_timeout(device_config, cr_timeout);
+					if(num_modes_seen > 2) {
+						ykp_set_device_autoeject_time(device_config, autoeject_timeout);
+					}
+				}
+
 				if(!yk_write_device_config(yk, device_config)) {
 					if(verbose)
 						printf(" failure\n");
