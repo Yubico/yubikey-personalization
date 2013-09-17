@@ -28,7 +28,7 @@
 
 AC_INIT([yubikey-personalization], [1.14.2],
   [yubico-devel@googlegroups.com], [ykpers],
-  [http://yubico.github.io/yubikey-personalization/])
+  [http://opensource.yubico.com/yubikey-personalization/])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -62,7 +62,7 @@ AC_LIB_HAVE_LINKFLAGS(yubikey,,
   [#include <yubikey.h>],
   [yubikey_modhex_p("foo")])
 if test "$ac_cv_libyubikey" != yes; then
-  AC_MSG_ERROR([libyubikey v1.5+ not found, see http://code.google.com/p/yubico-c/])
+  AC_MSG_ERROR([libyubikey v1.5+ not found, see http://opensource.yubico.com/yubico-c/])
 fi
 
 AC_ARG_WITH([backend],
