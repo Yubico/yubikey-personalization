@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-AC_INIT([yubikey-personalization], [1.14.1],
+AC_INIT([yubikey-personalization], [1.14.2],
   [yubico-devel@googlegroups.com], [ykpers],
   [http://yubico.github.io/yubikey-personalization/])
 AC_CONFIG_AUX_DIR([build-aux])
