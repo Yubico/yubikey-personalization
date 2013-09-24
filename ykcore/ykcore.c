@@ -41,6 +41,10 @@
 #define Sleep(x) usleep((x)*1000)
 #endif
 
+#ifdef YK_DEBUG
+static void _yk_hexdump(void *, int);
+#endif
+
 /*
  * Yubikey low-level interface section 2.4 (Report arbitration polling) specifies
  * a 600 ms timeout for a Yubikey to process something written to it.
@@ -713,8 +717,9 @@ uint16_t yk_endian_swap_16(uint16_t x)
 	return x;
 }
 
+#ifdef YK_DEBUG
 /* Private little hexdump function for debugging */
-void _yk_hexdump(void *buffer, int size)
+static void _yk_hexdump(void *buffer, int size)
 {
        unsigned char *p = buffer;
        int i;
@@ -725,3 +730,4 @@ void _yk_hexdump(void *buffer, int size)
       fprintf(stderr, "\n");
       fflush(stderr);
 }
+#endif
