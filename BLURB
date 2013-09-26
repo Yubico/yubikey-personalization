@@ -1,0 +1,7 @@
+Author: Yubico
+Basename: yubikey-personalization
+Homepage: http://opensource.yubico.com/yubikey-personalization/
+License: BSD-2-Clause
+Name: yubikey-personalization
+Project: yubikey-personalization
+Summary: YubiKey Personalization cross-platform library and tool
