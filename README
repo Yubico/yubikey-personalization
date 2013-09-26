@@ -1,10 +1,303 @@
-Documentation is in doc/ and in particular the doc/ReadMe.asciidoc file.
+Installation of the Yubikey Personalization package
+===================================================
 
-If you've checked out the source tree and the doc/ dir is empty, do
+Yubikey Personalization
+-----------------------
 
-   $ git submodule init
-   $ git submodule update
+The YubiKey Personalization package contains a library and command
+line tool used to personalize (i.e., set a AES key) YubiKeys.
 
-The documentation is also available online at
+Documentation
+-------------
 
-    http://github.com/Yubico/yubikey-personalization/wiki
+The complete reference manual on the YubiKey is required reading if
+you want to understand the entire picture and what each parameter
+does.  Download it from http://www.yubico.com/
+
+Dependencies
+------------
+
+Getting and installing dependencies depends on your operating systems,
+we give example for some flavours.  If you know how to install
+dependencies on other systems, let us know.  Debian hints should apply
+to Debian derivatives as well, including Ubuntu.
+
+Yubico-c is needed, see: http://yubico.github.io/yubico-c/
+
+  Debian:           apt-get install libyubikey-dev
+
+Pkg-config simplify finding other dependencies, see:
+http://www.freedesktop.org/wiki/Software/pkg-config
+
+  Debian:           apt-get install pkg-config
+
+Yubikey-personalization depends on libusb or libusb-1, so you will
+have to get it.  We recommend using libusb-1.
+
+  Debian libusb-1:  apt-get install libusb-1.0-0-dev
+  Debian libusb:    apt-get install libusb-dev
+  Fedora:           yum install libusb-devel
+
+The JSON library is an optional dependency, see:
+https://github.com/json-c/json-c/wiki
+
+  Debian:           apt-get install libjson0-dev
+
+You need json-c version 0.10 or later to get pretty printing of JSON
+output.  This project will build with version 0.9 too, but will not
+pretty print the JSON output.
+
+License
+-------
+
+The project is licensed under a BSD license.  See the file COPYING for
+exact wording.  For any copyright year range specified as YYYY-ZZZZ in
+this package note that the range specifies every single year in that
+closed interval.
+
+Building from Git
+-----------------
+
+Skip to the next section if you are using an official packaged
+version.
+
+You may check out the sources using Git with the following command:
+
+-----------
+  git clone git://github.com/Yubico/yubikey-personalization.git
+-----------
+
+This will create a directory 'yubikey-personalization'.  Enter the directory:
+
+-----------
+  cd yubikey-personalization
+-----------
+
+The doc/ sub-directory is stored in a git submodule, so you need to
+get those files as well:
+
+-----------
+  git submodule init
+  git submodule update
+-----------
+
+To later update the doc/ tree, you may do:
+
+-----------
+  cd doc
+  git pull
+  git checkout master
+-----------
+
+Autoconf, automake and libtool must be installed.
+
+Generate the build system using:
+
+-----------
+  autoreconf --install
+-----------
+
+Building
+--------
+
+The build system uses Autoconf, to set up the build system run:
+
+-----------
+  ./configure
+-----------
+
+Then build the code, run the self-test and install the binaries:
+
+-----------
+  make check install
+-----------
+
+Using
+-----
+
+WARNING: By using this tool you will destroy the AES key in your
+YubiKey.  This prevents it from being useful against Yubico's
+validation server.  It is possible to upload a new AES key to Yubico,
+using a random YubiKey prefix, to restore it.  But it is not possible
+to get back your old yubikey prefix if you decide to re-program your
+YubiKey.
+
+IMPORTANT: When running any of the utils that need to access the YubiKey 
+you will either need to run as root, or you will have to have made sure 
+that the current user has permission to access the device. These 
+permissions can be set up by copying the udev rules files 
+(https://github.com/Yubico/yubikey-personalization/blob/master/69-yubikey.rules[69-yubikey.rules] 
+and https://github.com/Yubico/yubikey-personalization/blob/master/70-yubikey.rules[70-yubikey.rules]) to /etc/udev/rules.d/
+
+With that out of the way, here is how you would program a YubiKey with
+an all-zero AES key and a dummy prefix:
+
+-----------
+$ ./ykpersonalize -ofixed=cccccccccccc -a00000000000000000000000000000000
+Firmware version 1.3.1 Touch level 9840 Program sequence 10
+Configuration data to be written to key configuration 1:
+
+fixed: m:cccccccccccc
+uid: h:000000000000
+key: h:00000000000000000000000000000000
+acc_code: h:000000000000
+ticket_flags: APPEND_CR
+config_flags:
+
+Commit? (y/n) [n]: y
+$ 
+-----------
+
+Using the "ykparse" tool from the yubico-c package, you can check that
+the OTPs are correct.  For example:
+
+-----------
+$ ykparse 00000000000000000000000000000000 ccccccccccccdkrkedgchtlfefghcekefhlifbchijrd
+warning: overlong token, ignoring prefix: cccccccccccc
+Input:
+  token: dkrkedgchtlfefghcekefhlifbchijrd
+          29 c9 32 50 6d a4 34 56 03 93 46 a7 41 06 78 c2 
+  aeskey: 00000000000000000000000000000000
+          00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+Output:
+          00 00 00 00 00 00 01 00 53 ea 63 00 6f 9e c4 24 
+
+Struct:
+  uid: 00 00 00 00 00 00 
+  counter: 1 (0x0001)
+  timestamp (low): 59987 (0xea53)
+  timestamp (high): 99 (0x63)
+  session use: 0 (0x00)
+  random: 40559 (0x9e6f)
+  crc: 9412 (0x24c4)
+
+Derived:
+  cleaned counter: 1 (0x0001)
+  modhex uid: cccccccccccc
+  triggered by caps lock: no
+  crc: F0B8
+  crc check: ok
+$ 
+-----------
+
+To program a YubiKey in static mode, you use the -ostatic-ticket flag
+as follows:
+
+-----------
+$  ./ykpersonalize -ofixed=cccccccccccc -a00000000000000000000000000000000 -ostatic-ticket
+Firmware version 1.3.1 Touch level 9856 Program sequence 11
+Configuration data to be written to key configuration 1:
+
+fixed: m:cccccccccccc
+uid: h:000000000000
+key: h:00000000000000000000000000000000
+acc_code: h:000000000000
+ticket_flags: APPEND_CR
+config_flags: STATIC_TICKET
+
+Commit? (y/n) [n]: y
+$ 
+-----------
+
+To program a YubiKey in static mode with a strongly looking password
+(i.e., also containing numeric and upper case letters), you use the
+-ostatic-ticket flag together with -ostrong-pw1 and -ostrong-pw2 (note
+YubiKey 2.0 only!) as follows:
+
+-----------
+$  ./ykpersonalize -ofixed=cccccccccccc -a00000000000000000000000000000000 -ostatic-ticket -ostrong-pw1 -ostrong-pw2
+Firmware version 2.0.0 Touch level 1792 Program sequence 3
+Configuration data to be written to key configuration 1:
+
+fixed: m:cccccccccccc
+uid: h:000000000000
+key: h:00000000000000000000000000000000
+acc_code: h:000000000000
+ticket_flags: APPEND_CR
+config_flags: STATIC_TICKET|STRONG_PW1|STRONG_PW2
+
+Commit? (y/n) [n]: y
+$ 
+-----------
+
+Alternatively on a YubiKey 2.0, you can program the second configuration, which
+defaults to be the static key configuration:
+
+-----------
+$  ./ykpersonalize -ofixed=cccccccccccc -a00000000000000000000000000000000 -2
+Firmware version 2.0.0 Touch level 1792 Program sequence 3
+Configuration data to be written to key configuration 2:
+
+fixed: m:cccccccccccc
+uid: h:000000000000
+key: h:00000000000000000000000000000000
+acc_code: h:000000000000
+ticket_flags: APPEND_CR
+config_flags: STATIC_TICKET|STRONG_PW1|STRONG_PW2
+
+Commit? (y/n) [n]: y
+$ 
+-----------
+
+To program a YubiKey with a lock code (to prevent others from easily
+reprogramming it), you use the -oaccess= flag as follows:
+
+-----------
+$ ./ykpersonalize -ofixed=vvvecdcedvjj -a00000000000000000000000000000000 -oaccess=001100001100
+Firmware version 2.0.0 Touch level 1792 Program sequence 3
+Configuration data to be written to key configuration 1:
+
+fixed: m:vvvecdcedvjj
+uid: h:000000000000
+key: h:00000000000000000000000000000000
+acc_code: h:001100001100
+ticket_flags: APPEND_CR
+config_flags:
+
+Commit? (y/n) [n]: y
+$
+-----------
+
+To re-program a YubiKey that has a lock code set, you use the
+-cXXX.. flag as follows:
+
+-----------
+$ ./ykpersonalize -c001100001100 -ofixed=vvvecdcedvjj -a00000000000000000000000000000000 -oaccess=001100223300
+Firmware version 2.0.0 Touch level 1792 Program sequence 3
+Configuration data to be written to key configuration 1:
+
+fixed: m:vvvecdcedvjj
+uid: h:000000000000
+key: h:00000000000000000000000000000000
+acc_code: h:001100223300
+ticket_flags: APPEND_CR
+config_flags:
+
+Commit? (y/n) [n]: y
+$
+-----------
+
+To disable the lock code on a YubiKey, program it with a lock code set
+to zeros.  For example:
+
+-----------
+$ ./ykpersonalize -c001100001133 -ofixed=vvvecdcedvjj -a00000000000000000000000000000003 -oaccess=000000000000
+Firmware version 2.0.0 Touch level 1792 Program sequence 7
+Configuration data to be written to key configuration 1:
+
+fixed: m:vvvecdcedvjj
+uid: h:000000000000
+key: h:00000000000000000000000000000000
+acc_code: h:000000000000
+ticket_flags: APPEND_CR
+config_flags:
+
+Commit? (y/n) [n]: y
+$
+-----------
+
+Feedback
+--------
+
+See the Google Group yubico-devel:
+http://groups.google.com/group/yubico-devel
