@@ -31,6 +31,7 @@ LIBYUBIKEYVERSION=1.10
 LIBJSONVERSION=0.11
 PROJECT=yubikey-personalization
 PACKAGE=ykpers
+CFLAGS="-mmacosx-version-min=10.6"
 
 all: usage ykpers4mac
 
@@ -51,7 +52,7 @@ ykpers4mac:
 		||	wget --no-check-certificate https://s3.amazonaws.com/json-c_releases/releases/json-c-$(LIBJSONVERSION).tar.gz && \
 	tar xfz json-c-$(LIBJSONVERSION).tar.gz && \
 	cd json-c-$(LIBJSONVERSION) && \
-	./configure --prefix=$(PWD)/tmp/root && \
+	CFLAGS=$(CFLAGS) ./configure --prefix=$(PWD)/tmp/root && \
 	make install $(CHECK) && \
 	install_name_tool -id @executable_path/../lib/libjson-c.2.dylib $(PWD)/tmp/root/lib/libjson-c.2.dylib && \
 	install_name_tool -id @executable_path/../lib/libjson-c.2.dylib $(PWD)/tmp/root/lib/libjson-c.dylib && \
@@ -65,7 +66,7 @@ ykpers4mac:
 		||	wget http://yubico.github.io/yubico-c/releases/libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
 	tar xfz libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
 	cd libyubikey-$(LIBYUBIKEYVERSION) && \
-	./configure --prefix=$(PWD)/tmp/root && \
+	CFLAGS=$(CFLAGS) ./configure --prefix=$(PWD)/tmp/root && \
 	make install $(CHECK) && \
 	install_name_tool -id @executable_path/../lib/libyubikey.0.dylib $(PWD)/tmp/root/lib/libyubikey.dylib && \
 	install_name_tool -id @executable_path/../lib/libyubikey.0.dylib $(PWD)/tmp/root/lib/libyubikey.0.dylib && \
@@ -75,7 +76,7 @@ ykpers4mac:
 		|| wget http://yubico.github.io/yubikey-personalization/releases/ykpers-$(VERSION).tar.gz && \
 	tar xfz ykpers-$(VERSION).tar.gz && \
 	cd ykpers-$(VERSION)/ && \
-	PKG_CONFIG_PATH=$(PWD)/tmp/root/lib/pkgconfig ./configure --prefix=$(PWD)/tmp/root --with-libyubikey-prefix=$(PWD)/tmp/root && \
+	CFLAGS=$(CFLAGS) PKG_CONFIG_PATH=$(PWD)/tmp/root/lib/pkgconfig ./configure --prefix=$(PWD)/tmp/root --with-libyubikey-prefix=$(PWD)/tmp/root && \
 	make install $(CHECK) && \
 	install_name_tool -id @executable_path/../lib/libykpers-1.1.dylib $(PWD)/tmp/root/lib/libykpers-1.dylib && \
 	install_name_tool -id @executable_path/../lib/libykpers-1.1.dylib $(PWD)/tmp/root/lib/libykpers-1.1.dylib && \
