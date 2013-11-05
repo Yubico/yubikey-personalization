@@ -37,7 +37,7 @@ all: usage ykpers4mac
 
 .PHONY: usage
 usage:
-	@if test test -z "$(VERSION)" || test -z "$(PGPKEYID)"; then \
+	@if test -z "$(VERSION)" || test -z "$(PGPKEYID)"; then \
 		echo "Try this instead:"; \
 		echo "  make PGPKEYID=[PGPKEYID] VERSION=[VERSION]"; \
 		echo "For example:"; \

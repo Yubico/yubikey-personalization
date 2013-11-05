@@ -35,7 +35,7 @@ all: usage ykpers4win32 ykpers4win64
 
 .PHONY: usage
 usage:
-	@if test test -z "$(VERSION)" || test -z "$(PGPKEYID)"; then \
+	@if test -z "$(VERSION)" || test -z "$(PGPKEYID)"; then \
 		echo "Try this instead:"; \
 		echo "  make PGPKEYID=[PGPKEYID] VERSION=[VERSION]"; \
 		echo "For example:"; \
