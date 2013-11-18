@@ -33,7 +33,7 @@
 
 #include <yubikey.h>
 
-#include <json/json.h>
+#include <json.h>
 #include <string.h>
 
 int _ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
