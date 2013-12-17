@@ -471,6 +471,13 @@ int yk_wait_for_key_status(YK_KEY *yk, uint8_t slot, unsigned int flags,
 	slot = 0;
 
 	while (slept_time < max_time_ms) {
+		Sleep(sleepval);
+		slept_time += sleepval;
+		/* exponential backoff, up to 500 ms */
+		sleepval *= 2;
+		if (sleepval > 500)
+			sleepval = 500;
+
 		/* Read a status report from the key */
 		memset(data, 0, sizeof(data));
 		if (!_ykusb_read(yk, REPORT_TYPE_FEATURE, slot, (char *) &data, FEATURE_RPT_SIZE))
@@ -512,13 +519,6 @@ int yk_wait_for_key_status(YK_KEY *yk, uint8_t slot, unsigned int flags,
 				break;
 			}
 		}
-
-		Sleep(sleepval);
-		slept_time += sleepval;
-		/* exponential backoff, up to 500 ms */
-		sleepval *= 2;
-		if (sleepval > 500)
-			sleepval = 500;
 	}
 
 	yk_errno = YK_ETIMEOUT;
