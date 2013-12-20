@@ -987,11 +987,9 @@ static int _ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t le
 			    && p->capability(cfg)
 			    && (mode & p->mode) == mode) {
 				if (*buffer) {
-					strcat(buffer, str_flags_separator);
-					strcat(buffer, p->flag_text);
-				} else {
-					strcpy(buffer, p->flag_text);
+					strncat(buffer, str_flags_separator, 256 - strlen(buffer));
 				}
+				strncat(buffer, p->flag_text, 256 - strlen(buffer));
 			}
 		}
 		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s\n", str_ticket_flags, str_key_value_separator, buffer);
@@ -1004,11 +1002,9 @@ static int _ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t le
 			    && p->capability(cfg)
 			    && (mode & p->mode) == mode) {
 				if (*buffer) {
-					strcat(buffer, str_flags_separator);
-					strcat(buffer, p->flag_text);
-				} else {
-					strcpy(buffer, p->flag_text);
+					strncat(buffer, str_flags_separator, 256 - strlen(buffer));
 				}
+				strncat(buffer, p->flag_text, 256 - strlen(buffer));
 				/* make sure we don't show more than one cfgFlag per value -
 				   some cfgflags share value in different contexts
 				*/
@@ -1024,11 +1020,9 @@ static int _ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t le
 			    && p->capability(cfg)
 			    && (mode & p->mode) == mode) {
 				if (*buffer) {
-					strcat(buffer, str_flags_separator);
-					strcat(buffer, p->flag_text);
-				} else {
-					strcpy(buffer, p->flag_text);
+					strncat(buffer, str_flags_separator, 256 - strlen(buffer));
 				}
+				strncat(buffer, p->flag_text, 256 - strlen(buffer));
 			}
 		}
 		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s\n", str_extended_flags, str_key_value_separator, buffer);
