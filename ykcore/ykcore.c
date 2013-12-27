@@ -458,7 +458,7 @@ int yk_wait_for_key_status(YK_KEY *yk, uint8_t slot, unsigned int flags,
 {
 	unsigned char data[FEATURE_RPT_SIZE];
 
-	unsigned int sleepval = 10;
+	unsigned int sleepval = 1;
 	unsigned int slept_time = 0;
 	int blocking = 0;
 
