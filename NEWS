@@ -2,6 +2,16 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
 * Version 1.14.2 (unreleased)
 
+** let -m take challenge-response timeout and autoeject timeout
+supplied with : beteen, so mode:cr-timeout:autoeject-timeout
+
+** make sure to always wait 1 millisecond between writes to the key
+newer platforms triggered a race where writes to the key could
+happen in a very short (about 0.4 milliseconds) timespan and would
+not be processed.
+
+** minor fixes for the printing format.
+
 * Version 1.14.1 (released 2013-09-16)
 
 ** Fix breakage with latest automake.
