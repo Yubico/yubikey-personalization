@@ -1,6 +1,6 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.14.2 (unreleased)
+* Version 1.14.2 (released 2013-12-30)
 
 ** let -m take challenge-response timeout and autoeject timeout
 supplied with : beteen, so mode:cr-timeout:autoeject-timeout
