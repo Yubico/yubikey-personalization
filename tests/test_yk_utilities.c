@@ -32,26 +32,32 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <assert.h>
+#include <stdbool.h>
 
 #include <ykstatus.h>
 #include <ykcore.h>
 #include <ykdef.h>
 
-struct {
+struct versions {
 	int major;
 	int minor;
 	int build;
+	bool support;
 } supported[] = {
-	{0,9,9},
-	{1,2,9},
-	{1,3,1},
-	{2,0,2},
-	{2,1,1},
-	{2,2,3},
-	{2,3,0},
-	{2,4,5},
-	{3,0,1},
-	{3,2,8},
+	{0,8,0,false},
+	{0,9,9,true},
+	{1,2,9,true},
+	{1,3,1,true},
+	{2,0,2,true},
+	{2,1,1,true},
+	{2,2,3,true},
+	{2,3,0,true},
+	{2,4,5,true},
+	{2,5,2,false},
+	{3,0,1,true},
+	{3,2,8,true},
+	{3,3,0,false},
+	{4,0,0,false},
 };
 
 static YK_STATUS * _test_init_st(int major, int minor, int build)
@@ -72,12 +78,17 @@ static YK_STATUS * _test_init_st(int major, int minor, int build)
 static void _test_yk_firmware(void)
 {
 	size_t i;
-	for(i = 0; i < sizeof(supported) / (sizeof(int) * 3); i++) {
+	for(i = 0; i < sizeof(supported) / sizeof(struct versions); i++) {
 		int rc;
 		YK_STATUS *st = _test_init_st(supported[i].major, supported[i].minor, supported[i].build);
 		printf("testing: %d.%d.%d\n", supported[i].major, supported[i].minor, supported[i].build);
 		rc = yk_check_firmware_version2(st);
-		assert(rc == 1);
+		if(supported[i].support == true) {
+			assert(rc == 1);
+		} else {
+			assert(yk_errno == YK_EFIRMWARE);
+			assert(rc == 0);
+		}
 		ykds_free(st);
 	}
 }
