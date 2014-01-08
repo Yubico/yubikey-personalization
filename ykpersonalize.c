@@ -124,7 +124,7 @@ int main(int argc, char **argv)
 	if (! args_to_config(argc, argv, cfg, yk,
 			     &infname, &outfname,
 			     &data_format,
-			     &autocommit, salt,
+			     &autocommit, &salt,
 			     st, &verbose, &dry_run,
 			     access_code, &use_access_code,
 			     &aesviahash, &ndef_type, ndef_string,

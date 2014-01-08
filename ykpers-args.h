@@ -36,7 +36,7 @@ const char *usage;
 int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		   const char **infname, const char **outfname,
 		   int *data_format,
-		   bool *autocommit, char *salt,
+		   bool *autocommit, char **salt,
 		   YK_STATUS *st, bool *verbose, bool *dry_run,
 		   unsigned char *access_code, bool *use_access_code,
 		   bool *aesviahash, char *ndef_type, char *ndef, unsigned char *usb_mode, 

@@ -229,7 +229,7 @@ void report_yk_error(void)
 int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		   const char **infname, const char **outfname,
 		   int *data_format,
-		   bool *autocommit, char *salt,
+		   bool *autocommit, char **salt,
 		   YK_STATUS *st, bool *verbose, bool *dry_run,
 		   unsigned char *access_code, bool *use_access_code,
 		   bool *aesviahash, char *ndef_type, char *ndef,
@@ -494,7 +494,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 				return 0;
 			}
 			if (strncmp(optarg, "salt=", 5) == 0)
-				salt = strdup(optarg+5);
+				*salt = strdup(optarg+5);
 			else if (strncmp(optarg, "fixed=", 6) == 0) {
 				if (_set_fixed(optarg + 6, cfg) != 1) {
 					fprintf(stderr,
