@@ -37,7 +37,6 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <time.h>
 #include <ctype.h>
 #include <assert.h>
 
@@ -297,8 +296,7 @@ int ykp_HMAC_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
  * key from user entered input.
  *
  * Use user provided salt, or use salt from an available random device.
- * If no random device is available we fall back to using 2048 bits of
- * system time data, together with the user input, as salt.
+ * If no random device is available we return with an error.
  */
 int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 				const char *salt)
@@ -349,16 +347,10 @@ int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 			}
 		}
 		if (_salt_len == 0) {
-			/* There was no randomness files, so create a cheap
-			   salt from time */
-			time_t t = time(NULL);
-			uint8_t output[256]; /* 2048 bits is a lot! */
-
-			prf_method.prf_fn(passphrase, strlen(passphrase),
-					    (char *)&t, sizeof(t),
-					    output, sizeof(output));
-			memcpy(_salt, output, sizeof(_salt));
-			_salt_len = sizeof(_salt);
+			/* There was no randomness files, so don't do
+			 * anything */
+			ykp_errno = YKP_EINVAL;
+			return 0;
 		}
 
 		rc = yk_pbkdf2(passphrase,
