@@ -637,6 +637,67 @@ int _test_ndef2_with_neo(void)
 	free(st);
 }
 
+int _test_salt(void)
+{
+	char *argv[] = {
+		"unittest", "-1", "-osalt=kaka",
+		NULL
+	};
+	YKP_CONFIG *cfg = ykp_alloc();
+	YK_STATUS *st = _test_init_st(2, 2, 0);
+	const char *infname = NULL;
+	const char *outfname = NULL;
+	bool verbose = false;
+	bool dry_run = false;
+	bool aesviahash = false;
+	bool use_access_code = false;
+	unsigned char access_code[256];
+	YK_KEY *yk = 0;
+	bool autocommit = false;
+	int exit_code = 0;
+	int data_format = YKP_FORMAT_LEGACY;
+
+	/* Options */
+	char *salt = NULL;
+	char ndef[128];
+	char ndef_type = 0;
+	unsigned char usb_mode = 0;
+	unsigned char cr_timeout = 0;
+	unsigned char autoeject_timeout = 0;
+	int num_modes_seen = 0;
+	bool zap = false;
+
+	unsigned char scan_map[sizeof(SCAN_MAP)];
+
+	int rc;
+
+	ykp_errno = 0;
+
+/* getopt reinit (BSD systems use optreset and a different optind value) */
+#if defined(__GLIBC__) || defined(_WIN32)
+	optind = 0;
+#else
+	optind = optreset = 1;
+#endif
+
+	/* copy version number from st into cfg */
+	assert(ykp_configure_for(cfg, 1, st) == 1);
+
+	/* call args_to_config from ykpers-args.c with a fake set of program arguments */
+	rc = args_to_config(3, argv, cfg, yk,
+			    &infname, &outfname,
+			    &data_format,
+			    &autocommit, &salt,
+			    st, &verbose, &dry_run,
+			    access_code, &use_access_code,
+			    &aesviahash, &ndef_type, ndef, &usb_mode, &zap,
+			    scan_map, &cr_timeout, &autoeject_timeout, &num_modes_seen,
+			    &exit_code);
+
+	assert(rc == 1);
+	assert(strncmp(salt, "kaka", 4) == 0);
+}
+
 int main (int argc, char **argv)
 {
 	_test_config_slot1();
@@ -662,6 +723,7 @@ int main (int argc, char **argv)
 	_test_slot_two_with_neo_beta();
 	_test_ndef2_with_neo();
 	_test_ndef2_with_neo_beta();
+	_test_salt();
 
 	return 0;
 }
