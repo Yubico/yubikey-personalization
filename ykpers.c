@@ -280,12 +280,15 @@ int ykp_HMAC_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
 
 	/* Make sure that the hexkey is exactly 40 characters */
 	if (strlen(hexkey) != 40) {
+		ykp_errno = YKP_EINVAL;
 		return 1;  /* Bad HMAC key */
 	}
 
 	/* Make sure that the hexkey is made up of only [0-9a-f] */
-	if (! yubikey_hex_p(hexkey))
+	if (! yubikey_hex_p(hexkey)) {
+		ykp_errno = YKP_EINVAL;
 		return 1;
+	}
 
 	yubikey_hex_decode(aesbin, hexkey, sizeof(aesbin));
 	i = sizeof(cfg->ykcore_config.key);
