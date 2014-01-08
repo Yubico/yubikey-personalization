@@ -47,7 +47,7 @@ int main(int argc, char **argv)
 	FILE *outf = NULL; const char *outfname = NULL;
 	int data_format = YKP_FORMAT_LEGACY;
 	bool verbose = false;
-	bool aesviahash = false;
+	char keylocation = 0;
 	bool use_access_code = false;
 	unsigned char access_code[256];
 	unsigned char scan_codes[sizeof(SCAN_MAP)];
@@ -127,7 +127,7 @@ int main(int argc, char **argv)
 			     &autocommit, &salt,
 			     st, &verbose, &dry_run,
 			     access_code, &use_access_code,
-			     &aesviahash, &ndef_type, ndef_string,
+			     &keylocation, &ndef_type, ndef_string,
 			     &usb_mode, &zap, scan_codes, &cr_timeout,
 			     &autoeject_timeout, &num_modes_seen, &exit_code)) {
 		goto err;
@@ -186,22 +186,42 @@ int main(int argc, char **argv)
 			goto err;
 		if (!ykp_import_config(cfg, data, strlen(data), data_format))
 			goto err;
-	} else if (! aesviahash && ! zap && (ykp_command(cfg) == SLOT_CONFIG || ykp_command(cfg) == SLOT_CONFIG2)) {
-		char passphrasebuf[256]; size_t passphraselen;
-		fprintf(stderr, "Passphrase to create AES key: ");
-		fflush(stderr);
-		if (!fgets(passphrasebuf, sizeof(passphrasebuf), stdin))
-		{
-			perror ("fgets");
-			exit_code = 1;
+	} else if (! zap && (ykp_command(cfg) == SLOT_CONFIG || ykp_command(cfg) == SLOT_CONFIG2)) {
+		char keybuf[42]; size_t keylen;
+		if(keylocation == 2) {
+			bool long_key = false;
+			if((ykp_get_tktflag_OATH_HOTP(cfg) && !ykp_get_cfgflag_CHAL_YUBICO(cfg)) ||
+					(ykp_get_tktflag_CHAL_RESP(cfg) && ykp_get_cfgflag_CHAL_HMAC(cfg))) {
+				long_key = true;
+				fprintf(stderr, " HMAC key, up to 20 bytes (40 characters hex) : ");
+			} else {
+				fprintf(stderr, " AES key, 16 bytes (32 characters hex) : ");
+			}
+			fflush(stderr);
+			if(!fgets(keybuf, sizeof(keybuf), stdin)) {
+				printf("error?\n");
+				perror ("fgets");
+				exit_code = 1;
+				goto err;
+			}
+			keylen = strnlen(keybuf, sizeof(keybuf));
+			if(keybuf[keylen - 1] == '\n') {
+				keybuf[keylen - 1] = '\0';
+			}
+			if(long_key) {
+				if(ykp_HMAC_key_from_hex(cfg, keybuf)) {
+					goto err;
+				}
+			} else {
+				if(ykp_AES_key_from_hex(cfg, keybuf)) {
+					goto err;
+				}
+			}
+		} else if(keylocation == 0) {
+			/* TODO: random */
+			ykp_errno = YKP_ENOTYETIMPL;
 			goto err;
 		}
-		passphraselen = strlen(passphrasebuf);
-		if (passphrasebuf[passphraselen - 1] == '\n')
-			passphrasebuf[passphraselen - 1] = '\0';
-		if (!ykp_AES_key_from_passphrase(cfg,
-						 passphrasebuf, salt))
-			goto err;
 	}
 
 	if (outf) {

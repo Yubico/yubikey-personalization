@@ -67,8 +67,8 @@ const char *usage =
 "-iFILE    read configuration from FILE.\n"
 "          (if FILE is -, read from stdin)\n"
 "-fformat  set the data format for -s and -i valid values are ycfg or legacy.\n"
-"-aXXX..   The AES secret key as a 32 (or 40 for OATH-HOTP/HMAC CHAL-RESP)\n"
-"          char hex value (not modhex)\n"
+"-a[XXX..] The AES secret key as a 32 (or 40 for OATH-HOTP/HMAC CHAL-RESP)\n"
+"          char hex value (not modhex) (none to prompt for key on stdin)\n"
 "-cXXX..   A 12 char hex value (not modhex) to use as access code for programming\n"
 "          (this does NOT SET the access code, that's done with -oaccess=)\n"
 "-nXXX..   Write NDEF URI to YubiKey NEO, must be used with -1 or -2\n"
@@ -157,7 +157,7 @@ const char *usage =
 "-V        tool version\n"
 "-h        help (this text)\n"
 ;
-const char *optstring = "u12xza:c:n:t:hi:o:s:f:dvym:S::V";
+const char *optstring = "u12xza::c:n:t:hi:o:s:f:dvym:S::V";
 
 static int _set_fixed(char *opt, YKP_CONFIG *cfg);
 static int _format_decimal_as_hex(uint8_t *dst, size_t dst_len, uint8_t *src);
@@ -232,7 +232,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		   bool *autocommit, char **salt,
 		   YK_STATUS *st, bool *verbose, bool *dry_run,
 		   unsigned char *access_code, bool *use_access_code,
-		   bool *aesviahash, char *ndef_type, char *ndef,
+		   char *keylocation, char *ndef_type, char *ndef,
 		   unsigned char *usb_mode, bool *zap,
 		   unsigned char *scan_bin, unsigned char *cr_timeout,
 		   unsigned char *autoeject_timeout, int *num_modes_seen,
@@ -381,8 +381,12 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 			}
 			break;
 		case 'a':
-			*aesviahash = true;
-			aeshash = optarg;
+			if(optarg) {
+				aeshash = optarg;
+				*keylocation = 1;
+			} else {
+				*keylocation = 2;
+			}
 			break;
 		case 'c': {
 			size_t access_code_len = 0;
@@ -708,7 +712,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		}
 	}
 
-	if (*aesviahash) {
+	if (*keylocation == 1) {
 		bool long_key_valid = false;
 		int res = 0;
 
