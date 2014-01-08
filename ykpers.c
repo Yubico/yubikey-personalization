@@ -253,12 +253,15 @@ int ykp_AES_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
 
 	/* Make sure that the hexkey is exactly 32 characters */
 	if (strlen(hexkey) != 32) {
+		ykp_errno = YKP_EINVAL;
 		return 1;  /* Bad AES key */
 	}
 
 	/* Make sure that the hexkey is made up of only [0-9a-f] */
-	if (! yubikey_hex_p(hexkey))
+	if (! yubikey_hex_p(hexkey)) {
+		ykp_errno = YKP_EINVAL;
 		return 1;
+	}
 
 	yubikey_hex_decode(aesbin, hexkey, sizeof(aesbin));
 	memcpy(cfg->ykcore_config.key, aesbin, sizeof(cfg->ykcore_config.key));
