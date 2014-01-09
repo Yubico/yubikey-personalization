@@ -268,6 +268,27 @@ int ykp_AES_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
 	return 0;
 }
 
+/* Store a 16 byte AES key.
+ *
+ * copy 16 bytes from key to cfg->ykcore_config.key
+ */
+int ykp_AES_key_from_raw(YKP_CONFIG *cfg, const char *key) {
+	memcpy(cfg->ykcore_config.key, key, sizeof(cfg->ykcore_config.key));
+	return 0;
+}
+
+/* Store a 20 byte HMAC key.
+ *
+ * store the first 16 bytes of key in cfg->ykcore_config.key
+ * and the remaining 4 bytes in cfg->ykcore_config.uid
+ */
+int ykp_HMAC_key_from_raw(YKP_CONFIG *cfg, const char *key) {
+	size_t size = sizeof(cfg->ykcore_config.key);
+	memcpy(cfg->ykcore_config.key, key, size);
+	memcpy(cfg->ykcore_config.uid, key + size, 20 - size);
+	return 0;
+}
+
 /* Decode 160 bits HMAC key, used with OATH and HMAC challenge-response.
  *
  * The first 128 bits of the HMAC go key into cfg->ykcore_config.key,

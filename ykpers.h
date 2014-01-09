@@ -62,9 +62,11 @@ int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command);
 int ykp_configure_for(YKP_CONFIG *cfg, int confnum, YK_STATUS *st);
 
 int ykp_AES_key_from_hex(YKP_CONFIG *cfg, const char *hexkey);
+int ykp_AES_key_from_raw(YKP_CONFIG *cfg, const char *key);
 int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 				const char *salt);
 int ykp_HMAC_key_from_hex(YKP_CONFIG *cfg, const char *hexkey);
+int ykp_HMAC_key_from_raw(YKP_CONFIG *cfg, const char *key);
 
 /* Functions for constructing the YK_NDEF struct before writing it to a neo */
 YK_NDEF *ykp_alloc_ndef(void);

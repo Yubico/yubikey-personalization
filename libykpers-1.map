@@ -247,5 +247,7 @@ LIBYKPERS_1.15 {
   global:
 # Functions:
   ykp_get_supported_key_length;
+  ykp_AES_key_from_raw;
+  ykp_HMAC_key_from_raw;
 # Variables:
 } LIBYKPERS_1.14;
