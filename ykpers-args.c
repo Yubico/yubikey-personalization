@@ -713,17 +713,8 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 	}
 
 	if (*keylocation == 1) {
-		bool long_key_valid = false;
+		bool long_key_valid = ykp_get_supported_key_length(cfg) == 20 ? true : false;
 		int res = 0;
-
-		/* for OATH-HOTP, 160 bits key is also valid */
-		if (ykp_get_tktflag_OATH_HOTP(cfg))
-			long_key_valid = true;
-
-		/* for HMAC (not Yubico) challenge-response, 160 bits key is also valid */
-		if(ykp_get_tktflag_CHAL_RESP(cfg) && ykp_get_cfgflag_CHAL_HMAC(cfg)) {
-			long_key_valid = true;
-		}
 
 		if (long_key_valid && strlen(aeshash) == 40) {
 			res = ykp_HMAC_key_from_hex(cfg, aeshash);
