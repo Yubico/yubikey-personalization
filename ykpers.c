@@ -768,7 +768,7 @@ int ykp_set_tktflag_ ## type(YKP_CONFIG *cfg, bool state)	\
 	ykp_errno = YKP_ENOCFG;					\
 	return 0;						\
 } \
-bool ykp_get_tktflag_ ## type(YKP_CONFIG *cfg)			\
+bool ykp_get_tktflag_ ## type(const YKP_CONFIG *cfg)		\
 {								\
 	if (cfg) {						\
 		if((cfg->ykcore_config.tktFlags & TKTFLAG_ ## type) == TKTFLAG_ ## type)	\
@@ -798,7 +798,7 @@ int ykp_set_cfgflag_ ## type(YKP_CONFIG *cfg, bool state)	\
 	ykp_errno = YKP_ENOCFG;					\
 	return 0;						\
 }								\
-bool ykp_get_cfgflag_ ## type(YKP_CONFIG *cfg)			\
+bool ykp_get_cfgflag_ ## type(const YKP_CONFIG *cfg)		\
 {								\
 	if (cfg) {						\
 		if((cfg->ykcore_config.cfgFlags & CFGFLAG_ ## type) == CFGFLAG_ ## type)	\
@@ -827,7 +827,7 @@ int ykp_set_extflag_ ## type(YKP_CONFIG *cfg, bool state)	\
 	ykp_errno = YKP_ENOCFG;					\
 	return 0;						\
 }								\
-bool ykp_get_extflag_ ## type(YKP_CONFIG *cfg)			\
+bool ykp_get_extflag_ ## type(const YKP_CONFIG *cfg)		\
 {								\
 	if (cfg) {						\
 		if((cfg->ykcore_config.extFlags & EXTFLAG_ ## type) == EXTFLAG_ ## type)	\
