@@ -69,6 +69,7 @@ const char *usage =
 "-fformat  set the data format for -s and -i valid values are ycfg or legacy.\n"
 "-a[XXX..] The AES secret key as a 32 (or 40 for OATH-HOTP/HMAC CHAL-RESP)\n"
 "          char hex value (not modhex) (none to prompt for key on stdin)\n"
+"          If -a is not used a random key will be generated.\n"
 "-cXXX..   A 12 char hex value (not modhex) to use as access code for programming\n"
 "          (this does NOT SET the access code, that's done with -oaccess=)\n"
 "-nXXX..   Write NDEF URI to YubiKey NEO, must be used with -1 or -2\n"
