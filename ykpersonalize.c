@@ -189,10 +189,8 @@ int main(int argc, char **argv)
 	} else if (! zap && (ykp_command(cfg) == SLOT_CONFIG || ykp_command(cfg) == SLOT_CONFIG2)) {
 		char keybuf[42]; size_t keylen;
 		if(keylocation == 2) {
-			bool long_key = false;
-			if((ykp_get_tktflag_OATH_HOTP(cfg) && !ykp_get_cfgflag_CHAL_YUBICO(cfg)) ||
-					(ykp_get_tktflag_CHAL_RESP(cfg) && ykp_get_cfgflag_CHAL_HMAC(cfg))) {
-				long_key = true;
+			bool long_key = ykp_get_supported_key_length(cfg) == 20 ? true : false;
+			if(long_key == true) {
 				fprintf(stderr, " HMAC key, up to 20 bytes (40 characters hex) : ");
 			} else {
 				fprintf(stderr, " AES key, 16 bytes (32 characters hex) : ");
