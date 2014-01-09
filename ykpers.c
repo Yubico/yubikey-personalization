@@ -355,7 +355,7 @@ int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 		if (_salt_len == 0) {
 			/* There was no randomness files, so don't do
 			 * anything */
-			ykp_errno = YKP_EINVAL;
+			ykp_errno = YKP_ENORANDOM;
 			return 0;
 		}
 
@@ -1154,6 +1154,7 @@ static const char *errtext[] = {
 	"too old yubikey for this operation",
 	"invalid configuration number (this is a programming error)",
 	"invalid option/argument value",
+	"no randomness source available",
 };
 const char *ykp_strerror(int errnum)
 {

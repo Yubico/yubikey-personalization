@@ -200,6 +200,7 @@ const char *ykp_strerror(int errnum);
 #define YKP_EOLDYUBIKEY	0x04
 #define YKP_EINVCONFNUM	0x05
 #define YKP_EINVAL	0x06
+#define YKP_ENORANDOM	0x07
 
 # ifdef __cplusplus
 }
