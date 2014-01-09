@@ -231,7 +231,7 @@ int ykp_configure_for(YKP_CONFIG *cfg, int confnum, YK_STATUS *st)
 /* Return number of bytes of key data for this configuration.
  * 20 bytes is 160 bits, 16 bytes is 128.
  */
-static int _get_supported_key_length(const YKP_CONFIG *cfg)
+int ykp_get_supported_key_length(const YKP_CONFIG *cfg)
 {
 	/* OATH-HOTP and HMAC-SHA1 challenge response support 20 byte (160 bits)
 	 * keys, holding the last four bytes in the uid field.
@@ -319,7 +319,7 @@ int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 		size_t _salt_len = 0;
 		unsigned char buf[sizeof(cfg->ykcore_config.key) + 4];
 		int rc;
-		int key_bytes = _get_supported_key_length(cfg);
+		int key_bytes = ykp_get_supported_key_length(cfg);
 		YK_PRF_METHOD prf_method = {20, yk_hmac_sha1};
 
 		assert (key_bytes <= sizeof(buf));
@@ -920,7 +920,7 @@ static int _ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t le
 		/* for OATH-HOTP and HMAC-SHA1 challenge response, there is four bytes
 		 *  additional key data in the uid field
 		 */
-		key_bits_in_uid = (_get_supported_key_length(cfg) == 20);
+		key_bits_in_uid = (ykp_get_supported_key_length(cfg) == 20);
 
 		/* fixed: or OATH id: */
 		if ((ycfg.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP &&

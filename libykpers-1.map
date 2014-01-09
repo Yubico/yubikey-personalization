@@ -242,3 +242,10 @@ LIBYKPERS_1.14 {
   ykp_get_acccode_type;
 # Variables:
 } LIBYKPERS_1.13;
+
+LIBYKPERS_1.15 {
+  global:
+# Functions:
+  ykp_get_supported_key_length;
+# Variables:
+} LIBYKPERS_1.14;

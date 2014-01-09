@@ -190,6 +190,8 @@ unsigned int ykp_get_acccode_type(const YKP_CONFIG *cfg);
 #define YKP_ACCCODE_RANDOM	0x02
 #define YKP_ACCCODE_SERIAL	0x03
 
+int ykp_get_supported_key_length(const YKP_CONFIG *cfg);
+
 extern int * _ykp_errno_location(void);
 #define ykp_errno (*_ykp_errno_location())
 const char *ykp_strerror(int errnum);
