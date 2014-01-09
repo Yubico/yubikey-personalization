@@ -187,10 +187,11 @@ int main(int argc, char **argv)
 		if (!ykp_import_config(cfg, data, strlen(data), data_format))
 			goto err;
 	} else if (! zap && (ykp_command(cfg) == SLOT_CONFIG || ykp_command(cfg) == SLOT_CONFIG2)) {
-		char keybuf[42]; size_t keylen;
+		int key_bytes = ykp_get_supported_key_length(cfg);
+		char keybuf[42];
+		size_t keylen;
 		if(keylocation == 2) {
-			bool long_key = ykp_get_supported_key_length(cfg) == 20 ? true : false;
-			if(long_key == true) {
+			if(key_bytes == 20) {
 				fprintf(stderr, " HMAC key, up to 20 bytes (40 characters hex) : ");
 			} else {
 				fprintf(stderr, " AES key, 16 bytes (32 characters hex) : ");
@@ -206,7 +207,7 @@ int main(int argc, char **argv)
 			if(keybuf[keylen - 1] == '\n') {
 				keybuf[keylen - 1] = '\0';
 			}
-			if(long_key) {
+			if(key_bytes == 20) {
 				if(ykp_HMAC_key_from_hex(cfg, keybuf)) {
 					goto err;
 				}
@@ -216,9 +217,43 @@ int main(int argc, char **argv)
 				}
 			}
 		} else if(keylocation == 0) {
-			/* TODO: random */
-			ykp_errno = YKP_ENOTYETIMPL;
-			goto err;
+			const char *random_places[] = {
+				"/dev/srandom",
+				"/dev/urandom",
+				"/dev/random",
+				0
+			};
+			const char **random_place;
+			size_t read_bytes = 0;
+
+			for (random_place = random_places; *random_place; random_place++) {
+				FILE *random_file = fopen(*random_place, "r");
+				if (random_file) {
+					read_bytes = 0;
+
+					while (read_bytes < key_bytes) {
+						size_t n = fread(&keybuf[read_bytes], 1,
+								key_bytes - read_bytes, random_file);
+						read_bytes += n;
+					}
+
+					fclose(random_file);
+					break;
+				}
+			}
+			if(read_bytes < key_bytes) {
+				ykp_errno = YKP_ENORANDOM;
+				goto err;
+			}
+			if(key_bytes == 20) {
+				if(ykp_HMAC_key_from_raw(cfg, keybuf)) {
+					goto err;
+				}
+			} else {
+				if(ykp_AES_key_from_raw(cfg, keybuf)) {
+					goto err;
+				}
+			}
 		}
 	}
 
