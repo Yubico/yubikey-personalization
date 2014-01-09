@@ -79,9 +79,6 @@ const char *usage =
 "-S0605..  Set the scanmap to use with the YubiKey NEO. Must be 45 unique bytes,\n"
 "          in hex.  Use with no argument to reset to the default.\n"
 "-oOPTION  change configuration option.  Possible OPTION arguments are:\n"
-"          salt=ssssssss       Salt to be used when deriving key from a\n"
-"                              password.  If none is given, a unique random\n"
-"                              one will be generated.\n"
 "          fixed=xxxxxxxxxxx   The public identity of key, in MODHEX.\n"
 "                              This is 0-16 characters long.\n"
 "          uid=xxxxxx          The uid part of the generated ticket, in HEX.\n"
@@ -229,8 +226,7 @@ void report_yk_error(void)
  */
 int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		   const char **infname, const char **outfname,
-		   int *data_format,
-		   bool *autocommit, char **salt,
+		   int *data_format, bool *autocommit,
 		   YK_STATUS *st, bool *verbose, bool *dry_run,
 		   unsigned char *access_code, bool *use_access_code,
 		   char *keylocation, char *ndef_type, char *ndef,
@@ -498,9 +494,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 				*exit_code = 1;
 				return 0;
 			}
-			if (strncmp(optarg, "salt=", 5) == 0)
-				*salt = strdup(optarg+5);
-			else if (strncmp(optarg, "fixed=", 6) == 0) {
+			if (strncmp(optarg, "fixed=", 6) == 0) {
 				if (_set_fixed(optarg + 6, cfg) != 1) {
 					fprintf(stderr,
 						"Invalid fixed string: %s\n",

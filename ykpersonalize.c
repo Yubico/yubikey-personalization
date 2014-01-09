@@ -59,7 +59,6 @@ int main(int argc, char **argv)
 	bool dry_run = false;
 
 	/* Options */
-	char *salt = NULL;
 	char ndef_string[128] = {0};
 	char ndef_type = 0;
 	unsigned char usb_mode = 0;
@@ -123,8 +122,7 @@ int main(int argc, char **argv)
 	/* Parse all arguments in a testable way */
 	if (! args_to_config(argc, argv, cfg, yk,
 			     &infname, &outfname,
-			     &data_format,
-			     &autocommit, &salt,
+			     &data_format, &autocommit,
 			     st, &verbose, &dry_run,
 			     access_code, &use_access_code,
 			     &keylocation, &ndef_type, ndef_string,
@@ -387,8 +385,6 @@ err:
 		report_yk_error();
 	}
 
-	if (salt)
-		free(salt);
 	if (st)
 		free(st);
 	if (inf)
