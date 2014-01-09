@@ -236,11 +236,10 @@ int ykp_get_supported_key_length(const YKP_CONFIG *cfg)
 	/* OATH-HOTP and HMAC-SHA1 challenge response support 20 byte (160 bits)
 	 * keys, holding the last four bytes in the uid field.
 	 */
-	if ((cfg->ykcore_config.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP)
-		return 20;
-
-	if ((cfg->ykcore_config.tktFlags & TKTFLAG_CHAL_RESP) == TKTFLAG_CHAL_RESP &&
-	    (cfg->ykcore_config.cfgFlags & CFGFLAG_CHAL_HMAC) == CFGFLAG_CHAL_HMAC) {
+	if((ykp_get_tktflag_OATH_HOTP(cfg) &&
+				!ykp_get_cfgflag_CHAL_YUBICO(cfg)) ||
+			(ykp_get_tktflag_CHAL_RESP(cfg) &&
+			 ykp_get_cfgflag_CHAL_HMAC(cfg))) {
 		return 20;
 	}
 
