@@ -192,7 +192,7 @@ int main(int argc, char **argv)
 		size_t keylen;
 		if(keylocation == 2) {
 			if(key_bytes == 20) {
-				fprintf(stderr, " HMAC key, up to 20 bytes (40 characters hex) : ");
+				fprintf(stderr, " HMAC key, 20 bytes (40 characters hex) : ");
 			} else {
 				fprintf(stderr, " AES key, 16 bytes (32 characters hex) : ");
 			}
