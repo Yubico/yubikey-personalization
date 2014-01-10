@@ -482,13 +482,8 @@ int yk_wait_for_key_status(YK_KEY *yk, uint8_t slot, unsigned int flags,
 
 		/* Read a status report from the key */
 		memset(data, 0, sizeof(data));
-		if (!_ykusb_read(yk, REPORT_TYPE_FEATURE, slot, (char *) &data, FEATURE_RPT_SIZE)) {
-			if(yk_errno == YK_ENODATA) {
-				yk_errno = 0;
-				continue;
-			}
+		if (!_ykusb_read(yk, REPORT_TYPE_FEATURE, slot, (char *) &data, FEATURE_RPT_SIZE))
 			return 0;
-		}
 
 		if (last_data != NULL)
 			memcpy(last_data, data, sizeof(data));
