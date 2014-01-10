@@ -121,7 +121,10 @@ int _ykusb_read(void *dev, int report_type, int report_number,
 	}
 	if (rc >= 0)
 		return rc;
-	yk_errno = YK_EUSBERR;
+	if(rc == 0)
+		yk_errno = YK_ENODATA;
+	else
+		yk_errno = YK_EUSBERR;
 	return 0;
 }
 

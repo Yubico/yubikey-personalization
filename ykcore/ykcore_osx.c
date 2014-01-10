@@ -185,6 +185,9 @@ int _ykusb_read(void *dev, int report_type, int report_number,
 		return 0;
 	}
 
+	if(sizecf == 0)
+		yk_errno = YK_ENODATA;
+
 	return (int)sizecf;
 }
 

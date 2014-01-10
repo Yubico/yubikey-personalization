@@ -403,6 +403,7 @@ static const char *errtext[] = {
 	"operation would block",
 	"invalid command for operation",
 	"expected only one YubiKey but several present",
+	"no data returned from device",
 };
 const char *yk_strerror(int errnum)
 {
