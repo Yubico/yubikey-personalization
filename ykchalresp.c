@@ -243,11 +243,11 @@ static int challenge_response(YK_KEY *yk, int slot,
 	expect_bytes = (hmac == true) ? 20 : 16;
 
 	if(totp){
-        	offset   =  response[19] & 0xf ;
-        	bin_code = (response[offset]  & 0x7f) << 24
-           	| (response[offset+1] & 0xff) << 16
-           	| (response[offset+2] & 0xff) <<  8
-        	   | (response[offset+3] & 0xff) ;
+		offset   =  response[19] & 0xf ;
+		bin_code = (response[offset]  & 0x7f) << 24
+		| (response[offset+1] & 0xff) << 16
+		| (response[offset+2] & 0xff) <<  8
+		| (response[offset+3] & 0xff) ;
 		bin_code = bin_code % 1000000;
 		printf("%06i\n", bin_code);
 		return 1;
