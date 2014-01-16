@@ -54,6 +54,7 @@ const char *usage =
 	"\t-N        Abort if Yubikey requires button press.\n"
 	"\t-x        Challenge is hex encoded.\n"
 	"\t-t        Calculate TOTP (length 6, implies -H)\n"
+	"\t-8        8 Digit TOTP (usw with -t)\n"
 	"\n"
 	"\t-v        verbose\n"
 	"\t-V        tool version\n"
@@ -61,7 +62,7 @@ const char *usage =
 	"\n"
 	"\n"
 	;
-const char *optstring = "12xvhHtYNV";
+const char *optstring = "128xvhHtYNV";
 
 static void report_yk_error(void)
 {
@@ -79,7 +80,7 @@ static void report_yk_error(void)
 static int parse_args(int argc, char **argv,
 	       int *slot, bool *verbose,
 	       unsigned char **challenge, unsigned int *challenge_len,
-	       bool *hmac, bool *may_block, bool *totp,
+	       bool *hmac, bool *may_block, bool *totp, bool *eight,
 	       int *exit_code)
 {
 	int c;
@@ -102,6 +103,9 @@ static int parse_args(int argc, char **argv,
 		case 't':
 			*totp = true;
 			*hmac = true;
+			break;
+		case '8':
+			*eight = true;
 			break;
 		case 'Y':
 			*hmac = false;
@@ -208,7 +212,7 @@ static int check_firmware(YK_KEY *yk, bool verbose)
 
 static int challenge_response(YK_KEY *yk, int slot,
 		       unsigned char *challenge, unsigned int len,
-		       bool hmac, bool may_block, bool verbose, bool totp)
+		       bool hmac, bool may_block, bool verbose, bool totp, bool eight)
 {
 	unsigned char response[64];
 	unsigned char output_buf[(SHA1_MAX_BLOCK_SIZE * 2) + 1];
@@ -248,6 +252,11 @@ static int challenge_response(YK_KEY *yk, int slot,
 		| (response[offset+1] & 0xff) << 16
 		| (response[offset+2] & 0xff) <<  8
 		| (response[offset+3] & 0xff) ;
+		if(eight){
+			bin_code = bin_code % 100000000;
+			printf("%08u\n", bin_code);
+			return 1;
+		}
 		bin_code = bin_code % 1000000;
 		printf("%06i\n", bin_code);
 		return 1;
@@ -273,6 +282,7 @@ int main(int argc, char **argv)
 	bool hmac = true;
 	bool may_block = true;
 	bool totp = false;
+	bool eight = false;
 	unsigned char *challenge;
 	unsigned int challenge_len;
 	int slot = 1;
@@ -282,7 +292,7 @@ int main(int argc, char **argv)
 	if (! parse_args(argc, argv,
 			 &slot, &verbose,
 			 &challenge, &challenge_len,
-			 &hmac, &may_block, &totp,
+			 &hmac, &may_block, &totp, &eight,
 			 &exit_code))
 		exit(exit_code);
 
@@ -303,7 +313,7 @@ int main(int argc, char **argv)
 
 	if (! challenge_response(yk, slot,
 				 challenge, challenge_len,
-				 hmac, may_block, verbose, totp)) {
+				 hmac, may_block, verbose, totp, eight)) {
 		exit_code = 1;
 		goto err;
 	}
