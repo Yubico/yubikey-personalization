@@ -250,7 +250,7 @@ static int challenge_response(YK_KEY *yk, int slot,
 	/* HMAC responses are 160 bits, Yubico 128 */
 	expect_bytes = (hmac == true) ? 20 : 16;
 
-	if(digits){
+	if(digits && hmac){
 		offset   =  response[19] & 0xf ;
 		bin_code = (response[offset]  & 0x7f) << 24
 		| (response[offset+1] & 0xff) << 16
