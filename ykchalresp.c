@@ -43,7 +43,7 @@
 #include <ykpers-version.h>
 
 const char *usage =
-	"Usage: ykchalresp [options] challenge\n"
+	"Usage: ykchalresp [options] [challenge]\n"
 	"\n"
 	"Options :\n"
 	"\n"
@@ -53,8 +53,9 @@ const char *usage =
 	"\t-Y        Send a 6 byte Yubico challenge.\n"
 	"\t-N        Abort if Yubikey requires button press.\n"
 	"\t-x        Challenge is hex encoded.\n"
-	"\t-t        Calculate TOTP (length 6, implies -H)\n"
-	"\t-8        8 Digit TOTP (usw with -t)\n"
+	"\t-t        Time based challenge (for TOTP)\n"
+	"\t-6        Output 6 digit HOTP/TOTP code\n"
+	"\t-8        Output 8 digit HOTP/TOTP code\n"
 	"\n"
 	"\t-v        verbose\n"
 	"\t-V        tool version\n"
@@ -62,7 +63,7 @@ const char *usage =
 	"\n"
 	"\n"
 	;
-const char *optstring = "128xvhHtYNV";
+const char *optstring = "1268xvhHtYNV";
 
 static void report_yk_error(void)
 {
@@ -80,7 +81,7 @@ static void report_yk_error(void)
 static int parse_args(int argc, char **argv,
 	       int *slot, bool *verbose,
 	       unsigned char **challenge, unsigned int *challenge_len,
-	       bool *hmac, bool *may_block, bool *totp, bool *eight,
+	       bool *hmac, bool *may_block, bool *totp, int *digits,
 	       int *exit_code)
 {
 	int c;
@@ -104,8 +105,11 @@ static int parse_args(int argc, char **argv,
 			*totp = true;
 			*hmac = true;
 			break;
+		case '6':
+			*digits = 6;
+			break;
 		case '8':
-			*eight = true;
+			*digits = 8;
 			break;
 		case 'Y':
 			*hmac = false;
@@ -212,7 +216,7 @@ static int check_firmware(YK_KEY *yk, bool verbose)
 
 static int challenge_response(YK_KEY *yk, int slot,
 		       unsigned char *challenge, unsigned int len,
-		       bool hmac, bool may_block, bool verbose, bool totp, bool eight)
+		       bool hmac, bool may_block, bool verbose, bool totp, int digits )
 {
 	unsigned char response[64];
 	unsigned char output_buf[(SHA1_MAX_BLOCK_SIZE * 2) + 1];
@@ -246,13 +250,13 @@ static int challenge_response(YK_KEY *yk, int slot,
 	/* HMAC responses are 160 bits, Yubico 128 */
 	expect_bytes = (hmac == true) ? 20 : 16;
 
-	if(totp){
+	if(totp && digits){
 		offset   =  response[19] & 0xf ;
 		bin_code = (response[offset]  & 0x7f) << 24
 		| (response[offset+1] & 0xff) << 16
 		| (response[offset+2] & 0xff) <<  8
 		| (response[offset+3] & 0xff) ;
-		if(eight){
+		if(digits == 8){
 			bin_code = bin_code % 100000000;
 			printf("%08u\n", bin_code);
 			return 1;
@@ -282,7 +286,7 @@ int main(int argc, char **argv)
 	bool hmac = true;
 	bool may_block = true;
 	bool totp = false;
-	bool eight = false;
+	int digits = 0;
 	unsigned char *challenge;
 	unsigned int challenge_len;
 	int slot = 1;
@@ -292,7 +296,7 @@ int main(int argc, char **argv)
 	if (! parse_args(argc, argv,
 			 &slot, &verbose,
 			 &challenge, &challenge_len,
-			 &hmac, &may_block, &totp, &eight,
+			 &hmac, &may_block, &totp, &digits,
 			 &exit_code))
 		exit(exit_code);
 
@@ -313,7 +317,7 @@ int main(int argc, char **argv)
 
 	if (! challenge_response(yk, slot,
 				 challenge, challenge_len,
-				 hmac, may_block, verbose, totp, eight)) {
+				 hmac, may_block, verbose, totp, digits)) {
 		exit_code = 1;
 		goto err;
 	}
