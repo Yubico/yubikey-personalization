@@ -253,9 +253,9 @@ static int challenge_response(YK_KEY *yk, int slot,
 	if(digits && hmac){
 		offset   =  response[19] & 0xf ;
 		bin_code = (response[offset]  & 0x7f) << 24
-		| (response[offset+1] & 0xff) << 16
-		| (response[offset+2] & 0xff) <<  8
-		| (response[offset+3] & 0xff) ;
+			| (response[offset+1] & 0xff) << 16
+			| (response[offset+2] & 0xff) <<  8
+			| (response[offset+3] & 0xff) ;
 		if(digits == 8){
 			bin_code = bin_code % 100000000;
 			printf("%08u\n", bin_code);
@@ -264,7 +264,7 @@ static int challenge_response(YK_KEY *yk, int slot,
 		bin_code = bin_code % 1000000;
 		printf("%06i\n", bin_code);
 		return 1;
-        }
+	}
 	if (hmac) {
 		yubikey_hex_encode((char *)output_buf, (char *)response, expect_bytes);
 	} else {
