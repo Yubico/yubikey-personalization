@@ -133,7 +133,7 @@ static int parse_args(int argc, char **argv,
 		}
 	}
 
-	if (optind >= argc && !*totp) {
+	if ((optind >= argc && !*totp) || (optind < argc && *totp)) {
 		/* No challenge */
 		fputs(usage, stderr);
 		return 0;
