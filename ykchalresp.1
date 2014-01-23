@@ -1,4 +1,4 @@
-.\" Copyright (c) 2011-2013 Yubico AB
+.\" Copyright (c) 2011-2014 Yubico AB
 .\" All rights reserved.
 .\"
 .\" Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@
 ykchalresp - Perform challenge-response operation with YubiKey
 .SH SYNOPSIS
 .B ykchalresp
-[\fI-1\fR | \fI-2\fR] [\fI-H\fR] [\fI-Y\fR] [\fI-N\fR] [\fI-x\fR] [\fI-v\fR] [\fI-V\fR] [\fI-h\fR]
+[\fI-1\fR | \fI-2\fR] [\fI-H\fR] [\fI-Y\fR] [\fI-N\fR] [\fI-x\fR] [\fI-v\fR] [\fI-6\fR] [\fI-8\fR] [\fI-t\fR] [\fI-V\fR] [\fI-h\fR]
 .SH DESCRIPTION
 .PP
 Send a challenge to a YubiKey, and read the response.  The YubiKey can be configured
@@ -65,6 +65,15 @@ challenge is hex encoded.
 .TP
 \fB\-v\fR
 enable verbose mode.
+.TP
+\fB\-6\fR
+output the response in OATH format, 6 digits.
+.TP
+\fB\-8\fR
+output the response in OATH format, 8 digits.
+.TP
+\fB\-t\fR
+use current time as challenge instead of reading challenge from command line (as in default TOTP mode, seconds since 1970-01-01 00:00:00 / 30 encoded as an 8 byte challenge).
 .TP
 \fB\-V\fR
 print tool version and exit.
