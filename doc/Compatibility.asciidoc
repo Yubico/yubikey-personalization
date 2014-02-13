@@ -1,14 +1,14 @@
 Compatibility
 =============
 
-Compatibility information between yubikey-personalization and Yubikey
+Compatibility information between yubikey-personalization and YubiKey
 firmware versions.
 
 Introduction
 ------------
 
 This document tries to document which versions of
-yubikey-personalization and Yubikey firmwares go together and any
+yubikey-personalization and YubiKey firmwares go together and any
 missing features or incompatibilities.
 
 [width="80%",cols="3,^2,^2",options="header"]
