@@ -94,7 +94,7 @@ EXTRA_DIST += contrib/README contrib/programming.sh contrib/oath-unlock-reprogra
 EXTRA_DIST += ykpers4win.mk ykpers4mac.mk
 
 # Dist dev tools as well, to have the tarball complete.
-EXTRA_DIST += build-and-test.sh .travis.yml .gitignore .gitmodules
+EXTRA_DIST += build-and-test.sh .travis.yml .gitignore
 
 # udev rule files
 EXTRA_DIST += 69-yubikey.rules 70-yubikey.rules
