@@ -73,22 +73,6 @@ This will create a directory 'yubikey-personalization'.  Enter the directory:
   cd yubikey-personalization
 -----------
 
-The doc/ sub-directory is stored in a git submodule, so you need to
-get those files as well:
-
------------
-  git submodule init
-  git submodule update
------------
-
-To later update the doc/ tree, you may do:
-
------------
-  cd doc
-  git pull
-  git checkout master
------------
-
 Autoconf, automake and libtool must be installed.
 
 Generate the build system using:
