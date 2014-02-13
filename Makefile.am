@@ -85,7 +85,7 @@ ykinfo_LDADD = ./libykpers-1.la $(LTLIBYUBIKEY)
 dist_man1_MANS = ykpersonalize.1 ykchalresp.1 ykinfo.1
 
 # Dist docs from wiki.
-EXTRA_DIST = doc/Compatibility.asciidoc doc/Make-Release.asciidoc doc/Read-Me.asciidoc doc/USB-Hid-Issue.asciidoc doc/Windows-Build.asciidoc
+EXTRA_DIST = doc/Compatibility.asciidoc doc/Make-Release.asciidoc doc/USB-Hid-Issue.asciidoc doc/Windows-Build.asciidoc
 
 # Dist contrib stuff.
 EXTRA_DIST += contrib/README contrib/programming.sh contrib/oath-unlock-reprogram.sh contrib/draft-josefsson-yubikey-config.xml
