@@ -1,0 +1,128 @@
+Build yubikey-personalization for Windows
+=========================================
+
+Build yubikey-personalization for Windows
+-----------------------------------------
+
+The yubikey-personalization library and tools works fine on multiple
+platforms: GNU/Linux, Mac OS X and Windows.  Building for Windows is
+relatively easy if you follow these steps.
+
+First install a Windows cross-compiler on your GNU/Linux system.  We
+recommend the MinGW-w64 project because it is easy to install and
+provides cross-compilers for both 32-bit and 64-bit Windows.  For more
+information about the MinGW-w64 project please see:
+
+  http://mingw-w64.sourceforge.net/
+
+To build the compiler follow these steps:
+
+-----
+$ mkdir mingw-w64-32
+$ cd mingw-w64-32
+$ wget -q http://mingw-w64.svn.sourceforge.net/viewvc/mingw-w64/experimental/buildsystem/makebuildroot-test.mk
+$ $EDITOR makebuildroot-test.mk
+-----
+
+In the editor, modify TARGET_ARCH to be 'i686-w64-mingw32', set
+GCC_FORTRAN and GCC_OBJC to 'N' (unless you have some other use for
+Fortran/ObjectiveC cross-compilers), and set GCC_BRANCH to
+'tags/gcc_4_5_1_release' which is a known stable GCC release.  Then
+build your cross-compiler:
+
+-----------
+$ make -f makebuildroot-test.mk
+...
+-----------
+
+This will take some time, but when it is finished, place
+mingw-w64-32/build/root/bin/ in your PATH or symlink the files into
+/usr/local/bin or similar.
+
+To build the 64-bit compiler (optional), redo the above command but
+replace mingw-w64-32 with mingw-w64-64 and 'i686-w64-mingw32' with
+'x86_64-w64-mingw32'.
+
+You also need to install Wine to have 'make check' work.  It needs to
+be relatively modern in order to work properly.  On a dpkg-based
+system, here is how to install it:
+
+-----------
+$ apt-get install wine
+-----------
+
+Let's create a directory where all our further work will be done.  I'm
+assuming it is $HOME/ykpers4win.  If you use another path, you need to
+replace the occurances of that path with your own path below.
+
+-----------
+$ mkdir $HOME/ykpers4win
+$ cd $HOME/ykpers4win
+-----------
+
+The next step is to build and install libyubikey.  Follow these steps:
+
+-----------
+$ wget -q http://yubico-c.googlecode.com/files/libyubikey-1.7.tar.gz
+$ tar xfa libyubikey-1.7.tar.gz
+$ cd libyubikey-1.7
+$ ./configure --host=i686-w64-mingw32 --build=x86_64-unknown-linux-gnu --prefix=$HOME/ykpers4win/root
+$ make install check
+$ cd ..
+-----------
+
+Now it is time to install the yubikey-personalization library and tool
+itself.  Follow these steps:
+
+-----------
+$ wget -q http://yubikey-personalization.googlecode.com/files/ykpers-1.5.1.tar.gz
+$ tar xfa ykpers-1.5.1.tar.gz 
+$ cd ykpers-1.5.1/
+$ lt_cv_deplibs_check_method=pass_all ./configure --host=i686-w64-mingw32 --build=x86_64-unknown-linux-gnu --prefix=$HOME/ykpers4win/root LDFLAGS=-L$HOME/ykpers4win/root/lib CPPFLAGS=-I$HOME/ykpers4win/root/include
+$ make install check
+$ cd ..
+-----------
+
+That's it!  You should now have all the necessary files in
+$HOME/ykpers4win/root/.
+
+Test the build by transferring the directory (only the files in bin/
+are necessary) to a Windows machine and start CMD.EXE, change into the
+bin/ directory and then invoke:
+
+-----------
+D:\root\bin>ykpersonalize -ofixed=ccccccbbbbbb
+...
+-----------
+
+It should query for a passphrase to generate the AES key, and then ask
+whether you want to reprogram your YubiKey.  It should finish without
+any error message.  Touch the YubiKey button and it should emit OTPs
+correctly.
+
+On libusb under Windows
+-----------------------
+
+Traditionally, we were using Libusb (both 0.x and 1.0 should work)
+under Windows.  Libusb 0.x is considered obsolete and libusb 1.x (up
+to and including at least 1.0.8) had some bugs under Windows which
+made it unusable for us.  Therefor, recent versions of
+yubikey-personalization do not require libusb, but instead uses native
+Windows code.
+
+If you are interested in building with libusb 1.x instead of the
+native Windows code, you may use instructions below to build libusb
+1.x.  Don't forget to configure yubikey-personalization using
+--with-backend=libusb or --with-backend=libusb-1.0.  You would build
+libusb after libyubikey but before yubikey-personalization.  We
+provide a somewhat modified libusb-1.0 tar archive that solves some
+build issues.
+
+-----------
+$ wget -q http://yubikey-personalization.googlecode.com/files/libusb-1.0.8-windows.tar.bz2
+$ tar xfa libusb-1.0.8-windows.tar.bz2
+$ cd libusb-1.0.8
+$ ./configure --host=i686-w64-mingw32 --build=x86_64-unknown-linux-gnu --prefix=$HOME/ykpers4win/root
+$ make install
+$ cd ..
+-----------

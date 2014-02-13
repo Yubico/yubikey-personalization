@@ -1,0 +1,26 @@
+Compatibility
+=============
+
+Compatibility information between yubikey-personalization and Yubikey
+firmware versions.
+
+Introduction
+------------
+
+This document tries to document which versions of
+yubikey-personalization and Yubikey firmwares go together and any
+missing features or incompatibilities.
+
+[width="80%",cols="3,^2,^2",options="header"]
+|=========================================================
+|ykpersonalize version |firmware version |unsupported features
+
+|<= 1.1 |1.x, 2.0 |
+|1.2    |2.1      |OATH-HOTP programming
+|1.3    |2.1      |
+|1.3.2  |0.9.9    |
+
+|=========================================================
+
+For more complete and general firmware information, see
+http://wiki.yubico.com/wiki/index.php/YubiKeyFirmwareVersion

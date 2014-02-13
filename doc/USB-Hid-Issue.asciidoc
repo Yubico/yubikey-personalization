@@ -1,0 +1,91 @@
+USB Hid Issue
+=============
+
+A quirk with the usbhid module on Linux
+
+The problem
+-----------
+
+It seems like the Linux kernel takes exclusive ownership over the
+YubiKey, making it difficult for our programs to talk with it.
+
+When looking in /var/log/syslog or /var/log/messages, you might see a
+message like the following:
+
+-----
+  Jun 29 13:17:22 lapdog vmunix: [  738.648591] usb 3-3: usbfs: process 10782 (mini) did not claim interface 0 before use
+-----
+
+Real Solution 1
+---------------
+
+To get it to work with libusb 0.1, a https://github.com/Yubico/yubikey-personalization/commit/919d5ad91365337f33c1abbdb30474f5373194e1[small fix] to the library was all that
+was needed.  This is now fixed in the main distribution, since version 1.4.0.
+
+Real Solution 2
+---------------
+
+Install libusb-1.0 and re-build ykpersonalize, and make sure it is
+using the "libusb-1.0" backend rather than the "libusb" backend.
+
+This backend has been added recently, but appears to solve the problem
+in a clean way.
+
+[NOTE]
+The "libusb-1.0" library is different from the traditional
+"libusb" library.  Install it on Debian/Ubuntu systems like this:
+
+-----
+sudo apt-get install libusb-1.0-0-dev
+-----
+
+Workaround 1
+------------
+
+There's a workaround, though, to set a quirks mode for the key, as
+follows:
+
+---
+  rmmod usbhid && modprobe usbhid quirks=0x1050:0x0010:0x04
+---
+
+In that mode, though, the YubiKey will not work as a keyboard and
+therefore not generate any string at all, so to have it work as usual
+again, you'll have to take usbhid out of quirks more:
+
+---
+  rmmod usbhid && modprobe usbhid
+---
+
+The above quirk only works on kernels up to 2.6.26.  We have yet to
+find out exactly what changed on newer versions and how to get around
+it again.
+
+Workaround 2
+------------
+
+User t.bubeck contributed the following, arguable better solution:
+
+1. Get the USB device numbers with the following command:
+
+----------------
+# dmesg | grep Yubi
+[314508.442312] input: Yubico Yubico Yubikey Touch as /devices/pci0000:00/0000:00:1d.2/usb4/4-1/4-1:1.0/input/input119
+[314508.448287] generic-usb 0003:1050:0010.006F: input,hidraw1: USB HID v1.11 Keyboard [Yubico Yubico Yubikey Touch] on usb-0000:00:1d.2-1/input0 
+----------------
+
+Then unbind your YubiKey by using your numbers instead of the example
+given here:
+
+----
+# echo 4-1:1.0 > /sys/bus/usb/drivers/usbhid/unbind 
+----
+
+David Dindorp has contributed a small script that unbinds YubiKeys as
+they are plugged in, for use during personalization.  See:
+
+https://github.com/Yubico/yubikey-personalization/blob/master/contrib/programming.sh
+
+Start the script as root (e.g., using "sudo programming.sh") and let
+it run, it will print status information as it unbinds newly connected
+YubiKeys.
