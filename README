@@ -22,7 +22,7 @@ we give example for some flavours.  If you know how to install
 dependencies on other systems, let us know.  Debian hints should apply
 to Debian derivatives as well, including Ubuntu.
 
-Yubico-c is needed, see: http://yubico.github.io/yubico-c/
+Yubico-c is needed, see: http://opensource.yubico.com/yubico-c/
 
   Debian:           apt-get install libyubikey-dev
 
