@@ -6,3 +6,4 @@ Name: yubikey-personalization
 Project: yubikey-personalization
 Summary: YubiKey Personalization cross-platform library and tool
 Yubico-Category: YubiKey Personalization
+Travis: https://travis-ci.org/Yubico/yubikey-personalization
