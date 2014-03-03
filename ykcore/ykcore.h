@@ -147,6 +147,10 @@ const char *yk_strerror(int errnum);
    error.  */
 const char *yk_usb_strerror(void);
 
+
+/* Swaps the two bytes between little and big endian on big endian machines */
+extern uint16_t yk_endian_swap_16(uint16_t x);
+
 #define YK_EUSBERR	0x01	/* USB error reporting should be used */
 #define YK_EWRONGSIZ	0x02
 #define YK_EWRITEERR	0x03

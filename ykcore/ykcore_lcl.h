@@ -66,13 +66,4 @@ extern int yk_read_from_key(YK_KEY *k, uint8_t slot,
 			    void *buf, unsigned int bufsize,
 			    unsigned int *bufcount);
 
-/*************************************************************************
- *
- * Internal helper functions
- *
- ****/
-
-/* Swaps the two bytes between little and big endian on big endian machines */
-extern uint16_t yk_endian_swap_16(uint16_t x);
-
 #endif	/* __YKCORE_LCL_H_INCLUDED__ */
