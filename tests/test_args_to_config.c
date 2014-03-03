@@ -634,7 +634,7 @@ void _test_ndef2_with_neo(void)
 	free(st);
 }
 
-int main (int argc, char **argv)
+int main (void)
 {
 	_test_config_slot1();
 	_test_config_static_slot2();
