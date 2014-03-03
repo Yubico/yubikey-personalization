@@ -49,16 +49,17 @@
 
 #include <ykpers.h>
 
-void *start_thread(void *arg)
+static void *start_thread(void *arg)
 {
+	YK_STATUS *st;
+	YK_KEY *yk = 0;
+	yk_errno = 0;
+	ykp_errno = 0;
 	if(!yk_init()) {
 		printf("failed to init usb..\n");
 		return NULL;
 	}
-	YK_STATUS *st = ykds_alloc();
-	YK_KEY *yk = 0;
-	yk_errno = 0;
-	ykp_errno = 0;
+	st = ykds_alloc();
 
 	yk = yk_open_first_key();
 	if(yk != 0) {
@@ -68,12 +69,13 @@ void *start_thread(void *arg)
 
 	ykds_free(st);
 	yk_release();
+	return NULL;
 }
 
-void _test_threaded_calls()
+static void _test_threaded_calls(void)
 {
-	int times = 5;
-	int i;
+	unsigned long times = 5;
+	unsigned long i;
 	ALLOC_THREADS(times);
 
 	for(i = 0; i < times; i++) {
