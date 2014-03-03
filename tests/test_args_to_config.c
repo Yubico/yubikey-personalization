@@ -57,7 +57,7 @@ struct ykp_config_t {
 
 static void _yktest_hexdump(const char *prefix, const void *buffer, int size, int break_on)
 {
-	unsigned char *p = buffer;
+	unsigned const char *p = buffer;
 	int i;
 	if (prefix != NULL)
 		fprintf(stderr, "%s", prefix);
