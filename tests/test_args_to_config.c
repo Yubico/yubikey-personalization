@@ -106,7 +106,7 @@ static int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, const char **
 	const char *outfname = NULL;
 	bool verbose = false;
 	bool dry_run = false;
-	char keylocation;
+	char keylocation = 0;
 	bool use_access_code = false;
 	unsigned char access_code[256];
 	YK_KEY *yk = 0;
@@ -295,7 +295,7 @@ static void _test_non_config_args(void)
 	const char *outfname = NULL;
 	bool verbose = false;
 	bool dry_run = false;
-	char keylocation;
+	char keylocation = 0;
 	bool use_access_code = false;
 	unsigned char access_code[256];
 	YK_KEY *yk = 0;
