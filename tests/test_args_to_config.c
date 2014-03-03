@@ -184,7 +184,7 @@ int _parse_args_rc(int argc, char *argv[])
 	return rc;
 }
 
-int _test_config_slot1(void)
+void _test_config_slot1(void)
 {
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(1, 3, 0);
@@ -215,7 +215,7 @@ int _test_config_slot1(void)
 	free(st);
 }
 
-int _test_config_static_slot2(void)
+void _test_config_static_slot2(void)
 {
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 0, 0);
@@ -246,7 +246,7 @@ int _test_config_static_slot2(void)
 	free(st);
 }
 
-int _test_too_old_key(void)
+void _test_too_old_key(void)
 {
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(1, 3, 0);
@@ -266,7 +266,7 @@ int _test_too_old_key(void)
 	free(st);
 }
 
-int _test_too_new_key(void)
+void _test_too_new_key(void)
 {
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 2, 0);
@@ -286,7 +286,7 @@ int _test_too_new_key(void)
 	free(st);
 }
 
-int _test_non_config_args(void)
+void _test_non_config_args(void)
 {
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 2, 0);
@@ -355,7 +355,7 @@ int _test_non_config_args(void)
 	free(st);
 }
 
-int _test_oath_hotp_nist_160_bits(void)
+void _test_oath_hotp_nist_160_bits(void)
 {
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 1, 0);
@@ -386,7 +386,7 @@ int _test_oath_hotp_nist_160_bits(void)
 	free(st);
 }
 
-int _test_extended_flags1(void)
+void _test_extended_flags1(void)
 {
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 2, 0);
@@ -420,7 +420,7 @@ int _test_extended_flags1(void)
 	free(st);
 }
 
-int _test_two_slots1(void)
+void _test_two_slots1(void)
 {
 	/* Test that it is not possible to choose slot more than once */
 	char *argv[] = {
@@ -431,7 +431,7 @@ int _test_two_slots1(void)
 	assert(rc == 0);
 }
 
-int _test_two_slots2(void)
+void _test_two_slots2(void)
 {
 	/* Test that it is not possible to choose slot more than once */
 	char *argv[] = {
@@ -442,7 +442,7 @@ int _test_two_slots2(void)
 	assert(rc == 0);
 }
 
-int _test_two_modes_at_once1(void)
+void _test_two_modes_at_once1(void)
 {
 	/* Test that it is not possible to choose mode (OATH-HOTP/CHAL-RESP) more than once */
 	char *argv[] = {
@@ -453,7 +453,7 @@ int _test_two_modes_at_once1(void)
 	assert(rc == 0);
 }
 
-int _test_two_modes_at_once2(void)
+void _test_two_modes_at_once2(void)
 {
 	/* Test that it is not possible to choose mode (OATH-HOTP/CHAL-RESP) more than once */
 	char *argv[] = {
@@ -464,7 +464,7 @@ int _test_two_modes_at_once2(void)
 	assert(rc == 0);
 }
 
-int _test_mode_after_other_option(void)
+void _test_mode_after_other_option(void)
 {
 	/* Test that it is not possible to set mode after other options */
 	char *argv[] = {
@@ -475,7 +475,7 @@ int _test_mode_after_other_option(void)
 	assert(rc == 0);
 }
 
-int _test_key_mixed_case1(void)
+void _test_key_mixed_case1(void)
 {
 	/* Make sure key with mixed case is rejected (parsing function yubikey_hex_decode
 	 * only handles lower case hex)
@@ -488,7 +488,7 @@ int _test_key_mixed_case1(void)
 	assert(rc == 0);
 }
 
-int _test_uid_for_oath(void)
+void _test_uid_for_oath(void)
 {
 	/* Test that it is not possible to specify UID with OATH */
 	char *argv[] = {
@@ -499,7 +499,7 @@ int _test_uid_for_oath(void)
 	assert(rc == 0);
 }
 
-int _test_uid_for_chal_resp(void)
+void _test_uid_for_chal_resp(void)
 {
 	/* Test that it is not possible to specify UID with Challenge Response */
 	char *argv[] = {
@@ -510,7 +510,7 @@ int _test_uid_for_chal_resp(void)
 	assert(rc == 0);
 }
 
-int _test_swap_with_slot(void)
+void _test_swap_with_slot(void)
 {
 	/* Test that you can not both swap and set slot */
 	char *argv[] = {
@@ -521,7 +521,7 @@ int _test_swap_with_slot(void)
 	assert(rc == 0);
 }
 
-int _test_slot_with_update(void)
+void _test_slot_with_update(void)
 {
 	/* Test the update must be before slot */
 	char *argv[] = {
@@ -532,7 +532,7 @@ int _test_slot_with_update(void)
 	assert(rc == 0);
 }
 
-int _test_swap_with_update(void)
+void _test_swap_with_update(void)
 {
 	/* Test the update must be before slot */
 	char *argv[] = {
@@ -543,7 +543,7 @@ int _test_swap_with_update(void)
 	assert(rc == 0);
 }
 
-int _test_ndef_for_neo_beta(void)
+void _test_ndef_for_neo_beta(void)
 {
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 1, 7);
@@ -563,7 +563,7 @@ int _test_ndef_for_neo_beta(void)
 	free(st);
 }
 
-int _test_ndef_with_non_neo(void)
+void _test_ndef_with_non_neo(void)
 {
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 2, 4);
@@ -581,7 +581,7 @@ int _test_ndef_with_non_neo(void)
 	free(st);
 }
 
-int _test_slot_two_with_neo_beta(void)
+void _test_slot_two_with_neo_beta(void)
 {
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 1, 7);
@@ -597,7 +597,7 @@ int _test_slot_two_with_neo_beta(void)
 	free(st);
 }
 
-int _test_ndef2_with_neo_beta(void)
+void _test_ndef2_with_neo_beta(void)
 {
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 1, 7);
@@ -613,7 +613,7 @@ int _test_ndef2_with_neo_beta(void)
 	free(st);
 }
 
-int _test_ndef2_with_neo(void)
+void _test_ndef2_with_neo(void)
 {
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(3, 0, 0);
