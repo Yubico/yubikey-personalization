@@ -36,7 +36,7 @@
 #include <ykpers.h>
 #include <ykdef.h>
 
-YK_STATUS *init_status(int major, int minor, int build) {
+static YK_STATUS *init_status(int major, int minor, int build) {
 	YK_STATUS *st = ykds_alloc();
 	struct status_st *t;
 
@@ -50,7 +50,7 @@ YK_STATUS *init_status(int major, int minor, int build) {
 	return st;
 }
 
-void _test_ykp_export_ycfg_empty(void) {
+static void _test_ykp_export_ycfg_empty(void) {
 	YKP_CONFIG *cfg = ykp_alloc();
 	char out[1024] = {0};
 	int res = ykp_export_config(cfg, out, 1024, YKP_FORMAT_YCFG);
@@ -58,13 +58,14 @@ void _test_ykp_export_ycfg_empty(void) {
 	ykp_free_config(cfg);
 }
 
-void _test_ykp_import_ycfg_simple(void) {
+static void _test_ykp_import_ycfg_simple(void) {
 	YK_STATUS *st = init_status(2,2,3);
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_CONFIG ycfg;
-	ykp_configure_version(cfg, st);
+  int res;
 	char data[1024] = "{ \"yubiProdConfig\": { \"mode\": \"oathHOTP\", \"options\": { \"fixedModhex\": false, \"oathDigits\": 6, \"fixedSeedvalue\": 0, \"randomSeed\": false, \"tabFirst\": false, \"tabBetween\": false, \"tabLast\": false, \"appendDelay1\": false, \"appendDelay2\": false, \"appendCR\": true, \"protectSecond\": false, \"sendRef\": false, \"ticketFirst\": false, \"pacing10MS\": false, \"pacing20MS\": false, \"allowHidtrig\": false, \"serialBtnVisible\": true, \"serialUsbVisible\": false, \"serialApiVisible\": true, \"useNumericKeypad\": false, \"fastTrig\": false, \"allowUpdate\": false, \"dormant\": false, \"ledInverted\": false } } }";
-	int res = ykp_import_config(cfg, data, strlen(data), YKP_FORMAT_YCFG);
+	ykp_configure_version(cfg, st);
+	res = ykp_import_config(cfg, data, strlen(data), YKP_FORMAT_YCFG);
 	assert(res == 1);
 
 	ycfg = cfg->ykcore_config;
