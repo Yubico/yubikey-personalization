@@ -49,7 +49,7 @@ static void _test_https_uri(void)
 	assert(ndef->len == 16);
 	rc = ykp_ndef_as_text(ndef, text, 256);
 	assert(rc == 1);
-	assert(strncmp(uri, text, strlen(uri)) == 0);
+	assert(memcmp(uri, text, strlen(uri)) == 0);
 	ykp_free_ndef(ndef);
 }
 
@@ -77,7 +77,7 @@ static void _test_exact_uri(void)
 	assert(ndef->len == NDEF_DATA_SIZE);
 	rc = ykp_ndef_as_text(ndef, text, 256);
 	assert(rc == 1);
-	assert(strncmp(uri, text, strlen(uri)) == 0);
+	assert(memcmp(uri, text, strlen(uri)) == 0);
 	ykp_free_ndef(ndef);
 }
 
@@ -95,7 +95,7 @@ static void _test_exact_text(void)
 	assert(ndef->len == NDEF_DATA_SIZE);
 	rc = ykp_ndef_as_text(ndef, text2, 256);
 	assert(rc == 1);
-	assert(strncmp(text, text2, strlen(text)) == 0);
+	assert(memcmp(text, text2, strlen(text)) == 0);
 	ykp_free_ndef(ndef);
 }
 
@@ -114,7 +114,7 @@ static void _test_other_lang_text(void)
 	assert(ndef->len == text_len + 6);
 	rc = ykp_ndef_as_text(ndef, text2, 256);
 	assert(rc == 1);
-	assert(strncmp(text, text2, strlen(text)));
+	assert(memcmp(text, text2, strlen(text)));
 	ykp_free_ndef(ndef);
 }
 
@@ -131,7 +131,7 @@ static void _test_uri_without_identifier(void)
 	assert(ndef->len == 16);
 	rc = ykp_ndef_as_text(ndef, text, 256);
 	assert(rc == 1);
-	assert(strncmp(uri, text, strlen(uri)) == 0);
+	assert(memcmp(uri, text, strlen(uri)) == 0);
 	ykp_free_ndef(ndef);
 }
 
