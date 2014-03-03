@@ -36,6 +36,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+#include <yubikey.h>
 #include <ykpers.h>
 #include <ykdef.h>
 /*
