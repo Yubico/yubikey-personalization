@@ -189,7 +189,6 @@ void _test_config_slot1(void)
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(1, 3, 0);
 	int rc = 0;
-	struct config_st *ycfg;
 
 	unsigned char expected[] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -220,7 +219,6 @@ void _test_config_static_slot2(void)
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 0, 0);
 	int rc = 0;
-	struct config_st *ycfg;
 
 	unsigned char expected[] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -360,7 +358,6 @@ void _test_oath_hotp_nist_160_bits(void)
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 1, 0);
 	int rc = 0;
-	struct config_st *ycfg;
 
 	unsigned char expected[] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -556,7 +553,6 @@ void _test_ndef_for_neo_beta(void)
 
 	int rc = _test_config(cfg, st, argc, argv);
 	assert(rc == 1);
-	struct config_st *ycfg = (struct config_st *) ykp_core_config(cfg);
 	assert(((struct ykp_config_t*)cfg)->command == SLOT_NDEF);
 
 	ykp_free_config(cfg);
@@ -627,7 +623,6 @@ void _test_ndef2_with_neo(void)
 
 	int rc = _test_config(cfg, st, argc, argv);
 	assert(rc == 1);
-	struct config_st *ycfg = (struct config_st *) ykp_core_config(cfg);
 	assert(((struct ykp_config_t*)cfg)->command == SLOT_NDEF2);
 
 	ykp_free_config(cfg);
