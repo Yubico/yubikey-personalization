@@ -35,7 +35,7 @@
 #include <ykpers.h>
 #include <ykdef.h>
 
-void _test_128_bits_key(YKP_CONFIG *ykp, struct config_st *cfg)
+static void _test_128_bits_key(YKP_CONFIG *ykp, struct config_st *cfg)
 {
 	unsigned char empty[256];
 
@@ -51,7 +51,7 @@ void _test_128_bits_key(YKP_CONFIG *ykp, struct config_st *cfg)
 	assert(memcmp(cfg->uid, empty, sizeof(cfg->uid)) == 0);
 }
 
-void _test_160_bits_key(YKP_CONFIG *ykp, struct config_st *cfg)
+static void _test_160_bits_key(YKP_CONFIG *ykp, struct config_st *cfg)
 {
 	unsigned char empty[256];
 
