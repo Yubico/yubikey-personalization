@@ -601,9 +601,9 @@ static void _test_ndef2_with_neo_beta(void)
 
 	const const char *argv[] = {
 		"unittest", "-2", "-nhttps://my.yubico.com/neo/",
-    NULL
+		NULL
 	};
-	int argc = 2;
+	int argc = 3;
 
 	int rc = _test_config(cfg, st, argc, argv);
 	assert(rc == 0);
