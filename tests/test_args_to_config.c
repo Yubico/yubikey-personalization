@@ -345,7 +345,7 @@ static void _test_non_config_args(void)
 	assert(rc == 1);
 	i = strcmp(infname, "in"); assert(i == 0);
 	i = strcmp(outfname, "out"); assert(i == 0);
-	i = strcmp(access_code, "123456"); assert(i == 0);
+	i = memcmp(access_code, "123456", 6); assert(i == 0);
 	assert(autocommit == true);
 	assert(verbose == true);
 
