@@ -151,12 +151,13 @@ extern int _ykusb_stop(void)
 void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 {
 	struct usb_bus *bus;
-	struct usb_device *dev, *yk_device;
+	struct usb_device *yk_device;
 	struct usb_dev_handle *h = NULL;
 	int rc = YK_EUSBERR;
 	int found = 0;
 
 	for (bus = usb_get_busses(); bus; bus = bus->next) {
+		struct usb_device *dev;
 		rc = YK_ENOKEY;
 		for (dev = bus->devices; dev; dev = dev->next) {
 			if (dev->descriptor.idVendor == vendor_id) {
