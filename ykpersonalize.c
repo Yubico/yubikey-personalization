@@ -112,7 +112,7 @@ int main(int argc, char **argv)
 			printf("Unsupported firmware revision - some "
 			       "features may not be available\n"
 			       "Please see \n"
-			       "https://github.com/Yubico/yubikey-personalization/wiki/Compatibility\n"
+			       "http://opensource.yubico.com/yubikey-personalization/doc/Compatibility.html\n"
 			       "for more information.\n");
 		} else {
 			goto err;
