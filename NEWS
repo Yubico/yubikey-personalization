@@ -1,5 +1,7 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.15.2 (unreleased)
+
 * Version 1.15.1 (released 2014-03-12)
 
 * Add -6 and -8 flags to ykchalresp to output the response as a truncated
