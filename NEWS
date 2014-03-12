@@ -1,6 +1,15 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.15.1 (unreleased)
+* Version 1.15.1 (released 2014-03-12)
+
+* Add -6 and -8 flags to ykchalresp to output the response as a truncated
+OATH code. Thanks to joernchen of Phenoelit <joernchen@phenoelit.de>
+
+* Add -t to ykchalresp to use current time / 30 as challenge in TOTP
+fashion. Thanks to joernchen of Phenoelit <joernchen@phenoelit.de>
+
+* Fix for a crash in the libusb-0.1 backend.
+Thanks to Antti Keränen <detegr@gmail.com>
 
 * Version 1.15.0 (released 2014-01-10)
 
