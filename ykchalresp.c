@@ -218,7 +218,7 @@ static int challenge_response(YK_KEY *yk, int slot,
 		       unsigned char *challenge, unsigned int len,
 		       bool hmac, bool may_block, bool verbose, bool totp, int digits )
 {
-	unsigned char response[64];
+	unsigned char response[SHA1_MAX_BLOCK_SIZE];
 	unsigned char output_buf[(SHA1_MAX_BLOCK_SIZE * 2) + 1];
 	int yk_cmd;
 	unsigned int expect_bytes = 0;
