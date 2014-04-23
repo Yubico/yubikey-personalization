@@ -67,14 +67,12 @@ int main(int argc, char **argv)
 	int num_modes_seen = 0;
 	bool zap = false;
 
-	bool error = false;
+	/* Assume the worst */
+	bool error = true;
 	int exit_code = 0;
 
 	ykp_errno = 0;
 	yk_errno = 0;
-
-	/* Assume the worst */
-	error = true;
 
 	if (!yk_init()) {
 		exit_code = 1;
