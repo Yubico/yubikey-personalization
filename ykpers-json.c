@@ -39,6 +39,7 @@
 #ifdef HAVE_JSON_OBJECT_OBJECT_GET_EX
 #define yk_json_object_object_get(obj, key, value) json_object_object_get_ex(obj, key, &value)
 #else
+typedef int json_bool;
 #define yk_json_object_object_get(obj, key, value) (value = json_object_object_get(obj, key)) == NULL ? (json_bool)FALSE : (json_bool)TRUE
 #endif
 
