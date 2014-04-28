@@ -36,6 +36,21 @@
 #include <json.h>
 #include <string.h>
 
+static void set_json_value(struct map_st *p, int mode, json_object *options, YKP_CONFIG *cfg) {
+	if(!p->json_text) {
+		return;
+	}
+	if(p->mode && (mode & p->mode) == mode) {
+		json_object *joption = json_object_object_get(options, p->json_text);
+		if(joption && json_object_get_type(joption) == json_type_boolean) {
+			int value = json_object_get_boolean(joption);
+			if(value == 1) {
+				p->setter(cfg, true);
+			}
+		}
+	}
+}
+
 int _ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 	json_object *jobj = json_object_new_object();
 	json_object *yprod_json = json_object_new_object();
@@ -274,48 +289,15 @@ int _ykp_json_import_cfg(YKP_CONFIG *cfg, const char *json, size_t len) {
 		}
 
 		for(p = _ticket_flags_map; p->flag; p++) {
-			if(!p->json_text) {
-				continue;
-			}
-			if(p->mode && (mode & p->mode) == mode) {
-				json_object *joption = json_object_object_get(options, p->json_text);
-				if(joption && json_object_get_type(joption) == json_type_boolean) {
-					int value = json_object_get_boolean(joption);
-					if(value == 1) {
-						p->setter(cfg, true);
-					}
-				}
-			}
+			set_json_value(p, mode, options, cfg);
 		}
 
 		for(p = _config_flags_map; p->flag; p++) {
-			if(!p->json_text) {
-				continue;
-			}
-			if(p->mode && (mode & p->mode) == mode) {
-				json_object *joption = json_object_object_get(options, p->json_text);
-				if(joption && json_object_get_type(joption) == json_type_boolean) {
-					int value = json_object_get_boolean(joption);
-					if(value == 1) {
-						p->setter(cfg, true);
-					}
-				}
-			}
+			set_json_value(p, mode, options, cfg);
 		}
 
 		for(p = _extended_flags_map; p->flag; p++) {
-			if(!p->json_text) {
-				continue;
-			}
-			if(p->mode && (mode & p->mode) == mode) {
-				json_object *joption = json_object_object_get(options, p->json_text);
-				if(joption && json_object_get_type(joption) == json_type_boolean) {
-					int value = json_object_get_boolean(joption);
-					if(value == 1) {
-						p->setter(cfg, true);
-					}
-				}
-			}
+			set_json_value(p, mode, options, cfg);
 		}
 
 		ret_code = 1;
