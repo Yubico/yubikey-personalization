@@ -182,7 +182,8 @@ int main(int argc, char **argv)
 			goto err;
 		if (!ykp_import_config(cfg, data, strlen(data), data_format))
 			goto err;
-	} else if (! zap && (ykp_command(cfg) == SLOT_CONFIG || ykp_command(cfg) == SLOT_CONFIG2)) {
+	}
+	if (! zap && (ykp_command(cfg) == SLOT_CONFIG || ykp_command(cfg) == SLOT_CONFIG2)) {
 		int key_bytes = ykp_get_supported_key_length(cfg);
 		char keybuf[42];
 		size_t keylen;
