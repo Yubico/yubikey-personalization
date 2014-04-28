@@ -975,7 +975,7 @@ static int _ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t le
 
 		/* uid: */
 		if (key_bits_in_uid) {
-			strncpy(buffer, "n/a", 3);
+			strncpy(buffer, "n/a", 4);
 		} else {
 			yubikey_hex_encode(buffer, (const char *)ycfg.uid, UID_SIZE);
 		}
