@@ -142,6 +142,7 @@ am_save_LIBS="$LIBS"
 CFLAGS="$CFLAGS $libjson_CFLAGS"
 LIBS="$LIBS $libjson_LIBS"
 AC_CHECK_FUNCS([json_object_to_json_string_ext])
+AC_CHECK_FUNCS([json_object_object_get_ex])
 CFLAGS=$am_save_CFLAGS
 LIBS=$am_save_LIBS
 

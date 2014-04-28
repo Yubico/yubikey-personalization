@@ -36,13 +36,20 @@
 #include <json.h>
 #include <string.h>
 
+#ifdef HAVE_JSON_OBJECT_OBJECT_GET_EX
+#define yk_json_object_object_get(obj, key, value) json_object_object_get_ex(obj, key, &value)
+#else
+#define yk_json_object_object_get(obj, key, value) (value = json_object_object_get(obj, key)) == NULL ? (json_bool)FALSE : (json_bool)TRUE
+#endif
+
 static void set_json_value(struct map_st *p, int mode, json_object *options, YKP_CONFIG *cfg) {
 	if(!p->json_text) {
 		return;
 	}
 	if(p->mode && (mode & p->mode) == mode) {
-		json_object *joption = json_object_object_get(options, p->json_text);
-		if(joption && json_object_get_type(joption) == json_type_boolean) {
+		json_object *joption;
+		json_bool ret = yk_json_object_object_get(options, p->json_text, joption);
+		if(ret == TRUE && json_object_get_type(joption) == json_type_boolean) {
 			int value = json_object_get_boolean(joption);
 			if(value == 1) {
 				p->setter(cfg, true);
@@ -211,21 +218,28 @@ int _ykp_json_import_cfg(YKP_CONFIG *cfg, const char *json, size_t len) {
 	int ret_code = 0;
 	if(cfg) {
 		json_object *jobj = json_tokener_parse(json);
-		json_object *yprod_json = json_object_object_get(jobj, "yubiProdConfig");
-		json_object *jmode = json_object_object_get(yprod_json, "mode");
-		json_object *options = json_object_object_get(yprod_json, "options");
-		json_object *jtarget;
+		json_object *yprod_json, *jmode, *options, *jtarget;
 		const char *raw_mode;
 		int mode = MODE_OTP_YUBICO;
 		struct map_st *p;
-
-		if(!jobj || !yprod_json || !jmode || !options) {
+		if(!jobj) {
+			ykp_errno = YKP_EINVAL;
+			goto out;
+		}
+		if(yk_json_object_object_get(jobj, "yubiProdConfig", yprod_json) == FALSE) {
+			ykp_errno = YKP_EINVAL;
+			goto out;
+		}
+		if(yk_json_object_object_get(yprod_json, "mode", jmode) == FALSE) {
+			ykp_errno = YKP_EINVAL;
+			goto out;
+		}
+		if(yk_json_object_object_get(yprod_json, "options", options) == FALSE) {
 			ykp_errno = YKP_EINVAL;
 			goto out;
 		}
 
-		jtarget = json_object_object_get(yprod_json, "targetConfig");
-		if(jtarget) {
+		if(yk_json_object_object_get(yprod_json, "targetConfig", jtarget) == TRUE) {
 			int target_config = json_object_get_int(jtarget);
 			int command;
 			if(target_config == 1) {
@@ -255,24 +269,22 @@ int _ykp_json_import_cfg(YKP_CONFIG *cfg, const char *json, size_t len) {
 
 
 		if(mode == MODE_OATH_HOTP) {
-			json_object *jdigits = json_object_object_get(options, "oathDigits");
-			json_object *jrandom = json_object_object_get(options, "randomSeed");
-
+			json_object *jdigits, *jrandom;
 			ykp_set_tktflag_OATH_HOTP(cfg, true);
-			if(jdigits) {
+			if(yk_json_object_object_get(options, "oathDigits", jdigits) == TRUE) {
 				int digits = json_object_get_int(jdigits);
 				if(digits == 8) {
 					ykp_set_cfgflag_OATH_HOTP8(cfg, true);
 				}
 			}
-			if(jrandom) {
+			if(yk_json_object_object_get(options, "randomSeed", jrandom) == TRUE) {
 				int random = json_object_get_boolean(jrandom);
 				int seed = 0;
 				if(random == 1) {
 					/* XXX: add random seed.. */
 				} else {
-					json_object *jseed = json_object_object_get(options, "fixedSeedvalue");
-					if(jseed) {
+					json_object *jseed;
+					if(yk_json_object_object_get(options, "fixedSeedvalue", jseed) == TRUE) {
 						seed = json_object_get_int(jseed);
 					}
 				}
