@@ -485,6 +485,9 @@ int yk_wait_for_key_status(YK_KEY *yk, uint8_t slot, unsigned int flags,
 		memset(data, 0, sizeof(data));
 		if (!_ykusb_read(yk, REPORT_TYPE_FEATURE, slot, (char *) &data, FEATURE_RPT_SIZE))
 			return 0;
+#ifdef YK_DEBUG
+		_yk_hexdump(data, FEATURE_RPT_SIZE);
+#endif
 
 		if (last_data != NULL)
 			memcpy(last_data, data, sizeof(data));
