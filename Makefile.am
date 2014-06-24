@@ -73,8 +73,13 @@ endif
 
 bin_PROGRAMS = ykpersonalize ykchalresp ykinfo
 
-ykpersonalize_SOURCES = ykpersonalize.c ykpers-args.h ykpers-args.c
-ykpersonalize_LDADD = ./libykpers-1.la $(LTLIBYUBIKEY)
+ykpersonalize_SOURCES = ykpersonalize.c
+ykpersonalize_LDADD = ./libykpers-1.la
+ykpersonalize_LDADD += ./libykpers_args.la
+
+noinst_LTLIBRARIES = libykpers_args.la
+libykpers_args_la_SOURCES = ykpers-args.c ykpers-args.h
+libykpers_args_la_LIBADD = libykpers-1.la $(LTLIBYUBIKEY)
 
 ykchalresp_SOURCES = ykchalresp.c
 ykchalresp_LDADD = ./libykpers-1.la $(LTLIBYUBIKEY)

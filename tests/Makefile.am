@@ -40,7 +40,6 @@ endif
 check_PROGRAMS = $(ctests)
 TESTS = $(ctests)
 
-test_args_to_config_SOURCES = test_args_to_config.c \
-	ykpers-args.h ykpers-args.c
+test_args_to_config_LDADD = ../libykpers_args.la
 
 TESTS_ENVIRONMENT = $(VALGRIND)

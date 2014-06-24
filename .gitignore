@@ -15,6 +15,7 @@ build-aux/install-sh
 build-aux/ltmain.sh
 build-aux/missing
 build-aux/test-driver
+build-aux/compile
 config.log
 config.status
 configure
@@ -22,6 +23,7 @@ hmac.lo
 hmac.o
 libtool
 libykpers-1.la
+libykpers_args.la
 m4/libtool.m4
 m4/ltoptions.m4
 m4/ltsugar.m4
@@ -103,6 +105,7 @@ ykpers-*-win64.zip.sig
 ykpers-*.tar.gz
 ykpers-*.tar.gz.sig
 ykpers-1.pc
+ykpers-args.lo
 ykpers-args.o
 ykpers-json.lo
 ykpers-json.o
