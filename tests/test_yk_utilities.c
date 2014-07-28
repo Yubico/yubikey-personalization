@@ -57,7 +57,8 @@ struct versions {
 	{2,6,0,false},
 	{3,0,1,true},
 	{3,2,8,true},
-	{3,3,0,false},
+	{3,3,0,true},
+	{3,4,0,false},
 	{4,0,0,false},
 };
 
