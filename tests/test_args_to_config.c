@@ -100,7 +100,7 @@ static void _check_success(int rc, YKP_CONFIG *cfg, unsigned char expected[], in
 	assert(config_matches_expected == true);
 }
 
-static int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, const char **argv)
+static int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 {
 	const char *infname = NULL;
 	const char *outfname = NULL;
@@ -171,7 +171,7 @@ static YK_STATUS * _test_init_st(int major, int minor, int build)
  * Utility function to parse arguments and just return the result code.
  * The calling function does the assert() to get function name in assert output.
  */
-static int _parse_args_rc(int argc, const char *argv[])
+static int _parse_args_rc(int argc, char *argv[])
 {
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 2, 0);
@@ -202,7 +202,7 @@ static void _test_config_slot1(void)
 		0x00, 0x46, 0xc0
 	};
 
-	const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-1",
 		NULL
 	};
@@ -232,7 +232,7 @@ static void _test_config_static_slot2(void)
 		0x00, 0xe9, 0xf5
 	};
 
-	const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-2", "-a303132333435363738393a3b3c3d3e3f",
 		NULL
 	};
@@ -251,7 +251,7 @@ static void _test_too_old_key(void)
 	YK_STATUS *st = _test_init_st(1, 3, 0);
 	int rc = 0;
 
-	const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-oshort-ticket",
 		NULL
 	};
@@ -271,7 +271,7 @@ static void _test_too_new_key(void)
 	YK_STATUS *st = _test_init_st(2, 2, 0);
 	int rc = 0;
 
-	const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-oticket-first",
 		NULL
 	};
@@ -315,7 +315,7 @@ static void _test_non_config_args(void)
 
 	unsigned char scan_map[sizeof(SCAN_MAP)];
 
-	const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-1", "-sout", "-iin", "-c313233343536", "-y", "-v",
 		NULL
 	};
@@ -371,7 +371,7 @@ static void _test_oath_hotp_nist_160_bits(void)
 		0x00, 0x6a, 0xb9
 	};
 
-	const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-1", "-a303132333435363738393a3b3c3d3e3f40414243", "-ooath-hotp", "-o-append-cr",
 		NULL
 	};
@@ -404,7 +404,7 @@ static void _test_extended_flags1(void)
 		0x00, 0x03, 0x95, 0x56, 0x00, 0x00, 0x00,
 	};
 
-	const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-2", "-a303132333435363738393a3b3c3d3e3f40414243",
 		"-ochal-resp", "-ochal-hmac", "-ohmac-lt64", "-oserial-api-visible",
 		NULL
@@ -421,7 +421,7 @@ static void _test_extended_flags1(void)
 static void _test_two_slots1(void)
 {
 	/* Test that it is not possible to choose slot more than once */
-	const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-1", "-1",
 		NULL
 	};
@@ -432,7 +432,7 @@ static void _test_two_slots1(void)
 static void _test_two_slots2(void)
 {
 	/* Test that it is not possible to choose slot more than once */
-	const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-2", "-1",
 		NULL
 	};
@@ -443,7 +443,7 @@ static void _test_two_slots2(void)
 static void _test_two_modes_at_once1(void)
 {
 	/* Test that it is not possible to choose mode (OATH-HOTP/CHAL-RESP) more than once */
-	const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-ochal-resp", "-ooath-hotp",
 		NULL
 	};
@@ -454,7 +454,7 @@ static void _test_two_modes_at_once1(void)
 static void _test_two_modes_at_once2(void)
 {
 	/* Test that it is not possible to choose mode (OATH-HOTP/CHAL-RESP) more than once */
-	const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-ochal-resp", "-ochal-resp",
 		NULL
 	};
@@ -465,7 +465,7 @@ static void _test_two_modes_at_once2(void)
 static void _test_mode_after_other_option(void)
 {
 	/* Test that it is not possible to set mode after other options */
-	const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-ohmac-lt64", "-ochal-resp",
 		NULL
 	};
@@ -478,7 +478,7 @@ static void _test_key_mixed_case1(void)
 	/* Make sure key with mixed case is rejected (parsing function yubikey_hex_decode
 	 * only handles lower case hex)
 	 */
-	const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-1", "-a0000000000000000000000000000000E",
 		NULL
 	};
@@ -489,7 +489,7 @@ static void _test_key_mixed_case1(void)
 static void _test_uid_for_oath(void)
 {
 	/* Test that it is not possible to specify UID with OATH */
-	const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-ooath-hotp", "-ouid=h:010203040506",
 		NULL
 	};
@@ -500,7 +500,7 @@ static void _test_uid_for_oath(void)
 static void _test_uid_for_chal_resp(void)
 {
 	/* Test that it is not possible to specify UID with Challenge Response */
-	const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-ochal-resp", "-ouid=h:010203040506",
 		NULL
 	};
@@ -511,7 +511,7 @@ static void _test_uid_for_chal_resp(void)
 static void _test_swap_with_slot(void)
 {
 	/* Test that you can not both swap and set slot */
-	const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-x", "-1",
 		NULL
 	};
@@ -522,7 +522,7 @@ static void _test_swap_with_slot(void)
 static void _test_slot_with_update(void)
 {
 	/* Test the update must be before slot */
-	const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-1", "-u",
 		NULL
 	};
@@ -533,7 +533,7 @@ static void _test_slot_with_update(void)
 static void _test_swap_with_update(void)
 {
 	/* Test the update must be before slot */
-	const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-u", "-x",
 		NULL
 	};
@@ -546,7 +546,7 @@ static void _test_ndef_for_neo_beta(void)
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 1, 7);
 
-	const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-nhttps://my.yubico.com/neo/",
 		NULL
 	};
@@ -565,7 +565,7 @@ static void _test_ndef_with_non_neo(void)
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 2, 4);
 
-	const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-nhttps://my.yubico.com/neo/",
 		NULL
 	};
@@ -583,7 +583,7 @@ static void _test_slot_two_with_neo_beta(void)
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 1, 7);
 
-	const const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-2", NULL
 	};
 	int argc = 2;
@@ -599,7 +599,7 @@ static void _test_ndef2_with_neo_beta(void)
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(2, 1, 7);
 
-	const const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-2", "-nhttps://my.yubico.com/neo/",
 		NULL
 	};
@@ -616,7 +616,7 @@ static void _test_ndef2_with_neo(void)
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = _test_init_st(3, 0, 0);
 
-	const const char *argv[] = {
+	char *argv[] = {
 		"unittest", "-2", "-nhttps://my.yubico.com/neo/",
 		NULL
 	};
