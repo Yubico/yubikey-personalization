@@ -262,6 +262,7 @@ const char *_ykusb_strerror(void)
 		buf = "Operation not supported or unimplemented on this platform";
 		break;
 	case LIBUSB_ERROR_OTHER:
+	default:
 		buf = "Other/unknown error";
 		break;
 	}
