@@ -231,7 +231,7 @@ struct device_config_st {
 #define MODE_OTP_CCID		0x02	/* OTP + CCID composite */
 #define MODE_U2F		0x03	/* U2F mode */
 #define MODE_OTP_U2F		0x04	/* OTP + U2F composite */
-#define MODE_U2F_CCID		0x05	/* U2F + U2F composite */
+#define MODE_U2F_CCID		0x05	/* U2F + CCID composite */
 #define MODE_OTP_U2F_CCID	0x06	/* OTP + U2F + CCID composite */
 #define MODE_MASK		0x07	/* Mask for mode bits */
 
