@@ -1,5 +1,5 @@
 Maintainer instructions for making releases
-===============================
+===========================================
 
 Introduction
 ------------
