@@ -1,5 +1,5 @@
 # Written by Simon Josefsson <simon@josefsson.org>.
-# Copyright (c) 2010-2013 Yubico AB
+# Copyright (c) 2010-2014 Yubico AB
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -55,7 +55,7 @@ ykpers4win:
 	cp COPYING $(PWD)/tmp/root/licenses/json-c.txt && \
 	cd .. && \
 	cp ../libyubikey-$(LIBYUBIKEYVERSION).tar.gz . \
-		||	wget http://yubico.github.io/yubico-c/releases/libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
+		||	wget https://developers.yubico.com/yubico-c/releases/libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
 	tar xfa libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
 	cd libyubikey-$(LIBYUBIKEYVERSION) && \
 	./configure --host=$(HOST) --build=x86_64-unknown-linux-gnu --prefix=$(PWD)/tmp/root && \
@@ -63,7 +63,7 @@ ykpers4win:
 	cp COPYING $(PWD)/tmp/root/licenses/libyubikey.txt && \
 	cd .. && \
 	cp ../ykpers-$(VERSION).tar.gz . \
-		|| wget http://yubico.github.io/yubikey-personalization/releases/ykpers-$(VERSION).tar.gz && \
+		|| wget https://developers.yubico.com/yubikey-personalization/releases/ykpers-$(VERSION).tar.gz && \
 	tar xfa ykpers-$(VERSION).tar.gz && \
 	cd ykpers-$(VERSION)/ && \
 	PKG_CONFIG_PATH=$(PWD)/tmp/root/lib/pkgconfig lt_cv_deplibs_check_method=pass_all ./configure --host=$(HOST) --build=x86_64-unknown-linux-gnu --prefix=$(PWD)/tmp/root LDFLAGS=-L$(PWD)/tmp/root/lib CPPFLAGS=-I$(PWD)/tmp/root/include && \
