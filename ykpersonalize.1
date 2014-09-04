@@ -142,11 +142,19 @@ set device configuration for the YubiKey NEO.  It is parsed in the form
 .br
 where mode is:
 .br
-0    HID device only.
+0    OTP device only.
 .br
 1    CCID device only.
 .br
-2    HID/CCID composite device.
+2    OTP/CCID composite device.
+.br
+3    U2F device only.
+.br
+4    OTP/U2F composite device.
+.br
+5    U2F/CCID composite device.
+.br
+6    OTP/U2F/CCID composite device.
 .br
 Add 80 to set MODE_FLAG_EJECT, for example: 81
 .br

@@ -12,7 +12,10 @@
 **	10-05-01	/ 2.2.0		/ J E	/ Added support for 2.2 ext. + frame	**
 **	11-04-15	/ 2.3.0		/ J E	/ Added support for 2.3 extensions	**
 **	11-12-05	/ 2.4.0		/ J E	/ Added support for NFC and NDEF	**
-**	12-10-28    / 3.0.0     / J E   / NEO changes                                   **
+**	12-10-28	/ 3.0.0		/ J E	/ NEO changes				**
+**      13-03-05	/ 3.1.0		/ J E	/ Added EXTFLAG_LED_INV flag		**         
+**      13-03-06	/ 3.1.0		/ J E	/ Added NEO startup busy flag		**
+**      14-06-13	/ 3.3.0		/ J E	/ Added U2F mode modifiers		**
 **											**
 *****************************************************************************************/
 
@@ -226,7 +229,11 @@ struct device_config_st {
 #define MODE_OTP		0x00	/* OTP only */
 #define MODE_CCID		0x01	/* CCID only, no eject */
 #define MODE_OTP_CCID		0x02	/* OTP + CCID composite */
-#define MODE_MASK		0x03	/* Mask for mode bits */
+#define MODE_U2F		0x03	/* U2F mode */
+#define MODE_OTP_U2F		0x04	/* OTP + U2F composite */
+#define MODE_U2F_CCID		0x05	/* U2F + CCID composite */
+#define MODE_OTP_U2F_CCID	0x06	/* OTP + U2F + CCID composite */
+#define MODE_MASK		0x07	/* Mask for mode bits */
 
 #define MODE_FLAG_EJECT		0x80	/* CCID device supports eject (mode 1 only) */
 
@@ -260,11 +267,15 @@ struct status_st {
 
 /* USB vendor ID (VID) and product ID (PID) mapping */
 
-#define	YUBICO_VID		0x1050		/* Global vendor ID */
-#define	YUBIKEY_PID		0x0010		/* Yubikey (version 1 and 2) */
-#define	NEO_OTP_PID		0x0110		/* Yubikey NEO - OTP only */
-#define	NEO_OTP_CCID_PID	0x0111      // Yubikey NEO - OTP and CCID
-#define	NEO_CCID_PID		0x0112      // Yubikey NEO - CCID only
+#define	YUBICO_VID		0x1050	/* Global vendor ID */
+#define	YUBIKEY_PID		0x0010	/* Yubikey (version 1 and 2) */
+#define	NEO_OTP_PID		0x0110	/* Yubikey NEO - OTP only */
+#define	NEO_OTP_CCID_PID	0x0111	/* Yubikey NEO - OTP and CCID */
+#define	NEO_CCID_PID		0x0112	/* Yubikey NEO - CCID only */
+#define	NEO_U2F_PID		0x0113	/* Yubikey NEO - U2F only */
+#define	NEO_OTP_U2F_PID		0x0114	/* Yubikey NEO - OTP and U2F */
+#define	NEO_U2F_CCID_PID	0x0115	/* Yubikey NEO - OTP and U2F */
+#define	NEO_OTP_U2F_CCID_PID	0x0116	/* Yubikey NEO - OTP, U2F and CCID */
 
 #if defined(_WIN32) || defined(__GNUC__)
 #pragma pack(pop)
