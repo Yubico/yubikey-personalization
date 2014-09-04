@@ -2,6 +2,8 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
 * Version 1.15.3 (unreleased)
 
+** Whitelist firmware version 3.3 and detect new PIDs.
+
 * Version 1.15.2 (released 2014-07-30)
 
 ** Whitelist firmware version 2.5
