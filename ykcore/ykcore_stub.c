@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2008-2012 Yubico AB
+ * Copyright (c) 2008-2014 Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -67,6 +67,12 @@ int _ykusb_read(void *dev, int report_type, int report_number,
 
 int _ykusb_write(void *dev, int report_type, int report_number,
 		 char *buffer, int buffer_size)
+{
+	yk_errno = YK_ENOTYETIMPL;
+	return 0;
+}
+
+int _ykusb_get_vid_pid(void *dev, int *vid, int *pid)
 {
 	yk_errno = YK_ENOTYETIMPL;
 	return 0;

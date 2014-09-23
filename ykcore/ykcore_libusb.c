@@ -205,6 +205,13 @@ int _ykusb_close_device(void *yk)
 	return 0;
 }
 
+int _ykusb_get_vid_pid(void *yk, int *vid, int *pid) {
+	usb_dev_handle *h = yk;
+	*vid = yk->device->descriptor.idVendor;
+	*pid = yk->device->descriptor.idProduct;
+	return 1;
+}
+
 const char *_ykusb_strerror(void)
 {
 	return usb_strerror();

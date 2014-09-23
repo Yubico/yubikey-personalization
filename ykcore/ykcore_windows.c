@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2008-2013 Yubico AB
+ * Copyright (c) 2008-2014 Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -183,6 +183,18 @@ int _ykusb_write(void *dev, int report_type, int report_number,
 	}
 
 	return 1;
+}
+
+int _ykusb_get_vid_pid(void *yk, int *vid, int *pid) {
+	HIDD_ATTRIBUTES devInfo;
+	int rc = HidD_GetAttributes(yk, &devInfo);
+	if (rc) {
+		*vid = devInfo.VendorID;
+		*pid = devInfo.ProductID;
+		return 1;
+	}
+	yk_errno = YK_EUSBERR;
+	return 0;
 }
 
 const char *_ykusb_strerror(void)

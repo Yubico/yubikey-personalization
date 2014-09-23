@@ -218,6 +218,21 @@ int _ykusb_close_device(void *yk)
 	return 1;
 }
 
+int _ykusb_get_vid_pid(void *yk, int *vid, int *pid)
+{
+	struct libusb_device_descriptor desc;
+	libusb_device *dev = libusb_get_device(yk);
+	int rc = libusb_get_device_descriptor(dev, &desc);
+
+	if (rc == 0) {
+		*vid = desc.idVendor;
+		*pid = desc.idProduct;
+		return 1;
+	}
+	yk_errno = YK_EUSBERR;
+	return 0;
+}
+
 const char *_ykusb_strerror(void)
 {
 	static const char *buf;

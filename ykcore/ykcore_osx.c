@@ -211,6 +211,13 @@ int _ykusb_write(void *dev, int report_type, int report_number,
 	return 1;
 }
 
+int _ykusb_get_vid_pid(void *yk, int *vid, int *pid) {
+	IOHIDDeviceRef dev = (IOHIDDeviceRef)yk;
+	*vid = _ykosx_getIntProperty( dev, CFSTR( kIOHIDVendorIDKey ));
+	*pid = _ykosx_getIntProperty( dev, CFSTR( kIOHIDProductIDKey ));
+	return 1;
+}
+
 const char *_ykusb_strerror()
 {
 	switch (_ykusb_IOReturn) {
