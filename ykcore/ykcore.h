@@ -133,6 +133,8 @@ extern int yk_challenge_response(YK_KEY *yk, uint8_t yk_cmd, int may_block,
 				 unsigned int response_len, unsigned char *response);
 
 extern int yk_force_key_update(YK_KEY *yk);
+/* Get the VID and PID of an opened device. */
+extern int yk_get_key_vid_pid(YK_KEY *yk, int *vid, int *pid);
 
 /*************************************************************************
  *

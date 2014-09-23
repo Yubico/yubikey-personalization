@@ -706,6 +706,10 @@ int yk_force_key_update(YK_KEY *yk)
 	return 1;
 }
 
+int yk_get_key_vid_pid(YK_KEY *yk, int *vid, int *pid) {
+	return _ykusb_get_vid_pid(yk, vid, pid);
+}
+
 uint16_t yk_endian_swap_16(uint16_t x)
 {
 	static int testflag = -1;
