@@ -206,9 +206,10 @@ int _ykusb_close_device(void *yk)
 }
 
 int _ykusb_get_vid_pid(void *yk, int *vid, int *pid) {
-	usb_dev_handle *h = yk;
-	*vid = yk->device->descriptor.idVendor;
-	*pid = yk->device->descriptor.idProduct;
+	struct usb_dev_handle *h = yk;
+	struct usb_device *dev = usb_device(h);
+	*vid = dev->descriptor.idVendor;
+	*pid = dev->descriptor.idProduct;
 	return 1;
 }
 
