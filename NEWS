@@ -1,5 +1,11 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.16.0 (unreleased)
+
+** Add yk_get_key_vid_pid() to get the vendor and product id of a key.
+
+** Add flags for ykinfo to print vendor and product id.
+
 * Version 1.15.3 (released 2014-09-04)
 
 ** Fix URLs for opensource.y.com -> developers.y.com move.
