@@ -53,6 +53,8 @@ const char *usage =
 	"\t-1        Check if slot 1 is programmed\n"
 	"\t-2        Check if slot 2 is programmed\n"
 	"\t-p        Get programming sequence from YubiKey\n"
+	"\t-i        Get vendor id of YubiKey\n"
+	"\t-I        Get product id of YubiKey\n"
 	"\t-a        Get all information above\n"
 	"\n"
 	"\t-q        Only output information from YubiKey\n"
@@ -62,7 +64,7 @@ const char *usage =
 	"\n"
 	"\n"
 	;
-const char *optstring = "asmHvtpqhV12";
+const char *optstring = "asmHvtpqhV12iI";
 
 static void report_yk_error(void)
 {
@@ -80,7 +82,7 @@ static void report_yk_error(void)
 static int parse_args(int argc, char **argv,
 		bool *serial_dec, bool *serial_modhex, bool *serial_hex,
 		bool *version, bool *touch_level, bool *pgm_seq, bool *quiet,
-		bool *slot1, bool *slot2,
+		bool *slot1, bool *slot2, bool *vid, bool *pid,
 		int *exit_code)
 {
 	int c;
@@ -96,6 +98,8 @@ static int parse_args(int argc, char **argv,
 			*pgm_seq = true;
 			*slot1 = true;
 			*slot2 = true;
+			*vid = true;
+			*pid = true;
 			break;
 		case 's':
 			*serial_dec = true;
@@ -124,6 +128,12 @@ static int parse_args(int argc, char **argv,
 		case '2':
 			*slot2 = true;
 			break;
+		case 'i':
+			*vid = true;
+			break;
+		case 'I':
+			*pid = true;
+			break;
 		case 'V':
 			fputs(YKPERS_VERSION_STRING "\n", stderr);
 			*exit_code = 0;
@@ -137,7 +147,8 @@ static int parse_args(int argc, char **argv,
 	}
 
 	if (!*serial_dec && !*serial_modhex && !*serial_hex &&
-			!*version && !*touch_level && !*pgm_seq && !*slot1 && !*slot2) {
+			!*version && !*touch_level && !*pgm_seq && !*slot1 && !*slot2 &&
+			!*vid && !*pid) {
 		/* no options at all */
 		fputs("You must give at least one option.\n", stderr);
 		fputs(usage, stderr);
@@ -163,6 +174,8 @@ int main(int argc, char **argv)
 	bool pgm_seq = false;
 	bool slot1 = false;
 	bool slot2 = false;
+	bool vid = false;
+	bool pid = false;
 
 	bool quiet = false;
 
@@ -171,7 +184,7 @@ int main(int argc, char **argv)
 	if (! parse_args(argc, argv,
 				&serial_dec, &serial_modhex, &serial_hex,
 				&version, &touch_level, &pgm_seq, &quiet,
-				&slot1, &slot2,
+				&slot1, &slot2, &vid, &pid,
 				&exit_code))
 		exit(exit_code);
 
@@ -249,6 +262,23 @@ int main(int argc, char **argv)
 			printf("%d\n", (ykds_touch_level(st) & CONFIG2_VALID) == CONFIG2_VALID);
 		}
 		ykds_free(st);
+	}
+	if(vid || pid) {
+		int vendor_id, product_id;
+		if(!yk_get_key_vid_pid(yk, &vendor_id, &product_id)) {
+			exit_code = 1;
+			goto err;
+		}
+		if(vid) {
+			if(!quiet)
+				printf("vendor_id: ");
+			printf("%x\n", vendor_id);
+		}
+		if(pid) {
+			if(!quiet)
+				printf("product_id: ");
+			printf("%x\n", product_id);
+		}
 	}
 
 	exit_code = 0;
