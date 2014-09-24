@@ -102,8 +102,11 @@ void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 
 		for(i = 0; i < cnt; i++) {
 			IOHIDDeviceRef dev = (IOHIDDeviceRef)CFArrayGetValueAtIndex( array, i );
+			long usagePage = _ykosx_getIntProperty( dev, CFSTR( kIOHIDPrimaryUsagePageKey ));
+			long usage = _ykosx_getIntProperty( dev, CFSTR( kIOHIDPrimaryUsageKey ));
 			long devVendorId = _ykosx_getIntProperty( dev, CFSTR( kIOHIDVendorIDKey ));
-			if(devVendorId == vendor_id) {
+			/* usagePage 1 is generic desktop and usage 6 is keyboard */
+			if(usagePage == 1 && usage == 6 && devVendorId == vendor_id) {
 				long devProductId = _ykosx_getIntProperty( dev, CFSTR( kIOHIDProductIDKey ));
 				size_t j;
 				for(j = 0; j < pids_len; j++) {
