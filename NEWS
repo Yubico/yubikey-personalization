@@ -6,6 +6,9 @@ Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
 ** Add flags for ykinfo to print vendor and product id.
 
+** Fix a bug in the osx backend where it would return an error opening
+a composite device with two hid interfaces.
+
 * Version 1.15.3 (released 2014-09-04)
 
 ** Fix URLs for opensource.y.com -> developers.y.com move.
