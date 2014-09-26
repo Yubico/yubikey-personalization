@@ -274,7 +274,7 @@ struct status_st {
 #define	NEO_CCID_PID		0x0112	/* Yubikey NEO - CCID only */
 #define	NEO_U2F_PID		0x0113	/* Yubikey NEO - U2F only */
 #define	NEO_OTP_U2F_PID		0x0114	/* Yubikey NEO - OTP and U2F */
-#define	NEO_U2F_CCID_PID	0x0115	/* Yubikey NEO - OTP and U2F */
+#define	NEO_U2F_CCID_PID	0x0115	/* Yubikey NEO - U2F and CCID */
 #define	NEO_OTP_U2F_CCID_PID	0x0116	/* Yubikey NEO - OTP, U2F and CCID */
 
 #if defined(_WIN32) || defined(__GNUC__)
