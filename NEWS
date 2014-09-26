@@ -1,5 +1,7 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.16.1 (unreleased)
+
 * Version 1.16.0 (released 2014-09-26)
 
 ** Add yk_get_key_vid_pid() to get the vendor and product id of a key.
