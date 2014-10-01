@@ -64,7 +64,7 @@ const char *usage =
 "-z        delete the configuration in slot 1 or 2.\n"
 "-sFILE    save configuration to FILE instead of key.\n"
 "          (if FILE is -, send to stdout)\n"
-"-iFILE    read configuration from FILE.\n"
+"-iFILE    read configuration from FILE. (only valid for -fycfg)\n"
 "          (if FILE is -, read from stdin)\n"
 "-fformat  set the data format for -s and -i valid values are ycfg or legacy.\n"
 "-a[XXX..] The AES secret key as a 32 (or 40 for OATH-HOTP/HMAC CHAL-RESP)\n"
