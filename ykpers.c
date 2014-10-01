@@ -1068,8 +1068,9 @@ int ykp_import_config(YKP_CONFIG *cfg, const char *buf, size_t len,
 		return _ykp_json_import_cfg(cfg, buf, len);
 	} else if(format == YKP_FORMAT_LEGACY) {
 		ykp_errno = YKP_ENOTYETIMPL;
+	} else {
+		ykp_errno = YKP_EINVAL;
 	}
-	ykp_errno = YKP_EINVAL;
 	return 0;
 }
 int ykp_write_config(const YKP_CONFIG *cfg,
