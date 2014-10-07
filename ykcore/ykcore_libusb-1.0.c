@@ -197,8 +197,12 @@ void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 		ykl_errno = libusb_open(dev, &h);
 		if (ykl_errno != 0)
 			goto done;
-		ykl_errno = libusb_detach_kernel_driver(h, 0);
-		if (ykl_errno != 0)
+		ykl_errno = libusb_kernel_driver_active(h, 0);
+		if (ykl_errno == 1) {
+			ykl_errno = libusb_detach_kernel_driver(h, 0);
+			if (ykl_errno != 0)
+				goto done;
+		} else if (ykl_errno != 0)
 			goto done;
 		/* This is needed for yubikey-personalization to work inside virtualbox virtualization. */
 		ykl_errno = libusb_set_configuration(h, 1);
