@@ -80,6 +80,8 @@ ykcore/Makefile.in
 ykcore/libykcore.la
 ykcore/ykcore.lo
 ykcore/ykcore.o
+ykcore/ykcore_hidapi.lo
+ykcore/ykcore_hidapi.o
 ykcore/ykcore_libusb-1.0.lo
 ykcore/ykcore_libusb-1.0.o
 ykcore/ykcore_libusb.lo

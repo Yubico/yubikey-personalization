@@ -1,4 +1,4 @@
-# Copyright (c) 2008-2013 Yubico AB
+# Copyright (c) 2008-2014 Yubico AB
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,16 +28,18 @@
 noinst_LTLIBRARIES = libykcore.la
 libykcore_la_SOURCES = ykdef.h ykcore.h ykcore_lcl.h ykcore_backend.h	\
 	ykcore.c ykstatus.h ykstatus.c yktsd.h
-libykcore_la_LIBADD = $(LTLIBYUBIKEY) $(LTLIBUSB) @LIBUSB_LIBS@
+libykcore_la_LIBADD = $(LTLIBYUBIKEY)
 AM_CFLAGS = $(WARN_CFLAGS)
 
 if BACKEND_LIBUSB_1_0
 libykcore_la_SOURCES += ykcore_libusb-1.0.c
 AM_CFLAGS += @LIBUSB_CFLAGS@
+libykcore_la_LIBADD += @LIBUSB_LIBS@
 endif
 
 if BACKEND_LIBUSB
 libykcore_la_SOURCES += ykcore_libusb.c
+libykcore_la_LIBADD += @LTLIBUSB@
 endif
 
 if BACKEND_OSX
@@ -46,6 +48,12 @@ endif
 
 if BACKEND_WINDOWS
 libykcore_la_SOURCES += ykcore_windows.c
+endif
+
+if BACKEND_HIDAPI
+libykcore_la_SOURCES += ykcore_hidapi.c
+AM_CFLAGS += @HIDAPI_CFLAGS@
+libykcore_la_LIBADD += @HIDAPI_LIBS@
 endif
 
 EXTRA_DIST = ykcore_stub.c

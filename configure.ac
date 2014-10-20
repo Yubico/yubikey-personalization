@@ -67,7 +67,7 @@ fi
 
 AC_ARG_WITH([backend],
   [AS_HELP_STRING([--with-backend=ARG],
-    [use specific backend; 'libusb-1.0', 'libusb', 'osx' or 'windows'])],
+    [use specific backend; 'libusb-1.0', 'libusb', 'osx', 'windows' or 'hidapi'])],
     [],
     [with_backend=check])
 
@@ -120,10 +120,16 @@ if test x$with_backend = xwindows; then
   LDFLAGS="$LDFLAGS -luuid -lsetupapi -lhid"
 fi
 
+if test x$with_backend = xhidapi; then
+  PKG_CHECK_MODULES([HIDAPI], [hidapi], [], [
+                     PKG_CHECK_MODULES([HIDAPI], [hidapi-hidraw])])
+fi
+
 AM_CONDITIONAL([BACKEND_LIBUSB], test x$with_backend = xlibusb)
 AM_CONDITIONAL([BACKEND_LIBUSB_1_0], test x$with_backend = xlibusb-1.0)
 AM_CONDITIONAL([BACKEND_OSX], test x$with_backend = xosx)
 AM_CONDITIONAL([BACKEND_WINDOWS], test x$with_backend = xwindows)
+AM_CONDITIONAL([BACKEND_HIDAPI], test x$with_backend = xhidapi)
 
 AC_ARG_WITH([json],
             AC_HELP_STRING([--without-json], [without JSON YCFG support]),
