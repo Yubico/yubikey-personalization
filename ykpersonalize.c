@@ -315,7 +315,7 @@ int main(int argc, char **argv)
 			else if(ykp_command(cfg) == SLOT_NDEF || ykp_command(cfg) == SLOT_NDEF2) {
 				YK_NDEF *ndef = ykp_alloc_ndef();
 				int confnum = 1;
-				int res;
+				int res = 0;
 				if(ndef_type == 'U') {
 					res = ykp_construct_ndef_uri(ndef, ndef_string);
 				} else if(ndef_type == 'T') {
