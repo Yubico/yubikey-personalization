@@ -3,6 +3,6 @@
 # device node, needed for challenge/response to work correctly.
 
 ACTION=="add|change", SUBSYSTEM=="usb", \
-  ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0010|0110|0111|114|116", \
+  ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0010|0110|0111|0114|0116", \
   TEST=="/var/run/ConsoleKit/database", \
   RUN+="udev-acl --action=$env{ACTION} --device=$env{DEVNAME}"
