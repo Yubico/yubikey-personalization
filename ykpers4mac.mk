@@ -49,40 +49,43 @@ ykpers4mac:
 	rm -rf tmp && mkdir tmp && cd tmp && \
 	mkdir -p root/licenses && \
 	cp ../json-c-$(LIBJSONVERSION) . \
-		||	wget --no-check-certificate https://s3.amazonaws.com/json-c_releases/releases/json-c-$(LIBJSONVERSION).tar.gz && \
+		||	curl -L -O https://s3.amazonaws.com/json-c_releases/releases/json-c-$(LIBJSONVERSION).tar.gz && \
 	tar xfz json-c-$(LIBJSONVERSION).tar.gz && \
 	cd json-c-$(LIBJSONVERSION) && \
 	CFLAGS=$(CFLAGS) ./configure --prefix=$(PWD)/tmp/root && \
+	make install $(CHECK) && \
+	cp COPYING $(PWD)/tmp/root/licenses/json-c.txt && \
+	cd .. && \
+	cp ../libyubikey-$(LIBYUBIKEYVERSION).tar.gz . \
+		||	curl -L -O https://developers.yubico.com/yubico-c/releases/libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
+	tar xfz libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
+	cd libyubikey-$(LIBYUBIKEYVERSION) && \
+	CFLAGS=$(CFLAGS) ./configure --prefix=$(PWD)/tmp/root && \
+	make install $(CHECK) && \
+	cp COPYING $(PWD)/tmp/root/licenses/libyubikey.txt && \
+	cd .. && \
+	cp ../ykpers-$(VERSION).tar.gz . \
+		|| curl -L -O https://developers.yubico.com/yubikey-personalization/releases/ykpers-$(VERSION).tar.gz && \
+	tar xfz ykpers-$(VERSION).tar.gz && \
+	cd ykpers-$(VERSION)/ && \
+	CFLAGS=$(CFLAGS) PKG_CONFIG_PATH=$(PWD)/tmp/root/lib/pkgconfig ./configure --prefix=$(PWD)/tmp/root --with-libyubikey-prefix=$(PWD)/tmp/root && \
 	make install $(CHECK) && \
 	install_name_tool -id @executable_path/../lib/libjson-c.2.dylib $(PWD)/tmp/root/lib/libjson-c.2.dylib && \
 	install_name_tool -id @executable_path/../lib/libjson-c.2.dylib $(PWD)/tmp/root/lib/libjson-c.dylib && \
 	install_name_tool -id @executable_path/../lib/libjson.0.dylib $(PWD)/tmp/root/lib/libjson.0.dylib && \
 	install_name_tool -id @executable_path/../lib/libjson.0.dylib $(PWD)/tmp/root/lib/libjson.dylib && \
-	install_name_tool -change $(PWD)/tmp/root/lib/libjson-c.2.dylib @executable_path/../lib/libjson-c.2 $(PWD)/tmp/root/lib/libjson.0.dylib && \
-	install_name_tool -change $(PWD)/tmp/root/lib/libjson-c.2.dylib @executable_path/../lib/libjson-c.2 $(PWD)/tmp/root/lib/libjson.dylib && \
-	cp COPYING $(PWD)/tmp/root/licenses/json-c.txt && \
-	cd .. && \
-	cp ../libyubikey-$(LIBYUBIKEYVERSION).tar.gz . \
-		||	wget https://developers.yubico.com/yubico-c/releases/libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
-	tar xfz libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
-	cd libyubikey-$(LIBYUBIKEYVERSION) && \
-	CFLAGS=$(CFLAGS) ./configure --prefix=$(PWD)/tmp/root && \
-	make install $(CHECK) && \
+	install_name_tool -change $(PWD)/tmp/root/lib/libjson-c.2.dylib @executable_path/../lib/libjson-c.2.dylib $(PWD)/tmp/root/lib/libjson.0.dylib && \
+	install_name_tool -change $(PWD)/tmp/root/lib/libjson-c.2.dylib @executable_path/../lib/libjson-c.2.dylib $(PWD)/tmp/root/lib/libjson.dylib && \
 	install_name_tool -id @executable_path/../lib/libyubikey.0.dylib $(PWD)/tmp/root/lib/libyubikey.dylib && \
 	install_name_tool -id @executable_path/../lib/libyubikey.0.dylib $(PWD)/tmp/root/lib/libyubikey.0.dylib && \
-	cp COPYING $(PWD)/tmp/root/licenses/libyubikey.txt && \
-	cd .. && \
-	cp ../ykpers-$(VERSION).tar.gz . \
-		|| wget https://developers.yubico.com/yubikey-personalization/releases/ykpers-$(VERSION).tar.gz && \
-	tar xfz ykpers-$(VERSION).tar.gz && \
-	cd ykpers-$(VERSION)/ && \
-	CFLAGS=$(CFLAGS) PKG_CONFIG_PATH=$(PWD)/tmp/root/lib/pkgconfig ./configure --prefix=$(PWD)/tmp/root --with-libyubikey-prefix=$(PWD)/tmp/root && \
-	make install $(CHECK) && \
 	install_name_tool -id @executable_path/../lib/libykpers-1.1.dylib $(PWD)/tmp/root/lib/libykpers-1.dylib && \
 	install_name_tool -id @executable_path/../lib/libykpers-1.1.dylib $(PWD)/tmp/root/lib/libykpers-1.1.dylib && \
+	install_name_tool -change $(PWD)/tmp/root/lib/libjson-c.2.dylib @executable_path/../lib/libjson-c.2.dylib $(PWD)/tmp/root/lib/libykpers-1.1.dylib && \
+	install_name_tool -change $(PWD)/tmp/root/lib/libjson-c.2.dylib @executable_path/../lib/libjson-c.2.dylib $(PWD)/tmp/root/lib/libykpers-1.dylib && \
 	for executable in $(PWD)/tmp/root/bin/*; do \
 	install_name_tool -change $(PWD)/tmp/root/lib/libyubikey.0.dylib @executable_path/../lib/libyubikey.0.dylib $$executable && \
-	install_name_tool -change $(PWD)/tmp/root/lib/libykpers-1.1.dylib @executable_path/../lib/libykpers-1.1.dylib $$executable ; \
+	install_name_tool -change $(PWD)/tmp/root/lib/libykpers-1.1.dylib @executable_path/../lib/libykpers-1.1.dylib $$executable && \
+	install_name_tool -change $(PWD)/tmp/root/lib/libjson-c.2.dylib @executable_path/../lib/libjson-c.2.dylib $$executable ; \
 	done && \
 	cp COPYING $(PWD)/tmp/root/licenses/yubikey-personalization.txt && \
 	cd .. && \
