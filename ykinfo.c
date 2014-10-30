@@ -210,22 +210,30 @@ int main(int argc, char **argv)
 				printf("serial: ");
 			printf("%d\n", serial);
 		}
-		if(serial_hex) {
-			if(!quiet)
-				printf("serial_hex: ");
-			printf("%x\n", serial);
-		}
-		if(serial_modhex) {
+		if(serial_modhex || serial_hex) {
 			char buf[64];
 			char hex_serial[64];
 			char modhex_serial[64];
+			char *ptr = buf;
 
-			snprintf(buf, 64, "%x", serial);
-			yubikey_hex_decode(hex_serial, buf, strlen(buf));
-			yubikey_modhex_encode(modhex_serial, hex_serial, strlen(hex_serial));
-			if(!quiet)
-				printf("serial_modhex: ");
-			printf("%s\n", modhex_serial);
+			int chars = snprintf(buf + 1, 63, "%x", serial);
+			if(chars % 2 == 1) {
+				buf[0] = '0';
+			} else {
+				ptr += 1;
+			}
+			if(serial_hex) {
+				if(!quiet)
+					printf("serial_hex: ");
+				printf("%s\n", ptr);
+			}
+			if(serial_modhex) {
+				yubikey_hex_decode(hex_serial, ptr, strlen(ptr));
+				yubikey_modhex_encode(modhex_serial, hex_serial, strlen(hex_serial));
+				if(!quiet)
+					printf("serial_modhex: ");
+				printf("%s\n", modhex_serial);
+			}
 		}
 	}
 	if(version || touch_level || pgm_seq || slot1 || slot2) {
