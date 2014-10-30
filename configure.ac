@@ -186,6 +186,7 @@ if test "$gl_gcc_warnings" = yes; then
   nw="$nw -Wtraditional-conversion" # Too many warnings for now
   nw="$nw -Wconversion"             # Too many warnings for now
   nw="$nw -Wsuggest-attribute=pure" # Is it worth using attributes?
+  nw="$nw -Woverlength-strings"     # Don't complain about string lengths
 
   gl_MANYWARN_ALL_GCC([ws])
   gl_MANYWARN_COMPLEMENT(ws, [$ws], [$nw])
