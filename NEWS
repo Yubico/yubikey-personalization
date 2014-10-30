@@ -1,6 +1,13 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.16.1 (unreleased)
+* Version 1.16.1 (released 2014-10-30)
+
+** Fix udev rules so they contain four digits.
+
+** Only try to detach the kernel driver if it's attached.
+For libusb-1.0
+
+** Let import config report errors properly.
 
 * Version 1.16.0 (released 2014-09-26)
 
