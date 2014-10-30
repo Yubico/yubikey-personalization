@@ -1,5 +1,7 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.16.2 (unreleased)
+
 * Version 1.16.1 (released 2014-10-30)
 
 ** Fix udev rules so they contain four digits.
