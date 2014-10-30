@@ -216,7 +216,7 @@ static int check_firmware(YK_KEY *yk, bool verbose)
 
 static int challenge_response(YK_KEY *yk, int slot,
 		       unsigned char *challenge, unsigned int len,
-		       bool hmac, bool may_block, bool verbose, bool totp, int digits )
+		       bool hmac, bool may_block, bool verbose, int digits )
 {
 	unsigned char response[SHA1_MAX_BLOCK_SIZE];
 	unsigned char output_buf[(SHA1_MAX_BLOCK_SIZE * 2) + 1];
@@ -317,7 +317,7 @@ int main(int argc, char **argv)
 
 	if (! challenge_response(yk, slot,
 				 challenge, challenge_len,
-				 hmac, may_block, verbose, totp, digits)) {
+				 hmac, may_block, verbose, digits)) {
 		exit_code = 1;
 		goto err;
 	}
