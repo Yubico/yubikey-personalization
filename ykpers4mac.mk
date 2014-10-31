@@ -82,6 +82,8 @@ ykpers4mac:
 	install_name_tool -id @executable_path/../lib/libykpers-1.1.dylib $(PWD)/tmp/root/lib/libykpers-1.1.dylib && \
 	install_name_tool -change $(PWD)/tmp/root/lib/libjson-c.2.dylib @executable_path/../lib/libjson-c.2.dylib $(PWD)/tmp/root/lib/libykpers-1.1.dylib && \
 	install_name_tool -change $(PWD)/tmp/root/lib/libjson-c.2.dylib @executable_path/../lib/libjson-c.2.dylib $(PWD)/tmp/root/lib/libykpers-1.dylib && \
+	install_name_tool -change $(PWD)/tmp/root/lib/libyubikey.0.dylib @executable_path/../lib/libyubikey.0.dylib $(PWD)/tmp/root/lib/libykpers-1.dylib && \
+	install_name_tool -change $(PWD)/tmp/root/lib/libyubikey.0.dylib @executable_path/../lib/libyubikey.0.dylib $(PWD)/tmp/root/lib/libykpers-1.1.dylib && \
 	for executable in $(PWD)/tmp/root/bin/*; do \
 	install_name_tool -change $(PWD)/tmp/root/lib/libyubikey.0.dylib @executable_path/../lib/libyubikey.0.dylib $$executable && \
 	install_name_tool -change $(PWD)/tmp/root/lib/libykpers-1.1.dylib @executable_path/../lib/libykpers-1.1.dylib $$executable && \
