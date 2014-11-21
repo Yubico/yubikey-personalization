@@ -48,6 +48,7 @@ struct versions {
 	{0,9,9,true},
 	{1,2,9,true},
 	{1,3,1,true},
+	{1,4,5,false},
 	{2,0,2,true},
 	{2,1,1,true},
 	{2,2,3,true},
@@ -59,7 +60,9 @@ struct versions {
 	{3,2,8,true},
 	{3,3,0,true},
 	{3,4,0,false},
-	{4,0,0,false},
+	{4,0,1,true},
+	{4,1,2,false},
+	{5,0,0,false},
 };
 
 static YK_STATUS * _test_init_st(int major, int minor, int build)

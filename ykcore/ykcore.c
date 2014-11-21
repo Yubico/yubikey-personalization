@@ -121,6 +121,10 @@ int yk_check_firmware_version2(YK_STATUS *st)
 			if(st->versionMinor <= 3)
 				return 1;
 			break;
+		case 4:
+			if(st->versionMinor <= 0)
+				return 1;
+			break;
 	}
 	yk_errno = YK_EFIRMWARE;
 	return 0;
