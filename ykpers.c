@@ -188,8 +188,13 @@ int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command)
 		break;
 	case SLOT_DEVICE_CONFIG:
 	case SLOT_SCAN_MAP:
-	case SLOT_NDEF2:
 		if(!(cfg->yk_major_version >= 3)) {
+			ykp_errno = YKP_EYUBIKEYVER;
+			return 0;
+		}
+		break;
+	case SLOT_NDEF2:
+		if(cfg->yk_major_version != 3) {
 			ykp_errno = YKP_EYUBIKEYVER;
 			return 0;
 		}
