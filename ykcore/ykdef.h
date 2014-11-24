@@ -16,6 +16,7 @@
 **      13-03-05	/ 3.1.0		/ J E	/ Added EXTFLAG_LED_INV flag		**         
 **      13-03-06	/ 3.1.0		/ J E	/ Added NEO startup busy flag		**
 **      14-06-13	/ 3.3.0		/ J E	/ Added U2F mode modifiers		**
+**      14-11-20    / 4.0.0     / J E   / Updated with Yubikey 4 PIDs                   **
 **											**
 *****************************************************************************************/
 
@@ -56,6 +57,7 @@
 #define SLOT_WRITE_FLAG		0x80	/* Write flag - set by app - cleared by device */
 
 #define DUMMY_REPORT_WRITE	0x8f	/* Write a dummy report to force update or abort */
+#define NEO_STARTUP_BUSY	0x9f	/* Status during startup (writes blocked) */
 
 #define SHA1_MAX_BLOCK_SIZE	64	/* Max size of input SHA1 block */
 #define SHA1_DIGEST_SIZE	20	/* Size of SHA1 digest = 160 bits */
@@ -276,6 +278,14 @@ struct status_st {
 #define	NEO_OTP_U2F_PID		0x0114	/* Yubikey NEO - OTP and U2F */
 #define	NEO_U2F_CCID_PID	0x0115	/* Yubikey NEO - U2F and CCID */
 #define	NEO_OTP_U2F_CCID_PID	0x0116	/* Yubikey NEO - OTP, U2F and CCID */
+
+#define	YK4_OTP_PID                 0x0401      /* Yubikey 4 - OTP only */
+#define	YK4_U2F_PID                 0x0402      /* Yubikey 4 - U2F only */
+#define	YK4_OTP_U2F_PID             0x0403      /* Yubikey 4 - OTP and U2F */
+#define	YK4_CCID_PID                0x0404      /* Yubikey 4 - CCID only */
+#define	YK4_OTP_CCID_PID            0x0405      /* Yubikey 4 - OTP and CCID */
+#define	YK4_U2F_CCID_PID            0x0406      /* Yubikey 4 - U2F and CCID */
+#define	YK4_OTP_U2F_CCID_PID        0x0407      /* Yubikey 4 - OTP, U2F and CCID */
 
 #if defined(_WIN32) || defined(__GNUC__)
 #pragma pack(pop)
