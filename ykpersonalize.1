@@ -134,11 +134,11 @@ Help
 \fB-V\fR
 Version
 .TP
-\fBYubiKey NEO only\fR
+\fBYubiKey Neo only\fR
 .RS
 .TP
 \fB-m mode\fR
-set device configuration for the YubiKey NEO.  It is parsed in the form
+set device configuration for the YubiKey.  It is parsed in the form
 \fImode:cr_timeout:autoeject_timeout\fR
 .br
 where mode is:
@@ -162,6 +162,16 @@ Add 80 to set MODE_FLAG_EJECT, for example: 81
 cr_timeout is the timeout in seconds for the YubiKey to wait on button press for challenge response (default is 15)
 .br
 autoeject_timeout is the timeout in seconds before the card is automatically ejected in mode 81
+.TP
+\fB-n URI\fR
+Program NFC NDEF URI
+.TP
+\fB-t text\fR
+Program NFC NDEF text
+.RE
+.TP
+\fBYubiKey 3.0 and above\fR
+.RS
 .TP
 \fB-S\fI0605...\fR
 set the scanmap to be used with the YubiKey NEO.  It must be 45 unique
@@ -196,12 +206,6 @@ and a turkish example (has a dotless i instead of usual i):
 .br
 Note that you must remove any whitespace present in these examples
 before using the values.
-.TP
-\fB-n URI\fR
-Program NFC NDEF URI
-.TP
-\fB-t text\fR
-Program NFC NDEF text
 .RE
 .TP
 \fBYubiKey 2.3 and above\fR
@@ -229,9 +233,11 @@ Send a tab character as the last character.
 .TP
 [\-]\fBappend-delay1\fR
 Add a half-second delay before sending the one-time password part.
+This option is only valid for firmware 1.x and 2.x.
 .TP
 [\-]\fBappend-delay2\fR
 Add a half-second delay after sending the one-time password part.
+This option is only valid for firmware 1.x and 2.x.
 .TP
 [\-]\fBappend-cr\fR
 Send a carriage return after sending the one-time password part.
@@ -302,7 +308,8 @@ legacy systems.
 .TP
 [\-]\fBman-update\fR
 Enable user-initiated update of the static password.  Only makes sense
-with the \fB-ostatic-ticket\fR option.
+with the \fB-ostatic-ticket\fR option.  This is only valid for firmware
+2.x.
 .TP
 \fBYubiKey 2.1 firmware and above\fR
 .TP
@@ -342,9 +349,11 @@ answering the challenge.
 .TP
 [\-]\fBserial-btn-visible\fR
 The YubiKey will emit its serial number if the button is pressed during power-up.
+This option is only valid for the 2.x firmware line.
 .TP
 [\-]\fBserial-usb-visible\fR
 The YubiKey will indicate its serial number in the USB iSerial field.
+This option is not available in the 3.0 and 3.1 firmwares.
 .TP
 [\-]\fBserial-api-visible\fR
 The YubiKey will allow its serial number to be read using an API call.
@@ -373,9 +382,11 @@ for further details.
 [\-]\fBuse-numeric-keypad\fR
 Send scancodes for numeric keypad keypresses when sending digits - helps with some
 keyboard layouts.
+This option is only valid for the 2.x firmware line.
 .TP
 [\-]\fBfast-trig\fR
 Faster triggering when only configuration 1 is available.
+This option is always in effect on firmware versions 3.0 and above.
 .TP
 [\-]\fBallow-update\fR
 Allow updating of certain parameters in a configuration at a later time.
