@@ -69,7 +69,8 @@ YK_KEY *yk_open_first_key(void)
 {
 	int pids[] = {YUBIKEY_PID, NEO_OTP_PID, NEO_OTP_CCID_PID,
 		NEO_OTP_U2F_PID, NEO_OTP_U2F_CCID_PID, YK4_OTP_PID,
-		YK4_OTP_U2F_PID, YK4_OTP_CCID_PID, YK4_OTP_U2F_CCID_PID};
+		YK4_OTP_U2F_PID, YK4_OTP_CCID_PID, YK4_OTP_U2F_CCID_PID,
+		PLUS_U2F_OTP_PID};
 
 	YK_KEY *yk = _ykusb_open_device(YUBICO_VID, pids, sizeof(pids));
 	int rc = yk_errno;
