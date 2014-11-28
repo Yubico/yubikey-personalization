@@ -1,6 +1,12 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.16.2 (unreleased)
+* Version 1.16.2 (released 2014-11-28)
+
+** ykinfo: fix modhex printout when serial is an odd number of hex digits.
+
+** whitelist yubikey version 4.0.x
+
+** try to open more PIDs and add for udev.
 
 * Version 1.16.1 (released 2014-10-30)
 
