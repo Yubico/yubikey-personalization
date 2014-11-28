@@ -1,5 +1,7 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.16.3 (unreleased)
+
 * Version 1.16.2 (released 2014-11-28)
 
 ** ykinfo: fix modhex printout when serial is an odd number of hex digits.
