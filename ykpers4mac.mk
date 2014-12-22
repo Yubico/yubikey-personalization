@@ -31,7 +31,7 @@ LIBYUBIKEYVERSION=1.11
 LIBJSONVERSION=0.11
 PROJECT=yubikey-personalization
 PACKAGE=ykpers
-CFLAGS="-mmacosx-version-min=10.6"
+CFLAGS="-mmacosx-version-min=10.6 -arch i386 -arch x86_64"
 
 all: usage ykpers4mac
 
