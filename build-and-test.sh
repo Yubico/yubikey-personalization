@@ -17,6 +17,10 @@ if [ "x$LIBUSB" = "xwindows" ]; then
     fi
     make -f ykpers4win.mk ykpers4win${ARCH} `grep ^VERSION Makefile|sed 's/ = /=/'`
 else
-    ./configure --with-backend=$LIBUSB
+    ./configure --with-backend=$LIBUSB $COVERAGE
     make check
+    if [ "x$COVERAGE" != "x" ]; then
+        gem install coveralls-lcov
+        coveralls-lcov --repo-token $COVERALLS_TOKEN coverage/app2.info
+    fi
 fi

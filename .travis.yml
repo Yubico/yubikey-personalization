@@ -20,3 +20,5 @@ matrix:
       env: LIBUSB=windows EXTRA="wine mingw-w64" REMOVE=mingw32 ARCH=32
     - compiler: gcc
       env: LIBUSB=windows EXTRA="wine mingw-w64" REMOVE=mingw32 ARCH=64
+    - compiler: gcc
+      env: LIBUSB=libusb-1.0 EXTRA="libusb-1.0-0-dev libjson0-dev lcov" COVERAGE="--enable-coverage"
