@@ -48,4 +48,9 @@ if BACKEND_WINDOWS
 libykcore_la_SOURCES += ykcore_windows.c
 endif
 
+if ENABLE_COV
+AM_CFLAGS += --coverage
+AM_LDFLAGS = --coverage
+endif
+
 EXTRA_DIST = ykcore_stub.c
