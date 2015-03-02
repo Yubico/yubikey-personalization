@@ -120,7 +120,7 @@ int yk_check_firmware_version2(YK_STATUS *st)
 				return 1;
 			break;
 		case 3:
-			if(st->versionMinor <= 3)
+			if(st->versionMinor <= 4)
 				return 1;
 			break;
 		case 4:
