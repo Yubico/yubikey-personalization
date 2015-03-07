@@ -170,6 +170,7 @@ void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 	ssize_t cnt = libusb_get_device_list(usb_ctx, &list);
 	ssize_t i = 0;
 	int rc = YK_ENOKEY;
+	const int desired_cfg = 1;
 
 	for (i = 0; i < cnt; i++) {
 		ykl_errno = libusb_get_device_descriptor(list[i], &desc);
@@ -205,8 +206,15 @@ void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 		} else if (ykl_errno != 0)
 			goto done;
 		/* This is needed for yubikey-personalization to work inside virtualbox virtualization. */
-		ykl_errno = libusb_set_configuration(h, 1);
-		goto done;
+		int current_cfg;
+		ykl_errno = libusb_get_configuration(h, &current_cfg);
+		if (ykl_errno != 0)
+			goto done;
+		if (desired_cfg != current_cfg) {
+			ykl_errno = libusb_set_configuration(h, desired_cfg);
+			if (ykl_errno != 0)
+				goto done;
+		}
 	}
  done:
 	libusb_free_device_list(list, 1);
