@@ -233,7 +233,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 		   char *keylocation, char *ndef_type, char *ndef,
 		   unsigned char *usb_mode, bool *zap,
 		   unsigned char *scan_bin, unsigned char *cr_timeout,
-		   unsigned char *autoeject_timeout, int *num_modes_seen,
+		   unsigned short *autoeject_timeout, int *num_modes_seen,
 		   int *exit_code)
 {
 	int c;
@@ -437,8 +437,9 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 				*exit_code = 1;
 				return 0;
 			}
-			unsigned char mode, crtime, autotime;
-			int matched = sscanf(optarg, "%hhx:%hhd:%hhd", &mode, &crtime, &autotime);
+			unsigned char mode, crtime;
+			unsigned short autotime;
+			int matched = sscanf(optarg, "%hhx:%hhd:%hd", &mode, &crtime, &autotime);
 			if(matched > 0) {
 				*usb_mode = mode;
 				if(matched > 1) {

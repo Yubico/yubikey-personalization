@@ -119,7 +119,7 @@ static int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 	char ndef_type = 0;
 	unsigned char usb_mode = 0;
 	unsigned char cr_timeout = 0;
-	unsigned char autoeject_timeout = 0;
+	unsigned short autoeject_timeout = 0;
 	int num_modes_seen = 0;
 	bool zap = false;
 
@@ -309,7 +309,7 @@ static void _test_non_config_args(void)
 	char ndef_type = 0;
 	unsigned char usb_mode = 0;
 	unsigned char cr_timeout = 0;
-	unsigned char autoeject_timeout = 0;
+	unsigned short autoeject_timeout = 0;
 	int num_modes_seen = 0;
 	bool zap = false;
 
