@@ -1,6 +1,8 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.16.4 (unreleased)
+* Version 1.16.4 (released 2015-03-23)
+
+** change the tool to accept autoeject time as a short instead of a byte
 
 * Version 1.16.3 (released 2015-03-10)
 
