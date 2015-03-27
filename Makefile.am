@@ -32,7 +32,7 @@ SUBDIRS= ykcore . tests
 
 ACLOCAL_AMFLAGS = -I m4
 
-AM_CPPFLAGS = -I$(srcdir)/ykcore -I$(srcdir)/rfc4634
+AM_CPPFLAGS = -I$(srcdir)/ykcore
 AM_CFLAGS = $(WARN_CFLAGS)
 
 AM_CFLAGS += $(libjson_CFLAGS)
