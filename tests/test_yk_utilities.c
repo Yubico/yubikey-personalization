@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2012-2014 Yubico AB
+ * Copyright (c) 2012-2015 Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -62,7 +62,8 @@ struct versions {
 	{3,4,3,true},
 	{3,5,1,false},
 	{4,0,1,true},
-	{4,1,2,false},
+	{4,1,2,true},
+	{4,2,1,false},
 	{5,0,0,false},
 };
 
