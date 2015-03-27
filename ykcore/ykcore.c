@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2008-2014 Yubico AB
+ * Copyright (c) 2008-2015 Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -124,7 +124,7 @@ int yk_check_firmware_version2(YK_STATUS *st)
 				return 1;
 			break;
 		case 4:
-			if(st->versionMinor <= 0)
+			if(st->versionMinor <= 1)
 				return 1;
 			break;
 	}
