@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2012-2013 Yubico AB.
+ * Copyright (c) 2012-2015 Yubico AB.
  * All rights reserved.
  *
  * Some basic code copied from ykchalresp.c.
@@ -56,6 +56,7 @@ const char *usage =
 	"\t-i        Get vendor id of YubiKey\n"
 	"\t-I        Get product id of YubiKey\n"
 	"\t-a        Get all information above\n"
+	"\t-c        Get capabilities from YubiKey\n"
 	"\n"
 	"\t-q        Only output information from YubiKey\n"
 	"\n"
@@ -64,7 +65,7 @@ const char *usage =
 	"\n"
 	"\n"
 	;
-const char *optstring = "asmHvtpqhV12iI";
+const char *optstring = "asmHvtpqhV12iIc";
 
 static void report_yk_error(void)
 {
@@ -82,7 +83,7 @@ static void report_yk_error(void)
 static int parse_args(int argc, char **argv,
 		bool *serial_dec, bool *serial_modhex, bool *serial_hex,
 		bool *version, bool *touch_level, bool *pgm_seq, bool *quiet,
-		bool *slot1, bool *slot2, bool *vid, bool *pid,
+		bool *slot1, bool *slot2, bool *vid, bool *pid, bool *capa,
 		int *exit_code)
 {
 	int c;
@@ -134,6 +135,9 @@ static int parse_args(int argc, char **argv,
 		case 'I':
 			*pid = true;
 			break;
+		case 'c':
+			*capa = true;
+			break;
 		case 'V':
 			fputs(YKPERS_VERSION_STRING "\n", stderr);
 			*exit_code = 0;
@@ -148,7 +152,7 @@ static int parse_args(int argc, char **argv,
 
 	if (!*serial_dec && !*serial_modhex && !*serial_hex &&
 			!*version && !*touch_level && !*pgm_seq && !*slot1 && !*slot2 &&
-			!*vid && !*pid) {
+			!*vid && !*pid && !*capa) {
 		/* no options at all */
 		fputs("You must give at least one option.\n", stderr);
 		fputs(usage, stderr);
@@ -176,6 +180,7 @@ int main(int argc, char **argv)
 	bool slot2 = false;
 	bool vid = false;
 	bool pid = false;
+	bool capa = false;
 
 	bool quiet = false;
 
@@ -184,7 +189,7 @@ int main(int argc, char **argv)
 	if (! parse_args(argc, argv,
 				&serial_dec, &serial_modhex, &serial_hex,
 				&version, &touch_level, &pgm_seq, &quiet,
-				&slot1, &slot2, &vid, &pid,
+				&slot1, &slot2, &vid, &pid, &capa,
 				&exit_code))
 		exit(exit_code);
 
@@ -287,6 +292,20 @@ int main(int argc, char **argv)
 				printf("product_id: ");
 			printf("%x\n", product_id);
 		}
+	}
+	if(capa) {
+		unsigned char buf[0xff];
+		unsigned int len = 0xff;
+		unsigned int i;
+		if(!yk_get_capabilities(yk, 1, 0, buf, &len)) {
+			exit_code = 1;
+			goto err;
+		}
+		printf("capabilities: ");
+		for(i = 0; i < len; i++) {
+			printf("%02x", buf[i]);
+		}
+		printf("\n");
 	}
 
 	exit_code = 0;

@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2008-2014 Yubico AB
+ * Copyright (c) 2008-2015 Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -135,6 +135,9 @@ extern int yk_challenge_response(YK_KEY *yk, uint8_t yk_cmd, int may_block,
 extern int yk_force_key_update(YK_KEY *yk);
 /* Get the VID and PID of an opened device. */
 extern int yk_get_key_vid_pid(YK_KEY *yk, int *vid, int *pid);
+/* Get the YK4 capabilities */
+int yk_get_capabilities(YK_KEY *yk, uint8_t slot, unsigned int flags,
+			unsigned char *capabilities, unsigned int *len);
 
 /*************************************************************************
  *

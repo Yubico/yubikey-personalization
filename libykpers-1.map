@@ -258,3 +258,10 @@ LIBYKPERS_1.16 {
   yk_get_key_vid_pid;
 # Variables:
 } LIBYKPERS_1.15;
+
+LIBYKPERS_1.17 {
+  global:
+# Functions:
+  yk_get_capabilities;
+# Variables:
+} LIBYKPERS_1.16;

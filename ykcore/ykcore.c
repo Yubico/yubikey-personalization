@@ -192,6 +192,27 @@ int yk_get_serial(YK_KEY *yk, uint8_t slot, unsigned int flags, unsigned int *se
 	return 1;
 }
 
+int yk_get_capabilities(YK_KEY *yk, uint8_t slot, unsigned int flags,
+		unsigned char *capabilities, unsigned int *len)
+{
+	unsigned int response_len = 0;
+
+	if (!yk_write_to_key(yk, SLOT_YK4_CAPABILITIES, capabilities, 0))
+		return 0;
+
+	if (! yk_read_response_from_key(yk, slot, flags,
+					capabilities, *len, 0, /* we have no idea how much data we'll get */
+					&response_len))
+		return 0;
+
+	/* the first data of the capabilities string is the length */
+	response_len = capabilities[0];
+	response_len++;
+
+	*len = response_len;
+	return 1;
+}
+
 static int _yk_write(YK_KEY *yk, uint8_t yk_cmd, unsigned char *buf, size_t len)
 {
 	YK_STATUS stat;
