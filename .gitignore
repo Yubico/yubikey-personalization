@@ -138,3 +138,14 @@ ykpers-version.gcno
 ykpers.gcno
 ykpers_lcl.gcno
 ykpersonalize.gcno
+libhmac.la
+libhmac_la-hmac.lo
+libhmac_la-hmac.o
+libhmac_la-sha1.lo
+libhmac_la-sha1.o
+libhmac_la-sha224-256.lo
+libhmac_la-sha224-256.o
+libhmac_la-sha384-512.lo
+libhmac_la-sha384-512.o
+libhmac_la-usha.lo
+libhmac_la-usha.o

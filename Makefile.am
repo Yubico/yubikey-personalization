@@ -44,6 +44,11 @@ ykpers_include_HEADERS = ykpers.h ykpers-version.h
 ykpers_include_HEADERS += ykcore/ykstatus.h ykcore/ykcore.h ykcore/ykdef.h
 ykpers_include_HEADERS += ykpbkdf2.h
 
+noinst_LTLIBRARIES = libhmac.la
+libhmac_la_SOURCES = hmac.c usha.c sha.h sha1.c sha224-256.c
+libhmac_la_SOURCES += sha384-512.c sha-private.h
+libhmac_la_CFLAGS =
+
 lib_LTLIBRARIES = libykpers-1.la
 libykpers_1_la_SOURCES = ykpers.c ykpers-version.c ykpbkdf2.c
 if JSON
@@ -52,10 +57,8 @@ else
 libykpers_1_la_SOURCES += ykpers-nojson.c
 endif
 libykpers_1_la_SOURCES += ykpers_lcl.h ykpers-json.h ykpers_lcl.c
-libykpers_1_la_SOURCES += hmac.c usha.c sha.h sha1.c sha224-256.c \
-	sha384-512.c sha-private.h
 libykpers_1_la_SOURCES += ykpers-1.pc.in libykpers-1.map
-libykpers_1_la_LIBADD = $(LTLIBYUBIKEY) ./ykcore/libykcore.la $(libjson_LIBS)
+libykpers_1_la_LIBADD = $(LTLIBYUBIKEY) ./ykcore/libykcore.la libhmac.la $(libjson_LIBS)
 libykpers_1_la_LDFLAGS = -no-undefined \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 EXTRA_libykpers_1_la_DEPENDENCIES = libykpers-1.map
@@ -77,7 +80,7 @@ ykpersonalize_SOURCES = ykpersonalize.c
 ykpersonalize_LDADD = ./libykpers-1.la
 ykpersonalize_LDADD += ./libykpers_args.la
 
-noinst_LTLIBRARIES = libykpers_args.la
+noinst_LTLIBRARIES += libykpers_args.la
 libykpers_args_la_SOURCES = ykpers-args.c ykpers-args.h
 libykpers_args_la_LIBADD = libykpers-1.la $(LTLIBYUBIKEY)
 
