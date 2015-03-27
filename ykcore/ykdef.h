@@ -17,6 +17,7 @@
 **      13-03-06	/ 3.1.0		/ J E	/ Added NEO startup busy flag		**
 **      14-06-13	/ 3.3.0		/ J E	/ Added U2F mode modifiers		**
 **      14-11-20    / 4.0.0     / J E   / Updated with Yubikey 4 PIDs                   **
+**      15-03-27    / 4.1.0     / K L   / Added YK4 Capabilities                        **
 **											**
 *****************************************************************************************/
 
@@ -42,6 +43,7 @@
 #define SLOT_DEVICE_SERIAL	0x10	/* Device serial number */
 #define SLOT_DEVICE_CONFIG	0x11	/* Write device configuration record */
 #define SLOT_SCAN_MAP		0x12	/* Write scancode map */
+#define SLOT_YK4_CAPABILITIES	0x13	/* Read YK4 capabilities list */
 
 #define SLOT_CHAL_OTP1		0x20	/* Write 6 byte challenge to slot 1, get Yubico OTP response */
 #define SLOT_CHAL_OTP2		0x28	/* Write 6 byte challenge to slot 2, get Yubico OTP response */
@@ -288,6 +290,13 @@ struct status_st {
 #define	YK4_OTP_U2F_CCID_PID	0x0407	/* Yubikey 4 - OTP, U2F and CCID */
 
 #define	PLUS_U2F_OTP_PID	0x0410	/* Yubikey plus - OTP+U2F */
+
+#define YK4_CAPA_TAG		0x01	/* TAG for capabilities */
+#define YK4_SERIAL_TAG		0x02	/* TAG for serial number */
+
+#define YK4_CAPA1_OTP		0x01	/* Capability bit for OTP functonality */
+#define YK4_CAPA1_U2F		0x02	/* Capability bit for U2F functionality */
+#define YK4_CAPA1_CCID		0x04	/* Capability bit for CCID functionality */
 
 #if defined(_WIN32) || defined(__GNUC__)
 #pragma pack(pop)
