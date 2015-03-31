@@ -301,7 +301,8 @@ int main(int argc, char **argv)
 			exit_code = 1;
 			goto err;
 		}
-		printf("capabilities: ");
+		if(!quiet)
+			printf("capabilities: ");
 		for(i = 0; i < len; i++) {
 			printf("%02x", buf[i]);
 		}
