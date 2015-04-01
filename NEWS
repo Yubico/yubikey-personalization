@@ -1,6 +1,12 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.16.5 (unreleased)
+* Version 1.17.0 (released 2015-04-01)
+
+** add yk_get_capabilities() to fetch capabilities.
+
+** add -c to ykinfo to fetch capabilities.
+
+** whitelist firmware 4.1.x
 
 * Version 1.16.4 (released 2015-03-23)
 
