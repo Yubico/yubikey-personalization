@@ -1,5 +1,9 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.17.1 (released 2015-04-01)
+
+** Fixup of 1.17.0
+
 * Version 1.17.0 (released 2015-04-01)
 
 ** add yk_get_capabilities() to fetch capabilities.
