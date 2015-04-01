@@ -38,7 +38,7 @@ AC_CONFIG_MACRO_DIR([m4])
 # Interfaces removed:                           AGE=0
 AC_SUBST(LT_CURRENT, 18)
 AC_SUBST(LT_REVISION, 0)
-AC_SUBST(LT_AGE, 16)
+AC_SUBST(LT_AGE, 17)
 
 AM_INIT_AUTOMAKE([1.11.3 -Wall -Werror])
 AM_SILENT_RULES([yes])
