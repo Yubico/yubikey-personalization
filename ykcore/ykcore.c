@@ -234,7 +234,8 @@ static int _yk_write(YK_KEY *yk, uint8_t yk_cmd, unsigned char *buf, size_t len)
 	 * want to get the bytes in the status message, but when writing configuration
 	 * we don't expect any data back.
 	 */
-	yk_wait_for_key_status(yk, yk_cmd, 0, WAIT_FOR_WRITE_FLAG, false, SLOT_WRITE_FLAG, NULL);
+	if(!yk_wait_for_key_status(yk, yk_cmd, 0, WAIT_FOR_WRITE_FLAG, false, SLOT_WRITE_FLAG, NULL))
+		return 0;
 
 	/* Verify update */
 
