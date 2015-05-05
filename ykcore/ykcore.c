@@ -678,12 +678,6 @@ int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount)
 	ptr = (unsigned char *) &frame;
 	end = (unsigned char *) &frame + sizeof(frame);
 
-	/* Initial check that the YubiKey is in a state where it will accept
-	 * a write.
-	 *
-	if (! yk_wait_for_key_status(yk, slot, 0, 1000, false, SLOT_WRITE_FLAG, NULL))
-		return 0;
-	*/
 #ifdef YK_DEBUG
 	fprintf(stderr, "YK_DEBUG: Write %i bytes to YubiKey :\n", bufcount);
 #endif
