@@ -58,7 +58,7 @@ libykpers_1_la_SOURCES += ykpers-nojson.c
 endif
 libykpers_1_la_SOURCES += ykpers_lcl.h ykpers-json.h ykpers_lcl.c
 libykpers_1_la_SOURCES += ykpers-1.pc.in libykpers-1.map
-libykpers_1_la_LIBADD = $(LTLIBYUBIKEY) ./ykcore/libykcore.la libhmac.la $(libjson_LIBS)
+libykpers_1_la_LIBADD = $(LTLIBYUBIKEY) ./ykcore/libykcore.la ./libhmac.la $(libjson_LIBS)
 libykpers_1_la_LDFLAGS = -no-undefined \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 EXTRA_libykpers_1_la_DEPENDENCIES = libykpers-1.map
