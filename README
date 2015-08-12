@@ -117,7 +117,7 @@ With that out of the way, here is how you would program a YubiKey with
 an all-zero AES key and a dummy prefix:
 
 -----------
-$ ./ykpersonalize -ofixed=cccccccccccc -a00000000000000000000000000000000
+$ ./ykpersonalize -1 -ofixed=cccccccccccc -a00000000000000000000000000000000
 Firmware version 1.3.1 Touch level 9840 Program sequence 10
 Configuration data to be written to key configuration 1:
 
@@ -168,7 +168,7 @@ To program a YubiKey in static mode, you use the -ostatic-ticket flag
 as follows:
 
 -----------
-$  ./ykpersonalize -ofixed=cccccccccccc -a00000000000000000000000000000000 -ostatic-ticket
+$  ./ykpersonalize -1 -ofixed=cccccccccccc -a00000000000000000000000000000000 -ostatic-ticket
 Firmware version 1.3.1 Touch level 9856 Program sequence 11
 Configuration data to be written to key configuration 1:
 
@@ -189,7 +189,7 @@ To program a YubiKey in static mode with a strongly looking password
 YubiKey 2.0 only!) as follows:
 
 -----------
-$  ./ykpersonalize -ofixed=cccccccccccc -a00000000000000000000000000000000 -ostatic-ticket -ostrong-pw1 -ostrong-pw2
+$  ./ykpersonalize -1 -ofixed=cccccccccccc -a00000000000000000000000000000000 -ostatic-ticket -ostrong-pw1 -ostrong-pw2
 Firmware version 2.0.0 Touch level 1792 Program sequence 3
 Configuration data to be written to key configuration 1:
 
@@ -208,7 +208,7 @@ Alternatively on a YubiKey 2.0, you can program the second configuration, which
 defaults to be the static key configuration:
 
 -----------
-$  ./ykpersonalize -ofixed=cccccccccccc -a00000000000000000000000000000000 -2
+$  ./ykpersonalize -2 -ofixed=cccccccccccc -a00000000000000000000000000000000
 Firmware version 2.0.0 Touch level 1792 Program sequence 3
 Configuration data to be written to key configuration 2:
 
@@ -227,7 +227,7 @@ To program a YubiKey with a lock code (to prevent others from easily
 reprogramming it), you use the -oaccess= flag as follows:
 
 -----------
-$ ./ykpersonalize -ofixed=vvvecdcedvjj -a00000000000000000000000000000000 -oaccess=001100001100
+$ ./ykpersonalize -1 -ofixed=vvvecdcedvjj -a00000000000000000000000000000000 -oaccess=001100001100
 Firmware version 2.0.0 Touch level 1792 Program sequence 3
 Configuration data to be written to key configuration 1:
 
@@ -246,7 +246,7 @@ To re-program a YubiKey that has a lock code set, you use the
 -cXXX.. flag as follows:
 
 -----------
-$ ./ykpersonalize -c001100001100 -ofixed=vvvecdcedvjj -a00000000000000000000000000000000 -oaccess=001100223300
+$ ./ykpersonalize -1 -c001100001100 -ofixed=vvvecdcedvjj -a00000000000000000000000000000000 -oaccess=001100223300
 Firmware version 2.0.0 Touch level 1792 Program sequence 3
 Configuration data to be written to key configuration 1:
 
@@ -265,7 +265,7 @@ To disable the lock code on a YubiKey, program it with a lock code set
 to zeros.  For example:
 
 -----------
-$ ./ykpersonalize -c001100001133 -ofixed=vvvecdcedvjj -a00000000000000000000000000000003 -oaccess=000000000000
+$ ./ykpersonalize -1 -c001100001133 -ofixed=vvvecdcedvjj -a00000000000000000000000000000003 -oaccess=000000000000
 Firmware version 2.0.0 Touch level 1792 Program sequence 7
 Configuration data to be written to key configuration 1:
 
