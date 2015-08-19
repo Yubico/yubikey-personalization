@@ -81,7 +81,7 @@ const char *usage =
 "          YubiKey 3.0 and newer only\n"
 "-oOPTION  change configuration option.  Possible OPTION arguments are:\n"
 "          fixed=xxxxxxxxxxx   The public identity of key, in MODHEX.\n"
-"                              This is 0-16 characters long.\n"
+"                              This is 0-32 characters long.\n"
 "          uid=xxxxxx          The uid part of the generated ticket, in HEX.\n"
 "                              MUST be 12 characters long.\n"
 "          access=xxxxxxxxxxx  New access code to set, in HEX.\n"
