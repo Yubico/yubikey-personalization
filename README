@@ -279,9 +279,3 @@ config_flags:
 Commit? (y/n) [n]: y
 $
 -----------
-
-Feedback
---------
-
-See the Google Group yubico-devel:
-http://groups.google.com/group/yubico-devel
