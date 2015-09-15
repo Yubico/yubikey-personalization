@@ -64,7 +64,8 @@ struct versions {
 	{4,0,1,true},
 	{4,1,2,true},
 	{4,1,10,true},
-	{4,2,1,false},
+	{4,2,1,true},
+	{4,3,7,false},
 	{5,0,0,false},
 };
 
