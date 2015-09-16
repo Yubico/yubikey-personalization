@@ -354,6 +354,30 @@ int main(int argc, char **argv)
 					}
 				}
 
+				if((usb_mode & 0xf) == MODE_CCID || (usb_mode & 0xf) == MODE_U2F ||
+						(usb_mode & 0xf) == MODE_U2F_CCID) {
+					fprintf(stderr, "WARNING: This tool will not be able to switch back from the selected mode, really commit? (y/n) [n]: ");
+					if (autocommit) {
+						strcpy(commitbuf, "yes");
+						puts(commitbuf);
+					} else {
+						if (!fgets(commitbuf, sizeof(commitbuf), stdin))
+						{
+							perror ("fgets");
+							goto err;
+						}
+					}
+					commitlen = strlen(commitbuf);
+					if (commitbuf[commitlen - 1] == '\n')
+						commitbuf[commitlen - 1] = '\0';
+					if (strcmp(commitbuf, "y") != 0
+							|| strcmp(commitbuf, "yes") != 0) {
+						exit_code = 0;
+						error = false;
+						goto err;
+					}
+				}
+
 				if(!yk_write_device_config(yk, device_config)) {
 					if(verbose)
 						printf(" failure\n");
