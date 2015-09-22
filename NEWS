@@ -1,5 +1,13 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.17.2 (released 2015-09-22)
+
+** Let _yk_write() return an error if yk_wait_for_key_status() fails.
+
+** Fix a mistake in help, fixed is up to 16 bytes, 32 characters.
+
+** Add 4.2 as supported firmware.
+
 * Version 1.17.1 (released 2015-04-01)
 
 ** Fixup of 1.17.0
