@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2009-2013 Yubico AB
+ * Copyright (c) 2009-2015 Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@
 #include <ykpers.h>
 #include <ykpers-version.h>
 #include <stdio.h>
+#include <string.h>
 
 int main (void)
 {
