@@ -1,4 +1,5 @@
 language: c
+os: linux
 compiler:
   - gcc
   - clang
@@ -9,11 +10,6 @@ env:
   - LIBUSB=libusb-1.0 EXTRA="libusb-1.0-0-dev libjson0-dev"
 script:
   - ./build-and-test.sh
-before_install:
-  - sudo apt-get update -qq || true
-  - sudo apt-get remove -qq -y $REMOVE
-  - sudo apt-get autoremove -qq
-  - sudo apt-get install -qq -y libyubikey-dev $EXTRA
 matrix:
   include:
     - compiler: gcc
@@ -22,3 +18,9 @@ matrix:
       env: LIBUSB=windows EXTRA="wine mingw-w64" REMOVE=mingw32 ARCH=64
     - compiler: gcc
       env: LIBUSB=libusb-1.0 EXTRA="libusb-1.0-0-dev libjson0-dev lcov" COVERAGE="--enable-coverage"
+    - os: osx
+      compiler: gcc
+      env: LIBUSB=osx
+    - os: osx
+      compiler: clang
+      env: LIBUSB=osx
