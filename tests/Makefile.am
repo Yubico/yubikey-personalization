@@ -42,7 +42,7 @@ TESTS = $(ctests)
 
 test_args_to_config_LDADD = ../libykpers_args.la
 
-TESTS_ENVIRONMENT = $(VALGRIND)
+LOG_COMPILER = $(VALGRIND)
 
 if ENABLE_COV
 AM_LDFLAGS += --coverage
