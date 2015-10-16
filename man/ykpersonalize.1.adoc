@@ -13,13 +13,13 @@ ykpersonalize - personalize YubiKey OTP tokens
 
 *ykpersonalize* [__-1__ | __-2__] [__-sfile__] [__-ifile__] [__-fformat__] [__-axxx__] [__-cxxx__] [__-ooption__] [__-y__] [__-v__] [__-d__] [__-h__] [__-n__] [__-t__] [__-u__] [__-x__] [__-z__] [__-m__] [__-S__] [__-V__]
 
-
-== OPTIONS
+== DESCRIPTION
 
 Set the AES key, user ID and other settings in a YubiKey. For the
 complete explanation of the meaning of all parameters, see the reference
-manual: YubiKey manual ⟨ URL: http://yubico.com/files/YubiKey_manual-2.0.pdf ⟩
+manual: YubiKey manual (http://yubico.com/files/YubiKey_manual-2.0.pdf)
 
+== OPTIONS
 
 *−1*:: change the first configuration. This is the default and is
 normally used for true OTP generation. In this configuration, the option
