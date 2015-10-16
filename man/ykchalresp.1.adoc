@@ -1,13 +1,11 @@
 ykchalresp(1)
-================
+=============
 :doctype:	manpage
 :man source:	ykchalresp
 :man manual:	YubiKey Personalization Tool Manual
 
-
 == NAME
 ykchalresp - Perform challenge-response operation with YubiKey
-
 
 == SYNOPSIS
 
