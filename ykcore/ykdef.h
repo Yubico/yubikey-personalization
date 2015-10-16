@@ -273,6 +273,7 @@ struct status_st {
 
 #define	YUBICO_VID		0x1050	/* Global vendor ID */
 #define	YUBIKEY_PID		0x0010	/* Yubikey (version 1 and 2) */
+#define	YUBIKEY_U2F_PID	0x0120	/* Yubikey U2F (e.g. GitHub promo key) */
 #define	NEO_OTP_PID		0x0110	/* Yubikey NEO - OTP only */
 #define	NEO_OTP_CCID_PID	0x0111	/* Yubikey NEO - OTP and CCID */
 #define	NEO_CCID_PID		0x0112	/* Yubikey NEO - CCID only */
