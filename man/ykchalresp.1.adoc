@@ -9,7 +9,7 @@ ykchalresp - Perform challenge-response operation with YubiKey
 
 == SYNOPSIS
 
-*ykchalresp* [__-1__ | __-2__] [__-H__] [__-Y__] [__-N__] [__-x__] [__-v__] [__-6__] [__-8__] [__-t__] [__-V__] [__-h__]
+*ykchalresp* [__-1__ | __-2__] [__-H__ | __-Y__] [__-N__] [__-x__] [__-v__] [__-6__ | __-8__] [__-t__] [__-V__] [__-h__]
 
 == DESCRIPTION
 
