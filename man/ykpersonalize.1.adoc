@@ -17,7 +17,7 @@ ykpersonalize - personalize YubiKey OTP tokens
 
 Set the AES key, user ID and other settings in a YubiKey. For the
 complete explanation of the meaning of all parameters, see the reference
-manual: YubiKey manual (http://yubico.com/files/YubiKey_manual-2.0.pdf)
+manual: YubiKey manual (https://www.yubico.com/wp-content/uploads/2015/03/YubiKeyManual_v3.4.pdf)
 
 == OPTIONS
 
