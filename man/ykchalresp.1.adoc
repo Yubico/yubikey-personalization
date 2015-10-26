@@ -51,6 +51,7 @@ The YubiKey challenge-response operation can be demonstrated using the
 *NIST PUB 198 A.2* test vector.
 
 First, program a YubiKey with the test vector :
+
  $ ykpersonalize -2 -ochal-resp -ochal-hmac -ohmac-lt64 -a 303132333435363738393a3b3c3d3e3f40414243
   ...
  Commit? (y/n) [n]: y
@@ -58,6 +59,7 @@ First, program a YubiKey with the test vector :
 
 Now, send the NIST test challenge to the YubiKey and verify the result
 matches the expected :
+
  $ ykchalresp -2 'Sample #2'
  0922d3405faa3d194f82a45830737d5cc6c75d24
  $

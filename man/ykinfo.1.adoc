@@ -47,6 +47,7 @@ is written to screen.
 == EXAMPLE
 
 Output information from a YubiKey:
+
  $ ykinfo -s -m -H -v -t -p
  serial: 1077254
  serial_hex: 107006
