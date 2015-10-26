@@ -98,7 +98,7 @@ SUFFIXES = .1.adoc .1
 	$(A2X) -L --format=manpage -a revdate="Version $(VERSION)" $<
 
 # Dist docs from wiki.
-EXTRA_DIST = doc/Compatibility.asciidoc doc/Make-Release.asciidoc doc/USB-Hid-Issue.asciidoc doc/Windows-Build.asciidoc
+EXTRA_DIST = doc/Compatibility.asciidoc doc/USB-Hid-Issue.asciidoc
 
 # Dist contrib stuff.
 EXTRA_DIST += contrib/README contrib/programming.sh contrib/oath-unlock-reprogram.sh contrib/draft-josefsson-yubikey-config.xml
