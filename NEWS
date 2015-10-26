@@ -1,5 +1,7 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.17.3 (unreleased)
+
 * Version 1.17.2 (released 2015-09-22)
 
 ** Let _yk_write() return an error if yk_wait_for_key_status() fails.
