@@ -371,7 +371,7 @@ int main(int argc, char **argv)
 					if (commitbuf[commitlen - 1] == '\n')
 						commitbuf[commitlen - 1] = '\0';
 					if (strcmp(commitbuf, "y") != 0
-							|| strcmp(commitbuf, "yes") != 0) {
+							&& strcmp(commitbuf, "yes") != 0) {
 						exit_code = 0;
 						error = false;
 						goto err;
