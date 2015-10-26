@@ -1,0 +1,70 @@
+ykinfo(1)
+=========
+:doctype:	manpage
+:man source:	ykinfo
+:man manual:	YubiKey Personalization Tool Manual
+
+== NAME
+ykinfo - Get basic information from a YubiKey
+
+== SYNOPSIS
+
+*ykinfo* [__-s__] [__-m__] [__-H__] [__-v__] [__-t__] [__-p__] [__-1__] [__-2__] [__-q__] [__-a__] [__-c__] [__-V__] [__-h__]
+
+== DESCRIPTION
+
+Get basic information from a YubiKey. Can get serial number, version
+and current touch level. Can get all parameters at once or one at a
+time.  If __-q__ is given only the relevant string from the YubiKey
+is written to screen.
+
+== OPTIONS
+
+*-s*:: get the serial number and output it.
+
+*-m*:: get the serial number and output it as modhex.
+
+*-H*:: get the serial number and output it as hex.
+
+*-v*:: get the version and output it.
+
+*-t*:: get the touch level and output it.
+
+*-p*:: get the programming sequence and output it.
+
+*-1*:: get the status of slot 1, 1 for programmed and 0 for empty.
+
+*-2*:: get the status of slot 2, 1 for programmed and 0 for empty.
+
+*-a*:: get all the information above.
+
+*-c*:: get YubiKey capability information.
+
+*-q*:: modifier, only show the relevant data from the YubiKey, no extra information.
+
+*-V*:: print tool version and exit
+
+== EXAMPLE
+
+Output information from a YubiKey:
+ $ ykinfo -s -m -H -v -t -p
+ serial: 1077254
+ serial_hex: 107006
+ serial_modhex: bcicch
+ version: 2.2.3
+ touch_level: 1793
+ programming_sequence: 1
+ $
+
+== BUGS
+
+Report ykinfo bugs in the issue tracker
+(https://github.com/Yubico/yubikey-personalization/issues)
+
+
+== SEE ALSO
+
+The ykpersonalize home page ⟨ URL:
+https://developers.yubico.com/yubikey-personalization/ ⟩
+
+YubiKeys can be obtained from Yubico ⟨ URL: http://www.yubico.com/ ⟩ .
