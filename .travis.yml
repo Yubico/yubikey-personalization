@@ -4,20 +4,20 @@ compiler:
   - gcc
   - clang
 env:
-  - LIBUSB=libusb EXTRA="libusb-dev a2x"
-  - LIBUSB=libusb EXTRA="libusb-dev libjson0-dev a2x"
-  - LIBUSB=libusb-1.0 EXTRA="libusb-1.0-0-dev a2x"
-  - LIBUSB=libusb-1.0 EXTRA="libusb-1.0-0-dev libjson0-dev a2x"
+  - LIBUSB=libusb EXTRA="libusb-dev"
+  - LIBUSB=libusb EXTRA="libusb-dev libjson0-dev"
+  - LIBUSB=libusb-1.0 EXTRA="libusb-1.0-0-dev"
+  - LIBUSB=libusb-1.0 EXTRA="libusb-1.0-0-dev libjson0-dev"
 script:
   - ./build-and-test.sh
 matrix:
   include:
     - compiler: gcc
-      env: LIBUSB=windows EXTRA="wine mingw-w64 a2x" REMOVE=mingw32 ARCH=32
+      env: LIBUSB=windows EXTRA="wine mingw-w64" REMOVE=mingw32 ARCH=32
     - compiler: gcc
-      env: LIBUSB=windows EXTRA="wine mingw-w64 a2x" REMOVE=mingw32 ARCH=64
+      env: LIBUSB=windows EXTRA="wine mingw-w64" REMOVE=mingw32 ARCH=64
     - compiler: gcc
-      env: LIBUSB=libusb-1.0 EXTRA="libusb-1.0-0-dev libjson0-dev lcov a2x" COVERAGE="--enable-coverage"
+      env: LIBUSB=libusb-1.0 EXTRA="libusb-1.0-0-dev libjson0-dev lcov" COVERAGE="--enable-coverage"
     - os: osx
       compiler: gcc
       env: LIBUSB=osx
