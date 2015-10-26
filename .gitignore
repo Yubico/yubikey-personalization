@@ -149,3 +149,6 @@ libhmac_la-sha384-512.lo
 libhmac_la-sha384-512.o
 libhmac_la-usha.lo
 libhmac_la-usha.o
+ykpersonalize.1
+ykchalresp.1
+ykinfo.1
