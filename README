@@ -38,10 +38,6 @@ have to get it.  We recommend using libusb-1.
   Debian libusb:    apt-get install libusb-dev
   Fedora:           yum install libusb-devel
 
-Yubikey-personaliztion depends on asciidoc to build it's manpage.
-
-  Debain:           apt-get install asciidoc
-
 The JSON library is an optional dependency, see:
 https://github.com/json-c/json-c/wiki
 
@@ -76,6 +72,9 @@ This will create a directory 'yubikey-personalization'.  Enter the directory:
 -----------
   cd yubikey-personalization
 -----------
+
+
+When building from source Yubikey-personaliztion depends on [asciidoc](http://asciidoc.org/INSTALL.html) to build it's manpage.
 
 Autoconf, automake and libtool must be installed.
 
