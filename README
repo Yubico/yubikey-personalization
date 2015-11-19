@@ -38,6 +38,10 @@ have to get it.  We recommend using libusb-1.
   Debian libusb:    apt-get install libusb-dev
   Fedora:           yum install libusb-devel
 
+Yubikey-personaliztion depends on asciidoc to build it's manpage.
+
+  Debain:           apt-get install asciidoc
+
 The JSON library is an optional dependency, see:
 https://github.com/json-c/json-c/wiki
 
