@@ -73,6 +73,9 @@ This will create a directory 'yubikey-personalization'.  Enter the directory:
   cd yubikey-personalization
 -----------
 
+
+When building from source Yubikey-personaliztion depends on link:http://asciidoc.org/INSTALL.html[asciidoc] to build it's manpage.
+
 Autoconf, automake and libtool must be installed.
 
 Generate the build system using:
