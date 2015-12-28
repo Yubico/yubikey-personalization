@@ -78,6 +78,8 @@ static void report_yk_error(void)
 	}
 }
 
+extern int optind;
+
 static int parse_args(int argc, char **argv,
 	       int *slot, bool *verbose,
 	       unsigned char **challenge, unsigned int *challenge_len,

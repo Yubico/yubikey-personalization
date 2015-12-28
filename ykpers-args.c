@@ -218,6 +218,9 @@ void report_yk_error(void)
 	}
 }
 
+extern char *optarg;
+extern int optind;
+
 /*
  * Parse all arguments supplied to this program and turn it into mainly
  * a YKP_CONFIG (but return some other parameters as well, like
