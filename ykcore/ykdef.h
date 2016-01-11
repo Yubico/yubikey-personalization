@@ -18,6 +18,7 @@
 **      14-06-13	/ 3.3.0		/ J E	/ Added U2F mode modifiers		**
 **      14-11-20    / 4.0.0     / J E   / Updated with Yubikey 4 PIDs                   **
 **      15-03-27    / 4.1.0     / K L   / Added YK4 Capabilities                        **
+**      15-06-23    / 4.2.0     / K L   / Added more YK4 Capabilities                   **
 **											**
 *****************************************************************************************/
 
@@ -297,6 +298,9 @@ struct status_st {
 #define YK4_CAPA1_OTP		0x01	/* Capability bit for OTP functonality */
 #define YK4_CAPA1_U2F		0x02	/* Capability bit for U2F functionality */
 #define YK4_CAPA1_CCID		0x04	/* Capability bit for CCID functionality */
+#define YK4_CAPA1_OPGP		0x08	/* Capability bit for OpenPGP functionality */
+#define YK4_CAPA1_PIV		0x10	/* Capability bit for PIV functionality */
+#define YK4_CAPA1_OATH		0x20	/* Capability bit for OATH functionality */
 
 #if defined(_WIN32) || defined(__GNUC__)
 #pragma pack(pop)
