@@ -56,6 +56,7 @@ const char *usage =
 	"\t-t        Time based challenge (for TOTP)\n"
 	"\t-6        Output 6 digit HOTP/TOTP code\n"
 	"\t-8        Output 8 digit HOTP/TOTP code\n"
+	"\t-iFILE    Read challenge from a file instead, - for STDIN\n"
 	"\n"
 	"\t-v        verbose\n"
 	"\t-V        tool version\n"
@@ -63,7 +64,7 @@ const char *usage =
 	"\n"
 	"\n"
 	;
-const char *optstring = "1268xvhHtYNV";
+const char *optstring = "1268xvhHtYNVi:";
 
 static void report_yk_error(void)
 {
@@ -88,6 +89,7 @@ static int parse_args(int argc, char **argv,
 {
 	int c;
 	bool hex_encoded = false;
+	FILE *input = NULL;
 
 	while((c = getopt(argc, argv, optstring)) != -1) {
 		switch (c) {
@@ -123,6 +125,13 @@ static int parse_args(int argc, char **argv,
 		case 'v':
 			*verbose = true;
 			break;
+		case 'i':
+			if(strcmp(optarg, "-") != 0) {
+				input = fopen(optarg, "r");
+			} else {
+				input = stdin;
+			}
+			break;
 		case 'V':
 			fputs(YKPERS_VERSION_STRING "\n", stderr);
 			*exit_code = 0;
@@ -135,8 +144,8 @@ static int parse_args(int argc, char **argv,
 		}
 	}
 
-	if ((optind >= argc && !*totp) || (optind < argc && *totp)) {
-		/* No challenge */
+	if ((optind >= argc && !*totp && !input) || (optind < argc && *totp && input)) {
+		fprintf(stderr, "No challenge.\n");
 		fputs(usage, stderr);
 		return 0;
 	}
@@ -153,35 +162,47 @@ static int parse_args(int argc, char **argv,
 		*challenge = (unsigned char *) &t_buf;
 		*challenge_len = 8;
 	}
-	else if (hex_encoded) {
+	else if (input) {
+		static unsigned char buf[65] = {0};
+		size_t len = fread(buf, 1, 64, input);
+		if(input != stdin) {
+			fclose(input);
+		}
+		if(len == 0) {
+			fprintf(stderr, "Failed to read any data from file.\n");
+			return 0;
+		}
+		*challenge = buf;
+		*challenge_len = len;
+	} else {
+		*challenge = (unsigned char *) argv[optind];
+		*challenge_len = strlen(argv[optind]);
+	}
+
+	if (hex_encoded) {
 		static unsigned char decoded[SHA1_MAX_BLOCK_SIZE];
 
-		size_t strl = strlen(argv[optind]);
-
-		if (strl > sizeof(decoded) * 2) {
+		if (*challenge_len > sizeof(decoded) * 2) {
 			fprintf(stderr, "Hex-encoded challenge too long (max %lu chars)\n",
 				sizeof(decoded) * 2);
 			return 0;
 		}
 
-		if (strl % 2 != 0) {
+		if (*challenge_len % 2 != 0) {
 			fprintf(stderr, "Odd number of characters in hex-encoded challenge\n");
 			return 0;
 		}
 
 		memset(decoded, 0, sizeof(decoded));
 
-		if (yubikey_hex_p(argv[optind])) {
-			yubikey_hex_decode((char *)decoded, argv[optind], sizeof(decoded));
+		if (yubikey_hex_p((char*)*challenge)) {
+			yubikey_hex_decode((char *)decoded, (char*)*challenge, sizeof(decoded));
 		} else {
-			fprintf(stderr, "Bad hex-encoded string '%s'\n", argv[optind]);
+			fprintf(stderr, "Bad hex-encoded string '%s'\n", (char*)*challenge);
 			return 0;
 		}
 		*challenge = (unsigned char *) &decoded;
-		*challenge_len = strl / 2;
-	} else {
-		*challenge = (unsigned char *) argv[optind];
-		*challenge_len = strlen(argv[optind]);
+		*challenge_len /= 2;
 	}
 
 	return 1;

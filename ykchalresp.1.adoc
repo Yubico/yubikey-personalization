@@ -9,7 +9,7 @@ ykchalresp - Perform challenge-response operation with YubiKey
 
 == SYNOPSIS
 
-*ykchalresp* [__-1__ | __-2__] [__-H__ | __-Y__] [__-N__] [__-x__] [__-v__] [__-6__ | __-8__] [__-t__] [__-V__] [__-h__]
+*ykchalresp* [__-1__ | __-2__] [__-H__ | __-Y__] [__-N__] [__-x__] [__-v__] [__-6__ | __-8__] [__-t__] [__-iFILE__] [__-V__] [__-h__]
 
 == DESCRIPTION
 
@@ -42,6 +42,8 @@ to require a key press before sending the response.
 *-t*:: use current time as challenge instead of reading challenge from
 command line (as in default TOTP mode, seconds since 1970-01-01 00:00:00 
 / 30 encoded as an 8 byte challenge).
+
+*-i*'FILE':: take challenge from FILE instead of as an argument. If file is - challenge is read from STDIN
 
 *-V*:: print tool version and exit.
 
