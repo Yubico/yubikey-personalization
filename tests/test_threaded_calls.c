@@ -61,7 +61,7 @@ static void *start_thread(void *arg)
 	}
 	st = ykds_alloc();
 
-	yk = yk_open_first_key();
+	yk = yk_open_key(0);
 	if(yk != 0) {
 		yk_get_status(yk, st);
 		yk_close_key(yk);
