@@ -1,5 +1,7 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.18.0 (unreleased)
+
 * Version 1.17.3 (released 2015-12-28)
 
 ** Dont read to much if we don't find a key.
