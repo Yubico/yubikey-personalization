@@ -9,7 +9,7 @@ ykinfo - Get basic information from a YubiKey
 
 == SYNOPSIS
 
-*ykinfo* [__-s__] [__-m__] [__-H__] [__-v__] [__-t__] [__-p__] [__-1__] [__-2__] [__-q__] [__-a__] [__-c__] [__-V__] [__-h__]
+*ykinfo* [__-s__] [__-m__] [__-nkey__] [__-H__] [__-v__] [__-t__] [__-p__] [__-1__] [__-2__] [__-q__] [__-a__] [__-c__] [__-V__] [__-h__]
 
 == DESCRIPTION
 
@@ -23,6 +23,8 @@ is written to screen.
 *-s*:: get the serial number and output it.
 
 *-m*:: get the serial number and output it as modhex.
+
+*-nkey*:: read from the nth key found.
 
 *-H*:: get the serial number and output it as hex.
 

@@ -47,7 +47,7 @@ const char *usage =
 	"\n"
 	"\t-s        Get serial in decimal from YubiKey\n"
 	"\t-m        Get serial in modhex from YubiKey\n"
-	"\t-n <key>  Read from nth key found\n"
+	"\t-nkey     Read from nth key found\n"
 	"\t-H        Get serial in hex from YubiKey\n"
 	"\t-v        Get version from YubiKey\n"
 	"\t-t        Get touchlevel from YubiKey\n"
