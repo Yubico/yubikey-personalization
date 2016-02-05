@@ -9,7 +9,7 @@ ykchalresp - Perform challenge-response operation with YubiKey
 
 == SYNOPSIS
 
-*ykchalresp* [__-1__ | __-2__] [__-H__ | __-Y__] [__-N__] [__-x__] [__-v__] [__-6__ | __-8__] [__-t__] [__-iFILE__] [__-V__] [__-h__]
+*ykchalresp* [__-nkey__] [__-1__ | __-2__] [__-H__ | __-Y__] [__-N__] [__-x__] [__-v__] [__-6__ | __-8__] [__-t__] [__-iFILE__] [__-V__] [__-h__]
 
 == DESCRIPTION
 
@@ -19,6 +19,8 @@ is a YubiKey OTP mimicing mode, meaning two subsequent calls with the same chall
 will result in different responses.
 
 == OPTIONS
+
+*-nkey*:: send the challenge to the nth key found.
 
 *-1*:: send the challenge to slot 1.  This is the default
 

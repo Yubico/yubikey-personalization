@@ -47,6 +47,7 @@ const char *usage =
 	"\n"
 	"Options :\n"
 	"\n"
+	"\t-nkey     Send challenge to nth key found.\n"
 	"\t-1        Send challenge to slot 1. This is the default.\n"
 	"\t-2        Send challenge to slot 2.\n"
 	"\t-H        Send a 64 byte HMAC challenge. This is the default.\n"
@@ -64,7 +65,7 @@ const char *usage =
 	"\n"
 	"\n"
 	;
-const char *optstring = "1268xvhHtYNVi:";
+const char *optstring = "1268xvhHtYNVi:n:";
 
 static void report_yk_error(void)
 {
@@ -85,7 +86,7 @@ static int parse_args(int argc, char **argv,
 	       int *slot, bool *verbose,
 	       unsigned char **challenge, unsigned int *challenge_len,
 	       bool *hmac, bool *may_block, bool *totp, int *digits,
-	       int *exit_code)
+	       int *exit_code, int *key_index)
 {
 	int c;
 	bool hex_encoded = false;
@@ -131,6 +132,9 @@ static int parse_args(int argc, char **argv,
 			} else {
 				input = stdin;
 			}
+			break;
+		case 'n':
+			*key_index = atoi(optarg);
 			break;
 		case 'V':
 			fputs(YKPERS_VERSION_STRING "\n", stderr);
@@ -321,7 +325,7 @@ int main(int argc, char **argv)
 			 &slot, &verbose,
 			 &challenge, &challenge_len,
 			 &hmac, &may_block, &totp, &digits,
-			 &exit_code))
+			 &exit_code, &key_index))
 		exit(exit_code);
 
 	if (!yk_init()) {
