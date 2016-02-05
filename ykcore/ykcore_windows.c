@@ -49,7 +49,7 @@ int _ykusb_stop(void)
 	return 1;
 }
 
-void * _ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
+void * _ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len, int index)
 {
 	HDEVINFO hi;
 	SP_DEVICE_INTERFACE_DATA di;
@@ -58,6 +58,7 @@ void * _ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 	LPTSTR path = 0;
 	DWORD len, rc;
 	HANDLE ret_handle = NULL;
+	int found = 0;
 
 	yk_errno = YK_EUSBERR;
 
@@ -96,14 +97,10 @@ void * _ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 						size_t j;
 						for (j = 0; j < pids_len; j++) {
 							if (devInfo.ProductID == product_ids[j]) {
-								if(ret_handle == NULL) {
+								found++;
+								if (found-1 == index) {
 									ret_handle = m_handle;
 									break;
-								} else {
-									yk_errno = YK_EMORETHANONE;
-									ret_handle = NULL;
-									CloseHandle (m_handle);
-									goto done;
 								}
 							}
 						}

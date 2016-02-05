@@ -36,6 +36,7 @@ LIBYKPERS_1.0 {
     yk_get_status;
     yk_init;
     yk_open_first_key;
+    yk_open_key;
     yk_pbkdf2;
     yk_read_from_key;
     yk_release;

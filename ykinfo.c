@@ -47,6 +47,7 @@ const char *usage =
 	"\n"
 	"\t-s        Get serial in decimal from YubiKey\n"
 	"\t-m        Get serial in modhex from YubiKey\n"
+	"\t-n <key>  Read from nth key found\n"
 	"\t-H        Get serial in hex from YubiKey\n"
 	"\t-v        Get version from YubiKey\n"
 	"\t-t        Get touchlevel from YubiKey\n"
@@ -65,7 +66,7 @@ const char *usage =
 	"\n"
 	"\n"
 	;
-const char *optstring = "asmHvtpqhV12iIc";
+const char *optstring = "asmn:HvtpqhV12iIc";
 
 static void report_yk_error(void)
 {
@@ -84,7 +85,7 @@ static int parse_args(int argc, char **argv,
 		bool *serial_dec, bool *serial_modhex, bool *serial_hex,
 		bool *version, bool *touch_level, bool *pgm_seq, bool *quiet,
 		bool *slot1, bool *slot2, bool *vid, bool *pid, bool *capa,
-		int *exit_code)
+		int *key_index, int *exit_code)
 {
 	int c;
 
@@ -107,6 +108,9 @@ static int parse_args(int argc, char **argv,
 			break;
 		case 'm':
 			*serial_modhex = true;
+			break;
+		case 'n':
+			*key_index = atoi(optarg);
 			break;
 		case 'H':
 			*serial_hex = true;
@@ -183,6 +187,7 @@ int main(int argc, char **argv)
 	bool capa = false;
 
 	bool quiet = false;
+	int key_index = 0;
 
 	yk_errno = 0;
 
@@ -190,7 +195,7 @@ int main(int argc, char **argv)
 				&serial_dec, &serial_modhex, &serial_hex,
 				&version, &touch_level, &pgm_seq, &quiet,
 				&slot1, &slot2, &vid, &pid, &capa,
-				&exit_code))
+				&key_index, &exit_code))
 		exit(exit_code);
 
 	if (!yk_init()) {
@@ -198,7 +203,7 @@ int main(int argc, char **argv)
 		goto err;
 	}
 
-	if (!(yk = yk_open_first_key())) {
+	if (!(yk = yk_open_key(key_index))) {
 		exit_code = 1;
 		goto err;
 	}

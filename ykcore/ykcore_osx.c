@@ -79,13 +79,14 @@ static int _ykosx_getIntProperty( IOHIDDeviceRef dev, CFStringRef key ) {
 	return result;
 }
 
-void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
+void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len, int index)
 {
 	void *yk = NULL;
 
 	int rc = YK_ENOKEY;
 
 	size_t i;
+	int found = 0;
 
 	IOHIDManagerSetDeviceMatchingMultiple( ykosxManager, NULL );
 
@@ -111,11 +112,9 @@ void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len)
 				size_t j;
 				for(j = 0; j < pids_len; j++) {
 					if(product_ids[j] == devProductId) {
-						if(yk == NULL) {
+						found++;
+						if(found-1 == index) {
 							yk = dev;
-							break;
-						} else {
-							rc = YK_EMORETHANONE;
 							break;
 						}
 					}

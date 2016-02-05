@@ -20,3 +20,6 @@ Mac OS X port.
 
 Tollef Fog Heen <tfheen@err.no>
 Support for libusb-1.0 backend.
+
+Google Inc.
+Support for multiple plugged in Yubikeys.

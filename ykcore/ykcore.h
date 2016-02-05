@@ -78,7 +78,9 @@ extern int yk_release(void);
  * Functions to get and release the key itself.
  *
  ****/
-extern YK_KEY *yk_open_first_key(void);	/* opens the first key available */
+/* opens first key available. For backwards compatability */
+extern YK_KEY *yk_open_first_key();
+extern YK_KEY *yk_open_key(int);	/* opens nth key available */
 extern int yk_close_key(YK_KEY *k);		/* closes a previously opened key */
 
 /*************************************************************************

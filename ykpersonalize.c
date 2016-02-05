@@ -66,6 +66,7 @@ int main(int argc, char **argv)
 	unsigned short autoeject_timeout = 0;
 	int num_modes_seen = 0;
 	bool zap = false;
+	int key_index = 0;
 
 	/* Assume the worst */
 	bool error = true;
@@ -84,7 +85,7 @@ int main(int argc, char **argv)
 		goto err;
 	}
 
-	if (!(yk = yk_open_first_key())) {
+	if (!(yk = yk_open_key(key_index))) {
 		exit_code = 1;
 		goto err;
 	}
