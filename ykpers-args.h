@@ -34,6 +34,7 @@
 #include "ykpers.h"
 
 const char *usage;
+const char *optstring;
 
 int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 		   const char **infname, const char **outfname,

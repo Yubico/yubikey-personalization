@@ -73,16 +73,31 @@ int main(int argc, char **argv)
 	bool error = true;
 	int exit_code = 0;
 
+	int c;
+
 	ykp_errno = 0;
 	yk_errno = 0;
 
+	while((c = getopt(argc, argv, optstring)) != -1) {
+		switch(c) {
+			case 'h':
+				fputs(usage, stderr);
+				exit(0);
+			case 'N':
+				key_index = atoi(optarg);
+				break;
+			case ':':
+				fprintf(stderr, "Option %c requires an argument.\n", optopt);
+				exit(1);
+				break;
+			default:
+				continue;
+		}
+	}
+	optind = 1;
+
 	if (!yk_init()) {
 		exit_code = 1;
-		goto err;
-	}
-
-	if (argc == 2 && strcmp (argv[1], "-h") == 0) {
-		fputs(usage, stderr);
 		goto err;
 	}
 

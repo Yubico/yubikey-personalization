@@ -48,6 +48,7 @@
 
 const char *usage =
 "Usage: ykpersonalize [options]\n"
+"-Nkey     use nth key found\n"
 "-u        update configuration without overwriting.  This is only available\n"
 "          in YubiKey 2.3 and later.  EXTFLAG_ALLOW_UPDATE will be set by\n"
 "          default\n"
@@ -156,7 +157,7 @@ const char *usage =
 "-V        tool version\n"
 "-h        help (this text)\n"
 ;
-const char *optstring = "u12xza::c:n:t:hi:o:s:f:dvym:S::V";
+const char *optstring = "u12xza::c:n:t:hi:o:s:f:dvym:S::VN:";
 
 static int _set_fixed(char *opt, YKP_CONFIG *cfg);
 static int _format_decimal_as_hex(uint8_t *dst, size_t dst_len, uint8_t *src);
@@ -675,9 +676,12 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 			fputs(YKPERS_VERSION_STRING "\n", stderr);
 			*exit_code = 0;
 			return 0;
+		case 'N':
+			continue;
 		case 'h':
 		default:
 			fputs(usage, stderr);
+			fprintf(stderr, "foo: %c\n", optopt);
 			*exit_code = 0;
 			return 0;
 		}
