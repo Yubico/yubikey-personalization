@@ -360,11 +360,19 @@ int yk_challenge_response(YK_KEY *yk, uint8_t yk_cmd, int may_block,
 	unsigned int flags = 0;
 	unsigned int bytes_read = 0;
 	unsigned int expect_bytes = 0;
+	unsigned char real_challenge[SHA1_MAX_BLOCK_SIZE];
 
 	switch(yk_cmd) {
 	case SLOT_CHAL_HMAC1:
 	case SLOT_CHAL_HMAC2:
 		expect_bytes = 20;
+		if(challenge_len < SHA1_MAX_BLOCK_SIZE) {
+			unsigned char pad = challenge[challenge_len - 1] ^ 0xff;
+			memset(real_challenge, pad, SHA1_MAX_BLOCK_SIZE);
+			memcpy(real_challenge, challenge, challenge_len);
+			challenge = real_challenge;
+			challenge_len = SHA1_MAX_BLOCK_SIZE;
+		}
 		break;
 	case SLOT_CHAL_OTP1:
 	case SLOT_CHAL_OTP2:
