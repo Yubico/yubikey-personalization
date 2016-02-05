@@ -65,6 +65,11 @@ int yk_release(void)
 	return _ykusb_stop();
 }
 
+YK_KEY *yk_open_first_key()
+{
+	return yk_open_key(0);
+}
+
 YK_KEY *yk_open_key(int index)
 {
 	int pids[] = {YUBIKEY_PID, NEO_OTP_PID, NEO_OTP_CCID_PID,
