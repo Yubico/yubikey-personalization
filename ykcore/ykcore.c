@@ -65,7 +65,7 @@ int yk_release(void)
 	return _ykusb_stop();
 }
 
-YK_KEY *yk_open_first_key()
+YK_KEY *yk_open_first_key(void)
 {
 	return yk_open_key(0);
 }
