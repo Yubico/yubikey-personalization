@@ -179,29 +179,32 @@ functions according to the OATH-HOTP standard.
 
 == Configuration flags
 
-[−]*send-ref* Send a reference string of all 16 modhex characters
+[−]*send-ref*::
+
+Send a reference string of all 16 modhex characters
 before the fixed part. This can not be combined with the *-ostrong-pw2*
-flag. +
- [−]*pacing-10ms*
+flag.
+
+[−]*pacing-10ms*::
 
 Add a 10ms delay between key presses.
 
-[−]*pacing-20ms*
+[−]*pacing-20ms*::
 
 Add a 20ms delay between key presses.
 
-[−]*static-ticket*
+[−]*static-ticket*::
 
 Output a fixed string rather than a one-time password. The password is
 still based on the AES key and should be hard to guess and impossible to
 remember.
 
-*YubiKey 1.x firmware only* +
- [−]*ticket-first*
+=== YubiKey 1.x firmware only
+[−]*ticket-first*::
 
 Send the one-time password rather than the fixed part first.
 
-[−]*allow-hidtrig*
+[−]*allow-hidtrig*::
 
 Allow trigger through HID/keyboard by pressing caps-, num or scroll-lock
 twice. Not recommended for security reasons.
