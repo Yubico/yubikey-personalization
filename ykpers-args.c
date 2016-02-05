@@ -161,7 +161,6 @@ const char *optstring = "u12xza::c:n:t:hi:o:s:f:dvym:S::V";
 static int _set_fixed(char *opt, YKP_CONFIG *cfg);
 static int _format_decimal_as_hex(uint8_t *dst, size_t dst_len, uint8_t *src);
 static int _format_oath_id(uint8_t *dst, size_t dst_len, uint8_t vendor, uint8_t type, uint32_t mui);
-static int _set_oath_id(char *opt, YKP_CONFIG *cfg, YK_KEY *yk, YK_STATUS *st);
 
 static int hex_modhex_decode(unsigned char *result, size_t *resultlen,
 			     const char *str, size_t strl,
@@ -228,7 +227,7 @@ extern int optind;
  *
  * Done in this way to be testable (see tests/test_args_to_config.c).
  */
-int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
+int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 		   const char **infname, const char **outfname,
 		   int *data_format, bool *autocommit,
 		   YK_STATUS *st, bool *verbose, bool *dry_run,
@@ -631,10 +630,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, YK_KEY *yk,
 				}
 			}
 			else if (strncmp(optarg, "oath-id=", 8) == 0 || strcmp(optarg, "oath-id") == 0) {
-				if (_set_oath_id(optarg, cfg, yk, st) != 1) {
-					*exit_code = 1;
-					return 0;
-				}
+				strcpy(oathid, optarg);
 			}
 
 #define EXTFLAG(o, f)							\
@@ -789,7 +785,7 @@ static int _format_oath_id(uint8_t *dst, size_t dst_len, uint8_t vendor, uint8_t
 	return 1;
 }
 
-static int _set_oath_id(char *opt, YKP_CONFIG *cfg, YK_KEY *yk, YK_STATUS *st) {
+int set_oath_id(char *opt, YKP_CONFIG *cfg, YK_KEY *yk, YK_STATUS *st) {
 	/* For details, see YubiKey Manual 2010-09-16 section 5.3.4 - OATH-HOTP Token Identifier */
 	if (!ykp_get_tktflag_OATH_HOTP(cfg)) {
 		fprintf(stderr,

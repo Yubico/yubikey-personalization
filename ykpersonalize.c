@@ -59,6 +59,7 @@ int main(int argc, char **argv)
 	bool dry_run = false;
 
 	/* Options */
+	char oathid[128] = {0};
 	char ndef_string[128] = {0};
 	char ndef_type = 0;
 	unsigned char usb_mode = 0;
@@ -119,7 +120,7 @@ int main(int argc, char **argv)
 	}
 
 	/* Parse all arguments in a testable way */
-	if (! args_to_config(argc, argv, cfg, yk,
+	if (! args_to_config(argc, argv, cfg, oathid,
 			     &infname, &outfname,
 			     &data_format, &autocommit,
 			     st, &verbose, &dry_run,
@@ -128,6 +129,10 @@ int main(int argc, char **argv)
 			     &usb_mode, &zap, scan_codes, &cr_timeout,
 			     &autoeject_timeout, &num_modes_seen, &exit_code)) {
 		goto err;
+	}
+
+	if (oathid[0] != 0) {
+		set_oath_id(oathid, cfg, yk, st);
 	}
 
 	if (verbose && (ykds_version_major(st) > 2 ||
