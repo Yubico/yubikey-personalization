@@ -42,7 +42,17 @@
 #endif
 
 #ifdef YK_DEBUG
-static void _yk_hexdump(void *, int);
+#define _yk_hexdump(buffer, size) \
+	do { \
+		unsigned char *p = buffer; \
+		int i; \
+		fprintf(stderr, "%25s: ", __func__); \
+		for(i = 0; i < size; i++) { \
+			fprintf(stderr, "%02x ", *p++); \
+		} \
+		fprintf(stderr, "\n"); \
+	} while(0)
+//static void _yk_hexdump(void *, int);
 #endif
 
 /*
@@ -751,18 +761,3 @@ uint16_t yk_endian_swap_16(uint16_t x)
 
 	return x;
 }
-
-#ifdef YK_DEBUG
-/* Private little hexdump function for debugging */
-static void _yk_hexdump(void *buffer, int size)
-{
-       unsigned char *p = buffer;
-       int i;
-       for (i = 0; i < size; i++) {
-               fprintf(stderr, "%02x ", *p);
-               p++;
-      }
-      fprintf(stderr, "\n");
-      fflush(stderr);
-}
-#endif
