@@ -52,7 +52,6 @@
 		} \
 		fprintf(stderr, "\n"); \
 	} while(0)
-//static void _yk_hexdump(void *, int);
 #endif
 
 /*
