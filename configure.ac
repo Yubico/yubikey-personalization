@@ -168,6 +168,13 @@ fi
 gl_LD_VERSION_SCRIPT
 gl_VALGRIND_TESTS
 
+AC_ARG_ENABLE([debug],
+              [AS_HELP_STRING([--enable-debug],
+                              [enable USB debugging])],
+                              [],
+                              [enable_debug=no])
+AM_CONDITIONAL([ENABLE_DEBUG],[test '!' "$enable_debug" = no])
+
 AC_ARG_ENABLE([coverage],
               [AS_HELP_STRING([--enable-coverage],
                               [use Gcov to test the test suite])],

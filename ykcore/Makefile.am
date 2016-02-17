@@ -31,6 +31,10 @@ libykcore_la_SOURCES = ykdef.h ykcore.h ykcore_lcl.h ykcore_backend.h	\
 libykcore_la_LIBADD = $(LTLIBYUBIKEY) $(LTLIBUSB) @LIBUSB_LIBS@
 AM_CFLAGS = $(WARN_CFLAGS)
 
+if ENABLE_DEBUG
+AM_CFLAGS += -DYK_DEBUG
+endif
+
 if BACKEND_LIBUSB_1_0
 libykcore_la_SOURCES += ykcore_libusb-1.0.c
 AM_CFLAGS += @LIBUSB_CFLAGS@
