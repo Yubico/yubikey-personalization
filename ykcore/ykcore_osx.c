@@ -120,14 +120,6 @@ void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len, int i
 					}
 				}
 			}
-			if(rc == YK_EMORETHANONE) {
-				yk = NULL;
-				break;
-			}
-		}
-
-		if(rc != YK_EMORETHANONE) {
-			rc = YK_ENOKEY;
 		}
 
 		/* this is a workaround for a memory leak in IOHIDManagerCopyDevices() in 10.8 */
