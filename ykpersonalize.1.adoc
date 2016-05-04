@@ -93,6 +93,10 @@ press for challenge response (default is 15) +
  autoeject_timeout is the timeout in seconds before the card is
 automatically ejected in mode 81
 
+Removing OTP mode also disable communication between ykpersonalize and
+the YubiKey, further mode changes will have to be done with ykneomgr (for CCID mode) 
+or u2f-host (for U2F mode)
+
 *-n* URI:: Program NFC NDEF URI
 
 *-t* text:: Program NFC NDEF text

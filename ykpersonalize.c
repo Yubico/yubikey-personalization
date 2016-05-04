@@ -377,7 +377,7 @@ int main(int argc, char **argv)
 
 				if((usb_mode & 0xf) == MODE_CCID || (usb_mode & 0xf) == MODE_U2F ||
 						(usb_mode & 0xf) == MODE_U2F_CCID) {
-					fprintf(stderr, "WARNING: This tool will not be able to switch back from the selected mode, really commit? (y/n) [n]: ");
+					fprintf(stderr, "WARNING: Changing mode will requires to use another tool (ykneomgr or u2f-host) if OTP mode is disabled, really commit? (y/n) [n]: ");
 					if (autocommit) {
 						strcpy(commitbuf, "yes");
 						puts(commitbuf);
