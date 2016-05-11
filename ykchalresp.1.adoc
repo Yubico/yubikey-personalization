@@ -24,7 +24,7 @@ will result in different responses.
 
 *-1*:: send the challenge to slot 1.  This is the default
 
-*−2*:: send the challenge to slot 2.
+*-2*:: send the challenge to slot 2.
 
 *-H*:: send a 64 byte HMAC challenge.  This is the default.
 
