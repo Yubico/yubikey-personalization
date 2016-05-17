@@ -75,6 +75,12 @@ identifier for the user, for example.
 
 === YubiKey Neo only
 
+*-n* URI:: Program NFC NDEF URI
+
+*-t* text:: Program NFC NDEF text
+
+=== YubiKey 3.0 and above
+
 *-m* mode::
 
 set device configuration for the YubiKey. It is parsed in the form
@@ -97,16 +103,9 @@ Removing OTP mode also disable communication between ykpersonalize and
 the YubiKey, further mode changes will have to be done with ykneomgr (for CCID mode) 
 or u2f-host (for U2F mode)
 
-*-n* URI:: Program NFC NDEF URI
-
-*-t* text:: Program NFC NDEF text
-
-
-=== YubiKey 3.0 and above
-
 *-S*'0605...'::
 
-set the scanmap to be used with the YubiKey NEO. It must be 45 unique
+set the scanmap to be used with the YubiKey. It must be 45 unique
 bytes as 90 characters. Leave argument empty to reset to the YubiKey’s
 default. The scanmap must be sent in the order:
  
