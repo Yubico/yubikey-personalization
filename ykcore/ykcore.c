@@ -551,7 +551,7 @@ int yk_wait_for_key_status(YK_KEY *yk, uint8_t slot, unsigned int flags,
 				if (! blocking) {
 					/* Extend timeout first time we see RESP_TIMEOUT_WAIT_FLAG. */
 					blocking = 1;
-					max_time_ms += 15000;
+					max_time_ms += 256 * 1000;
 				}
 			} else {
 				/* Reset read mode of Yubikey before aborting. */
