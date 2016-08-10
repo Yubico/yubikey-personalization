@@ -15,7 +15,7 @@ ykchalresp - Perform challenge-response operation with YubiKey
 
 Send a challenge to a YubiKey, and read the response.  The YubiKey can be configured
 with two different C/R modes -- the standard one is a 160 bits HMAC-SHA1, and the other
-is a YubiKey OTP mimicing mode, meaning two subsequent calls with the same challenge
+is a YubiKey OTP mimicking mode, meaning two subsequent calls with the same challenge
 will result in different responses.
 
 == OPTIONS
