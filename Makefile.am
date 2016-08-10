@@ -96,9 +96,10 @@ MANSOURCES = ykpersonalize.1.adoc ykchalresp.1.adoc ykinfo.1.adoc
 SUFFIXES = .1.adoc .1
 .1.adoc.1:
 	$(A2X) -L --format=manpage -a revdate="Version $(VERSION)" $<
+EXTRA_DIST = $(MANSOURCES)
 
 # Dist docs from wiki.
-EXTRA_DIST = doc/Compatibility.asciidoc doc/USB-Hid-Issue.asciidoc
+EXTRA_DIST += doc/Compatibility.asciidoc doc/USB-Hid-Issue.asciidoc
 
 # Dist contrib stuff.
 EXTRA_DIST += contrib/README contrib/programming.sh contrib/oath-unlock-reprogram.sh contrib/draft-josefsson-yubikey-config.xml
