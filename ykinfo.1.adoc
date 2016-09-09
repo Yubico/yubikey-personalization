@@ -62,12 +62,12 @@ Output information from a YubiKey:
 == BUGS
 
 Report ykinfo bugs in the issue tracker
-(https://github.com/Yubico/yubikey-personalization/issues)
+https://github.com/Yubico/yubikey-personalization/issues
 
 
 == SEE ALSO
 
-The ykpersonalize home page ⟨ URL:
-https://developers.yubico.com/yubikey-personalization/ ⟩
+The ykpersonalize home page
+https://developers.yubico.com/yubikey-personalization/
 
-YubiKeys can be obtained from Yubico ⟨ URL: http://www.yubico.com/ ⟩ .
+YubiKeys can be obtained from Yubico http://www.yubico.com/

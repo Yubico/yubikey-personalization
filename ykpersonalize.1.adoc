@@ -319,9 +319,8 @@ accomplished using the appropriate oath-fixed-modhex options.
 Note that the YubiKey must be programmed to allow reading its serial
 number, otherwise automatic token id creation is not possible.
 
-See section "5.3.4 - OATH-HOTP Token Identifier" of the YubiKey manual ⟨
-URL: http://yubico.com/files/YubiKey_manual-2.0.pdf ⟩ for further
-details.
+See section "5.3.4 - OATH-HOTP Token Identifier" of the YubiKey manual
+http://yubico.com/files/YubiKey_manual-2.0.pdf for further details.
 
 === YubiKey 2.3 firmware and above
 [-]*use-numeric-keypad*::
@@ -397,14 +396,14 @@ https://upload.yubico.com/
 BUGS
 ~~~~
 
-Report ykpersonalize bugs in the issue tracker ⟨ URL:
-https://github.com/Yubico/yubikey-personalization/issues ⟩
+Report ykpersonalize bugs in the issue tracker
+https://github.com/Yubico/yubikey-personalization/issues
 
 
 SEE ALSO
 ~~~~~~~~
 
-The ykpersonalize home page ⟨ URL:
-https://developers.yubico.com/yubikey-personalization/ ⟩
+The ykpersonalize home page
+https://developers.yubico.com/yubikey-personalization/
 
-YubiKeys can be obtained from Yubico ⟨ URL: http://www.yubico.com/ ⟩ .
+YubiKeys can be obtained from Yubico http://www.yubico.com/
