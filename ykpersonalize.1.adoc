@@ -383,6 +383,17 @@ To convert the other way, use:
  tr "[cbdefghijklnrtuv]" "[0123456789abcdef]"
 
 
+EXAMPLES
+~~~~~~~~
+
+Programming for YubiCloud:
+
+ ykpersonalize -1 -ouid=h:`dd if=/dev/urandom bs=1 count=6 status=none | hexdump -e '/1 "%02x"'` -ofixed=h:ff`dd if=/dev/urandom bs=1 count=5 status=none | hexdump -e '/1 "%02x"'`
+
+This will program a key with a random 6 byte uid and a 12 character fixed
+string starting with vv. This is suitable for upload to YubiCloud at
+https://upload.yubico.com/
+
 BUGS
 ~~~~
 
