@@ -14,6 +14,7 @@ else
     brew install libyubikey
     brew install json-c
     brew install asciidoc
+    brew install docbook-xsl
 fi
 
 if [ "x$LIBUSB" = "xwindows" ]; then
