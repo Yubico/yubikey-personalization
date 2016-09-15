@@ -15,6 +15,8 @@ else
     brew install json-c
     brew install asciidoc
     brew install docbook-xsl
+    # this is required so asciidoc can find the xml catalog
+    export XML_CATALOG_FILES=/usr/local/etc/xml/catalog
 fi
 
 if [ "x$LIBUSB" = "xwindows" ]; then
