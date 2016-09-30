@@ -11,6 +11,8 @@ if [ "x$TRAVIS_OS_NAME" != "xosx" ]; then
     sudo apt-get autoremove -qq
     sudo apt-get install -qq -y --no-install-recommends libyubikey-dev asciidoc docbook-xsl xsltproc libxml2-utils $EXTRA
 else
+    brew uninstall libtool
+    brew install libtool
     brew install libyubikey
     brew install json-c
     brew install asciidoc
