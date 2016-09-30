@@ -681,7 +681,6 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 		case 'h':
 		default:
 			fputs(usage, stderr);
-			fprintf(stderr, "foo: %c\n", optopt);
 			*exit_code = 0;
 			return 0;
 		}
