@@ -152,3 +152,4 @@ libhmac_la-usha.o
 ykpersonalize.1
 ykchalresp.1
 ykinfo.1
+*.xml
