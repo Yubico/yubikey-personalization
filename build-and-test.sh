@@ -1,8 +1,5 @@
 #!/bin/sh
 
-set -e
-set -x
-
 if [ "x$TRAVIS_OS_NAME" != "xosx" ]; then
     sudo apt-get update -qq || true
     sudo apt-get remove -qq -y $REMOVE
@@ -18,6 +15,8 @@ else
     # this is required so asciidoc can find the xml catalog
     export XML_CATALOG_FILES=/usr/local/etc/xml/catalog
 fi
+
+set -e
 
 autoreconf -ifv
 
