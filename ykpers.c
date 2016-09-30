@@ -166,7 +166,7 @@ int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command)
 	case SLOT_CONFIG:
 		break;
 	case SLOT_CONFIG2:
-		if (!cfg->yk_major_version >= 2) {
+		if (!(cfg->yk_major_version >= 2)) {
 			ykp_errno = YKP_EOLDYUBIKEY;
 			return 0;
 		}
