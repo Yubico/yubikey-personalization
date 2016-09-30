@@ -3,8 +3,6 @@
 set -e
 set -x
 
-autoreconf -i
-
 if [ "x$TRAVIS_OS_NAME" != "xosx" ]; then
     sudo apt-get update -qq || true
     sudo apt-get remove -qq -y $REMOVE
@@ -20,6 +18,8 @@ else
     # this is required so asciidoc can find the xml catalog
     export XML_CATALOG_FILES=/usr/local/etc/xml/catalog
 fi
+
+autoreconf -ifv
 
 if [ "x$LIBUSB" = "xwindows" ]; then
     ./configure --with-backend=stub
