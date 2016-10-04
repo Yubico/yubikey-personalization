@@ -68,6 +68,8 @@ ykpers4win:
 	cd ykpers-$(VERSION)/ && \
 	PKG_CONFIG_PATH=$(PWD)/tmp/root/lib/pkgconfig lt_cv_deplibs_check_method=pass_all ./configure --host=$(HOST) --build=x86_64-unknown-linux-gnu --prefix=$(PWD)/tmp/root LDFLAGS=-L$(PWD)/tmp/root/lib CPPFLAGS=-I$(PWD)/tmp/root/include && \
 	make install $(CHECK) && \
+	rm $(PWD)/tmp/root/lib/*.la && \
+	rm -rf $(PWD)/tmp/root/lib/pkgconfig && \
 	cp COPYING $(PWD)/tmp/root/licenses/yubikey-personalization.txt && \
 	cd .. && \
 	cd root && \
