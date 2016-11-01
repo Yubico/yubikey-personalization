@@ -681,14 +681,17 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 		case 'h':
 		default:
 			fputs(usage, stderr);
-			fprintf(stderr, "foo: %c\n", optopt);
 			*exit_code = 0;
 			return 0;
 		}
 	}
 
 	if (!slot_chosen && !ndef_seen && !swap_seen && !usb_mode_seen && !scan_map_seen) {
-		fprintf(stderr, "A slot must be chosen with -1 or -2.\n");
+		if (argc == 1) {
+			fputs(usage, stderr);
+		} else {
+			fprintf(stderr, "A slot must be chosen with -1 or -2.\n");
+		}
 		*exit_code = 1;
 		return 0;
 	}
