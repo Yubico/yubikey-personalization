@@ -186,9 +186,8 @@ functions according to the OATH-HOTP standard.
 
 [-]*send-ref*::
 
-Send a reference string of all 16 modhex characters
-before the fixed part. This can not be combined with the *-ostrong-pw2*
-flag.
+Send a reference string of all 16 modhex characters before the fixed part. When combined
+with *-ostrong-pw2* this sends a '!' before the rest of the string.
 
 [-]*pacing-10ms*::
 
