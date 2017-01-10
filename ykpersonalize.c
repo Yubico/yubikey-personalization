@@ -87,6 +87,12 @@ int main(int argc, char **argv)
 				key_index = atoi(optarg);
 				break;
 			case ':':
+				switch(optopt) {
+					case 'S':
+						continue;
+					case 'a':
+						continue;
+				}
 				fprintf(stderr, "Option %c requires an argument.\n", optopt);
 				exit(1);
 				break;

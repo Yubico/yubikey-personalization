@@ -157,7 +157,7 @@ const char *usage =
 "-V        tool version\n"
 "-h        help (this text)\n"
 ;
-const char *optstring = "u12xza::c:n:t:hi:o:s:f:dvym:S::VN:";
+const char *optstring = ":u12xza:c:n:t:hi:o:s:f:dvym:S:VN:";
 
 static int _set_fixed(char *opt, YKP_CONFIG *cfg);
 static int _format_decimal_as_hex(uint8_t *dst, size_t dst_len, uint8_t *src);
@@ -382,12 +382,8 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 			}
 			break;
 		case 'a':
-			if(optarg) {
-				aeshash = optarg;
-				*keylocation = 1;
-			} else {
-				*keylocation = 2;
-			}
+			aeshash = optarg;
+			*keylocation = 1;
 			break;
 		case 'c': {
 			size_t access_code_len = 0;
@@ -470,7 +466,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 					*exit_code = 1;
 					return 0;
 				}
-				if(optarg) {
+				{
 					size_t scanbinlen;
 					size_t scanlen = strlen (optarg);
 					int rc = hex_modhex_decode(scan_bin, &scanbinlen,
@@ -485,8 +481,6 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 						*exit_code = 1;
 						return 0;
 					}
-				} else {
-					memset(scan_bin, 0, scanlength);
 				}
 				scan_map_seen = true;
 			}
@@ -678,6 +672,26 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 			return 0;
 		case 'N':
 			continue;
+		case ':':
+			switch(optopt) {
+				case 'S':
+					{
+						size_t scanlength = strlen(SCAN_MAP);
+						if(slot_chosen || swap_seen || update_seen || option_seen || ndef_seen || *zap || usb_mode_seen) {
+							fprintf(stderr, "Scanmap (-S) can not be combined with other options.\n");
+							*exit_code = 1;
+							return 0;
+						}
+						memset(scan_bin, 0, scanlength);
+						scan_map_seen = true;
+						if (!ykp_configure_command(cfg, SLOT_SCAN_MAP))
+							return 0;
+						continue;
+					}
+				case 'a':
+					*keylocation = 2;
+					continue;
+			}
 		case 'h':
 		default:
 			fputs(usage, stderr);
