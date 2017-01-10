@@ -630,6 +630,24 @@ static void _test_ndef2_with_neo(void)
 	free(st);
 }
 
+static void _test_scanmap_no_config(void)
+{
+	YKP_CONFIG *cfg = ykp_alloc();
+	YK_STATUS *st = _test_init_st(4, 3, 0);
+
+	char *argv[] = {
+		"unittest", "-S", NULL
+	};
+	int argc = 2;
+
+	int rc = _test_config(cfg, st, argc, argv);
+	assert(rc == 1);
+	assert(((struct ykp_config_t*)cfg)->command == SLOT_SCAN_MAP);
+
+	ykp_free_config(cfg);
+	free(st);
+}
+
 int main (void)
 {
 	_test_config_slot1();
@@ -655,6 +673,7 @@ int main (void)
 	_test_slot_two_with_neo_beta();
 	_test_ndef2_with_neo();
 	_test_ndef2_with_neo_beta();
+	_test_scanmap_no_config();
 
 	return 0;
 }
