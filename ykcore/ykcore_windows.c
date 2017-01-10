@@ -109,6 +109,8 @@ void * _ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len, int 
 			}
 			if(ret_handle == NULL) {
 				CloseHandle (m_handle);
+			} else {
+				break;
 			}
 		}
 
