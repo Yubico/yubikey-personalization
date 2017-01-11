@@ -40,7 +40,6 @@
 #include <ykpers.h>
 #include <yubikey.h> /* To get yubikey_modhex_encode and yubikey_hex_encode */
 #include <ykdef.h>
-#include <ykpers-version.h>
 #include "ykpers-args.h"
 
 #define YUBICO_OATH_VENDOR_ID_HEX	0xe1	/* UB as hex */
@@ -667,9 +666,6 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 			*autocommit = true;
 			break;
 		case 'V':
-			fputs(YKPERS_VERSION_STRING "\n", stderr);
-			*exit_code = 0;
-			return 0;
 		case 'N':
 			continue;
 		case ':':

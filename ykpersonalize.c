@@ -38,6 +38,7 @@
 
 #include <ykpers.h>
 #include <ykdef.h>
+#include <ykpers-version.h>
 
 #include "ykpers-args.h"
 
@@ -86,6 +87,9 @@ int main(int argc, char **argv)
 			case 'N':
 				key_index = atoi(optarg);
 				break;
+			case 'V':
+				fputs(YKPERS_VERSION_STRING "\n", stderr);
+				return 0;
 			case ':':
 				switch(optopt) {
 					case 'S':
