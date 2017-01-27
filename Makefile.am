@@ -96,10 +96,9 @@ MANSOURCES = ykpersonalize.1.adoc ykchalresp.1.adoc ykinfo.1.adoc
 SUFFIXES = .1.adoc .1
 .1.adoc.1:
 	$(A2X) -L --format=manpage -a revdate="Version $(VERSION)" --xsltproc-opts="--nonet" $<
-EXTRA_DIST = $(MANSOURCES)
 
-# Dist docs from wiki.
-EXTRA_DIST += doc/Compatibility.asciidoc doc/USB-Hid-Issue.asciidoc
+# Dist docs
+EXTRA_DIST = doc/Compatibility.asciidoc doc/USB-Hid-Issue.asciidoc
 
 # Dist contrib stuff.
 EXTRA_DIST += contrib/README contrib/programming.sh contrib/oath-unlock-reprogram.sh contrib/draft-josefsson-yubikey-config.xml
@@ -112,6 +111,10 @@ EXTRA_DIST += build-and-test.sh .travis.yml .gitignore
 
 # udev rule files
 EXTRA_DIST += 69-yubikey.rules 70-yubikey.rules
+
+# dist the man sources
+EXTRA_DIST += $(MANSOURCES)
+
 udevrulesdir=@udevrulesdir@
 dist_udevrules_DATA = \
         @udevrulesfile@
