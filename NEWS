@@ -1,6 +1,17 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.18.0 (unreleased)
+* Version 1.18.0 (released 2017-01-27)
+
+** Let ykchalresp read challenge from a file.
+
+** Add support of working with a numbered key when many connected
+Thanks to Thomas Habets <habets@google.com>
+
+** Documentation clarifications.
+
+** Fixup argument parsing of flags with optional arguments on BSD platforms.
+
+** Fix a file descriptor leak on windows.
 
 * Version 1.17.3 (released 2015-12-28)
 
