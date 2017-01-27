@@ -1,5 +1,7 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.18.1 (unreleased)
+
 * Version 1.18.0 (released 2017-01-27)
 
 ** Let ykchalresp read challenge from a file.
