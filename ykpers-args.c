@@ -387,164 +387,164 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 			*access_code = strdup(optarg);
 			break;
 		case 't':
-							*ndef_type = 'T';
+			*ndef_type = 'T';
 		case 'n': {
-								int command;
-								if(!*ndef_type) {
-									*ndef_type = 'U';
-								}
-								if (swap_seen || update_seen || option_seen || *zap || usb_mode_seen || scan_map_seen) {
-									fprintf(stderr, "Ndef (-n/-t) can only be used with a slot (-1/-2).\n");
-									*exit_code = 1;
-									return 0;
-								}
-								if(ykp_command(cfg) == SLOT_CONFIG) {
-									command = SLOT_NDEF;
-								} else if(ykp_command(cfg) == SLOT_CONFIG2) {
-									command = SLOT_NDEF2;
-								} else {
-									command = SLOT_NDEF;
-								}
-								if (!ykp_configure_command(cfg, command)) {
-									return 0;
-								}
-								memcpy(ndef, optarg, strlen(optarg));
-								ndef_seen = true;
-								break;
-							}
+				  int command;
+				  if(!*ndef_type) {
+					  *ndef_type = 'U';
+				  }
+				  if (swap_seen || update_seen || option_seen || *zap || usb_mode_seen || scan_map_seen) {
+					  fprintf(stderr, "Ndef (-n/-t) can only be used with a slot (-1/-2).\n");
+					  *exit_code = 1;
+					  return 0;
+				  }
+				  if(ykp_command(cfg) == SLOT_CONFIG) {
+					  command = SLOT_NDEF;
+				  } else if(ykp_command(cfg) == SLOT_CONFIG2) {
+					  command = SLOT_NDEF2;
+				  } else {
+					  command = SLOT_NDEF;
+				  }
+				  if (!ykp_configure_command(cfg, command)) {
+					  return 0;
+				  }
+				  memcpy(ndef, optarg, strlen(optarg));
+				  ndef_seen = true;
+				  break;
+			  }
 		case 'm':
-							if(slot_chosen || swap_seen || update_seen || option_seen || ndef_seen || *zap || scan_map_seen) {
-								fprintf(stderr, "USB mode (-m) can not be combined with other options.\n");
-								*exit_code = 1;
-								return 0;
-							}
-							unsigned char mode, crtime;
-							unsigned short autotime;
-							int matched = sscanf(optarg, "%hhx:%hhd:%hd", &mode, &crtime, &autotime);
-							if(matched > 0) {
-								*usb_mode = mode;
-								if(matched > 1) {
-									*cr_timeout = crtime;
-									if(matched > 2) {
-										*autoeject_timeout = autotime;
-									}
-								}
-								usb_mode_seen = true;
-								*num_modes_seen = matched;
-							} else {
-								fprintf(stderr, "Invalid USB operation mode.\n");
-								*exit_code = 1;
-								return 0;
-							}
-							if (!ykp_configure_command(cfg, SLOT_DEVICE_CONFIG))
-								return 0;
+			if(slot_chosen || swap_seen || update_seen || option_seen || ndef_seen || *zap || scan_map_seen) {
+				fprintf(stderr, "USB mode (-m) can not be combined with other options.\n");
+				*exit_code = 1;
+				return 0;
+			}
+			unsigned char mode, crtime;
+			unsigned short autotime;
+			int matched = sscanf(optarg, "%hhx:%hhd:%hd", &mode, &crtime, &autotime);
+			if(matched > 0) {
+				*usb_mode = mode;
+				if(matched > 1) {
+					*cr_timeout = crtime;
+					if(matched > 2) {
+						*autoeject_timeout = autotime;
+					}
+				}
+				usb_mode_seen = true;
+				*num_modes_seen = matched;
+			} else {
+				fprintf(stderr, "Invalid USB operation mode.\n");
+				*exit_code = 1;
+				return 0;
+			}
+			if (!ykp_configure_command(cfg, SLOT_DEVICE_CONFIG))
+				return 0;
 
-							break;
+			break;
 		case 'S':
-							{
-								size_t scanlength = strlen(SCAN_MAP);
-								if(slot_chosen || swap_seen || update_seen || option_seen || ndef_seen || *zap || usb_mode_seen) {
-									fprintf(stderr, "Scanmap (-S) can not be combined with other options.\n");
-									*exit_code = 1;
-									return 0;
-								}
-								{
-									size_t scanbinlen;
-									size_t scanlen = strlen (optarg);
-									int rc = hex_modhex_decode(scan_bin, &scanbinlen,
-											optarg, scanlen,
-											scanlength * 2, scanlength * 2,
-											false);
+			{
+				size_t scanlength = strlen(SCAN_MAP);
+				if(slot_chosen || swap_seen || update_seen || option_seen || ndef_seen || *zap || usb_mode_seen) {
+					fprintf(stderr, "Scanmap (-S) can not be combined with other options.\n");
+					*exit_code = 1;
+					return 0;
+				}
+				{
+					size_t scanbinlen;
+					size_t scanlen = strlen (optarg);
+					int rc = hex_modhex_decode(scan_bin, &scanbinlen,
+							optarg, scanlen,
+							scanlength * 2, scanlength * 2,
+							false);
 
-									if (rc <= 0) {
-										fprintf(stderr,
-												"Invalid scanmap string %s\n",
-												optarg);
-										*exit_code = 1;
-										return 0;
-									}
-								}
-								scan_map_seen = true;
-							}
-							if (!ykp_configure_command(cfg, SLOT_SCAN_MAP))
-								return 0;
-							break;
+					if (rc <= 0) {
+						fprintf(stderr,
+								"Invalid scanmap string %s\n",
+								optarg);
+						*exit_code = 1;
+						return 0;
+					}
+				}
+				scan_map_seen = true;
+			}
+			if (!ykp_configure_command(cfg, SLOT_SCAN_MAP))
+				return 0;
+			break;
 		case 'o':
-							if (*zap) {
-								fprintf(stderr, "No options can be given with zap (-z).\n");
-								*exit_code = 1;
-								return 0;
-							}
-							if (strncmp(optarg, "fixed=", 6) == 0) {
-								if (_set_fixed(optarg + 6, cfg) != 1) {
-									fprintf(stderr,
-											"Invalid fixed string: %s\n",
-											optarg + 6);
-									*exit_code = 1;
-									return 0;
-								}
-							}
-							else if (strncmp(optarg, "uid", 3) == 0) {
-								char *uid = optarg+4;
-								char uidtmp[257];
-								size_t uidlen;
-								unsigned char uidbin[256];
-								size_t uidbinlen = 0;
-								int rc;
+			if (*zap) {
+				fprintf(stderr, "No options can be given with zap (-z).\n");
+				*exit_code = 1;
+				return 0;
+			}
+			if (strncmp(optarg, "fixed=", 6) == 0) {
+				if (_set_fixed(optarg + 6, cfg) != 1) {
+					fprintf(stderr,
+						"Invalid fixed string: %s\n",
+						optarg + 6);
+					*exit_code = 1;
+					return 0;
+				}
+			}
+			else if (strncmp(optarg, "uid", 3) == 0) {
+				char *uid = optarg+4;
+				char uidtmp[257];
+				size_t uidlen;
+				unsigned char uidbin[256];
+				size_t uidbinlen = 0;
+				int rc;
 
-								if(strncmp(optarg, "uid=", 4) != 0) {
-									fprintf(stderr, " Private ID, 6 bytes (12 characters hex) : ");
-									fflush(stderr);
-									if(!fgets(uidtmp, 256, stdin)) {
-										fprintf(stderr, "Error reading from stdin\n");
-										perror ("fgets");
-										*exit_code = 1;
-										return 0;
-									}
-									if(uidtmp[strlen(uidtmp) - 1] == '\n') {
-										uidtmp[strlen(uidtmp) - 1] = '\0';
-									}
-									uid = uidtmp;
-								}
+				if(strncmp(optarg, "uid=", 4) != 0) {
+					fprintf(stderr, " Private ID, 6 bytes (12 characters hex) : ");
+					fflush(stderr);
+					if(!fgets(uidtmp, 256, stdin)) {
+						fprintf(stderr, "Error reading from stdin\n");
+						perror ("fgets");
+						*exit_code = 1;
+						return 0;
+					}
+					if(uidtmp[strlen(uidtmp) - 1] == '\n') {
+						uidtmp[strlen(uidtmp) - 1] = '\0';
+					}
+					uid = uidtmp;
+				}
 
-								uidlen = strlen(uid);
-								rc = hex_modhex_decode(uidbin, &uidbinlen,
-										uid, uidlen,
-										12, 12, false);
-								if (rc <= 0) {
-									fprintf(stderr,
-											"Invalid uid string: %s\n",
-											uid);
-									*exit_code = 1;
-									return 0;
-								}
-								/* for OATH-HOTP and CHAL-RESP, uid is not applicable */
-								if (ykp_get_tktflag_OATH_HOTP(cfg) || ykp_get_tktflag_CHAL_RESP(cfg)) {
-									fprintf(stderr,
-											"Option uid= not valid with -ooath-hotp or -ochal-resp.\n"
-											);
-									*exit_code = 1;
-									return 0;
-								}
-								ykp_set_uid(cfg, uidbin, uidbinlen);
-							}
-							else if (strncmp(optarg, "access=", 7) == 0) {
-								*new_access_code = strdup(optarg + 7);
-							}
-							else if (strncmp(optarg, "access", 6) == 0) {
-								fprintf(stderr, " New access code, 6 bytes (12 characters hex) : ");
-								fflush(stderr);
-								*new_access_code = calloc(257, sizeof(char));
-								if(!fgets(*new_access_code, 256, stdin)) {
-									fprintf(stderr, "Error reading from stdin\n");
-									perror ("fgets");
-									*exit_code = 1;
-									return 0;
-								}
-								if((*new_access_code)[strlen(*new_access_code) - 1] == '\n') {
-									(*new_access_code)[strlen(*new_access_code) - 1] = '\0';
-								}
-							}
+				uidlen = strlen(uid);
+				rc = hex_modhex_decode(uidbin, &uidbinlen,
+						uid, uidlen,
+						12, 12, false);
+				if (rc <= 0) {
+					fprintf(stderr,
+							"Invalid uid string: %s\n",
+							uid);
+					*exit_code = 1;
+					return 0;
+				}
+				/* for OATH-HOTP and CHAL-RESP, uid is not applicable */
+				if (ykp_get_tktflag_OATH_HOTP(cfg) || ykp_get_tktflag_CHAL_RESP(cfg)) {
+					fprintf(stderr,
+							"Option uid= not valid with -ooath-hotp or -ochal-resp.\n"
+							);
+					*exit_code = 1;
+					return 0;
+				}
+				ykp_set_uid(cfg, uidbin, uidbinlen);
+			}
+			else if (strncmp(optarg, "access=", 7) == 0) {
+				*new_access_code = strdup(optarg + 7);
+			}
+			else if (strncmp(optarg, "access", 6) == 0) {
+				fprintf(stderr, " New access code, 6 bytes (12 characters hex) : ");
+				fflush(stderr);
+				*new_access_code = calloc(257, sizeof(char));
+				if(!fgets(*new_access_code, 256, stdin)) {
+					fprintf(stderr, "Error reading from stdin\n");
+					perror ("fgets");
+					*exit_code = 1;
+					return 0;
+				}
+				if((*new_access_code)[strlen(*new_access_code) - 1] == '\n') {
+					(*new_access_code)[strlen(*new_access_code) - 1] = '\0';
+				}
+			}
 #define TKTFLAG(o, f)							\
 			else if (strcmp(optarg, o) == 0) {		\
 				if (!ykp_set_tktflag_##f(cfg, true)) {	\
