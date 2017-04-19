@@ -40,7 +40,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 		   const char **infname, const char **outfname,
 		   int *data_format, bool *autocommit,
 		   YK_STATUS *st, bool *verbose, bool *dry_run,
-		   unsigned char *access_code, bool *use_access_code,
+		   char **access_code, char **new_access_code,
 		   char *keylocation, char *ndef_type, char *ndef, unsigned char *usb_mode,
 		   bool *zap, unsigned char *scan_bin, unsigned char *cr_timeout,
 		   unsigned short *autoeject_timeout, int *num_modes_seen, int *exit_code);
@@ -48,5 +48,11 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 int set_oath_id(char *opt, YKP_CONFIG *cfg, YK_KEY *yk, YK_STATUS *st);
 
 void report_yk_error(void);
+
+int hex_modhex_decode(unsigned char *result, size_t *resultlen,
+    const char *str, size_t strl,
+    size_t minsize, size_t maxsize,
+    bool primarily_modhex);
+
 
 #endif

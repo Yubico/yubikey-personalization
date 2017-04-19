@@ -108,7 +108,8 @@ static int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 	bool dry_run = false;
 	char keylocation = 0;
 	bool use_access_code = false;
-	unsigned char access_code[256];
+	char *access_code = NULL;
+	char *new_access_code = NULL;
 	bool autocommit = false;
 	int exit_code = 0;
 	int data_format = YKP_FORMAT_LEGACY;
@@ -144,11 +145,13 @@ static int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 			    &infname, &outfname,
 			    &data_format, &autocommit,
 			    st, &verbose, &dry_run,
-			    access_code, &use_access_code,
+			    &access_code, &new_access_code,
 			    &keylocation, &ndef_type, ndef, &usb_mode, &zap,
 			    scan_map, &cr_timeout, &autoeject_timeout, &num_modes_seen,
 			    &exit_code);
 
+	free(access_code);
+	free(new_access_code);
 	return rc;
 }
 
@@ -296,8 +299,8 @@ static void _test_non_config_args(void)
 	bool verbose = false;
 	bool dry_run = false;
 	char keylocation = 0;
-	bool use_access_code = false;
-	unsigned char access_code[256];
+	char *access_code = NULL;
+	char *new_access_code = NULL;
 	bool autocommit = false;
 	int exit_code = 0;
 	int i;
@@ -339,19 +342,21 @@ static void _test_non_config_args(void)
 			    &infname, &outfname,
 			    &data_format, &autocommit,
 			    st, &verbose, &dry_run,
-			    access_code, &use_access_code,
+			    &access_code, &new_access_code,
 			    &keylocation, &ndef_type, ndef, &usb_mode, &zap,
 			    scan_map, &cr_timeout, &autoeject_timeout, &num_modes_seen,
 			    &exit_code);
 	assert(rc == 1);
 	i = strcmp(infname, "in"); assert(i == 0);
 	i = strcmp(outfname, "out"); assert(i == 0);
-	i = memcmp(access_code, "123456", 6); assert(i == 0);
+	i = memcmp(access_code, "313233343536", 12); assert(i == 0);
 	assert(autocommit == true);
 	assert(verbose == true);
 
 	ykp_free_config(cfg);
 	free(st);
+	free(access_code);
+	free(new_access_code);
 }
 
 static void _test_oath_hotp_nist_160_bits(void)

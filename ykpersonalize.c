@@ -49,8 +49,9 @@ int main(int argc, char **argv)
 	int data_format = YKP_FORMAT_LEGACY;
 	bool verbose = false;
 	char keylocation = 0;
-	bool use_access_code = false;
 	unsigned char access_code[256];
+	char *acc_code = NULL;
+	char *new_acc_code = NULL;
 	unsigned char scan_codes[sizeof(SCAN_MAP)];
 	YK_KEY *yk = 0;
 	YKP_CONFIG *cfg = ykp_alloc();
@@ -95,6 +96,8 @@ int main(int argc, char **argv)
 					case 'S':
 						continue;
 					case 'a':
+						continue;
+					case 'c':
 						continue;
 				}
 				fprintf(stderr, "Option %c requires an argument.\n", optopt);
@@ -149,7 +152,7 @@ int main(int argc, char **argv)
 			     &infname, &outfname,
 			     &data_format, &autocommit,
 			     st, &verbose, &dry_run,
-			     access_code, &use_access_code,
+			     &acc_code, &new_acc_code,
 			     &keylocation, &ndef_type, ndef_string,
 			     &usb_mode, &zap, scan_codes, &cr_timeout,
 			     &autoeject_timeout, &num_modes_seen, &exit_code)) {
@@ -158,6 +161,40 @@ int main(int argc, char **argv)
 
 	if (oathid[0] != 0) {
 		set_oath_id(oathid, cfg, yk, st);
+	}
+
+	if (acc_code) {
+		size_t access_code_len = 0;
+		int rc = hex_modhex_decode(access_code, &access_code_len,
+				acc_code, strlen(acc_code),
+				12, 12, false);
+		if (rc <= 0) {
+			fprintf(stderr,
+					"Invalid access code string: %s\n",
+					optarg);
+			exit_code = 1;
+			goto err;
+		}
+		if (!new_acc_code) {
+			ykp_set_access_code(cfg,
+					access_code,
+					access_code_len);
+		}
+	}
+	if(new_acc_code) {
+		unsigned char accbin[256];
+		size_t accbinlen = 0;
+		int rc = hex_modhex_decode (accbin, &accbinlen,
+				new_acc_code, strlen(new_acc_code),
+				12, 12, false);
+		if (rc <= 0) {
+			fprintf(stderr,
+					"Invalid access code string: %s\n",
+					new_acc_code);
+			exit_code = 1;
+			goto err;
+		}
+		ykp_set_access_code(cfg, accbin, accbinlen);
 	}
 
 	if (verbose && (ykds_version_major(st) > 2 ||
@@ -358,7 +395,7 @@ int main(int argc, char **argv)
 					}
 					goto err;
 				}
-				if(use_access_code) {
+				if(acc_code) {
 					if(!ykp_set_ndef_access_code(ndef, access_code)) {
 						if(verbose) {
 							printf(" failure to set ndef accesscode\n");
@@ -431,7 +468,7 @@ int main(int argc, char **argv)
 				}
 				if (!yk_write_command(yk,
 							ycfg, ykp_command(cfg),
-							use_access_code ? access_code : NULL)) {
+							acc_code ? access_code : NULL)) {
 					if (verbose)
 						printf(" failure\n");
 					goto err;
@@ -470,6 +507,9 @@ err:
 
 	if (cfg)
 		ykp_free_config(cfg);
+
+	free(acc_code);
+	free(new_acc_code);
 
 	exit(exit_code);
 }
