@@ -217,6 +217,21 @@ void report_yk_error(void)
 	}
 }
 
+static int prompt_for_data(const char *prompt, char **data) {
+	fprintf(stderr, prompt);
+	fflush(stderr);
+	*data = calloc(257, sizeof(char));
+	if(!fgets(*data, 256, stdin)) {
+			fprintf(stderr, "Error reading from stdin\n");
+			perror ("fgets");
+			return 1;
+	}
+	if((*data)[strlen(*data) - 1] == '\n') {
+			(*data)[strlen(*data) - 1] = '\0';
+	}
+	return 0;
+}
+
 extern char *optarg;
 extern int optind;
 
@@ -380,11 +395,24 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 			}
 			break;
 		case 'a':
-			aeshash = optarg;
-			*keylocation = 1;
+			if(optarg[0] == '-') {
+				*keylocation = 2;
+				optind--;
+			} else {
+				aeshash = optarg;
+				*keylocation = 1;
+			}
 			break;
 		case 'c':
-			*access_code = strdup(optarg);
+			if(optarg[0] == '-') {
+				optind--;
+				if(prompt_for_data(" Access code, 6 bytes (12 characters hex) : ", access_code) != 0) {
+					*exit_code = 1;
+					return 0;
+				}
+			} else {
+				*access_code = strdup(optarg);
+			}
 			break;
 		case 't':
 			*ndef_type = 'T';
@@ -486,23 +514,16 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 			}
 			else if (strncmp(optarg, "uid", 3) == 0) {
 				char *uid = optarg+4;
-				char uidtmp[257];
 				size_t uidlen;
 				unsigned char uidbin[256];
 				size_t uidbinlen = 0;
 				int rc;
+				char *uidtmp = NULL;
 
 				if(strncmp(optarg, "uid=", 4) != 0) {
-					fprintf(stderr, " Private ID, 6 bytes (12 characters hex) : ");
-					fflush(stderr);
-					if(!fgets(uidtmp, 256, stdin)) {
-						fprintf(stderr, "Error reading from stdin\n");
-						perror ("fgets");
+					if(prompt_for_data(" Private ID, 6 bytes (12 characters hex) : ", &uidtmp) != 0) {
 						*exit_code = 1;
 						return 0;
-					}
-					if(uidtmp[strlen(uidtmp) - 1] == '\n') {
-						uidtmp[strlen(uidtmp) - 1] = '\0';
 					}
 					uid = uidtmp;
 				}
@@ -518,6 +539,8 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 					*exit_code = 1;
 					return 0;
 				}
+
+				free(uidtmp);
 				/* for OATH-HOTP and CHAL-RESP, uid is not applicable */
 				if (ykp_get_tktflag_OATH_HOTP(cfg) || ykp_get_tktflag_CHAL_RESP(cfg)) {
 					fprintf(stderr,
@@ -532,17 +555,9 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 				*new_access_code = strdup(optarg + 7);
 			}
 			else if (strncmp(optarg, "access", 6) == 0) {
-				fprintf(stderr, " New access code, 6 bytes (12 characters hex) : ");
-				fflush(stderr);
-				*new_access_code = calloc(257, sizeof(char));
-				if(!fgets(*new_access_code, 256, stdin)) {
-					fprintf(stderr, "Error reading from stdin\n");
-					perror ("fgets");
+				if(prompt_for_data(" New access code, 6 bytes (12 characters hex) : ", new_access_code) != 0) {
 					*exit_code = 1;
 					return 0;
-				}
-				if((*new_access_code)[strlen(*new_access_code) - 1] == '\n') {
-					(*new_access_code)[strlen(*new_access_code) - 1] = '\0';
 				}
 			}
 #define TKTFLAG(o, f)							\
@@ -689,17 +704,9 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 					*keylocation = 2;
 					continue;
 				case 'c':
-					fprintf(stderr, " Access code, 6 bytes (12 characters hex) : ");
-					fflush(stderr);
-					*access_code = calloc(257, sizeof(char));
-					if(!fgets(*access_code, 256, stdin)) {
-						fprintf(stderr, "Error reading from stdin\n");
-						perror ("fgets");
+					if(prompt_for_data(" Access code, 6 bytes (12 characters hex) : ", access_code) != 0) {
 						*exit_code = 1;
 						return 0;
-					}
-					if((*access_code)[strlen(*access_code) - 1] == '\n') {
-						(*access_code)[strlen(*access_code) - 1] = '\0';
 					}
 					continue;
 			}
