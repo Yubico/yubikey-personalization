@@ -484,12 +484,31 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 									return 0;
 								}
 							}
-							else if (strncmp(optarg, "uid=", 4) == 0) {
-								const char *uid = optarg+4;
-								size_t uidlen = strlen (uid);
+							else if (strncmp(optarg, "uid", 3) == 0) {
+								char *uid = optarg+4;
+								char uidtmp[257];
+								size_t uidlen;
 								unsigned char uidbin[256];
 								size_t uidbinlen = 0;
-								int rc = hex_modhex_decode(uidbin, &uidbinlen,
+								int rc;
+
+								if(strncmp(optarg, "uid=", 4) != 0) {
+									fprintf(stderr, " Private ID, 6 bytes (12 characters hex) : ");
+									fflush(stderr);
+									if(!fgets(uidtmp, 256, stdin)) {
+										fprintf(stderr, "Error reading from stdin\n");
+										perror ("fgets");
+										*exit_code = 1;
+										return 0;
+									}
+									if(uidtmp[strlen(uidtmp) - 1] == '\n') {
+										uidtmp[strlen(uidtmp) - 1] = '\0';
+									}
+									uid = uidtmp;
+								}
+
+								uidlen = strlen(uid);
+								rc = hex_modhex_decode(uidbin, &uidbinlen,
 										uid, uidlen,
 										12, 12, false);
 								if (rc <= 0) {
