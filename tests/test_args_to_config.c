@@ -106,7 +106,6 @@ static int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 	const char *outfname = NULL;
 	bool verbose = false;
 	bool dry_run = false;
-	char keylocation = 0;
 	bool use_access_code = false;
 	char *access_code = NULL;
 	char *new_access_code = NULL;
@@ -146,7 +145,7 @@ static int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 			    &data_format, &autocommit,
 			    st, &verbose, &dry_run,
 			    &access_code, &new_access_code,
-			    &keylocation, &ndef_type, ndef, &usb_mode, &zap,
+			    &ndef_type, ndef, &usb_mode, &zap,
 			    scan_map, &cr_timeout, &autoeject_timeout, &num_modes_seen,
 			    &exit_code);
 
@@ -206,10 +205,10 @@ static void _test_config_slot1(void)
 	};
 
 	char *argv[] = {
-		"unittest", "-1",
+		"unittest", "-1", "-a", "h:00000000000000000000000000000000",
 		NULL
 	};
-	int argc = 2;
+	int argc = 4;
 
 	rc = _test_config(cfg, st, argc, argv);
 	_check_success(rc, cfg, expected, __LINE__);
@@ -298,7 +297,6 @@ static void _test_non_config_args(void)
 	const char *outfname = NULL;
 	bool verbose = false;
 	bool dry_run = false;
-	char keylocation = 0;
 	char *access_code = NULL;
 	char *new_access_code = NULL;
 	bool autocommit = false;
@@ -343,7 +341,7 @@ static void _test_non_config_args(void)
 			    &data_format, &autocommit,
 			    st, &verbose, &dry_run,
 			    &access_code, &new_access_code,
-			    &keylocation, &ndef_type, ndef, &usb_mode, &zap,
+			    &ndef_type, ndef, &usb_mode, &zap,
 			    scan_map, &cr_timeout, &autoeject_timeout, &num_modes_seen,
 			    &exit_code);
 	assert(rc == 1);

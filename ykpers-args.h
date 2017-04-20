@@ -41,7 +41,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 		   int *data_format, bool *autocommit,
 		   YK_STATUS *st, bool *verbose, bool *dry_run,
 		   char **access_code, char **new_access_code,
-		   char *keylocation, char *ndef_type, char *ndef, unsigned char *usb_mode,
+		   char *ndef_type, char *ndef, unsigned char *usb_mode,
 		   bool *zap, unsigned char *scan_bin, unsigned char *cr_timeout,
 		   unsigned short *autoeject_timeout, int *num_modes_seen, int *exit_code);
 

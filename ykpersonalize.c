@@ -48,7 +48,6 @@ int main(int argc, char **argv)
 	FILE *outf = NULL; const char *outfname = NULL;
 	int data_format = YKP_FORMAT_LEGACY;
 	bool verbose = false;
-	char keylocation = 0;
 	unsigned char access_code[256];
 	char *acc_code = NULL;
 	char *new_acc_code = NULL;
@@ -153,7 +152,7 @@ int main(int argc, char **argv)
 			     &data_format, &autocommit,
 			     st, &verbose, &dry_run,
 			     &acc_code, &new_acc_code,
-			     &keylocation, &ndef_type, ndef_string,
+			     &ndef_type, ndef_string,
 			     &usb_mode, &zap, scan_codes, &cr_timeout,
 			     &autoeject_timeout, &num_modes_seen, &exit_code)) {
 		goto err;
@@ -251,50 +250,6 @@ int main(int argc, char **argv)
 		if (!ykp_import_config(cfg, data, strlen(data), data_format))
 			goto err;
 	}
-	if (! zap && (ykp_command(cfg) == SLOT_CONFIG || ykp_command(cfg) == SLOT_CONFIG2)) {
-		if(keylocation == 0) {
-			size_t key_bytes = (size_t)ykp_get_supported_key_length(cfg);
-			char keybuf[42];
-			const char *random_places[] = {
-				"/dev/srandom",
-				"/dev/urandom",
-				"/dev/random",
-				0
-			};
-			const char **random_place;
-			size_t read_bytes = 0;
-
-			for (random_place = random_places; *random_place; random_place++) {
-				FILE *random_file = fopen(*random_place, "r");
-				if (random_file) {
-					read_bytes = 0;
-
-					while (read_bytes < key_bytes) {
-						size_t n = fread(&keybuf[read_bytes], 1,
-								key_bytes - read_bytes, random_file);
-						read_bytes += n;
-					}
-
-					fclose(random_file);
-					break;
-				}
-			}
-			if(read_bytes < key_bytes) {
-				ykp_errno = YKP_ENORANDOM;
-				goto err;
-			}
-			if(key_bytes == 20) {
-				if(ykp_HMAC_key_from_raw(cfg, keybuf)) {
-					goto err;
-				}
-			} else {
-				if(ykp_AES_key_from_raw(cfg, keybuf)) {
-					goto err;
-				}
-			}
-		}
-	}
-
 	if (outf) {
 		if(!(ykp_export_config(cfg, data, 1024, data_format))) {
 			goto err;

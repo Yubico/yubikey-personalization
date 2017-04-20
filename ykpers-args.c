@@ -247,13 +247,14 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 		   int *data_format, bool *autocommit,
 		   YK_STATUS *st, bool *verbose, bool *dry_run,
 		   char **access_code, char **new_access_code,
-		   char *keylocation, char *ndef_type, char *ndef,
+		   char *ndef_type, char *ndef,
 		   unsigned char *usb_mode, bool *zap,
 		   unsigned char *scan_bin, unsigned char *cr_timeout,
 		   unsigned short *autoeject_timeout, int *num_modes_seen,
 		   int *exit_code)
 {
 	int c;
+	char keylocation = 0;
 	const char *aeshash = NULL;
 	bool slot_chosen = false;
 	bool mode_chosen = false;
@@ -396,11 +397,11 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 			break;
 		case 'a':
 			if(optarg[0] == '-') {
-				*keylocation = 2;
+				keylocation = 2;
 				optind--;
 			} else {
 				aeshash = optarg;
-				*keylocation = 1;
+				keylocation = 1;
 			}
 			break;
 		case 'c':
@@ -701,7 +702,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 						continue;
 					}
 				case 'a':
-					*keylocation = 2;
+					keylocation = 2;
 					continue;
 				case 'c':
 					if(prompt_for_data(" Access code, 6 bytes (12 characters hex) : ", access_code) != 0) {
@@ -747,13 +748,15 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 		}
 	}
 
-	if (*keylocation == 1 || *keylocation == 2) {
-		bool long_key_valid = ykp_get_supported_key_length(cfg) == 20 ? true : false;
+	if (! *zap && (ykp_command(cfg) == SLOT_CONFIG || ykp_command(cfg) == SLOT_CONFIG2)) {
+		size_t key_bytes = (size_t)ykp_get_supported_key_length(cfg);
 		int res = 0;
 		char *key_tmp = NULL;
-		if(*keylocation == 2) {
+		char keybuf[20];
+
+		if(keylocation == 2) {
 			const char *prompt = " AES key, 16 bytes (32 characters hex) : ";
-			if (long_key_valid) {
+			if (key_bytes == 20) {
 				prompt = " HMAC key, 20 bytes (40 characters hex) : ";
 			}
 			if (prompt_for_data(prompt, &key_tmp) != 0) {
@@ -761,22 +764,62 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 				return 0;
 			}
 			aeshash = key_tmp;
-			*keylocation = 1;
+			keylocation = 1;
 		}
 
-		/* NOTE: here we should probably do hex_modhex_decode() and the key_from_raw()
-		 * functions instead to allow for more syntax in the key. */
-		if (long_key_valid && strlen(aeshash) == 40) {
-			res = ykp_HMAC_key_from_hex(cfg, aeshash);
+		if(keylocation == 0) {
+			const char *random_places[] = {
+				"/dev/srandom",
+				"/dev/urandom",
+				"/dev/random",
+				0
+			};
+			const char **random_place;
+			size_t read_bytes = 0;
+
+			for (random_place = random_places; *random_place; random_place++) {
+				FILE *random_file = fopen(*random_place, "r");
+				if (random_file) {
+					read_bytes = 0;
+
+					while (read_bytes < key_bytes) {
+						size_t n = fread(&keybuf[read_bytes], 1,
+								key_bytes - read_bytes, random_file);
+						read_bytes += n;
+					}
+
+					fclose(random_file);
+					break;
+				}
+			}
+			if(read_bytes < key_bytes) {
+				ykp_errno = YKP_ENORANDOM;
+				*exit_code = 1;
+				return 0;
+			}
 		} else {
-			res = ykp_AES_key_from_hex(cfg, aeshash);
+			size_t key_len = 0;
+			int rc = hex_modhex_decode((unsigned char *)keybuf, &key_len, aeshash, strlen(aeshash), key_bytes * 2, key_bytes * 2, false);
+
+			free(key_tmp);
+
+			if(rc <= 0) {
+				fprintf(stderr, "Invalid key string\n");
+				exit_code = 1;
+				return 0;
+			}
 		}
 
-		free(key_tmp);
+		if (key_bytes == 20) {
+			res = ykp_HMAC_key_from_raw(cfg, keybuf);
+		} else {
+			res = ykp_AES_key_from_raw(cfg, keybuf);
+		}
 
 		if (res) {
-			fprintf(stderr, "Bad %s key: %s\n", long_key_valid ? "HMAC":"AES", aeshash);
+			fprintf(stderr, "Bad %s key: %s\n", key_bytes == 20 ? "HMAC":"AES", aeshash);
 			fflush(stderr);
+			*exit_code = 1;
 			return 0;
 		}
 	}
