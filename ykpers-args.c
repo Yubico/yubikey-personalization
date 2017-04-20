@@ -747,15 +747,32 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 		}
 	}
 
-	if (*keylocation == 1) {
+	if (*keylocation == 1 || *keylocation == 2) {
 		bool long_key_valid = ykp_get_supported_key_length(cfg) == 20 ? true : false;
 		int res = 0;
+		char *key_tmp = NULL;
+		if(*keylocation == 2) {
+			const char *prompt = " AES key, 16 bytes (32 characters hex) : ";
+			if (long_key_valid) {
+				prompt = " HMAC key, 20 bytes (40 characters hex) : ";
+			}
+			if (prompt_for_data(prompt, &key_tmp) != 0) {
+				*exit_code = 1;
+				return 0;
+			}
+			aeshash = key_tmp;
+			*keylocation = 1;
+		}
 
+		/* NOTE: here we should probably do hex_modhex_decode() and the key_from_raw()
+		 * functions instead to allow for more syntax in the key. */
 		if (long_key_valid && strlen(aeshash) == 40) {
 			res = ykp_HMAC_key_from_hex(cfg, aeshash);
 		} else {
 			res = ykp_AES_key_from_hex(cfg, aeshash);
 		}
+
+		free(key_tmp);
 
 		if (res) {
 			fprintf(stderr, "Bad %s key: %s\n", long_key_valid ? "HMAC":"AES", aeshash);

@@ -252,36 +252,9 @@ int main(int argc, char **argv)
 			goto err;
 	}
 	if (! zap && (ykp_command(cfg) == SLOT_CONFIG || ykp_command(cfg) == SLOT_CONFIG2)) {
-		int key_bytes = ykp_get_supported_key_length(cfg);
-		char keybuf[42];
-		size_t keylen;
-		if(keylocation == 2) {
-			if(key_bytes == 20) {
-				fprintf(stderr, " HMAC key, 20 bytes (40 characters hex) : ");
-			} else {
-				fprintf(stderr, " AES key, 16 bytes (32 characters hex) : ");
-			}
-			fflush(stderr);
-			if(!fgets(keybuf, sizeof(keybuf), stdin)) {
-				printf("error?\n");
-				perror ("fgets");
-				exit_code = 1;
-				goto err;
-			}
-			keylen = strnlen(keybuf, sizeof(keybuf));
-			if(keybuf[keylen - 1] == '\n') {
-				keybuf[keylen - 1] = '\0';
-			}
-			if(key_bytes == 20) {
-				if(ykp_HMAC_key_from_hex(cfg, keybuf)) {
-					goto err;
-				}
-			} else {
-				if(ykp_AES_key_from_hex(cfg, keybuf)) {
-					goto err;
-				}
-			}
-		} else if(keylocation == 0) {
+		if(keylocation == 0) {
+			size_t key_bytes = (size_t)ykp_get_supported_key_length(cfg);
+			char keybuf[42];
 			const char *random_places[] = {
 				"/dev/srandom",
 				"/dev/urandom",
