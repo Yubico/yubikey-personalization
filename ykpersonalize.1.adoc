@@ -46,7 +46,7 @@ from stdin) Configuration import is only valid for the ycfg format.
 
 *-c*'xxx':: A 12 char hex value (not modhex) to use as access
 code for programming. NOTE: this does NOT SET the access code, that’s
-done with **-oaccess**__=__.
+done with **-oaccess**__=__. If no argument is provided code is prompted for on stdin.
 
 *-o*'option':: change configuration option. Possible option arguments are:
 
@@ -56,9 +56,9 @@ well, just prepend the value with ’h:’. The fixed part is emitted before
 the OTP when the button on the YubiKey is pressed. It can be used as an
 identifier for the user, for example.
 
-*uid*='uuuuuu'::: The uid part of the generated OTP, also called __private identity__, in hex. Must be 12 characters long. The uid is 6 bytes of static data that is included (encrypted) in every OTP, and is used to validate that an OTP was in fact encrypted with the AES key shared between the YubiKey and the validation service. It cannot be used to identify the YubiKey as it is only readable to those that know the AES key.
+*uid*='uuuuuu'::: The uid part of the generated OTP, also called __private identity__, in hex. Must be 12 characters long. The uid is 6 bytes of static data that is included (encrypted) in every OTP, and is used to validate that an OTP was in fact encrypted with the AES key shared between the YubiKey and the validation service. It cannot be used to identify the YubiKey as it is only readable to those that know the AES key. If no argument is provided the uid is prompted for on stdin.
 
-*access*='fffffffffff'::: New hex access code to set. Must be 12 characters long. If an access code is set, it will be required for subsequent reprogramming of the YubiKey.
+*access*='fffffffffff'::: New hex access code to set. Must be 12 characters long. If an access code is set, it will be required for subsequent reprogramming of the YubiKey. If no argument is provided code is prompted for on stdin.
 
 *oath-imf*='xxx'::: Set OATH Initial Moving Factor. This is the initial counter value for the YubiKey. This should be a value between 0 and 1048560, evenly dividable by 16.
 
