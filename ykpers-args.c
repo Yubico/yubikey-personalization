@@ -221,7 +221,7 @@ void report_yk_error(void)
 }
 
 static int prompt_for_data(const char *prompt, char **data) {
-	fprintf(stderr, prompt);
+	fprintf(stderr, "%s", prompt);
 	fflush(stderr);
 	*data = calloc(257, sizeof(char));
 	if(!fgets(*data, 256, stdin)) {
@@ -808,7 +808,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 
 			if(rc <= 0) {
 				fprintf(stderr, "Invalid key string\n");
-				exit_code = 1;
+				*exit_code = 1;
 				return 0;
 			}
 		}
