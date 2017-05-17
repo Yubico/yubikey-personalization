@@ -1,0 +1,10 @@
+ACTION!="add|change", GOTO="yubico_end"
+
+# Udev rules for letting the console user access the Yubikey USB
+# device node, needed for challenge/response to work correctly.
+
+# Yubico Yubikey II
+ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0010", \
+    ENV{ID_SECURITY_TOKEN}="1"
+
+LABEL="yubico_end"
