@@ -54,7 +54,7 @@ struct map_st _config_flags_map[] = {
 	{ CFGFLAG_OATH_FIXED_MODHEX,	"OATH_FIXED_MODHEX",	0,		capability_has_oath,		MODE_OATH_HOTP,		ykp_set_cfgflag_OATH_FIXED_MODHEX },
 	{ CFGFLAG_SEND_REF,		"SEND_REF",		"sendRef",	capability_has_ticket_mods,	MODE_OUTPUT,		ykp_set_cfgflag_SEND_REF },
 	{ CFGFLAG_TICKET_FIRST,		"TICKET_FIRST",		0,		capability_has_ticket_first,	MODE_OUTPUT,		ykp_set_cfgflag_TICKET_FIRST },
-	{ CFGFLAG_PACING_10MS,		"PACKING_10MS",		"pacing10ms",	capability_has_ticket_mods,	MODE_OUTPUT,		ykp_set_cfgflag_PACING_10MS },
+	{ CFGFLAG_PACING_10MS,		"PACING_10MS",		"pacing10ms",	capability_has_ticket_mods,	MODE_OUTPUT,		ykp_set_cfgflag_PACING_10MS },
 	{ CFGFLAG_PACING_20MS,		"PACING_20MS",		"pacing20ms",	capability_has_ticket_mods,	MODE_OUTPUT,		ykp_set_cfgflag_PACING_20MS },
 	{ CFGFLAG_ALLOW_HIDTRIG,	"ALLOW_HIDTRIG",	0,		capability_has_hidtrig,		MODE_OUTPUT,		ykp_set_cfgflag_ALLOW_HIDTRIG },
 	{ CFGFLAG_STATIC_TICKET,        "STATIC_TICKET",        "staticTicket", capability_has_static,		MODE_STATIC_TICKET,     ykp_set_cfgflag_STATIC_TICKET },
