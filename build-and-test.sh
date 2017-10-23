@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -x
+
 if [ "x$TRAVIS_OS_NAME" != "xosx" ]; then
     sudo apt-get update -qq || true
     sudo apt-get remove -qq -y $REMOVE
