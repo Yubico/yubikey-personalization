@@ -25,6 +25,7 @@ to Debian derivatives as well, including Ubuntu.
 Yubico-c is needed, see: https://developers.yubico.com/yubico-c/
 
   Debian:           apt-get install libyubikey-dev
+  Fedora:           dnf install libyubikey-devel
 
 Pkg-config simplify finding other dependencies, see:
 http://www.freedesktop.org/wiki/Software/pkg-config
@@ -36,7 +37,7 @@ have to get it.  We recommend using libusb-1.
 
   Debian libusb-1:  apt-get install libusb-1.0-0-dev
   Debian libusb:    apt-get install libusb-dev
-  Fedora:           yum install libusb-devel
+  Fedora:           dnf install libusb-devel
 
 The JSON library is an optional dependency, see:
 https://github.com/json-c/json-c/wiki
