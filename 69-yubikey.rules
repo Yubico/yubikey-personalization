@@ -4,7 +4,7 @@ ACTION!="add|change", GOTO="yubico_end"
 # device node, needed for challenge/response to work correctly.
 
 # Yubico Yubikey II
-ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0010|0110|0111|0114|0116|0401|0403|0405|0407|0410", \
+ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0010|0110|0111|0114|0116|0401|0403|0404|0405|0407|0410", \
     ENV{ID_SECURITY_TOKEN}="1"
 
 LABEL="yubico_end"
