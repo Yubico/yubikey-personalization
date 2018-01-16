@@ -120,30 +120,7 @@ int yk_check_firmware_version(YK_KEY *k)
 
 int yk_check_firmware_version2(YK_STATUS *st)
 {
-	switch(st->versionMajor) {
-		case 0:
-			if(st->versionMinor == 9)
-				return 1;
-			break;
-		case 1:
-			if(st->versionMinor <= 3)
-				return 1;
-			break;
-		case 2:
-			if(st->versionMinor <= 5)
-				return 1;
-			break;
-		case 3:
-			if(st->versionMinor <= 4)
-				return 1;
-			break;
-		case 4:
-			if(st->versionMinor <= 3)
-				return 1;
-			break;
-	}
-	yk_errno = YK_EFIRMWARE;
-	return 0;
+	return 1;
 }
 
 int yk_get_status(YK_KEY *k, YK_STATUS *status)
