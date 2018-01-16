@@ -239,7 +239,7 @@ int main(int argc, char **argv)
 			}
 			if(serial_modhex) {
 				yubikey_hex_decode(hex_serial, ptr, strlen(ptr));
-				yubikey_modhex_encode(modhex_serial, hex_serial, strlen(hex_serial));
+				yubikey_modhex_encode(modhex_serial, hex_serial, strlen(ptr)/2);
 				if(!quiet)
 					printf("serial_modhex: ");
 				printf("%s\n", modhex_serial);
