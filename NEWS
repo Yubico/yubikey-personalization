@@ -1,6 +1,16 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.18.1 (unreleased)
+* Version 1.18.1 (released 2018-01-16)
+
+** Support reading accesscode and private ID from stdin.
+
+** Parse optional arguments correctly.
+
+** Documentation fixes.
+
+** Fix for ykinfo modhex serial output when it ends with c.
+
+** Treat all firmware versions as supported.
 
 * Version 1.18.0 (released 2017-01-27)
 
