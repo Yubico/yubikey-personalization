@@ -272,3 +272,10 @@ LIBYKPERS_1.18 {
   yk_open_key;
 # Variables:
 } LIBYKPERS_1.17;
+
+LIBYKPERS_1.19 {
+  global:
+# Functions:
+  yk_write_device_info;
+# Variables:
+} LIBYKPERS_1.18;
