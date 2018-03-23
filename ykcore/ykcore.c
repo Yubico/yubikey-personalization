@@ -244,6 +244,12 @@ static int _yk_write(YK_KEY *yk, uint8_t yk_cmd, unsigned char *buf, size_t len)
 	return stat.pgmSeq != seq;
 }
 
+int yk_write_device_info(YK_KEY *yk, unsigned char *buf, unsigned int len)
+{
+	return _yk_write(yk, SLOT_YK4_SET_DEVICE_INFO, buf, len);
+}
+
+
 int yk_write_command(YK_KEY *yk, YK_CONFIG *cfg, uint8_t command,
 		    unsigned char *acc_code)
 {

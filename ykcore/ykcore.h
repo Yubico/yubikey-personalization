@@ -140,6 +140,9 @@ extern int yk_get_key_vid_pid(YK_KEY *yk, int *vid, int *pid);
 /* Get the YK4 capabilities */
 int yk_get_capabilities(YK_KEY *yk, uint8_t slot, unsigned int flags,
 			unsigned char *capabilities, unsigned int *len);
+/* Set the device info (TLV string) */
+int yk_write_device_info(YK_KEY *yk, unsigned char *buf, unsigned int len);
+
 
 /*************************************************************************
  *

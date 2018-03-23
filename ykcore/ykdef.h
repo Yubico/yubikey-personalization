@@ -44,7 +44,8 @@
 #define SLOT_DEVICE_SERIAL	0x10	/* Device serial number */
 #define SLOT_DEVICE_CONFIG	0x11	/* Write device configuration record */
 #define SLOT_SCAN_MAP		0x12	/* Write scancode map */
-#define SLOT_YK4_CAPABILITIES	0x13	/* Read YK4 capabilities list */
+#define SLOT_YK4_CAPABILITIES	0x13	/* Read YK4 capabilities (device info) list */
+#define SLOT_YK4_SET_DEVICE_INFO 0x15 /* Write device info */
 
 #define SLOT_CHAL_OTP1		0x20	/* Write 6 byte challenge to slot 1, get Yubico OTP response */
 #define SLOT_CHAL_OTP2		0x28	/* Write 6 byte challenge to slot 2, get Yubico OTP response */
