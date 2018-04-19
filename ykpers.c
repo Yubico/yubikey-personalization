@@ -187,14 +187,24 @@ int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command)
 		}
 		break;
 	case SLOT_DEVICE_CONFIG:
+		if(!(cfg->yk_major_version <= 5)) {
+			ykp_errno = YKP_EYUBIKEYVER;
+			return 0;
+		} /* we have an intentional fall-through to the next case here */
 	case SLOT_SCAN_MAP:
 		if(!(cfg->yk_major_version >= 3)) {
 			ykp_errno = YKP_EYUBIKEYVER;
 			return 0;
 		}
 		break;
+	case SLOT_YK4_SET_DEVICE_INFO:
+		if(!(cfg->yk_major_version >= 5)) {
+			ykp_errno = YKP_EYUBIKEYVER;
+			return 0;
+		}
+		break;
 	case SLOT_NDEF2:
-		if(cfg->yk_major_version != 3) {
+		if(cfg->yk_major_version != 3 && cfg->yk_major_version != 5) {
 			ykp_errno = YKP_EYUBIKEYVER;
 			return 0;
 		}
@@ -202,7 +212,7 @@ int ykp_configure_command(YKP_CONFIG *cfg, uint8_t command)
 	case SLOT_NDEF:
 		/* NDEF is available for neo, thus within 2.1 from build 4 */
 		if (!((cfg->yk_major_version == 2 && cfg->yk_minor_version == 1 &&
-			  cfg->yk_build_version >= 4) || cfg->yk_major_version == 3)) {
+			  cfg->yk_build_version >= 4) || cfg->yk_major_version == 3 || cfg->yk_major_version >= 5)) {
 			ykp_errno = YKP_EYUBIKEYVER;
 			return 0;
 		}
