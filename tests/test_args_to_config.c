@@ -124,6 +124,8 @@ static int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 	bool zap = false;
 
 	unsigned char scan_map[sizeof(SCAN_MAP)];
+	unsigned char device_info[128];
+	size_t device_info_len = 0;
 
 	int rc;
 
@@ -147,7 +149,7 @@ static int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 			    &access_code, &new_access_code,
 			    &ndef_type, ndef, &usb_mode, &zap,
 			    scan_map, &cr_timeout, &autoeject_timeout, &num_modes_seen,
-			    &exit_code);
+			    device_info, &device_info_len, &exit_code);
 
 	free(access_code);
 	free(new_access_code);
@@ -315,6 +317,8 @@ static void _test_non_config_args(void)
 	bool zap = false;
 
 	unsigned char scan_map[sizeof(SCAN_MAP)];
+	unsigned char device_info[128];
+	size_t device_info_len = 0;
 
 	char *argv[] = {
 		"unittest", "-1", "-sout", "-iin", "-c313233343536", "-y", "-v",
@@ -343,7 +347,7 @@ static void _test_non_config_args(void)
 			    &access_code, &new_access_code,
 			    &ndef_type, ndef, &usb_mode, &zap,
 			    scan_map, &cr_timeout, &autoeject_timeout, &num_modes_seen,
-			    &exit_code);
+			    device_info, &device_info_len, &exit_code);
 	assert(rc == 1);
 	i = strcmp(infname, "in"); assert(i == 0);
 	i = strcmp(outfname, "out"); assert(i == 0);

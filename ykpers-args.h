@@ -43,7 +43,8 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 		   char **access_code, char **new_access_code,
 		   char *ndef_type, char *ndef, unsigned char *usb_mode,
 		   bool *zap, unsigned char *scan_bin, unsigned char *cr_timeout,
-		   unsigned short *autoeject_timeout, int *num_modes_seen, int *exit_code);
+		   unsigned short *autoeject_timeout, int *num_modes_seen,
+                   unsigned char *device_info, size_t *device_info_len, int *exit_code);
 
 int set_oath_id(char *opt, YKP_CONFIG *cfg, YK_KEY *yk, YK_STATUS *st);
 

@@ -52,6 +52,8 @@ int main(int argc, char **argv)
 	char *acc_code = NULL;
 	char *new_acc_code = NULL;
 	unsigned char scan_codes[sizeof(SCAN_MAP)];
+	unsigned char device_info[128];
+	size_t device_info_len = 0;
 	YK_KEY *yk = 0;
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = ykds_alloc();
@@ -154,7 +156,8 @@ int main(int argc, char **argv)
 			     &acc_code, &new_acc_code,
 			     &ndef_type, ndef_string,
 			     &usb_mode, &zap, scan_codes, &cr_timeout,
-			     &autoeject_timeout, &num_modes_seen, &exit_code)) {
+			     &autoeject_timeout, &num_modes_seen,
+					 device_info, &device_info_len, &exit_code)) {
 		goto err;
 	}
 
@@ -274,6 +277,8 @@ int main(int argc, char **argv)
 			}
 		} else if(ykp_command(cfg) == SLOT_SCAN_MAP) {
 			fprintf(stderr, "A new scanmap will be written.\n");
+		} else if(ykp_command(cfg) == SLOT_YK4_SET_DEVICE_INFO) {
+			fprintf(stderr, "New device information will be written.\n");
 		} else if(zap) {
 			fprintf(stderr, "Configuration in slot %d will be deleted\n", ykp_config_num(cfg));
 		} else {
@@ -384,6 +389,12 @@ int main(int argc, char **argv)
 
 			} else if(ykp_command(cfg) == SLOT_SCAN_MAP) {
 				if(!yk_write_scan_map(yk, scan_codes)) {
+					if(verbose)
+						printf(" failure\n");
+					goto err;
+				}
+			} else if(ykp_command(cfg) == SLOT_YK4_SET_DEVICE_INFO) {
+				if(!yk_write_device_info(yk, device_info, device_info_len)) {
 					if(verbose)
 						printf(" failure\n");
 					goto err;

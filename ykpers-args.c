@@ -76,10 +76,11 @@ const char *usage =
 "-nXXX..   Write NDEF URI to YubiKey NEO, must be used with -1 or -2\n"
 "-tXXX..   Write NDEF text to YubiKey NEO, must be used with -1 or -2\n"
 "-mMODE    Set the USB device configuration of the YubiKey.\n"
-"          See the manpage for details. This is for YubiKey 3.0 and newer only.\n"
+"          See the manpage for details. This is for YubiKey 3 and 4 only.\n"
 "-S0605..  Set the scanmap to use with the YubiKey. Must be 45 unique bytes,\n"
 "          in hex.  Use with no argument to reset to the default. This is for\n"
 "          YubiKey 3.0 and newer only.\n"
+"-D0403..  Set the deviceinfo to use with this YubiKey. YubiKey 5 and newer only.\n"
 "-oOPTION  change configuration option.  Possible OPTION arguments are:\n"
 "          fixed=xxxxxxxxxxx   The public identity of key, in MODHEX.\n"
 "                              This is 0-32 characters long.\n"
@@ -159,7 +160,7 @@ const char *usage =
 "-V        tool version\n"
 "-h        help (this text)\n"
 ;
-const char *optstring = ":u12xza:c:n:t:hi:o:s:f:dvym:S:VN:";
+const char *optstring = ":u12xza:c:n:t:hi:o:s:f:dvym:S:VN:D:";
 
 static int _set_fixed(char *opt, YKP_CONFIG *cfg);
 static int _format_decimal_as_hex(uint8_t *dst, size_t dst_len, uint8_t *src);
@@ -254,6 +255,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 		   unsigned char *usb_mode, bool *zap,
 		   unsigned char *scan_bin, unsigned char *cr_timeout,
 		   unsigned short *autoeject_timeout, int *num_modes_seen,
+			 unsigned char *device_info, size_t *device_info_len,
 		   int *exit_code)
 {
 	int c;
@@ -267,6 +269,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 	bool ndef_seen = false;
 	bool usb_mode_seen = false;
 	bool scan_map_seen = false;
+	bool device_info_seen = false;
 
 	ykp_configure_version(cfg, st);
 
@@ -362,7 +365,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 				break;
 			}
 		case 'x':
-			if (slot_chosen || option_seen || update_seen || ndef_seen || *zap || usb_mode_seen || scan_map_seen) {
+			if (slot_chosen || option_seen || update_seen || ndef_seen || *zap || usb_mode_seen || scan_map_seen || device_info_seen) {
 				fprintf(stderr, "Slot swap (-x) can not be used with other options.\n");
 				*exit_code = 1;
 				return 0;
@@ -374,7 +377,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 			swap_seen = true;
 			break;
 		case 'z':
-			if (swap_seen || update_seen || ndef_seen || usb_mode_seen || scan_map_seen) {
+			if (swap_seen || update_seen || ndef_seen || usb_mode_seen || scan_map_seen || device_info_seen) {
 				fprintf(stderr, "Zap (-z) can only be used with a slot (-1 / -2).\n");
 				*exit_code = 1;
 				return 0;
@@ -425,7 +428,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 				  if(!*ndef_type) {
 					  *ndef_type = 'U';
 				  }
-				  if (swap_seen || update_seen || option_seen || *zap || usb_mode_seen || scan_map_seen) {
+				  if (swap_seen || update_seen || option_seen || *zap || usb_mode_seen || scan_map_seen || device_info_seen) {
 					  fprintf(stderr, "Ndef (-n/-t) can only be used with a slot (-1/-2).\n");
 					  *exit_code = 1;
 					  return 0;
@@ -445,7 +448,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 				  break;
 			  }
 		case 'm':
-			if(slot_chosen || swap_seen || update_seen || option_seen || ndef_seen || *zap || scan_map_seen) {
+			if(slot_chosen || swap_seen || update_seen || option_seen || ndef_seen || *zap || scan_map_seen || device_info_seen) {
 				fprintf(stderr, "USB mode (-m) can not be combined with other options.\n");
 				*exit_code = 1;
 				return 0;
@@ -475,7 +478,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 		case 'S':
 			{
 				size_t scanlength = strlen(SCAN_MAP);
-				if(slot_chosen || swap_seen || update_seen || option_seen || ndef_seen || *zap || usb_mode_seen) {
+				if(slot_chosen || swap_seen || update_seen || option_seen || ndef_seen || *zap || usb_mode_seen || device_info_seen) {
 					fprintf(stderr, "Scanmap (-S) can not be combined with other options.\n");
 					*exit_code = 1;
 					return 0;
@@ -500,6 +503,27 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 			}
 			if (!ykp_configure_command(cfg, SLOT_SCAN_MAP))
 				return 0;
+			break;
+		case 'D':
+			if(slot_chosen || swap_seen || update_seen || option_seen || ndef_seen || *zap || usb_mode_seen || scan_map_seen) {
+				fprintf(stderr, "Deviceinfo (-D) can not be combined with other options.\n");
+				*exit_code = 1;
+				return 0;
+			}
+			{
+				size_t len = strlen(optarg);
+				int rc = hex_modhex_decode(device_info, device_info_len, optarg, strlen(optarg), 2, 128, false);
+
+				if (rc <= 0) {
+					fprintf(stderr, "Failed decoding deviceinfo string: '%s'\n", optarg);
+					*exit_code = 1;
+					return 0;
+				}
+				if (!ykp_configure_command(cfg, SLOT_YK4_SET_DEVICE_INFO)) {
+					return 0;
+				}
+				device_info_seen = true;
+			}
 			break;
 		case 'o':
 			if (*zap) {
@@ -722,7 +746,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 		}
 	}
 
-	if (!slot_chosen && !ndef_seen && !swap_seen && !usb_mode_seen && !scan_map_seen) {
+	if (!slot_chosen && !ndef_seen && !swap_seen && !usb_mode_seen && !scan_map_seen && !device_info_seen) {
 		if (argc == 1) {
 			fputs(usage, stderr);
 		} else {
