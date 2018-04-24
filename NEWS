@@ -1,6 +1,12 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.19.0 (unreleased)
+* Version 1.19.0 (released 2018-04-24)
+
+** Add yk_write_device_info().
+
+** Add ykpersonalize cli switch -D for device info.
+
+** Add code for handling personalization interface of major version 5.
 
 * Version 1.18.1 (released 2018-01-16)
 
