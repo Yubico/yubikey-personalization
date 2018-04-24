@@ -11,7 +11,7 @@ ykpersonalize - personalize YubiKey OTP tokens
 
 == SYNOPSIS
 
-*ykpersonalize* [__-Nkey__] [__-1__ | __-2__] [__-sfile__] [__-ifile__] [__-fformat__] [__-axxx__] [__-cxxx__] [__-ooption__] [__-y__] [__-v__] [__-d__] [__-h__] [__-n__] [__-t__] [__-u__] [__-x__] [__-z__] [__-m__] [__-S__] [__-V__]
+*ykpersonalize* [__-Nkey__] [__-1__ | __-2__] [__-sfile__] [__-ifile__] [__-fformat__] [__-axxx__] [__-cxxx__] [__-ooption__] [__-y__] [__-v__] [__-d__] [__-h__] [__-n__] [__-t__] [__-u__] [__-x__] [__-z__] [__-m__] [__-S__] [__-V__] [__-Dxxx___]
 
 == DESCRIPTION
 
@@ -79,7 +79,7 @@ identifier for the user, for example.
 
 *-t* text:: Program NFC NDEF text
 
-=== YubiKey 3.0 and above
+=== YubiKey 3 and 4 only
 
 *-m* mode::
 
@@ -102,6 +102,8 @@ automatically ejected in mode 81
 Removing OTP mode also disable communication between ykpersonalize and
 the YubiKey, further mode changes will have to be done with ykneomgr (for CCID mode) 
 or u2f-host (for U2F mode)
+
+=== YubiKey 3 and above
 
 *-S*'0605...'::
 
@@ -133,6 +135,11 @@ And a Turkish example (has a dotless i instead of usual i):
 +
 Note that you must remove any whitespace present in these examples before using the values.
 
+=== YubiKey 5 and above
+
+*-D*'0403...'::
+
+Set the deviceinfo to use with this YubiKey.
 
 === YubiKey 2.3 and above
 
