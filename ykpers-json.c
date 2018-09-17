@@ -282,7 +282,9 @@ int _ykp_json_import_cfg(YKP_CONFIG *cfg, const char *json, size_t len) {
 				int random = json_object_get_boolean(jrandom);
 				int seed = 0;
 				if(random == 1) {
-					/* XXX: add random seed.. */
+					/* NOTE: random seed isn't implemented here for now. */
+					ykp_errno = YKP_ENORANDOM;
+					goto out;
 				} else {
 					json_object *jseed;
 					if(yk_json_object_object_get(options, "fixedSeedvalue", jseed) == TRUE) {
@@ -319,7 +321,6 @@ out:
 			json_object_put(jobj);
 		}
 	}
-	ykp_errno = YKP_EINVAL;
 	return ret_code;
 }
 
