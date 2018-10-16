@@ -200,6 +200,12 @@ int yk_get_capabilities(YK_KEY *yk, uint8_t slot, unsigned int flags,
 	response_len = capabilities[0];
 	response_len++;
 
+	/* validate the length we got back from the hardware */
+	if (response_len > *len) {
+		yk_errno = YK_EWRONGSIZ;
+		return 0;
+	}
+
 	*len = response_len;
 	return 1;
 }
