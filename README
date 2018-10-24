@@ -75,7 +75,11 @@ This will create a directory 'yubikey-personalization'.  Enter the directory:
 -----------
 
 
-When building from source Yubikey-personaliztion depends on link:http://asciidoc.org/INSTALL.html[asciidoc] to build its manpage.
+When building from source Yubikey-personalization depends on link:http://asciidoc.org/INSTALL.html[asciidoc], xsltproc and DocBook to build its manpage.
+
+-----------
+  Debian:           apt-get install asciidoc xsltproc docbook-xsl
+-----------
 
 Autoconf, automake and libtool must be installed.
 
