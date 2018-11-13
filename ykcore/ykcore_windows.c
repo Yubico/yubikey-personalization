@@ -199,7 +199,7 @@ int _ykusb_get_vid_pid(void *yk, int *vid, int *pid) {
 const char *_ykusb_strerror(void)
 {
 	static char buf[1024];
-	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0,
+	FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0,
 			buf, sizeof(buf), NULL);
 	return buf;
 }
