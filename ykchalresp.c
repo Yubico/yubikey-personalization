@@ -237,7 +237,7 @@ static int check_firmware(YK_KEY *yk, bool verbose)
 		return 0;
 	}
 
-	free(st);
+	ykds_free(st);
 	return 1;
 }
 
