@@ -42,7 +42,7 @@ have to get it.  We recommend using libusb-1.
 The JSON library is an optional dependency, see:
 https://github.com/json-c/json-c/wiki
 
-  Debian:           apt-get install libjson0-dev
+  Debian:           apt-get install libjson-c-dev
 
 You need json-c version 0.10 or later to get pretty printing of JSON
 output.  This project will build with version 0.9 too, but will not
