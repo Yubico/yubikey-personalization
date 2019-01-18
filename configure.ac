@@ -165,6 +165,20 @@ if test -n "$udevrulesdir"; then
     AC_SUBST([udevrulesfile], [$udevrulesfile])
 fi
 
+# Enable more secure memset if available
+AC_CHECK_FUNCS([memset_s explicit_bzero explicit_memset])
+AC_MSG_CHECKING(whether we can use inline asm code)
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[]],
+  [[
+    int a = 42;
+    int *pnt = &a;
+    __asm__ __volatile__ ("" : : "r"(pnt) : "memory");
+  ]])],
+  [AC_MSG_RESULT(yes)
+     AC_DEFINE([HAVE_INLINE_ASM], [1], [inline asm code can be used])]
+  [AC_MSG_RESULT(no)]
+)
+
 gl_LD_VERSION_SCRIPT
 gl_VALGRIND_TESTS
 
