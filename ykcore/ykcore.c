@@ -170,6 +170,9 @@ int yk_get_serial(YK_KEY *yk, uint8_t slot, unsigned int flags, unsigned int *se
 					&response_len))
 		return 0;
 
+	if (response_len != expect_bytes)
+		return 0;
+
 	/* Serial number is stored in big endian byte order, despite
 	 * everything else in the YubiKey being little endian - for
 	 * some good reason I don't remember.
@@ -386,6 +389,9 @@ int yk_challenge_response(YK_KEY *yk, uint8_t yk_cmd, int may_block,
 				&bytes_read)) {
 		return 0;
 	}
+	if (bytes_read != expect_bytes)
+		return 0;
+
 	return 1;
 }
 
