@@ -983,9 +983,15 @@ static int _ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t le
 			}
 			buffer[12] = 0;
 			pos += snprintf(buf, len - (size_t)pos, "%s%s%s\n", str_oath_id, str_key_value_separator, buffer);
+			if (pos > len) {
+				return -1;
+			}
 		} else {
 			yubikey_modhex_encode(buffer, (const char *)ycfg.fixed, ycfg.fixedSize);
 			pos += snprintf(buf, len - (size_t)pos, "%s%s%s%s\n", str_fixed, str_key_value_separator, str_modhex_prefix, buffer);
+			if (pos > len) {
+				return -1;
+			}
 		}
 
 		/* uid: */
@@ -995,6 +1001,9 @@ static int _ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t le
 			yubikey_hex_encode(buffer, (const char *)ycfg.uid, UID_SIZE);
 		}
 		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s\n", str_uid, str_key_value_separator, buffer);
+		if (pos > len) {
+			return -1;
+		}
 
 		/* key: */
 		yubikey_hex_encode(buffer, (const char *)ycfg.key, KEY_SIZE);
@@ -1002,15 +1011,24 @@ static int _ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t le
 			yubikey_hex_encode(buffer + KEY_SIZE * 2, (const char *)ycfg.uid, 4);
 		}
 		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s%s\n", str_key, str_key_value_separator, str_hex_prefix, buffer);
+		if (pos > len) {
+			return -1;
+		}
 
 		/* acc_code: */
 		yubikey_hex_encode(buffer, (const char*)ycfg.accCode, ACC_CODE_SIZE);
 		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s%s\n", str_acc_code, str_key_value_separator, str_hex_prefix, buffer);
+		if (pos > len) {
+			return -1;
+		}
 
 		/* OATH IMF: */
 		if ((ycfg.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP &&
 		    capability_has_oath_imf(cfg)) {
 			pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s%lx\n", str_oath_imf, str_key_value_separator, str_hex_prefix, ykp_get_oath_imf(cfg));
+			if (pos > len) {
+				return -1;
+			}
 		}
 
 		/* ticket_flags: */
@@ -1026,6 +1044,9 @@ static int _ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t le
 			}
 		}
 		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s\n", str_ticket_flags, str_key_value_separator, buffer);
+		if (pos > len) {
+			return -1;
+		}
 
 		/* config_flags: */
 		buffer[0] = '\0';
@@ -1045,6 +1066,9 @@ static int _ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t le
 			}
 		}
 		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s\n", str_config_flags, str_key_value_separator, buffer);
+		if (pos > len) {
+			return -1;
+		}
 
 		/* extended_flags: */
 		buffer[0] = '\0';
@@ -1059,6 +1083,9 @@ static int _ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t le
 			}
 		}
 		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s\n", str_extended_flags, str_key_value_separator, buffer);
+		if (pos > len) {
+			return -1;
+		}
 
 		return pos;
 	}
