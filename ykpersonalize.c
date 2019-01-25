@@ -302,7 +302,7 @@ int main(int argc, char **argv)
 			}
 		}
 		commitlen = strlen(commitbuf);
-		if (commitbuf[commitlen - 1] == '\n')
+		if (commitlen > 0 && commitbuf[commitlen - 1] == '\n')
 			commitbuf[commitlen - 1] = '\0';
 		if (strcmp(commitbuf, "y") == 0
 		    || strcmp(commitbuf, "yes") == 0) {
@@ -369,7 +369,7 @@ int main(int argc, char **argv)
 						}
 					}
 					commitlen = strlen(commitbuf);
-					if (commitbuf[commitlen - 1] == '\n')
+					if (commitlen > 0 && commitbuf[commitlen - 1] == '\n')
 						commitbuf[commitlen - 1] = '\0';
 					if (strcmp(commitbuf, "y") != 0
 							&& strcmp(commitbuf, "yes") != 0) {

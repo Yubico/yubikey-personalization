@@ -222,6 +222,7 @@ void report_yk_error(void)
 }
 
 static int prompt_for_data(const char *prompt, char **data) {
+	size_t datalen;
 	fprintf(stderr, "%s", prompt);
 	fflush(stderr);
 	*data = calloc(257, sizeof(char));
@@ -230,8 +231,9 @@ static int prompt_for_data(const char *prompt, char **data) {
 			perror ("fgets");
 			return 1;
 	}
-	if((*data)[strlen(*data) - 1] == '\n') {
-			(*data)[strlen(*data) - 1] = '\0';
+	datalen = strlen(*data);
+	if(datalen > 0 && (*data)[datalen - 1] == '\n') {
+			(*data)[datalen - 1] = '\0';
 	}
 	return 0;
 }
