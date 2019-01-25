@@ -209,6 +209,9 @@ int _ykp_json_export_cfg(const YKP_CONFIG *cfg, char *json, size_t len) {
 #else
 	strncpy(json, json_object_to_json_string(jobj), len);
 #endif
+	if (len > 0) {
+		json[len - 1] = '\0';
+	}
 
 	/* free the root object, will free all children */
 	json_object_put(jobj);
