@@ -249,11 +249,11 @@ extern int optind;
  * Done in this way to be testable (see tests/test_args_to_config.c).
  */
 int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
-		   const char **infname, const char **outfname,
-		   int *data_format, bool *autocommit,
+		   size_t oathid_len, const char **infname,
+		   const char **outfname, int *data_format, bool *autocommit,
 		   YK_STATUS *st, bool *verbose, bool *dry_run,
 		   char **access_code, char **new_access_code,
-		   char *ndef_type, char *ndef,
+		   char *ndef_type, char *ndef, size_t ndef_len,
 		   unsigned char *usb_mode, bool *zap,
 		   unsigned char *scan_bin, unsigned char *cr_timeout,
 		   unsigned short *autoeject_timeout, int *num_modes_seen,
@@ -445,7 +445,10 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 				  if (!ykp_configure_command(cfg, command)) {
 					  return 0;
 				  }
-				  memcpy(ndef, optarg, strlen(optarg));
+				  strncpy(ndef, optarg, ndef_len);
+				  if (ndef_len > 0) {
+					  ndef[ndef_len - 1] = '\0';
+				  }
 				  ndef_seen = true;
 				  break;
 			  }
@@ -670,7 +673,10 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 				}
 			}
 			else if (strncmp(optarg, "oath-id=", 8) == 0 || strcmp(optarg, "oath-id") == 0) {
-				strcpy(oathid, optarg);
+				strncpy(oathid, optarg, oathid_len);
+				if (oathid_len > 0) {
+					oathid[oathid_len - 1] = '\0';
+				}
 			}
 
 #define EXTFLAG(o, f)							\

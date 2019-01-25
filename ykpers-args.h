@@ -37,14 +37,16 @@ const char *usage;
 const char *optstring;
 
 int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
-		   const char **infname, const char **outfname,
-		   int *data_format, bool *autocommit,
+		   size_t oathid_len, const char **infname,
+		   const char **outfname, int *data_format, bool *autocommit,
 		   YK_STATUS *st, bool *verbose, bool *dry_run,
 		   char **access_code, char **new_access_code,
-		   char *ndef_type, char *ndef, unsigned char *usb_mode,
-		   bool *zap, unsigned char *scan_bin, unsigned char *cr_timeout,
+		   char *ndef_type, char *ndef, size_t ndef_len,
+		   unsigned char *usb_mode, bool *zap,
+		   unsigned char *scan_bin, unsigned char *cr_timeout,
 		   unsigned short *autoeject_timeout, int *num_modes_seen,
-                   unsigned char *device_info, size_t *device_info_len, int *exit_code);
+		   unsigned char *device_info, size_t *device_info_len,
+		   int *exit_code);
 
 int set_oath_id(char *opt, YKP_CONFIG *cfg, YK_KEY *yk, YK_STATUS *st);
 
