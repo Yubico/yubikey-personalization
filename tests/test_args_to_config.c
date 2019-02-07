@@ -132,10 +132,10 @@ static int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 	ykp_errno = 0;
 
 /* getopt reinit (BSD systems use optreset and a different optind value) */
-#if defined(__GLIBC__) || defined(_WIN32)
-	optind = 0;
-#else
+#if defined __FreeBSD__ || defined __OpenBSD__ || defined __NetBSD__
 	optind = optreset = 1;
+#else
+	optind = 0;
 #endif
 
 	/* copy version number from st into cfg */
@@ -329,10 +329,10 @@ static void _test_non_config_args(void)
 	ykp_errno = 0;
 
 /* getopt reinit (BSD systems use optreset and a different optind value) */
-#if defined(__GLIBC__) || defined(_WIN32)
-	optind = 0;
-#else
+#if defined __FreeBSD__ || defined __OpenBSD__ || defined __NetBSD__
 	optind = optreset = 1;
+#else
+	optind = 0;
 #endif
 
 	/* copy version number from st into cfg */
