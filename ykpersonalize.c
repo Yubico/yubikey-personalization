@@ -149,12 +149,12 @@ int main(int argc, char **argv)
 	}
 
 	/* Parse all arguments in a testable way */
-	if (! args_to_config(argc, argv, cfg, oathid,
+	if (! args_to_config(argc, argv, cfg, oathid, sizeof(oathid),
 			     &infname, &outfname,
 			     &data_format, &autocommit,
 			     st, &verbose, &dry_run,
 			     &acc_code, &new_acc_code,
-			     &ndef_type, ndef_string,
+			     &ndef_type, ndef_string, sizeof(ndef_string),
 			     &usb_mode, &zap, scan_codes, &cr_timeout,
 			     &autoeject_timeout, &num_modes_seen,
 					 device_info, &device_info_len, &exit_code)) {
@@ -302,7 +302,7 @@ int main(int argc, char **argv)
 			}
 		}
 		commitlen = strlen(commitbuf);
-		if (commitbuf[commitlen - 1] == '\n')
+		if (commitlen > 0 && commitbuf[commitlen - 1] == '\n')
 			commitbuf[commitlen - 1] = '\0';
 		if (strcmp(commitbuf, "y") == 0
 		    || strcmp(commitbuf, "yes") == 0) {
@@ -369,7 +369,7 @@ int main(int argc, char **argv)
 						}
 					}
 					commitlen = strlen(commitbuf);
-					if (commitbuf[commitlen - 1] == '\n')
+					if (commitlen > 0 && commitbuf[commitlen - 1] == '\n')
 						commitbuf[commitlen - 1] = '\0';
 					if (strcmp(commitbuf, "y") != 0
 							&& strcmp(commitbuf, "yes") != 0) {

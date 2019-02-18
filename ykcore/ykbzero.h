@@ -1,6 +1,6 @@
 /* -*- mode:C; c-file-style: "bsd" -*- */
 /*
- * Copyright (c) 2008-2014 Yubico AB
+ * Copyright (c) 2008-2019 Yubico AB
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,34 +28,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef YKPERS_ARGS_H
-#define YKPERS_ARGS_H
+#ifndef	__YKBZERO_H_INCLUDED__
+#define	__YKBZERO_H_INCLUDED__
 
-#include "ykpers.h"
-
-const char *usage;
-const char *optstring;
-
-int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
-		   size_t oathid_len, const char **infname,
-		   const char **outfname, int *data_format, bool *autocommit,
-		   YK_STATUS *st, bool *verbose, bool *dry_run,
-		   char **access_code, char **new_access_code,
-		   char *ndef_type, char *ndef, size_t ndef_len,
-		   unsigned char *usb_mode, bool *zap,
-		   unsigned char *scan_bin, unsigned char *cr_timeout,
-		   unsigned short *autoeject_timeout, int *num_modes_seen,
-		   unsigned char *device_info, size_t *device_info_len,
-		   int *exit_code);
-
-int set_oath_id(char *opt, YKP_CONFIG *cfg, YK_KEY *yk, YK_STATUS *st);
-
-void report_yk_error(void);
-
-int hex_modhex_decode(unsigned char *result, size_t *resultlen,
-    const char *str, size_t strl,
-    size_t minsize, size_t maxsize,
-    bool primarily_modhex);
-
-
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <string.h>
 #endif
+
+#ifdef _WIN32
+#define insecure_memzero(buf, len) SecureZeroMemory(buf, len)
+#elif HAVE_MEMSET_S
+#define insecure_memzero(buf, len) memset_s(buf, len, 0, len)
+#elif HAVE_EXPLICIT_BZERO
+#define insecure_memzero(buf, len) explicit_bzero(buf, len)
+#elif HAVE_EXPLICIT_MEMSET
+#define insecure_memzero(buf, len) explicit_memset(buf, 0, len)
+#elif HAVE_INLINE_ASM
+#define insecure_memzero(buf, len) do {                                 \
+                memset(buf, 0, len);                                    \
+                __asm__ __volatile__ ("" : : "r"(buf) : "memory");      \
+        } while (0)
+#else
+#define insecure_memzero(buf, len) do {                                 \
+                volatile unsigned char *volatile __buf_ =               \
+                        (volatile unsigned char *volatile)buf;          \
+                size_t __i_ = 0;                                        \
+                while (__i_ < len) __buf_[__i_++] = 0;                  \
+        } while (0)
+#endif
+
+#endif	/* __YKBZERO_H_INCLUDED__ */

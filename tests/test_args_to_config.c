@@ -142,12 +142,12 @@ static int _test_config (YKP_CONFIG *cfg, YK_STATUS *st, int argc, char **argv)
 	assert(ykp_configure_for(cfg, 1, st) == 1);
 
 	/* call args_to_config from ykpers-args.c with a fake set of program arguments */
-	rc = args_to_config(argc, argv, cfg, oathid,
+	rc = args_to_config(argc, argv, cfg, oathid, sizeof(oathid),
 			    &infname, &outfname,
 			    &data_format, &autocommit,
 			    st, &verbose, &dry_run,
 			    &access_code, &new_access_code,
-			    &ndef_type, ndef, &usb_mode, &zap,
+			    &ndef_type, ndef, sizeof(ndef), &usb_mode, &zap,
 			    scan_map, &cr_timeout, &autoeject_timeout, &num_modes_seen,
 			    device_info, &device_info_len, &exit_code);
 
@@ -340,12 +340,12 @@ static void _test_non_config_args(void)
 	//assert(ykp_configure_for(cfg, 1, st) == 1);
 
 	/* call args_to_config from ykpers-args.c with a fake set of program arguments */
-	rc = args_to_config(argc, argv, cfg, oathid,
+	rc = args_to_config(argc, argv, cfg, oathid, sizeof(oathid),
 			    &infname, &outfname,
 			    &data_format, &autocommit,
 			    st, &verbose, &dry_run,
 			    &access_code, &new_access_code,
-			    &ndef_type, ndef, &usb_mode, &zap,
+			    &ndef_type, ndef, sizeof(ndef), &usb_mode, &zap,
 			    scan_map, &cr_timeout, &autoeject_timeout, &num_modes_seen,
 			    device_info, &device_info_len, &exit_code);
 	assert(rc == 1);

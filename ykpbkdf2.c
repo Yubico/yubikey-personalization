@@ -54,6 +54,9 @@ int yk_pbkdf2(const char *passphrase,
 	      unsigned char *dk, size_t dklen,
 	      YK_PRF_METHOD *prf_method)
 {
+	if (salt_len > 256) {
+		return 0;
+	}
 	size_t l = ((dklen - 1 + prf_method->output_size)
 		    / prf_method->output_size);
 #if 0 /* r for "rest" is unused but may be interesting in the future */

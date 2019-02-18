@@ -31,6 +31,7 @@
 #include "ykcore_lcl.h"
 #include "ykcore_backend.h"
 #include "yktsd.h"
+#include "ykbzero.h"
 
 /* To get modhex and crc16 */
 #include <yubikey.h>
@@ -170,6 +171,9 @@ int yk_get_serial(YK_KEY *yk, uint8_t slot, unsigned int flags, unsigned int *se
 					&response_len))
 		return 0;
 
+	if (response_len != expect_bytes)
+		return 0;
+
 	/* Serial number is stored in big endian byte order, despite
 	 * everything else in the YubiKey being little endian - for
 	 * some good reason I don't remember.
@@ -259,6 +263,7 @@ int yk_write_device_info(YK_KEY *yk, unsigned char *buf, unsigned int len)
 int yk_write_command(YK_KEY *yk, YK_CONFIG *cfg, uint8_t command,
 		    unsigned char *acc_code)
 {
+	int ret;
 	unsigned char buf[sizeof(YK_CONFIG) + ACC_CODE_SIZE];
 
 	/* Update checksum and insert config block in buffer if present */
@@ -277,8 +282,9 @@ int yk_write_command(YK_KEY *yk, YK_CONFIG *cfg, uint8_t command,
 	if (acc_code)
 		memcpy(buf + sizeof(YK_CONFIG), acc_code, ACC_CODE_SIZE);
 
-	return _yk_write(yk, command, buf, sizeof(buf));
-
+	ret = _yk_write(yk, command, buf, sizeof(buf));
+	insecure_memzero(buf, sizeof(buf));
+	return ret;
 }
 
 int yk_write_config(YK_KEY *yk, YK_CONFIG *cfg, int confnum,
@@ -386,6 +392,9 @@ int yk_challenge_response(YK_KEY *yk, uint8_t yk_cmd, int may_block,
 				&bytes_read)) {
 		return 0;
 	}
+	if (bytes_read != expect_bytes)
+		return 0;
+
 	return 1;
 }
 
@@ -654,6 +663,7 @@ int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount)
 	YK_FRAME frame;
 	unsigned char repbuf[FEATURE_RPT_SIZE];
 	int i, seq;
+	int ret = 0;
 	unsigned char *ptr, *end;
 
 	if (bufcount > sizeof(frame.payload)) {
@@ -703,16 +713,20 @@ int yk_write_to_key(YK_KEY *yk, uint8_t slot, const void *buf, int bufcount)
 		 */
 		if (! yk_wait_for_key_status(yk, slot, 0, WAIT_FOR_WRITE_FLAG,
 					     false, SLOT_WRITE_FLAG, NULL))
-			return 0;
+			goto end;
 #ifdef YK_DEBUG
 		_yk_hexdump(repbuf, FEATURE_RPT_SIZE);
 #endif
 		if (!_ykusb_write(yk, REPORT_TYPE_FEATURE, 0,
 				  (char *)repbuf, FEATURE_RPT_SIZE))
-			return 0;
+			goto end;
 	}
 
-	return 1;
+	ret = 1;
+end:
+	insecure_memzero(&frame, sizeof(YK_FRAME));
+	insecure_memzero(repbuf, sizeof(repbuf));
+	return ret;
 }
 
 int yk_force_key_update(YK_KEY *yk)

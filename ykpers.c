@@ -938,6 +938,7 @@ static int _ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t le
 		int mode = MODE_OTP_YUBICO;
 
 		int pos = 0;
+		int written;
 
 		if((ycfg.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP){
 			if((ycfg.cfgFlags & CFGFLAG_CHAL_HMAC) == CFGFLAG_CHAL_HMAC) {
@@ -982,10 +983,18 @@ static int _ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t le
 				yubikey_hex_encode(buffer + 4, (const char *)ycfg.fixed + 2, 8);
 			}
 			buffer[12] = 0;
-			pos += snprintf(buf, len - (size_t)pos, "%s%s%s\n", str_oath_id, str_key_value_separator, buffer);
+			written = snprintf(buf, len - (size_t)pos, "%s%s%s\n", str_oath_id, str_key_value_separator, buffer);
+			if (written < 0 || pos + written > len) {
+				return -1;
+			}
+			pos += written;
 		} else {
 			yubikey_modhex_encode(buffer, (const char *)ycfg.fixed, ycfg.fixedSize);
-			pos += snprintf(buf, len - (size_t)pos, "%s%s%s%s\n", str_fixed, str_key_value_separator, str_modhex_prefix, buffer);
+			written = snprintf(buf, len - (size_t)pos, "%s%s%s%s\n", str_fixed, str_key_value_separator, str_modhex_prefix, buffer);
+			if (written < 0 || pos + written > len) {
+				return -1;
+			}
+			pos += written;
 		}
 
 		/* uid: */
@@ -994,23 +1003,39 @@ static int _ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t le
 		} else {
 			yubikey_hex_encode(buffer, (const char *)ycfg.uid, UID_SIZE);
 		}
-		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s\n", str_uid, str_key_value_separator, buffer);
+		written = snprintf(buf + pos, len - (size_t)pos, "%s%s%s\n", str_uid, str_key_value_separator, buffer);
+		if (written < 0 || pos + written > len) {
+			return -1;
+		}
+		pos += written;
 
 		/* key: */
 		yubikey_hex_encode(buffer, (const char *)ycfg.key, KEY_SIZE);
 		if (key_bits_in_uid) {
 			yubikey_hex_encode(buffer + KEY_SIZE * 2, (const char *)ycfg.uid, 4);
 		}
-		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s%s\n", str_key, str_key_value_separator, str_hex_prefix, buffer);
+		written = snprintf(buf + pos, len - (size_t)pos, "%s%s%s%s\n", str_key, str_key_value_separator, str_hex_prefix, buffer);
+		if (written < 0 || pos + written > len) {
+			return -1;
+		}
+		pos += written;
 
 		/* acc_code: */
 		yubikey_hex_encode(buffer, (const char*)ycfg.accCode, ACC_CODE_SIZE);
-		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s%s\n", str_acc_code, str_key_value_separator, str_hex_prefix, buffer);
+		written = snprintf(buf + pos, len - (size_t)pos, "%s%s%s%s\n", str_acc_code, str_key_value_separator, str_hex_prefix, buffer);
+		if (written < 0 || pos + written > len) {
+			return -1;
+		}
+		pos += written;
 
 		/* OATH IMF: */
 		if ((ycfg.tktFlags & TKTFLAG_OATH_HOTP) == TKTFLAG_OATH_HOTP &&
 		    capability_has_oath_imf(cfg)) {
-			pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s%lx\n", str_oath_imf, str_key_value_separator, str_hex_prefix, ykp_get_oath_imf(cfg));
+			written = snprintf(buf + pos, len - (size_t)pos, "%s%s%s%lx\n", str_oath_imf, str_key_value_separator, str_hex_prefix, ykp_get_oath_imf(cfg));
+			if (written < 0 || pos + written > len) {
+				return -1;
+			}
+			pos += written;
 		}
 
 		/* ticket_flags: */
@@ -1025,7 +1050,11 @@ static int _ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t le
 				strncat(buffer, p->flag_text, 256 - strlen(buffer));
 			}
 		}
-		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s\n", str_ticket_flags, str_key_value_separator, buffer);
+		written = snprintf(buf + pos, len - (size_t)pos, "%s%s%s\n", str_ticket_flags, str_key_value_separator, buffer);
+		if (written < 0 || pos + written > len) {
+			return -1;
+		}
+		pos += written;
 
 		/* config_flags: */
 		buffer[0] = '\0';
@@ -1044,7 +1073,11 @@ static int _ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t le
 				t_flags -= p->flag;
 			}
 		}
-		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s\n", str_config_flags, str_key_value_separator, buffer);
+		written = snprintf(buf + pos, len - (size_t)pos, "%s%s%s\n", str_config_flags, str_key_value_separator, buffer);
+		if (written < 0 || pos + written > len) {
+			return -1;
+		}
+		pos += written;
 
 		/* extended_flags: */
 		buffer[0] = '\0';
@@ -1058,7 +1091,11 @@ static int _ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t le
 				strncat(buffer, p->flag_text, 256 - strlen(buffer));
 			}
 		}
-		pos += snprintf(buf + pos, len - (size_t)pos, "%s%s%s\n", str_extended_flags, str_key_value_separator, buffer);
+		written = snprintf(buf + pos, len - (size_t)pos, "%s%s%s\n", str_extended_flags, str_key_value_separator, buffer);
+		if (written < 0 || pos + written > len) {
+			return -1;
+		}
+		pos += written;
 
 		return pos;
 	}
