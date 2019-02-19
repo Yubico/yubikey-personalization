@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 LIBYUBIKEYVERSION=1.13
-LIBJSONVERSION=0.11
+LIBJSONVERSION=0.13.1
 PROJECT=yubikey-personalization
 PACKAGE=ykpers
 
@@ -50,7 +50,7 @@ ykpers4win:
 		||	wget --no-check-certificate https://s3.amazonaws.com/json-c_releases/releases/json-c-$(LIBJSONVERSION).tar.gz && \
 	tar xfa json-c-$(LIBJSONVERSION).tar.gz && \
 	cd json-c-$(LIBJSONVERSION) && \
-	ac_cv_func_realloc_0_nonnull=yes ac_cv_func_malloc_0_nonnull=yes ./configure --host=$(HOST) --build=x86_64-unknown-linux-gnu --prefix=$(PWD)/tmp/root && \
+	CC="$(HOST)-gcc -static-libgcc" ac_cv_func_realloc_0_nonnull=yes ac_cv_func_malloc_0_nonnull=yes ./configure --host=$(HOST) --build=x86_64-unknown-linux-gnu --prefix=$(PWD)/tmp/root && \
 	make install && \
 	cp COPYING $(PWD)/tmp/root/licenses/json-c.txt && \
 	cd .. && \
