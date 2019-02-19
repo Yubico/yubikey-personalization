@@ -171,9 +171,6 @@ int yk_get_serial(YK_KEY *yk, uint8_t slot, unsigned int flags, unsigned int *se
 					&response_len))
 		return 0;
 
-	if (response_len != expect_bytes)
-		return 0;
-
 	/* Serial number is stored in big endian byte order, despite
 	 * everything else in the YubiKey being little endian - for
 	 * some good reason I don't remember.
@@ -392,8 +389,6 @@ int yk_challenge_response(YK_KEY *yk, uint8_t yk_cmd, int may_block,
 				&bytes_read)) {
 		return 0;
 	}
-	if (bytes_read != expect_bytes)
-		return 0;
 
 	return 1;
 }
@@ -623,11 +618,22 @@ int yk_read_response_from_key(YK_KEY *yk, uint8_t slot, unsigned int flags,
 			if ((data[FEATURE_RPT_SIZE - 1] & 31) == 0) {
 				if (expect_bytes > 0) {
 					/* Size of response is known. Verify CRC. */
-					int crc = yubikey_crc16(buf, expect_bytes + 2);
+					expect_bytes += 2;
+					int crc = yubikey_crc16(buf, expect_bytes);
 					if (crc != YK_CRC_OK_RESIDUAL) {
 						yk_errno = YK_ECHECKSUM;
 						return 0;
 					}
+				}
+
+				/* since we get data in chunks of 7 we need to round expect bytes out to the closest higher multiple of 7 */
+				if(expect_bytes % 7 != 0) {
+					expect_bytes += 7 - (expect_bytes % 7);
+				}
+
+				if (*bytes_read != expect_bytes) {
+					yk_errno = YK_EWRONGSIZ;
+					return 0;
 				}
 
 				/* Reset read mode of Yubikey before returning. */
