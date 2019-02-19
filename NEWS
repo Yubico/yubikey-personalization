@@ -1,5 +1,7 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
+* Version 1.19.3 (unreleased)
+
 * Version 1.19.2 (released 2019-02-19)
 
 ** Fix test on mac.
