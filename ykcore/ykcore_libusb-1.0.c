@@ -161,7 +161,7 @@ extern int _ykusb_stop(void)
 	return 0;
 }
 
-void *_ykusb_open_device(int vendor_id, int *product_ids, size_t pids_len, int index)
+void *_ykusb_open_device(int vendor_id, const int *product_ids, size_t pids_len, int index)
 {
 	libusb_device *dev = NULL;
 	libusb_device_handle *h = NULL;

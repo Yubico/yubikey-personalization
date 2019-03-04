@@ -279,3 +279,10 @@ LIBYKPERS_1.19 {
   yk_write_device_info;
 # Variables:
 } LIBYKPERS_1.18;
+
+LIBYKPERS_1.20 {
+  global:
+# Functions:
+  yk_open_key_vid_pid;
+# Variables:
+} LIBYKPERS_1.19;
