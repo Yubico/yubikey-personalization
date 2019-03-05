@@ -81,8 +81,8 @@ while sleep 1; do
 
     echo "notice: Found YubiKey serial $serialno with old unlock code $oldunlock..."
 
-    secret=`dd if=/dev/urandom bs=20 count=1 2>/dev/null | hexdump -v -e '/1 "%02x"'`
-    new_unlock=`dd if=/dev/urandom bs=6 count=1 2>/dev/null | hexdump -v -e '/1 "%02x"'`
+    secret=`dd if=/dev/urandom 2>/dev/null | tr -d '[:upper:]' | tr -cd '[:xdigit:]' | fold -w40 | head -1`
+    new_unlock=`dd if=/dev/urandom 2>/dev/null | tr -d '[:upper:]' | tr -cd '[:xdigit:]' | fold -w12 | head -1`
     seed=`dd if=/dev/urandom bs=2 count=1 2>/dev/null | hexdump -v -e '/2 "%u"'`
     seed=`expr "$seed" "*" 16`
 
