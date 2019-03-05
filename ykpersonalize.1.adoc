@@ -397,7 +397,9 @@ EXAMPLES
 
 Programming for YubiCloud:
 
- ykpersonalize -1 -ouid=h:`dd if=/dev/urandom bs=1 count=6 status=none | hexdump -e '/1 "%02x"'` -ofixed=h:ff`dd if=/dev/urandom bs=1 count=5 status=none | hexdump -e '/1 "%02x"'`
+ ouid=`dd if=/dev/urandom 2>/dev/null | tr -d '[:upper:]' | tr -cd '[:xdigit:]' | fold -w12 | head -1`
+ ofixed=ff`dd if=/dev/urandom 2>/dev/null | tr -d '[:upper:]' | tr -cd '[:xdigit:]' | fold -w10 | head -1`
+ ykpersonalize -1 -ouid=h:$ouid -ofixed=h:$ofixed
 
 This will program a key with a random 6 byte uid and a 12 character fixed
 string starting with vv. This is suitable for upload to YubiCloud at
