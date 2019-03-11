@@ -80,14 +80,9 @@ YK_KEY *yk_open_first_key(void)
 	return yk_open_key(0);
 }
 
-YK_KEY *yk_open_key(int index)
+YK_KEY *yk_open_key_vid_pid(int vid, const int* pids, size_t pids_len, int index)
 {
-	int pids[] = {YUBIKEY_PID, NEO_OTP_PID, NEO_OTP_CCID_PID,
-		NEO_OTP_U2F_PID, NEO_OTP_U2F_CCID_PID, YK4_OTP_PID,
-		YK4_OTP_U2F_PID, YK4_OTP_CCID_PID, YK4_OTP_U2F_CCID_PID,
-		PLUS_U2F_OTP_PID};
-
-	YK_KEY *yk = _ykusb_open_device(YUBICO_VID, pids, sizeof(pids) / sizeof(int), index);
+	YK_KEY *yk = _ykusb_open_device(vid, pids, pids_len, index);
 	int rc = yk_errno;
 
 	if (yk) {
@@ -101,6 +96,16 @@ YK_KEY *yk_open_key(int index)
 	}
 	yk_errno = rc;
 	return yk;
+}
+
+static const int yubico_pids[] = {YUBIKEY_PID, NEO_OTP_PID, NEO_OTP_CCID_PID,
+	NEO_OTP_U2F_PID, NEO_OTP_U2F_CCID_PID, YK4_OTP_PID,
+	YK4_OTP_U2F_PID, YK4_OTP_CCID_PID, YK4_OTP_U2F_CCID_PID,
+	PLUS_U2F_OTP_PID};
+
+YK_KEY *yk_open_key(int index)
+{
+	yk_open_key_vid_pid(YUBICO_VID, yubico_pids, sizeof(yubico_pids) / sizeof(yubico_pids[0]), index);
 }
 
 int yk_close_key(YK_KEY *yk)
