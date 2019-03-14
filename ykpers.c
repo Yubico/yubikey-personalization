@@ -32,6 +32,7 @@
 #include "ykpbkdf2.h"
 #include "yktsd.h"
 #include "ykpers-json.h"
+#include "ykcore/ykbzero.h"
 
 #include <ykpers.h>
 
@@ -408,7 +409,7 @@ int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 			}
 		}
 
-		memset (buf, 0, sizeof(buf));
+		insecure_memzero (buf, sizeof(buf));
 		return rc;
 	}
 	return 0;
