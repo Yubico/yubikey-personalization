@@ -105,7 +105,7 @@ static const int yubico_pids[] = {YUBIKEY_PID, NEO_OTP_PID, NEO_OTP_CCID_PID,
 
 YK_KEY *yk_open_key(int index)
 {
-	yk_open_key_vid_pid(YUBICO_VID, yubico_pids, sizeof(yubico_pids) / sizeof(yubico_pids[0]), index);
+	return yk_open_key_vid_pid(YUBICO_VID, yubico_pids, sizeof(yubico_pids) / sizeof(yubico_pids[0]), index);
 }
 
 int yk_close_key(YK_KEY *yk)
