@@ -32,21 +32,21 @@ and is then normally used for static key generation. In this
 configuration, the option flags **-oappend-cr**, **-ostatic-ticket**,
 **-ostrong-pw1**, *-ostrong-pw2* and *-oman-update* are set by default.
 
-*-z*:: delete configuration in selected slot
+*-z*:: delete configuration in selected slot.
 
-*-s*'file':: save configuration to file instead of key. (if file
-is -, send to stdout)
+*-s*'file':: save configuration to file instead of key (if file
+is -, send to stdout).
 
-*-i*'file':: read configuration from file. (if file is -, read
-from stdin) Configuration import is only valid for the ycfg format.
+*-i*'file':: read configuration from file (if file is -, read
+from stdin). Configuration import is only valid for the ycfg format.
 
 *-f*'format':: format to be used with *-s* and *-i*. Valid options are *ycfg* and *legacy*.
 
-*-a*['xxx']:: the AES secret key as a 32 (or 40 for OATH-HOTP/HMAC CHAL-RESP) char hex value (not modhex) (none to prompt for key on stdin) If *-a* is not used a random key will be generated.
+*-a*['xxx']:: the AES secret key as a 32 (or 40 for OATH-HOTP/HMAC CHAL-RESP) char hex value (not modhex) (none to prompt for key on stdin). If *-a* is not used a random key will be generated.
 
-*-c*['xxx']:: A 12 char hex value (not modhex) to use as access
-code for programming. NOTE: this does NOT SET the access code, that’s
-done with **-oaccess**__=__. If no argument is provided code is prompted for on stdin.
+*-c*['xxx']:: a 12 char hex value (not modhex) to use as the access
+code for programming. NOTE: this does NOT SET the access code. That is
+done with **-oaccess**__=__. If no argument is provided the code is prompted for on stdin.
 
 *-o*'option':: change configuration option. Possible option arguments are:
 
@@ -62,22 +62,22 @@ identifier for the user, for example.
 
 *oath-imf*='xxx'::: Set OATH Initial Moving Factor. This is the initial counter value for the YubiKey. This should be a value between 0 and 1048560, evenly dividable by 16.
 
-[-]'ticket-flag'::: Set/clear ticket flag, see the section 'Ticket flags'
+[-]'ticket-flag'::: Set/clear ticket flag, see the section link:#ticket-flags['Ticket Flags'].
 
-[-]'configuration-flag'::: Set/clear ticket flag, see the section 'Configuration flags'
+[-]'configuration-flag'::: Set/clear configuration flag, see the section link:#configuration-flags['Configuration flags'].
 
-*-y*:: always commit without prompting
-*-d*:: dry-run, run without writing a YubiKey
-*-v*:: Be more verbose
-*-h*:: Help
-*-V*:: Version
+*-y*:: always commit without prompting.
+*-d*:: dry-run, run without writing a YubiKey.
+*-v*:: be more verbose.
+*-h*:: display help.
+*-V*:: display version.
 
 
 === YubiKey Neo only
 
-*-n* URI:: Program NFC NDEF URI
+*-n* URI:: program NFC NDEF URI.
 
-*-t* text:: Program NFC NDEF text
+*-t* text:: program NFC NDEF text.
 
 === YubiKey 3 and 4 only
 
@@ -99,9 +99,9 @@ press for challenge response (default is 15) +
  autoeject_timeout is the timeout in seconds before the card is
 automatically ejected in mode 81
 
-Removing OTP mode also disable communication between ykpersonalize and
-the YubiKey, further mode changes will have to be done with ykneomgr (for CCID mode) 
-or u2f-host (for U2F mode)
+Removing OTP mode also disables communication between ykpersonalize and
+the YubiKey. Further mode changes will have to be done with ykneomgr (for CCID mode) 
+or u2f-host (for U2F mode).
 
 === YubiKey 3 and above
 
@@ -117,7 +117,7 @@ The default scanmap in the YubiKey is:
 
  06050708090a0b0c0d0e0f111517181986858788898a8b8c8d8e8f9195979899271e1f202122232425269e2b28
 +
-An example for simplified us dvorak would be:
+An example for simplified U.S. Dvorak would be:
 
  0c110b071c180d0a0619130f120e09378c918b879c988d8a8699938f928e89b7271e1f202122232425269e2b28
 +
@@ -125,7 +125,7 @@ Or for a French azerty keyboard (digits are shifted):
 
  06050708090a0b0c0d0e0f111517181986858788898a8b8c8d8e8f9195979899a79e9fa0a1a2a3a4a5a6382b28
 +
-Or for a French BÉPO keyboard (French DVORAK):
+Or for a French BÉPO keyboard (French Dvorak):
 
  0b140c0938363707130512330f0d16188b948c89b8b6b787938592b38f8d9698a79e9fa0a1a2a3a4a5a69c2b28
 +
@@ -163,17 +163,15 @@ Send a tab character between the fixed part and the one-time password
 part. This is useful if you have the fixed portion equal to the user
 name and two input fields that you navigate between using tab.
 
-[-]*append-tab2*::
+[-]*append-tab2*:: Send a tab character as the last character.
 
-Send a tab character as the last character.
-
-[-]*append-delay1*:: add a half-second delay before sending the one-time password part. This
+[-]*append-delay1*:: Add a half-second delay before sending the one-time password part. This
 option is only valid for firmware 1.x and 2.x.
 
-[-]*append-delay2*:: a half-second delay after sending the one-time password part. This
+[-]*append-delay2*:: Add a half-second delay after sending the one-time password part. This
 option is only valid for firmware 1.x and 2.x.
 
-[-]*append-cr*:: a carriage return after sending the one-time password part.
+[-]*append-cr*:: Add a carriage return after sending the one-time password part.
 
 
 === YubiKey 2.0 firmware and above
@@ -255,21 +253,13 @@ Enable user-initiated update of the static password. Only makes sense
 with the *-ostatic-ticket* option. This is only valid for firmware 2.x.
 
 === YubiKey 2.1 firmware and above
-[-]*oath-hotp8*::
+[-]*oath-hotp8*:: Generate an 8-digit HOTP rather than a 6-digit one.
 
-When set, generate an 8-digit HOTP rather than a 6-digit one.
+[-]*oath-fixed-modhex1*:: Send the first byte of the fixed part as modhex.
 
-[-]*oath-fixed-modhex1*::
+[-]*oath-fixed-modhex2*:: Send the first two bytes of the fixed part as modhex.
 
-When set, the first byte of the fixed part is sent as modhex.
-
-[-]*oath-fixed-modhex2*::
-
-When set, the first two bytes of the fixed part is sent as modhex.
-
-[-]*oath-fixed-modhex*::
-
-When set, the fixed part is sent as modhex.
+[-]*oath-fixed-modhex*:: Send the fixed part is as modhex.
 
 *oath-id*=m:OOTTUUUUUUUU::
 
