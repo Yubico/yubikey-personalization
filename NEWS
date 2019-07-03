@@ -1,6 +1,8 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.20.0 (released 2019-07-03d)
+* Version 1.20.1 (unreleased)
+
+* Version 1.20.0 (released 2019-07-03)
 
 ** Add yk_open_key_vid_pid() allowing vid and pid to be specified.
 
