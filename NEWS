@@ -1,6 +1,14 @@
 Yubikey-personalize NEWS -- History of user-visible changes.     -*- outline -*-
 
-* Version 1.19.4 (unreleased)
+* Version 1.20.0 (released 2019-07-03d)
+
+** Add yk_open_key_vid_pid() allowing vid and pid to be specified.
+
+** Documentation fixes.
+
+** Clear potentially sensitive material from buffers.
+
+** Fix potential buffer overwrite.
 
 * Version 1.19.3 (released 2019-02-22)
 
