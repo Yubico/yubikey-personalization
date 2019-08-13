@@ -100,8 +100,7 @@ press for challenge response (default is 15) +
 automatically ejected in mode 81
 
 Removing OTP mode also disables communication between ykpersonalize and
-the YubiKey. Further mode changes will have to be done with ykneomgr (for CCID mode) 
-or u2f-host (for U2F mode).
+the YubiKey. Further mode changes will have to be done with other tools.
 
 === YubiKey 3 and above
 
