@@ -137,6 +137,14 @@ AC_MSG_CHECKING([whether to use json library])
 AC_MSG_RESULT([$with_json])
 AM_CONDITIONAL([JSON], [test "$with_json" = yes])
 
+# --disable-documentation
+AC_ARG_ENABLE([documentation],
+	      [AS_HELP_STRING([--disable-documentation],
+			     [do not build documentation])],
+			     [enable_doc="${enableval}" ],
+			     [enable_doc="yes"])
+AM_CONDITIONAL(ENABLE_DOC, test "$enable_doc" != "no")
+
 # Check for json_object_to_json_string_ext, needed for pretty printing.
 am_save_CFLAGS="$CFLAGS"
 am_save_LIBS="$LIBS"
