@@ -32,6 +32,7 @@ missing features or incompatibilities.
 |1.17.2 |4.2      |4.2 is YubiKey 4
 |1.17.3 |4.3      |
 |1.18.1 |4.4 & 3.5|4.4 is YubiKey 4, 3.5 is the NEO
+|1.20.0 |5.0      |5.0 is YubiKey 5
 
 |=========================================================
 
