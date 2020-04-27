@@ -48,17 +48,17 @@ int main(int argc, char **argv)
 	FILE *outf = NULL; const char *outfname = NULL;
 	int data_format = YKP_FORMAT_LEGACY;
 	bool verbose = false;
-	unsigned char access_code[256];
+	unsigned char access_code[256] = {0};
 	char *acc_code = NULL;
 	char *new_acc_code = NULL;
-	unsigned char scan_codes[sizeof(SCAN_MAP)];
-	unsigned char device_info[128];
+	unsigned char scan_codes[sizeof(SCAN_MAP)] = {0};
+	unsigned char device_info[128] = {0};
 	size_t device_info_len = 0;
 	YK_KEY *yk = 0;
 	YKP_CONFIG *cfg = ykp_alloc();
 	YK_STATUS *st = ykds_alloc();
 	bool autocommit = false;
-	char data[1024];
+	char data[1024] = {0};
 	bool dry_run = false;
 
 	/* Options */
@@ -184,7 +184,7 @@ int main(int argc, char **argv)
 		}
 	}
 	if(new_acc_code) {
-		unsigned char accbin[256];
+		unsigned char accbin[256] = {0};
 		size_t accbinlen = 0;
 		int rc = hex_modhex_decode (accbin, &accbinlen,
 				new_acc_code, strlen(new_acc_code),
@@ -261,7 +261,8 @@ int main(int argc, char **argv)
 			goto err;
 		}
 	} else {
-		char commitbuf[256]; size_t commitlen;
+		char commitbuf[256] = {0};
+		size_t commitlen;
 
 		if (ykp_command(cfg) == SLOT_SWAP) {
 			fprintf(stderr, "Configuration in slot 1 and 2 will be swapped\n");

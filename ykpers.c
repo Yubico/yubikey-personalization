@@ -264,7 +264,7 @@ int ykp_get_supported_key_length(const YKP_CONFIG *cfg)
 
 /* Decode 128 bit AES key into cfg->ykcore_config.key */
 int ykp_AES_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
-	char aesbin[256];
+	char aesbin[256] = {0};
 
 	/* Make sure that the hexkey is exactly 32 characters */
 	if (strlen(hexkey) != 32) {
@@ -311,7 +311,7 @@ int ykp_HMAC_key_from_raw(YKP_CONFIG *cfg, const char *key) {
  * and 32 bits into the first four bytes of cfg->ykcore_config.uid.
 */
 int ykp_HMAC_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
-	char aesbin[256];
+	char aesbin[256] = {0};
 	size_t i;
 
 	/* Make sure that the hexkey is exactly 40 characters */
@@ -351,9 +351,9 @@ int ykp_AES_key_from_passphrase(YKP_CONFIG *cfg, const char *passphrase,
 			0
 		};
 		const char **random_place;
-		uint8_t _salt[8];
+		uint8_t _salt[8] = {0};
 		size_t _salt_len = 0;
-		unsigned char buf[sizeof(cfg->ykcore_config.key) + 4];
+		unsigned char buf[sizeof(cfg->ykcore_config.key) + 4] = {0};
 		int rc;
 		int key_bytes = ykp_get_supported_key_length(cfg);
 		YK_PRF_METHOD prf_method = {20, yk_hmac_sha1};
@@ -931,7 +931,7 @@ static const char str_extended_flags[] = "extended_flags";
 
 static int _ykp_legacy_export_config(const YKP_CONFIG *cfg, char *buf, size_t len) {
 	if (cfg) {
-		char buffer[256];
+		char buffer[256] = {0};
 		struct map_st *p;
 		unsigned char t_flags;
 		bool key_bits_in_uid = false;
@@ -1131,7 +1131,7 @@ int ykp_write_config(const YKP_CONFIG *cfg,
 				   void *userdata),
 		     void *userdata) {
 	if(cfg) {
-		char buffer[1024];
+		char buffer[1024] = {0};
 		int ret = _ykp_legacy_export_config(cfg, buffer, 1024);
 		if(ret) {
 			writer(buffer, strlen(buffer), userdata);
