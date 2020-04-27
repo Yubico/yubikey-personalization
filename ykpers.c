@@ -280,6 +280,7 @@ int ykp_AES_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
 
 	yubikey_hex_decode(aesbin, hexkey, sizeof(aesbin));
 	memcpy(cfg->ykcore_config.key, aesbin, sizeof(cfg->ykcore_config.key));
+	insecure_memzero (aesbin, sizeof(aesbin));
 
 	return 0;
 }
@@ -330,6 +331,7 @@ int ykp_HMAC_key_from_hex(YKP_CONFIG *cfg, const char *hexkey) {
 	i = sizeof(cfg->ykcore_config.key);
 	memcpy(cfg->ykcore_config.key, aesbin, i);
 	memcpy(cfg->ykcore_config.uid, aesbin + i, 20 - i);
+	insecure_memzero (aesbin, sizeof(aesbin));
 
 	return 0;
 }
