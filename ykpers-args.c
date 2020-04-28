@@ -548,7 +548,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 			else if (strncmp(optarg, "uid", 3) == 0) {
 				char *uid = optarg+4;
 				size_t uidlen;
-				unsigned char uidbin[256];
+				unsigned char uidbin[256] = {0};
 				size_t uidbinlen = 0;
 				int rc;
 				char *uidtmp = NULL;
@@ -787,7 +787,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 		size_t key_bytes = (size_t)ykp_get_supported_key_length(cfg);
 		int res = 0;
 		char *key_tmp = NULL;
-		char keybuf[20];
+		char keybuf[20] = {0};
 
 		if(keylocation == 2) {
 			const char *prompt = " AES key, 16 bytes (32 characters hex) : ";
@@ -865,7 +865,7 @@ int args_to_config(int argc, char **argv, YKP_CONFIG *cfg, char *oathid,
 static int _set_fixed(char *opt, YKP_CONFIG *cfg) {
 	const char *fixed = opt;
 	size_t fixedlen = strlen (fixed);
-	unsigned char fixedbin[256];
+	unsigned char fixedbin[256] = {0};
 	size_t fixedbinlen = 0;
 	int rc = hex_modhex_decode(fixedbin, &fixedbinlen,
 				   fixed, fixedlen,
@@ -898,7 +898,7 @@ static int _format_decimal_as_hex(uint8_t *dst, size_t dst_len, uint8_t *src)
 /* For details, see YubiKey Manual 2010-09-16 section 5.3.4 - OATH-HOTP Token Identifier */
 static int _format_oath_id(uint8_t *dst, size_t dst_len, uint8_t vendor, uint8_t type, uint32_t mui)
 {
-	uint8_t buf[8 + 1];
+	uint8_t buf[8 + 1] = {0};
 
 	if (mui > 99999999)
 		return 0;
