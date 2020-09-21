@@ -57,7 +57,7 @@ ykpers4mac:
 	cp COPYING $(PWD)/tmp/root/licenses/json-c.txt && \
 	cd .. && \
 	cp ../libyubikey-$(LIBYUBIKEYVERSION).tar.gz . \
-		||	curl -L -O https://developers.yubico.com/yubico-c/releases/libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
+		||	curl -L -O https://developers.yubico.com/yubico-c/Releases/libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
 	tar xfz libyubikey-$(LIBYUBIKEYVERSION).tar.gz && \
 	cd libyubikey-$(LIBYUBIKEYVERSION) && \
 	CFLAGS=$(CFLAGS) ./configure --prefix=$(PWD)/tmp/root && \
@@ -65,7 +65,7 @@ ykpers4mac:
 	cp COPYING $(PWD)/tmp/root/licenses/libyubikey.txt && \
 	cd .. && \
 	cp ../ykpers-$(VERSION).tar.gz . \
-		|| curl -L -O https://developers.yubico.com/yubikey-personalization/releases/ykpers-$(VERSION).tar.gz && \
+		|| curl -L -O https://developers.yubico.com/yubikey-personalization/Releases/ykpers-$(VERSION).tar.gz && \
 	tar xfz ykpers-$(VERSION).tar.gz && \
 	cd ykpers-$(VERSION)/ && \
 	CFLAGS=$(CFLAGS) PKG_CONFIG_PATH=$(PWD)/tmp/root/lib/pkgconfig ./configure --prefix=$(PWD)/tmp/root --with-libyubikey-prefix=$(PWD)/tmp/root && \
