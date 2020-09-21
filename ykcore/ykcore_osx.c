@@ -35,11 +35,14 @@
 
 #include <IOKit/hid/IOHIDLib.h>
 #include <IOKit/hid/IOHIDKeys.h>
+#include <IOKit/hid/IOHIDUsageTables.h>
 #include <CoreFoundation/CoreFoundation.h>
 
 #include "ykcore_backend.h"
 
 #define	FEATURE_RPT_SIZE		8
+#define FIDO_HID_USAGE_PAGE		0xF1D0
+#define FIDO_U2F_DEVICE_USAGE	0x01
 
 static IOHIDManagerRef ykosxManager = NULL;
 static IOReturn _ykusb_IOReturn = 0;
@@ -68,7 +71,8 @@ static void _ykosx_CopyToCFArray(const void *value, void *context)
 	CFArrayAppendValue( ( CFMutableArrayRef ) context, value );
 }
 
-static int _ykosx_getIntProperty( IOHIDDeviceRef dev, CFStringRef key ) {
+static int _ykosx_getIntProperty( IOHIDDeviceRef dev, CFStringRef key )
+{
 	int result = 0;
 	CFTypeRef tCFTypeRef = IOHIDDeviceGetProperty( dev, key );
 	if ( tCFTypeRef ) {
@@ -79,14 +83,50 @@ static int _ykosx_getIntProperty( IOHIDDeviceRef dev, CFStringRef key ) {
 	return result;
 }
 
+static IOHIDDeviceRef _ykosx_getHIDDeviceMatching(CFArrayRef devices, 
+                                                  int primaryUsagePage, 
+                                                  int primaryUsage,
+                                                  const int *productIDs,
+                                                  size_t productIDsCount,
+                                                  int index)
+{
+	IOHIDDeviceRef 	matchingDevice = NULL;
+	CFIndex 		cnt;
+	CFIndex 		i, j;
+	size_t			found = 0;
+	
+	cnt = CFArrayGetCount( devices );
+	
+	for(i = 0; i < cnt; ++i) {
+		IOHIDDeviceRef dev = (IOHIDDeviceRef)CFArrayGetValueAtIndex( devices, i );
+		const int usagePage = _ykosx_getIntProperty( dev, CFSTR( kIOHIDPrimaryUsagePageKey ));
+		const int usage = _ykosx_getIntProperty( dev, CFSTR( kIOHIDPrimaryUsageKey ));
+		const int devVendorId = _ykosx_getIntProperty( dev, CFSTR( kIOHIDVendorIDKey ));
+		const int devProductId = _ykosx_getIntProperty( dev, CFSTR( kIOHIDProductIDKey ));
+		
+		if (usagePage != primaryUsagePage || usage != primaryUsage) {
+			continue;
+		}
+		
+		for(j = 0; j < productIDsCount; j++) {
+			if(productIDs[j] == devProductId) {
+				found++;
+				if(found - 1 == index) {
+					matchingDevice = dev;
+					break;
+				}
+			}
+		}
+	}
+	
+	return matchingDevice;
+}
+
 void *_ykusb_open_device(int vendor_id, const int *product_ids, size_t pids_len, int index)
 {
-	void *yk = NULL;
+	IOHIDDeviceRef yk = NULL;
 
 	int rc = YK_ENOKEY;
-
-	size_t i;
-	int found = 0;
 
 	IOHIDManagerSetDeviceMatchingMultiple( ykosxManager, NULL );
 
@@ -96,30 +136,31 @@ void *_ykusb_open_device(int vendor_id, const int *product_ids, size_t pids_len,
 		CFMutableArrayRef array = CFArrayCreateMutable( kCFAllocatorDefault, 0, NULL );
 
 		CFSetApplyFunction( devSet, _ykosx_CopyToCFArray, array );
-
-		CFIndex cnt = CFArrayGetCount( array );
-
-		CFIndex i;
-
-		for(i = 0; i < cnt; i++) {
-			IOHIDDeviceRef dev = (IOHIDDeviceRef)CFArrayGetValueAtIndex( array, i );
-			long usagePage = _ykosx_getIntProperty( dev, CFSTR( kIOHIDPrimaryUsagePageKey ));
-			long usage = _ykosx_getIntProperty( dev, CFSTR( kIOHIDPrimaryUsageKey ));
-			long devVendorId = _ykosx_getIntProperty( dev, CFSTR( kIOHIDVendorIDKey ));
-			/* usagePage 1 is generic desktop and usage 6 is keyboard */
-			if(usagePage == 1 && usage == 6 && devVendorId == vendor_id) {
-				long devProductId = _ykosx_getIntProperty( dev, CFSTR( kIOHIDProductIDKey ));
-				size_t j;
-				for(j = 0; j < pids_len; j++) {
-					if(product_ids[j] == devProductId) {
-						found++;
-						if(found-1 == index) {
-							yk = dev;
-							break;
-						}
-					}
-				}
-			}
+		
+		/* ensure that we are attempting to open the FIDO interface instead
+		   of the keyboard interface. macOS requires explicit user
+		   authorization before we are able to open HID devices such as
+		   keyboards and mice, while it is not required for FIDO devices
+		   that communicate over HID. */
+		yk = _ykosx_getHIDDeviceMatching(
+			array,					// devices
+			FIDO_HID_USAGE_PAGE,	// primaryUsagePage
+			FIDO_U2F_DEVICE_USAGE,	// primaryUsage
+			product_ids,			// productIDs
+			pids_len,				// productIDsCount
+			index					// index
+		);
+		
+		if(yk == NULL) {
+			/* fallback to the keyboard device if it is present. */
+			yk = _ykosx_getHIDDeviceMatching(
+				array,						// devices
+				kHIDPage_GenericDesktop,	// primaryUsagePage
+				kHIDUsage_GD_Keyboard,		// primaryUsage
+				product_ids,				// productIDs
+				pids_len,					// productIDsCount
+				index						// index
+			);
 		}
 
 		/* this is a workaround for a memory leak in IOHIDManagerCopyDevices() in 10.8 */
@@ -140,7 +181,7 @@ void *_ykusb_open_device(int vendor_id, const int *product_ids, size_t pids_len,
 			goto error;
 		}
 
-		return yk;
+		return (void *)yk;
 	}
 
 error:
