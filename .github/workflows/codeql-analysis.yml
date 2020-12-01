@@ -29,6 +29,7 @@ jobs:
       uses: github/codeql-action/init@v1
 
     - run: |
+        sudo apt -q update
         sudo apt install -y libjson-c-dev libyubikey-dev libyubikey0 \
           libusb-1.0-0-dev libusb-1.0-0 asciidoc
         ./build-and-test.sh
