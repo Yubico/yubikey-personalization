@@ -104,17 +104,17 @@ static void _test_other_lang_text(void)
 	YK_NDEF *ndef = ykp_alloc_ndef();
 	char text[] = "aaaaaaaaaaaaaaa";
 	size_t text_len = strlen(text);
-	int rc = ykp_construct_ndef_text(ndef, text, "sv-SE", true);
-	char text2[256];
+	int rc = ykp_construct_ndef_text(ndef, text, "sv-SE", false);
+	char text2[256] = {0};
 	assert(rc == 1);
 	assert(ndef->type == 'T');
-	assert(ndef->data[0] == (0x80 & 5));
+	assert(ndef->data[0] == (5));
 	assert(memcmp(ndef->data + 1, "sv-SE", 5) == 0);
 	assert(memcmp(ndef->data + 6, text, text_len) == 0);
 	assert(ndef->len == text_len + 6);
 	rc = ykp_ndef_as_text(ndef, text2, 256);
 	assert(rc == 1);
-	assert(memcmp(text, text2, strlen(text)));
+	assert(memcmp(text, text2, strlen(text)) == 0);
 	ykp_free_ndef(ndef);
 }
 

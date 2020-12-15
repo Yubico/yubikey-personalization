@@ -473,7 +473,8 @@ int ykp_construct_ndef_text(YK_NDEF *ndef, const char *text, const char *lang, b
 	size_t lang_length = strlen(lang);
 	unsigned char status = lang_length;
 	if(isutf16) {
-		status &= 0x80;
+		ykp_errno = YKP_ENOTYETIMPL;
+		return 0;
 	}
 	if((data_length + lang_length + 1) > NDEF_DATA_SIZE) {
 		ykp_errno = YKP_EINVAL;
