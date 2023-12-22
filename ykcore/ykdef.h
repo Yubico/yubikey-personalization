@@ -146,7 +146,7 @@ struct config_st {
 /* Yubikey 2 and above */
 #define CFGFLAG_SHORT_TICKET	0x02	/* Send truncated ticket (half length) */
 #define CFGFLAG_STRONG_PW1	0x10	/* Strong password policy flag #1 (mixed case) */
-#define CFGFLAG_STRONG_PW2	0x40	/* Strong password policy flag #2 (subtitute 0..7 to digits) */
+#define CFGFLAG_STRONG_PW2	0x40	/* Strong password policy flag #2 (substitute 0..7 to digits) */
 #define CFGFLAG_MAN_UPDATE	0x80	/* Allow manual (local) update of static OTP */
 
 /* Yubikey 2.1 and above */
